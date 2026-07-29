@@ -1,0 +1,3708 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi Tiết Tour - Hạ Long Du Thuyền | Tripto</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/TRANGCHU_UI.css">
+    <style>
+        /* Root Variables */
+        :root {
+            --primary: #0057FF;
+            --primary-50: #ebeffc;
+            --primary-dark: #0046cc;
+            --secondary: #00D4FF;
+            --accent: #FF6B35;
+            --success: #06C270;
+            --warning: #FFB800;
+            --danger: #DC2626;
+            --neutral-900: #121316;
+            --neutral-800: #1a1d22;
+            --neutral-700: #283037;
+            --neutral-600: #3a424d;
+            --neutral-500: #454C58;
+            --neutral-400: #656F81;
+            --neutral-300: #8a94a3;
+            --neutral-200: #B5BAC2;
+            --neutral-100: #F1F2F3;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: var(--neutral-900);
+            background: linear-gradient(135deg, #f5f7fc 0%, #fafbff 100%);
+            line-height: 1.6;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Header */
+        .header {
+            background-color: var(--white);
+            border-bottom: 1px solid var(--neutral-200);
+            height: 80px;
+            display: flex;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(18, 19, 22, 0.08);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 32px;
+            gap: 24px;
+        }
+
+        .logo img {
+            height: 40px;
+            display: block;
+        }
+
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .nav-menu a {
+            padding: 10px 20px;
+            color: var(--neutral-700);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-menu a:hover {
+            color: var(--primary);
+            background-color: var(--primary-50);
+        }
+
+        .nav-menu a.active {
+            color: var(--primary);
+        }
+
+        .nav-menu a.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40%;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 3px;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .country {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .country img {
+            height: 20px;
+        }
+
+        .icon img {
+            height: 40px;
+            cursor: pointer;
+        }
+
+        .btn-login {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .btn-login:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 87, 255, 0.2);
+        }
+
+        /* ============================================
+           LOGIN MODAL STYLES
+           ============================================ */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-container {
+            background: var(--white);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 420px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.9) translateY(20px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-overlay.active .modal-container {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 24px 0;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--neutral-900);
+            margin: 0;
+        }
+
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: var(--neutral-100);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: var(--neutral-200);
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .form-group-modal {
+            margin-bottom: 20px;
+        }
+
+        .form-group-modal label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--neutral-700);
+            margin-bottom: 8px;
+        }
+
+        .form-input-modal {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--neutral-200);
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: 'Roboto', sans-serif;
+            transition: all 0.2s ease;
+        }
+
+        .form-input-modal:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-50);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-submit:hover {
+            background: var(--primary-dark);
+        }
+
+        .forgot-password {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 16px;
+        }
+
+        .forgot-password a {
+            color: var(--primary);
+            font-size: 13px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 24px 0;
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background: var(--neutral-200);
+        }
+
+        .divider-text {
+            padding: 0 16px;
+            font-size: 14px;
+            color: var(--neutral-400);
+        }
+
+        .social-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn-social-modal {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--neutral-200);
+            border-radius: 10px;
+            background: white;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-social-modal:hover {
+            border-color: var(--primary);
+            background: var(--primary-50);
+        }
+
+        .btn-social-modal i {
+            font-size: 20px;
+        }
+
+        .modal-footer {
+            text-align: center;
+            padding: 0 24px 24px;
+            font-size: 15px;
+            color: var(--neutral-600);
+        }
+
+        .modal-footer a {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .modal-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb-section {
+            background: var(--white);
+            padding: 16px 0;
+            border-bottom: 1px solid var(--neutral-100);
+        }
+
+        .breadcrumb-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+        }
+
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+        .breadcrumb-separator {
+            color: var(--neutral-400);
+        }
+
+        .breadcrumb span:last-child {
+            color: var(--neutral-600);
+            font-weight: 600;
+        }
+
+        /* Gallery Section - Main Left + Thumbnails Right */
+        .tour-gallery {
+            background: var(--white);
+            padding: 40px 0;
+            margin-bottom: 12px;
+        }
+
+        .gallery-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: 7fr 3fr;
+            gap: 16px;
+            height: 50vh;
+            min-height: 420px;
+            max-height: 550px;
+        }
+
+        .gallery-photo-main {
+            grid-column: 1;
+            background-size: cover;
+            background-position: center;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.28s ease, box-shadow 0.28s ease;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .gallery-photo-main::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(0, 87, 255, 0.15) 0%, rgba(0, 212, 255, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.28s ease;
+            z-index: 1;
+        }
+
+        .gallery-photo-main:hover {
+            transform: scale(1.015);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .gallery-photo-main:hover::before {
+            opacity: 0.55;
+        }
+
+        .gallery-thumbnails {
+            grid-column: 2;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .gallery-photo {
+            background-size: cover;
+            background-position: center;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            border: 3px solid transparent;
+        }
+
+        .gallery-photo::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            opacity: 0;
+            transition: opacity 0.28s ease;
+            z-index: 1;
+        }
+
+        .gallery-photo:hover {
+            transform: scale(1.08);
+            box-shadow: 0 6px 20px rgba(0, 87, 255, 0.15);
+        }
+
+        .gallery-photo:hover::before {
+            opacity: 1;
+        }
+
+        .gallery-photo.active {
+            border-color: var(--primary);
+            box-shadow: 0 6px 20px rgba(0, 87, 255, 0.25);
+        }
+
+        .gallery-photo-4::before {
+            opacity: 1;
+        }
+
+        .gallery-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.85), transparent);
+            color: var(--white);
+            padding: 24px;
+            font-size: 16px;
+            font-weight: 600;
+            z-index: 2;
+            transform: translateY(15%);
+            transition: transform 0.28s ease;
+        }
+
+        .gallery-photo-main .gallery-caption {
+            font-size: 18px;
+            padding: 28px;
+        }
+
+        .gallery-photo:hover .gallery-caption {
+            transform: translateY(0);
+        }
+
+        .gallery-view-all-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: 600;
+            cursor: pointer;
+            z-index: 3;
+            transition: all 0.3s ease;
+        }
+
+        .gallery-view-all-btn:hover {
+            background: var(--primary-dark);
+            transform: translate(-50%, -52%);
+            box-shadow: 0 4px 12px rgba(0, 87, 255, 0.3);
+        }
+
+        /* Anchor Navigation */
+        .tour-anchor-nav {
+            background: var(--white);
+            padding: 24px 0;
+            position: sticky;
+            top: 80px;
+            z-index: 50;
+            border-bottom: 1px solid var(--neutral-100);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            margin-top: 12px;
+            margin-bottom: 20px;
+        }
+
+        .tour-anchor-list {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tour-anchor-link {
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--neutral-700);
+            background: var(--neutral-100);
+            border: 1px solid var(--neutral-200);
+            border-radius: 999px;
+            padding: 10px 18px;
+            transition: all 0.3s ease;
+        }
+
+        .tour-anchor-link:hover {
+            color: var(--primary);
+            border-color: var(--primary);
+            background: var(--primary-50);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 87, 255, 0.15);
+        }
+
+        /* Main Content Layout */
+        .tour-content {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 32px 60px;
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 32px;
+        }
+
+        /* Left Column */
+        .tour-info-box {
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        /* Tour Header Section */
+        .tour-header-section {
+            background: var(--white);
+            padding: 16px 0;
+            border-bottom: 1px solid var(--neutral-100);
+        }
+
+        .tour-header-section .tour-header {
+            background: transparent;
+            border-radius: 0;
+            padding: 0;
+            box-shadow: none;
+            border: none;
+            text-align: center;
+        }
+
+        /* Tour Header */
+        .tour-header {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--neutral-100);
+        }
+
+        .tour-title-detail {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--neutral-900);
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+
+        .tour-meta-detail {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--neutral-700);
+            background: #f3f7ff;
+            border: 1px solid #dce8ff;
+            border-radius: 999px;
+            padding: 10px 16px;
+            transition: all 0.3s ease;
+        }
+
+        .meta-item:hover {
+            background: #ebeffc;
+            border-color: var(--primary);
+        }
+
+        .meta-item.rating {
+            color: var(--primary);
+            font-weight: 700;
+            background: #ebeffc;
+        }
+
+        .meta-item svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+        }
+
+        /* Section Styles */
+        .itinerary-section,
+        .important-notice-section,
+        .related-tours-section {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--neutral-100);
+        }
+
+        .section-heading {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--neutral-900);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-heading i {
+            color: var(--primary);
+            font-size: 26px;
+        }
+
+        .tour-description-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
+            gap: 20px;
+            align-items: start;
+        }
+
+        .tour-description-text {
+            background: linear-gradient(160deg, #f8fbff 0%, #ffffff 72%);
+            border: 1px solid #dce6fa;
+            border-radius: 12px;
+            padding: 18px;
+        }
+
+        .tour-facts {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .tour-fact-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #1f3f88;
+            background: #eaf1ff;
+            border: 1px solid #d5e2ff;
+        }
+
+        .tour-fact-chip i {
+            color: var(--primary);
+        }
+
+        .tour-description-text p {
+            color: var(--neutral-700);
+            line-height: 1.8;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+
+        .tour-description-list {
+            list-style: none;
+            margin: 0;
+            display: grid;
+            gap: 10px;
+        }
+
+        .tour-description-list li {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            color: var(--neutral-700);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .tour-description-list li i {
+            color: var(--success);
+            margin-top: 4px;
+            font-size: 13px;
+        }
+
+        .tour-location-map {
+            border: 1px solid #dce6fa;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #f7faff;
+            box-shadow: 0 6px 14px rgba(0, 87, 255, 0.08);
+        }
+
+        .map-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 12px;
+            border-bottom: 1px solid #dce6fa;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--neutral-700);
+            background: #f1f6ff;
+        }
+
+        .map-title i {
+            color: var(--primary);
+        }
+
+        .map-frame {
+            width: 100%;
+            height: 100%;
+            min-height: 280px;
+            border: 0;
+            display: block;
+        }
+
+        .map-caption {
+            border-top: 1px solid #dce6fa;
+            padding: 10px 12px;
+            font-size: 12px;
+            color: var(--neutral-600);
+            background: #f1f6ff;
+        }
+
+        /* Itinerary - Accordion */
+        .itinerary-day {
+            background: linear-gradient(135deg, #f8fbff 0%, #f5f9ff 100%);
+            border-left: 4px solid var(--primary);
+            border-radius: 10px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            border: 1px solid #dfe8f7;
+            transition: all 0.3s ease;
+        }
+
+        .itinerary-day:hover {
+            box-shadow: 0 4px 12px rgba(0, 87, 255, 0.1);
+            transform: translateX(4px);
+        }
+
+        .day-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px;
+            background: linear-gradient(135deg, #f8fbff 0%, #f5f9ff 100%);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            user-select: none;
+            font-weight: 600;
+            color: var(--neutral-900);
+            font-size: 15px;
+        }
+
+        .day-toggle:hover {
+            background: linear-gradient(135deg, #ebeffc 0%, #eef5ff 100%);
+        }
+
+        .day-toggle .toggle-icon {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            color: var(--primary);
+            transition: transform 0.3s ease;
+        }
+
+        .day-description {
+            display: none;
+            color: var(--neutral-700);
+            font-size: 14px;
+            line-height: 1.8;
+            padding: 20px 18px;
+            border-top: 1px solid #dfe8f7;
+            background: var(--white);
+        }
+
+        .itinerary-day.active .day-description {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        .itinerary-day.active .day-toggle {
+            background: var(--primary-50);
+            border-bottom: 1px solid #dce8ff;
+        }
+
+        .itinerary-day.active .toggle-icon {
+            transform: rotate(180deg);
+            color: var(--primary);
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Important Notice Section */
+        .notice-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .notice-item {
+            background: linear-gradient(135deg, #f8fbff 0%, #f5f9ff 100%);
+            border-left: 4px solid var(--primary);
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid #dfe8f7;
+        }
+
+        .notice-item:hover {
+            box-shadow: 0 6px 16px rgba(0, 87, 255, 0.12);
+            transform: translateY(-4px);
+        }
+
+        .notice-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background: linear-gradient(135deg, #f8fbff 0%, #f5f9ff 100%);
+            font-weight: 600;
+            color: var(--neutral-900);
+            font-size: 14px;
+            user-select: none;
+            transition: all 0.3s ease;
+        }
+
+        .notice-toggle:hover {
+            background: linear-gradient(135deg, #ebeffc 0%, #eef5ff 100%);
+        }
+
+        .notice-icon {
+            font-size: 16px;
+            transition: transform 0.3s ease;
+            color: var(--primary);
+        }
+
+        .notice-content {
+            display: none;
+            padding: 18px;
+            background: var(--white);
+            border-top: 1px solid #dfe8f7;
+            font-size: 13px;
+            line-height: 1.7;
+            color: var(--neutral-700);
+            animation: slideDown 0.3s ease;
+        }
+
+        .notice-item.active .notice-content {
+            display: block;
+        }
+
+        .notice-item.active .notice-toggle {
+            background: var(--primary-50);
+        }
+
+        .notice-item.active .notice-icon {
+            transform: rotate(180deg);
+        }
+
+        /* Related Tours Grid */
+        .related-tours-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        .tour-card {
+            background: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s ease;
+            border: 1px solid var(--neutral-100);
+        }
+
+        .tour-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+            border-color: var(--primary);
+        }
+
+        .tour-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tour-image::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(0, 87, 255, 0.15) 0%, rgba(0, 212, 255, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .tour-card:hover .tour-image::after {
+            opacity: 1;
+        }
+
+        .tour-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: var(--success);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: 999px;
+            z-index: 10;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .tour-badge.featured {
+            background: var(--primary);
+        }
+
+        .tour-badge.discount {
+            background: #c2410c;
+        }
+
+        .tour-info {
+            padding: 20px;
+        }
+
+        .tour-rating {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .rating-star {
+            color: #FFB800;
+            font-size: 13px;
+            letter-spacing: 1px;
+        }
+
+        .rating-score {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--neutral-900);
+        }
+
+        .rating-count {
+            font-size: 13px;
+            color: var(--neutral-400);
+        }
+
+        .tour-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--neutral-900);
+            margin: 0 0 8px 0;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            overflow: hidden;
+        }
+
+        .tour-location {
+            font-size: 13px;
+            color: var(--neutral-500);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tour-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 12px;
+            border-top: 1px solid var(--neutral-100);
+            margin-bottom: 14px;
+        }
+
+        .tour-price {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .price-from {
+            font-size: 11px;
+            color: var(--neutral-400);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .price-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .price-value span {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--neutral-500);
+        }
+
+        .tour-duration {
+            font-size: 12px;
+            color: var(--neutral-600);
+            background: var(--neutral-100);
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-weight: 600;
+        }
+
+        .related-detail-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .related-detail-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 87, 255, 0.25);
+        }
+
+        /* Sidebar */
+        .tour-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Booking Card */
+        .booking-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 185px;
+            border: 1px solid var(--neutral-100);
+        }
+
+        .price-section {
+            text-align: center;
+            margin-bottom: 10px;
+            padding: 12px 10px;
+            border-radius: 10px;
+            border: 1px solid #d8e5ff;
+            background: linear-gradient(135deg, #ebeffc 0%, #f5f9ff 100%);
+        }
+
+        .price-label {
+            font-size: 11px;
+            color: var(--neutral-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .price-value {
+            font-size: 25px;
+            font-weight: 650;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        .price-unit {
+            font-size: 14px;
+            color: var(--neutral-700);
+        }
+
+        .per-person {
+            font-size: 11px;
+            color: var(--neutral-500);
+            margin-top: 3px;
+            font-weight: 500;
+        }
+
+        .duration-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--neutral-100);
+        }
+
+        .duration-item {
+            text-align: center;
+        }
+
+        .duration-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+            display: block;
+            line-height: 1;
+        }
+
+        .duration-label {
+            font-size: 11px;
+            color: var(--neutral-500);
+            text-transform: uppercase;
+            margin-top: 4px;
+            letter-spacing: 0.3px;
+        }
+
+        .booking-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .booking-detail-item {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+            padding: 8px;
+            background: #f7faff;
+            border-radius: 8px;
+            border: 1px solid #e2ebfb;
+            transition: all 0.3s ease;
+        }
+
+        .booking-detail-item:hover {
+            background: #ebeffc;
+            border-color: #dce8ff;
+        }
+
+        .detail-icon {
+            font-size: 15px;
+            flex-shrink: 0;
+            color: var(--primary);
+        }
+
+        .booking-detail-item > div {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            flex: 1;
+        }
+
+        .detail-label {
+            font-size: 10px;
+            color: var(--neutral-500);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .detail-value {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--neutral-900);
+            word-break: break-word;
+        }
+
+        .booking-btn {
+            width: 100%;
+            padding: 11px;
+            background: linear-gradient(135deg, var(--primary) 0%, #0046cc 100%);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 12px rgba(0, 87, 255, 0.2);
+        }
+
+        .booking-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 87, 255, 0.3);
+        }
+
+        .booking-btn.outline {
+            background: var(--white);
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            box-shadow: none;
+        }
+
+        .booking-btn.outline:hover {
+            background: var(--primary-50);
+        }
+
+        .booking-note {
+            font-size: 11px;
+            color: var(--neutral-500);
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
+
+        .booking-form {
+            display: grid;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .booking-field {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .booking-field label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--neutral-600);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .booking-input {
+            border: 1px solid #dbe4f6;
+            border-radius: 8px;
+            padding: 8px 10px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--neutral-800);
+            background: #fbfcff;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .booking-input:focus {
+            border-color: #8db0ff;
+            box-shadow: 0 0 0 3px rgba(0, 87, 255, 0.12);
+        }
+
+        .support-mini {
+            border-top: 1px dashed #d8e2f3;
+            padding-top: 8px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 10px;
+            align-items: center;
+        }
+
+        .support-mini-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--neutral-700);
+        }
+
+        .support-mini a {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .support-mini a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--neutral-900);
+            color: #d1d5db;
+            padding: 60px 0 30px;
+            margin-top: 80px;
+        }
+
+        .footer-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 48px;
+            margin-bottom: 48px;
+        }
+
+        .footer-brand {
+            max-width: 360px;
+        }
+
+        .footer-logo {
+            display: block;
+            margin-bottom: 16px;
+        }
+
+        .footer-logo img {
+            height: 44px;
+        }
+
+        .footer-description {
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+            color: #9ca3af;
+        }
+
+        .footer-column h4 {
+            font-size: 16px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .footer-column ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-column li {
+            margin-bottom: 12px;
+        }
+
+        .footer-column a {
+            color: #9ca3af;
+            font-size: 14px;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-column a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 12px;
+        }
+
+        .social-icon {
+            width: 38px;
+            height: 38px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .social-icon:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .tour-content {
+                grid-template-columns: 1fr 320px;
+                gap: 24px;
+            }
+
+            .related-tours-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 0 16px;
+            }
+
+            .gallery-grid {
+                grid-template-columns: 1fr;
+                height: auto;
+                gap: 12px;
+            }
+
+            .gallery-photo-main {
+                grid-column: 1;
+                height: 300px;
+                margin-bottom: 8px;
+            }
+
+            .gallery-thumbnails {
+                grid-column: 1;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 12px;
+                height: auto;
+            }
+
+            .gallery-photo-4 {
+                grid-column: auto;
+                grid-row: auto;
+            }
+
+            .tour-content {
+                grid-template-columns: 1fr;
+                gap: 24px;
+                padding: 0 16px;
+            }
+
+            .gallery-container,
+            .breadcrumb-container,
+            .footer-container {
+                padding: 0 16px;
+            }
+
+            .tour-gallery {
+                padding: 24px 0;
+                margin-bottom: 8px;
+            }
+
+            .tour-header-section {
+                padding: 12px 0;
+            }
+
+            .tour-header-section .tour-header {
+                text-align: center;
+            }
+
+            .tour-meta-detail {
+                justify-content: center;
+            }
+
+            .tour-header,
+            .itinerary-section,
+            .important-notice-section,
+            .related-tours-section {
+                padding: 20px;
+            }
+
+            .tour-description-layout {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+
+            .map-frame {
+                min-height: 220px;
+            }
+
+            .tour-title-detail {
+                font-size: 24px;
+            }
+
+            .notice-container {
+                grid-template-columns: 1fr;
+            }
+
+            .related-tours-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+
+            .booking-card {
+                position: static;
+                top: auto;
+            }
+
+            .booking-details {
+                grid-template-columns: 1fr;
+            }
+
+            .tour-anchor-list {
+                justify-content: flex-start;
+                overflow-x: auto;
+                padding-bottom: 8px;
+            }
+
+            .tour-anchor-nav {
+                margin-top: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <script src="./js/auth.js"></script>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="TRANGCHU.html">
+                    <img src="../image/Logo.png" alt="Tripto Logo">
+                </a>
+            </div>
+            <nav class="nav-menu">
+                <a href="TRANGCHU.html">Trang Chủ</a>
+                <a href="UUDAI.html">Ưu Đãi</a>
+                <a href="TATCA_TOUR.html">Chuyến du lịch</a>
+                <a href="TATCA_COMBO.html">Gói du lịch</a>
+                <a href="BLOG.html">Tin Tức</a>
+            </nav>
+            <div class="nav-right">
+                <div class="country">
+                    <img src="../image/ngonngu.png" alt="Vietnam Flag">
+                    <span>VIETNAM</span>
+                </div>
+                <div class="icon">
+                    <a href="hotro.html" title="Hỗ trợ">
+                        <img src="../image/hotro.png" alt="Support">
+                    </a>
+                </div>
+                <button class="btn-login" id="loginBtn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    Đăng Nhập
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Breadcrumb -->
+    <section class="breadcrumb-section">
+        <div class="breadcrumb-container">
+            <div class="breadcrumb">
+                <a href="TRANGCHU.html">Trang Chủ</a>
+                <span class="breadcrumb-separator">›</span>
+                <a href="TATCA_TOUR.html">Chuyến du lịch</a>
+                <span class="breadcrumb-separator">›</span>
+                <span>Hạ Long - Vịnh Hạ Long Du Thuyền 2 Ngày 1 Đêm</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tour Gallery -->
+    <section class="tour-gallery">
+        <div class="gallery-container">
+            <div class="gallery-grid">
+                <!-- Main Image -->
+                <div class="gallery-photo-main" style="background-image: url('https://ecotour.com.vn/wp-content/uploads/2019/06/tour-vinh-ha-long-2-ngay-1-dem.jpg');">
+                    <span class="gallery-caption">Vẻ đẹp thiên nhiên</span>
+                </div>
+                
+                <!-- Thumbnails -->
+                <div class="gallery-thumbnails">
+                    <div class="gallery-photo gallery-photo-1 active" style="background-image: url('https://ecotour.com.vn/wp-content/uploads/2019/06/tour-vinh-ha-long-2-ngay-1-dem.jpg');" data-main="https://ecotour.com.vn/wp-content/uploads/2019/06/tour-vinh-ha-long-2-ngay-1-dem.jpg" data-caption="Vẻ đẹp thiên nhiên Hạ Long buổi sớm"></div>
+                    <div class="gallery-photo gallery-photo-2" style="background-image: url('https://ftctourist.com/wp-content/uploads/2022/09/cd346585a04c64123d5d.jpg');" data-main="https://ftctourist.com/wp-content/uploads/2022/09/cd346585a04c64123d5d.jpg" data-caption="Du thuyền hạng sang và trải nghiệm ban đêm"></div>
+                    <div class="gallery-photo gallery-photo-3" style="background-image: url('https://vivuhalong.com/wp-content/uploads/2019/04/tour_du_thuyen_ha_long_2_ngay-3.jpg');" data-main="https://vivuhalong.com/wp-content/uploads/2019/04/tour_du_thuyen_ha_long_2_ngay-3.jpg" data-caption="Hành trình tham quan vịnh và các đảo đá"></div>
+                    <div class="gallery-photo gallery-photo-4" style="background-image: url('https://res.klook.com/images/fl_lossy.progressive,q_65/c_fill,w_1200,h_630/w_80,x_15,y_15,g_south_west,l_Klook_water_br_trans_yhcmh3/activities/w95vodwvqqn4renfbzmj/2%20Ng%C3%A0y%201%20%C4%90%C3%AAm%20tr%C3%AAn%20Du%20Thuy%E1%BB%81n%20B%C3%ACnh%20Chu%E1%BA%A9n%20Heritage%20tham%20quan%20V%E1%BB%8Bnh%20Lan%20H%E1%BA%A1.jpg');" data-main="https://dncn2m8l71eov.cloudfront.net/2020/06/tour-du-lich-ha-long-2-ngay-1-dem-tro-thanh-san-pham-dac-biet-toan-quoc.jpg" data-caption="Trải nghiệm độc đáo trên du thuyền sang trọng">
+                        <button class="gallery-view-all-btn"><i class="fas fa-images"></i> Xem tất cả ảnh</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tour Header -->
+    <section class="tour-header-section">
+        <div class="gallery-container">
+            <div class="tour-header">
+                <h1 class="tour-title-detail">Hạ Long - Vịnh Hạ Long Du Thuyền 2 Ngày 1 Đêm</h1>
+                <div class="tour-meta-detail">
+                    <div class="meta-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        Quảng Ninh, Việt Nam
+                    </div>
+                    <div class="meta-item rating">
+                        <i class="fas fa-star"></i>
+                        5.0 (350 đánh giá)
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-users"></i>
+                        2,450+ khách du lịch
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Anchor Navigation -->
+    <section class="tour-anchor-nav">
+        <div class="gallery-container">
+            <div class="tour-anchor-list">
+                <a class="tour-anchor-link" href="#mo-ta-tour"><i class="fas fa-info-circle"></i> Mô tả tour</a>
+                <a class="tour-anchor-link" href="#lich-trinh-tour"><i class="fas fa-calendar"></i> Lịch trình</a>
+                <a class="tour-anchor-link" href="#thong-tin-luu-y"><i class="fas fa-bell"></i> Thông tin</a>
+                <a class="tour-anchor-link" href="#tour-lien-quan"><i class="fas fa-link"></i> Tour liên quan</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="tour-content">
+        <!-- Left Column -->
+        <div class="tour-info-box">
+            <!-- Tour Description -->
+            <div class="itinerary-section" id="mo-ta-tour">
+                <div class="section-heading">
+                    <i class="fas fa-info-circle"></i>
+                    Mô Tả Tour
+                </div>
+                <div class="tour-description-layout">
+                    <div class="tour-description-text">
+                        <div class="tour-facts">
+                            <span class="tour-fact-chip duration-chip"><i class="fas fa-clock"></i> 2 ngày 1 đêm</span>
+                            <span class="tour-fact-chip location-chip"><i class="fas fa-map-marker-alt"></i> Quảng Ninh</span>
+                            <span class="tour-fact-chip rating-chip"><i class="fas fa-star"></i> 5.0 đánh giá</span>
+                        </div>
+                        <p class="tour-description-intro">
+                            Hạ Long là kỳ quan thiên nhiên thế giới nổi bật với hàng nghìn hòn đảo granit kỳ lạ. Tour du lịch 2 ngày 1 đêm tuyệt vời này sẽ đưa bạn khám phá những hang động nổi tiếng, thưởng thức hải sản tươi ngon, và ngắm bình minh, hoàng hôn tuyệt đẹp trên biển.
+                        </p>
+                        <ul class="tour-description-list">
+                            <li><i class="fas fa-check-circle"></i><span><strong>Du thuyền 4 sao</strong> tiêu chuẩn quốc tế với phòng hạng phòng cho</span></li>
+                            <li><i class="fas fa-check-circle"></i><span><strong>Thăm Hang Đầu Gỗ và Hang Sửng Sót</strong> - hai hang động nổi tiếng nhất</span></li>
+                            <li><i class="fas fa-check-circle"></i><span><strong>Các hoạt động</strong> nước: Kayaking, Tai Chi buổi sáng</span></li>
+                            <li><i class="fas fa-check-circle"></i><span><strong>Ẩm thực cao cấp</strong> - buffet hải sản tươi ngon 3 bữa/ngày</span></li>
+                            <li><i class="fas fa-check-circle"></i><span><strong>1 đêm ngủ</strong> trong cabin riêng tư, thoải mái</span></li>
+                            <li><i class="fas fa-check-circle"></i><span><strong>Hướng dẫn viên</strong> tiếng Anh chuyên nghiệp</span></li>
+                        </ul>
+                    </div>
+                    <div class="tour-location-map">
+                        <div class="map-title"><i class="fas fa-map-marked-alt"></i> Bản đồ điểm đến</div>
+                        <iframe
+                            class="map-frame"
+                            title="Bản đồ Vịnh Hạ Long"
+                            src="https://www.google.com/maps?q=V%E1%BB%8Bnh%20H%E1%BA%A1%20Long%2C%20Qu%E1%BA%A3ng%20Ninh&output=embed"
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"
+                            allowfullscreen>
+                        </iframe>
+                        <div class="map-caption">Vị trí điểm tham quan chính: Vịnh Hạ Long, Quảng Ninh</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Itinerary -->
+            <div class="itinerary-section" id="lich-trinh-tour">
+                <div class="section-heading">
+                    <i class="fas fa-calendar-days"></i>
+                    Lịch Trình Chi Tiết
+                </div>
+
+                <!-- Schedule items will be populated here -->
+                <div id="schedule-container">
+                    <!-- Loading placeholder -->
+                    <div class="itinerary-day active" data-day="loading">
+                        <div class="day-toggle">
+                            <span><strong>📅 Đang tải dữ liệu...</strong></span>
+                            <span class="toggle-icon">▼</span>
+                        </div>
+                        <div class="day-description">
+                            <em style="color: #6c757d;">Vui lòng chờ...</em>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Important Notice Section -->
+            <div class="important-notice-section" id="thong-tin-luu-y">
+                <div class="section-heading">
+                    <i class="fas fa-bell"></i>
+                    Những Thông Tin Cần Lưu Ý
+                </div>
+
+                <div class="notice-container">
+                    <div class="notice-item">
+                        <div class="notice-toggle">
+                            <span><i class="fas fa-cogs"></i> Thông Tin Dịch Vụ</span>
+                            <span class="notice-icon">▼</span>
+                        </div>
+                        <div class="notice-content">
+                            <strong>⏱️ Thời gian:</strong> 2 ngày 1 đêm<br><br>
+                            <strong>📍 Điểm khởi hành:</strong> Hà Nội<br><br>
+                            <strong>🗣️ Hướng dẫn viên:</strong> Tiếng Anh chuyên nghiệp<br><br>
+                            <strong>👥 Tối đa:</strong> 30 khách/tour<br><br>
+                            <strong>🛡️ Bảo hiểm:</strong> Bảo hiểm du lịch toàn diện
+                        </div>
+                    </div>
+
+                    <div class="notice-item">
+                        <div class="notice-toggle">
+                            <span><i class="fas fa-shield-alt"></i> Điều Kiện Áp Dụng</span>
+                            <span class="notice-icon">▼</span>
+                        </div>
+                        <div class="notice-content">
+                            <strong>👶 Giới hạn tuổi:</strong> Từ 5 tuổi trở lên<br><br>
+                            <strong>❤️ Sức khỏe:</strong> Phù hợp mọi lứa tuổi. Không khuyến khích cho phụ nữ mang thai<br><br>
+                            <strong>🏊 Khả năng bơi:</strong> Không bắt buộc nhưng nên biết bơi<br><br>
+                            <strong>📄 Chứng thực:</strong> CCCD/Hộ chiếu gốc
+                        </div>
+                    </div>
+
+                    <div class="notice-item">
+                        <div class="notice-toggle">
+                            <span><i class="fas fa-check-circle"></i> Bao Gồm Trong Tour</span>
+                            <span class="notice-icon">▼</span>
+                        </div>
+                        <div class="notice-content">
+                            ✓ Vận chuyển đi lại từ Hà Nội<br><br>
+                            ✓ Du thuyền 4 sao tiêu chuẩn quốc tế<br><br>
+                            ✓ 1 đêm ngủ trong cabin hạng phòng cho<br><br>
+                            ✓ Ăn 3 bữa chính (sáng, trưa, tối)<br><br>
+                            ✓ Vé vào Hang Đầu Gỗ và Hang Sửng Sót<br><br>
+                            ✓ Hướng dẫn viên tiếng Anh chuyên nghiệp<br><br>
+                            ✓ Bảo hiểm du lịch toàn diện<br><br>
+                            ✓ Các hoạt động: Kayaking, Tai Chi
+                        </div>
+                    </div>
+
+                    <div class="notice-item">
+                        <div class="notice-toggle">
+                            <span><i class="fas fa-exchange-alt"></i> Chính Sách Hủy & Đổi</span>
+                            <span class="notice-icon">▼</span>
+                        </div>
+                        <div class="notice-content">
+                            <strong style="color: var(--success);">Hủy trước 30 ngày:</strong> Hoàn tiền 100%<br><br>
+                            <strong style="color: var(--success);">Hủy trước 15 ngày:</strong> Hoàn tiền 80%<br><br>
+                            <strong style="color: var(--warning);">Hủy trước 7 ngày:</strong> Hoàn tiền 50%<br><br>
+                            <strong style="color: var(--danger);">Hủy trong 7 ngày:</strong> Không hoàn tiền<br><br>
+                            <strong style="color: var(--primary);">Đổi ngày:</strong> Miễn phí (trước 10 ngày)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Related Tours Section -->
+            <div class="related-tours-section" id="tour-lien-quan">
+                <div class="section-heading">
+                    <i class="fas fa-star"></i>
+                    Tour Liên Quan & Nổi Bật
+                </div>
+                <div class="related-tours-grid">
+                    <div class="tour-card">
+                        <div class="tour-image" style="background-image: url('../image/HaLongBay.jpg');">
+                            <span class="tour-badge featured">Bán Chạy</span>
+                        </div>
+                        <div class="tour-info">
+                            <div class="tour-rating">
+                                <span class="rating-star">★★★★★</span>
+                                <span class="rating-score">4.9</span>
+                                <span class="rating-count">(280 đánh giá)</span>
+                            </div>
+                            <h4 class="tour-title">Hạ Long 3 Ngày 2 Đêm - Trải Nghiệm Cao Cấp</h4>
+                            <p class="tour-location">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Quảng Ninh, Việt Nam
+                            </p>
+                            <div class="tour-meta">
+                                <div class="tour-price">
+                                    <span class="price-from">Từ</span>
+                                    <span class="price-value">3.200.000<span>đ</span></span>
+                                </div>
+                                <span class="tour-duration">3N2Đ</span>
+                            </div>
+                            <a class="related-detail-btn" href="chitiettour.html">Xem Chi Tiết</a>
+                        </div>
+                    </div>
+
+                    <div class="tour-card">
+                        <div class="tour-image" style="background-image: url('../image/SaPa.jpeg');">
+                            <span class="tour-badge featured">Yêu Thích</span>
+                        </div>
+                        <div class="tour-info">
+                            <div class="tour-rating">
+                                <span class="rating-star">★★★★★</span>
+                                <span class="rating-score">4.8</span>
+                                <span class="rating-count">(320 đánh giá)</span>
+                            </div>
+                            <h4 class="tour-title">Sapa - Hà Giang 2 Ngày 1 Đêm</h4>
+                            <p class="tour-location">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Yên Bái, Hà Giang
+                            </p>
+                            <div class="tour-meta">
+                                <div class="tour-price">
+                                    <span class="price-from">Từ</span>
+                                    <span class="price-value">2.800.000<span>đ</span></span>
+                                </div>
+                                <span class="tour-duration">2N1Đ</span>
+                            </div>
+                            <a class="related-detail-btn" href="chitiettour.html">Xem Chi Tiết</a>
+                        </div>
+                    </div>
+
+                    <div class="tour-card">
+                        <div class="tour-image" style="background-image: url('../image/PhuQuoc.jpg');">
+                            <span class="tour-badge discount">Top Rated</span>
+                        </div>
+                        <div class="tour-info">
+                            <div class="tour-rating">
+                                <span class="rating-star">★★★★★</span>
+                                <span class="rating-score">5.0</span>
+                                <span class="rating-count">(410 đánh giá)</span>
+                            </div>
+                            <h4 class="tour-title">Phú Quốc 3 Ngày 2 Đêm - Thiên Đường Đảo</h4>
+                            <p class="tour-location">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Kiên Giang, Việt Nam
+                            </p>
+                            <div class="tour-meta">
+                                <div class="tour-price">
+                                    <span class="price-from">Từ</span>
+                                    <span class="price-value">2.900.000<span>đ</span></span>
+                                </div>
+                                <span class="tour-duration">3N2Đ</span>
+                            </div>
+                            <a class="related-detail-btn" href="chitiettour.html">Xem Chi Tiết</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Sidebar -->
+        <div class="tour-sidebar">
+            <!-- Booking Card -->
+            <div class="booking-card">
+                <div class="price-section">
+                    <div class="price-label">💰 Giá từ</div>
+                    <div class="price-value">2.500.000<span class="price-unit">đ</span></div>
+                    <div class="per-person">/ Khách (tiêu chuẩn)</div>
+                </div>
+                <p class="booking-note">Đã bao gồm thuế, phí tham quan và bảo hiểm du lịch</p>
+
+                <div class="duration-section">
+                    <div class="duration-item">
+                        <span class="duration-value">2</span>
+                        <span class="duration-label">Ngày</span>
+                    </div>
+                    <div class="duration-item">
+                        <span class="duration-value">1</span>
+                        <span class="duration-label">Đêm</span>
+                    </div>
+                </div>
+
+                <div class="booking-form">
+                    <div class="booking-field">
+                        <label for="departureDate">Ngày khởi hành</label>
+                        <select id="departureDate" class="booking-input">
+                            <option value="2026-03-20">20/03/2026 (Còn 12 chỗ)</option>
+                            <option value="2026-03-23">23/03/2026 (Còn 9 chỗ)</option>
+                            <option value="2026-03-27">27/03/2026 (Còn 15 chỗ)</option>
+                            <option value="2026-04-10">10/04/2026 (Còn 7 chỗ)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="booking-details">
+                    <div class="booking-detail-item">
+                        <span class="detail-icon">🎯</span>
+                        <div>
+                            <span class="detail-label">Mã tour</span>
+                            <span class="detail-value tour-code">HALONG-CRUISE-0202-VN</span>
+                        </div>
+                    </div>
+                    <div class="booking-detail-item">
+                        <span class="detail-icon">📍</span>
+                        <div>
+                            <span class="detail-label">Khởi hành từ</span>
+                            <span class="detail-value">Hà Nội</span>
+                        </div>
+                    </div>
+                    <div class="booking-detail-item">
+                        <span class="detail-icon">🛳️</span>
+                        <div>
+                            <span class="detail-label">Tàu</span>
+                            <span class="detail-value">4 sao tiêu chuẩn</span>
+                        </div>
+                    </div>
+                    
+                    <div class="booking-detail-item">
+                        <span class="detail-icon">⭐</span>
+                        <div>
+                            <span class="detail-label">Đánh giá</span>
+                            <span class="detail-value">5.0 / 350 đánh giá</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="booking-btn" id="bookingNowBtn" style="margin-top: 6px;">
+                    🎫 Đặt Tour Ngay
+                </button>
+                <button class="booking-btn outline">
+                    ❤️ Thêm vào yêu thích
+                </button>
+
+                <div class="support-mini">
+                    <div class="support-mini-title">Cần tư vấn nhanh?</div>
+                    <a href="tel:+841234567890">Hotline: +84 (0) 1234 567 890</a>
+                    <a href="trungtamhotro.html">Đến Trung Tâm Hỗ Trợ</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <img src="../image/Logo.png" alt="Tripto Logo" class="footer-logo">
+                    <p class="footer-description">Tripto là nền tảng đặt tour du lịch hàng đầu tại Việt Nam. Chúng tôi cung cấp hơn 500+ tour với giá tốt nhất.</p>
+                </div>
+                <div class="footer-column">
+                    <h4>Công Ty</h4>
+                    <ul>
+                        <li><a href="#">Về Chúng Tôi</a></li>
+                        <li><a href="#">Đội Ngũ</a></li>
+                        <li><a href="#">Liên Hệ</a></li>
+                        <li><a href="#">Tuyển Dụng</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Hỗ Trợ</h4>
+                    <ul>
+                        <li><a href="#">Câu Hỏi Thường Gặp</a></li>
+                        <li><a href="#">Chính Sách Bảo Mật</a></li>
+                        <li><a href="#">Điều Khoản Sử Dụng</a></li>
+                        <li><a href="#">Liên Hệ Hỗ Trợ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Liên Hệ</h4>
+                    <ul>
+                        <li><a href="#">📞 +84 (0) 1234 567 890</a></li>
+                        <li><a href="#">✉️ support@tripto.vn</a></li>
+                        <li><a href="#">📍 Hà Nội, Việt Nam</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <span>&copy; 2026 Tripto. Bản quyền được bảo lưu.</span>
+                <div class="social-links">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Login button functionality - will be handled by modal below
+        // See modal initialization script at the end of the page
+
+        // Gallery view all button
+        const viewAllGalleryBtn = document.querySelector('.gallery-view-all-btn');
+        if (viewAllGalleryBtn) {
+            viewAllGalleryBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                alert('Tính năng xem toàn bộ ảnh sẽ sớm được cập nhật');
+            });
+        }
+
+        // Gallery thumbnail switching
+        const galleryThumbnails = document.querySelectorAll('.gallery-photo');
+        const galleryMainPhoto = document.querySelector('.gallery-photo-main');
+        const galleryCaption = document.querySelector('.gallery-photo-main .gallery-caption');
+
+        galleryThumbnails.forEach(thumbnail => {
+            thumbnail.addEventListener('click', function() {
+                const mainImageUrl = this.getAttribute('data-main');
+                const captionText = this.getAttribute('data-caption');
+
+                // Remove active class from all thumbnails
+                galleryThumbnails.forEach(thumb => thumb.classList.remove('active'));
+
+                // Add active class to clicked thumbnail
+                this.classList.add('active');
+
+                // Update main image
+                galleryMainPhoto.style.backgroundImage = `url('${mainImageUrl}')`;
+                galleryCaption.textContent = captionText;
+            });
+        });
+
+        // Itinerary accordion - COMMENTED OUT (handled by attachScheduleToggleHandlers)
+        // const itineraryDays = document.querySelectorAll('.itinerary-day');
+        // itineraryDays.forEach(day => {
+        //     const toggle = day.querySelector('.day-toggle');
+        //     toggle.addEventListener('click', function() {
+        //         itineraryDays.forEach(d => {
+        //             if (d !== day) d.classList.remove('active');
+        //         });
+        //         day.classList.toggle('active');
+        //     });
+        // });
+
+        // Notice accordion
+        const noticeItems = document.querySelectorAll('.notice-item');
+        noticeItems.forEach(item => {
+            const toggle = item.querySelector('.notice-toggle');
+            toggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                
+                if (item.classList.contains('active')) {
+                    item.classList.remove('active');
+                } else {
+                    noticeItems.forEach(i => {
+                        i.classList.remove('active');
+                    });
+                    item.classList.add('active');
+                }
+            });
+        });
+
+        // Store tour data globally for booking button
+        let currentTourData = null;
+
+        // Booking button
+        const bookingBtn = document.getElementById('bookingNowBtn');
+        if (bookingBtn) {
+            bookingBtn.addEventListener('click', function() {
+                // Check if user is logged in
+                const isLoggedIn = sessionStorage.getItem('triptoLoggedIn') === 'true';
+                
+                if (!isLoggedIn) {
+                    alert('❌ Vui lòng đăng nhập để đặt tour!');
+                    // Open login modal
+                    const loginModal = document.getElementById('loginModal');
+                    if (loginModal) {
+                        loginModal.classList.add('active');
+                        document.body.style.overflow = 'hidden';
+                    }
+                    return;
+                }
+
+                // Check if tour data is loaded
+                if (!currentTourData) {
+                    alert('Dữ liệu tour chưa được tải. Vui lòng tải lại trang.');
+                    return;
+                }
+
+                const departureDateSelect = document.getElementById('departureDate');
+                const selectedDepartDate = departureDateSelect ? departureDateSelect.value : '';
+
+                // Store tour data in sessionStorage for payment page
+                sessionStorage.setItem('tourData', JSON.stringify(currentTourData));
+                
+                // Also store departure date if selected
+                if (selectedDepartDate) {
+                    sessionStorage.setItem('selectedDepartDate', selectedDepartDate);
+                }
+
+                // Redirect to payment page - preserve combo parameter if exists
+                const params = new URLSearchParams(window.location.search);
+                const comboId = params.get('combo');
+                let redirectUrl = 'thanhtoan_chitiet.html';
+                if (comboId) {
+                    redirectUrl += '?combo=' + comboId;
+                }
+                window.location.href = redirectUrl;
+            });
+        }
+
+        // Favorite button
+        const favoriteBtn = document.querySelector('.booking-btn.outline');
+        let isFavoritedNow = false; // Track favorite state
+
+        // Function to check if tour/combo is already favorited
+        async function checkIfFavorited() {
+            const isLoggedIn = sessionStorage.getItem('triptoLoggedIn') === 'true';
+            const userData = sessionStorage.getItem('triptoUser');
+            
+            if (!isLoggedIn || !userData) {
+                return false;
+            }
+
+            try {
+                const params = new URLSearchParams(window.location.search);
+                const tourId = params.get('id');
+                const comboId = params.get('combo');
+                
+                const user = JSON.parse(userData);
+                const userId = user.id;
+
+                let endpoint = '';
+                
+                if (comboId && !tourId) {
+                    endpoint = `check_favorite&id_goi_combo=${comboId}&id_nguoi_dung=${userId}`;
+                } else if (tourId) {
+                    endpoint = `check_favorite&id_tour=${tourId}&id_nguoi_dung=${userId}`;
+                } else {
+                    return false;
+                }
+
+                const response = await fetch(`../user.php?endpoint=${endpoint}`);
+                const result = await response.json();
+                
+                if (result.success && result.isFavorited) {
+                    return true;
+                }
+                return false;
+            } catch (error) {
+                console.error('Lỗi check favorite:', error);
+                return false;
+            }
+        }
+
+        // Update button state based on favorite status
+        async function updateFavoriteButtonState() {
+            const isFavorited = await checkIfFavorited();
+            
+            if (isFavorited) {
+                favoriteBtn.textContent = '✓ Đã thêm vào yêu thích';
+                favoriteBtn.style.color = '#0057FF';
+                isFavoritedNow = true;
+                favoriteBtn.style.flex = '1';
+            } else {
+                favoriteBtn.textContent = '❤️ Thêm vào yêu thích';
+                favoriteBtn.style.color = '';
+                isFavoritedNow = false;
+            }
+        }
+
+        if (favoriteBtn) {
+            // Check favorite status on page load
+            updateFavoriteButtonState();
+
+            favoriteBtn.addEventListener('click', async function(e) {
+                e.preventDefault();
+                
+                // Check if user is logged in
+                const isLoggedIn = sessionStorage.getItem('triptoLoggedIn') === 'true';
+                const userData = sessionStorage.getItem('triptoUser');
+                
+                if (!isLoggedIn || !userData) {
+                    alert('❌ Vui lòng đăng nhập để lưu yêu thích!');
+                    const loginModal = document.getElementById('loginModal');
+                    if (loginModal) {
+                        loginModal.classList.add('active');
+                        document.body.style.overflow = 'hidden';
+                    }
+                    return;
+                }
+
+                // Determine if this is a tour or combo
+                const params = new URLSearchParams(window.location.search);
+                const tourId = params.get('id');
+                const comboId = params.get('combo');
+
+                try {
+                    const user = JSON.parse(userData);
+                    const userId = user.id;
+
+                    let endpoint = '';
+
+                    if (comboId && !tourId) {
+                        // It's a combo
+                        console.log(`❤️ Toggle favorite for combo ${comboId}`);
+                        endpoint = `toggle_combo_favorite&id_goi_combo=${comboId}&id_nguoi_dung=${userId}`;
+                    } else if (tourId) {
+                        // It's a tour
+                        console.log(`❤️ Toggle favorite for tour ${tourId}`);
+                        endpoint = `toggle_favorite&id_tour=${tourId}&id_nguoi_dung=${userId}`;
+                    } else {
+                        alert('❌ Không thể xác định tour/combo');
+                        return;
+                    }
+
+                    const response = await fetch(`../user.php?endpoint=${endpoint}`);
+                    const result = await response.json();
+
+                    if (result.success && result.isFavorited) {
+                        // Added to favorites
+                        favoriteBtn.textContent = '✓ Đã thêm vào yêu thích';
+                        favoriteBtn.style.color = '#0057FF';
+                        isFavoritedNow = true;
+                        favoriteBtn.style.flex = '1';
+                        showFavoriteGroupsModal(userId, result.id);
+                    } else if (result.success && !result.isFavorited) {
+                        // Removed from favorites
+                        favoriteBtn.textContent = '❤️ Thêm vào yêu thích';
+                        favoriteBtn.style.color = '';
+                        isFavoritedNow = false;
+                        alert('✓ Đã xóa khỏi yêu thích');
+                    } else {
+                        alert('❌ Lỗi: ' + result.message);
+                    }
+                } catch (error) {
+                    console.error('Lỗi toggle favorite:', error);
+                    alert('Lỗi khi lưu yêu thích: ' + error.message);
+                }
+            });
+        }
+
+        // Show modal for selecting/creating favorite groups
+        async function showFavoriteGroupsModal(userId, favoriteId) {
+            const modal = document.createElement('div');
+            modal.className = 'favorite-groups-modal';
+            modal.innerHTML = `
+                <div class="modal-wrapper">
+                    <div class="modal-header">
+                        <h3>📁 Lưu vào nhóm yêu thích</h3>
+                        <button class="modal-close">✕</button>
+                    </div>
+                    <div class="modal-content" id="groupsContainer">
+                        <div style="text-align: center; padding: 24px;">
+                            <div class="spinner"></div>
+                            <p>Đang tải...</p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn-create-group" id="createGroupBtn">➕ Tạo nhóm mới</button>
+                        <button class="btn-cancel">Hủy</button>
+                    </div>
+                </div>
+            `;
+            modal.style.cssText = `
+                position: fixed;
+                top: 0; left: 0; right: 0; bottom: 0;
+                background: rgba(0,0,0,0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 2000;
+            `;
+
+            document.body.appendChild(modal);
+
+            const wrapper = modal.querySelector('.modal-wrapper');
+            wrapper.style.cssText = `
+                background: white;
+                border-radius: 12px;
+                width: 90%;
+                max-width: 500px;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+                display: flex;
+                flex-direction: column;
+                max-height: 80vh;
+            `;
+
+            const header = modal.querySelector('.modal-header');
+            header.style.cssText = `
+                padding: 24px;
+                border-bottom: 1px solid #e5e7eb;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            `;
+
+            const content = modal.querySelector('.modal-content');
+            content.style.cssText = `
+                padding: 20px;
+                overflow-y: auto;
+                flex: 1;
+                min-height: 200px;
+            `;
+
+            const footer = modal.querySelector('.modal-footer');
+            footer.style.cssText = `
+                padding: 16px 24px;
+                border-top: 1px solid #e5e7eb;
+                display: flex;
+                gap: 12px;
+                justify-content: flex-end;
+            `;
+
+            const buttons = modal.querySelectorAll('button');
+            buttons.forEach(btn => {
+                btn.style.cssText = `
+                    padding: 10px 20px;
+                    border-radius: 8px;
+                    border: none;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                `;
+            });
+
+            const closeBtn = modal.querySelector('.modal-close');
+            closeBtn.style.cssText = `
+                background: none;
+                border: none;
+                font-size: 24px;
+                cursor: pointer;
+                color: #6b7280;
+            `;
+
+            // Load groups
+            try {
+                // First, initialize tables
+                console.log('🔧 Initializing favorite tables...');
+                const initResponse = await fetch(`../user.php?endpoint=init_favorite_tables`);
+                const initData = await initResponse.json();
+                console.log('📋 Init Result:', initData);
+                
+                // Now load groups
+                const response = await fetch(`../user.php?endpoint=get_favorite_groups&id_nguoi_dung=${userId}`);
+                
+                console.log('🔍 Groups API Response Status:', response.status);
+                
+                if (!response.ok) {
+                    const errorData = await response.text();
+                    console.error('📌 Full Error Response:', errorData);
+                    throw new Error(`HTTP error! status: ${response.status} - ${errorData}`);
+                }
+                
+                const data = await response.json();
+                console.log('📦 Groups Data:', data);
+
+                if (data.success && data.groups.length > 0) {
+                    let html = '<div style="display: grid; gap: 10px;">';
+                    data.groups.forEach(group => {
+                        html += `
+                            <div class="group-option" data-group-id="${group.id}" style="
+                                padding: 16px;
+                                border: 2px solid #e5e7eb;
+                                border-radius: 8px;
+                                cursor: pointer;
+                                transition: all 0.2s ease;
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                            ">
+                                <div>
+                                    <div style="font-weight: 600; color: #1f2937;">${group.ten}</div>
+                                    <div style="font-size: 12px; color: #6b7280;">${group.so_tour} tour/combo</div>
+                                </div>
+                                <input type="radio" name="group" value="${group.id}" style="cursor: pointer; margin: 0; width: 20px; height: 20px;">
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                    content.innerHTML = html;
+
+                    // Add click handler to group options
+                    modal.querySelectorAll('.group-option').forEach(option => {
+                        option.addEventListener('click', () => {
+                            option.querySelector('input[type="radio"]').checked = true;
+                        });
+                        option.addEventListener('mouseenter', () => {
+                            option.style.borderColor = '#0057FF';
+                            option.style.backgroundColor = '#f0f4ff';
+                        });
+                        option.addEventListener('mouseleave', () => {
+                            option.style.borderColor = '#e5e7eb';
+                            option.style.backgroundColor = 'transparent';
+                        });
+                    });
+                } else {
+                    content.innerHTML = '<p style="text-align: center; color: #6b7280;">Bạn chưa có nhóm nào. Hãy tạo nhóm mới!</p>';
+                }
+            } catch (error) {
+                console.error('❌ Error loading groups:', error);
+                content.innerHTML = '<p style="color: #dc2626;">Lỗi tải nhóm: ' + error.message + '<br><small>Kiểm tra Console (F12) để xem chi tiết</small></p>';
+            }
+
+            // Create group button
+            const createGroupBtn = modal.querySelector('#createGroupBtn');
+            createGroupBtn.style.cssText = `
+                background: #0057FF;
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                border: none;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            `;
+            createGroupBtn.addEventListener('click', () => showCreateGroupForm(userId, modal, favoriteId));
+
+            const cancelBtn = modal.querySelector('.btn-cancel');
+            cancelBtn.style.cssText = `
+                background: #f3f4f6;
+                color: #6b7280;
+                padding: 10px 20px;
+                border-radius: 8px;
+                border: 1px solid #d1d5db;
+            `;
+
+            const closeModalBtn = modal.querySelector('.modal-close');
+            const removeModal = () => {
+                modal.remove();
+                document.body.style.overflow = '';
+            };
+
+            closeModalBtn.addEventListener('click', removeModal);
+            cancelBtn.addEventListener('click', removeModal);
+
+            // Save button
+            const saveBtn = document.createElement('button');
+            saveBtn.className = 'btn-save-group';
+            saveBtn.textContent = '💾 Lưu';
+            saveBtn.style.cssText = `
+                background: #10b981;
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                border: none;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            `;
+            
+            saveBtn.addEventListener('click', async () => {
+                const selectedGroup = modal.querySelector('input[name="group"]:checked');
+                if (!selectedGroup) {
+                    alert('Vui lòng chọn hoặc tạo nhóm');
+                    return;
+                }
+
+                try {
+                    const response = await fetch('../user.php?endpoint=add_to_favorite_group', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            id_yeu_thich: favoriteId,
+                            id_nhom: parseInt(selectedGroup.value)
+                        })
+                    });
+
+                    const result = await response.json();
+                    if (result.success) {
+                        favoriteBtn.textContent = '❤️ Đã lưu yêu thích';
+                        favoriteBtn.style.color = '#DC2626';
+                        removeModal();
+                        alert('✓ Đã lưu vào nhóm thành công!');
+                    } else {
+                        alert('❌ ' + result.message);
+                    }
+                } catch (error) {
+                    alert('Lỗi: ' + error.message);
+                }
+            });
+
+            footer.insertBefore(saveBtn, footer.querySelector('.btn-cancel'));
+        }
+
+        // Show create group form
+        async function showCreateGroupForm(userId, parentModal, favoriteId) {
+            const form = document.createElement('div');
+            form.innerHTML = `
+                <div style="display: grid; gap: 16px;">
+                    <div>
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #1f2937;">Tên nhóm</label>
+                        <input type="text" id="newGroupName" placeholder="Ví dụ: Các tour thích nhất" style="
+                            width: 100%;
+                            padding: 12px;
+                            border: 1px solid #d1d5db;
+                            border-radius: 8px;
+                            font-size: 14px;
+                            box-sizing: border-box;
+                        ">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <button id="cancelCreateBtn" style="
+                            padding: 10px;
+                            background: #f3f4f6;
+                            color: #6b7280;
+                            border: 1px solid #d1d5db;
+                            border-radius: 8px;
+                            cursor: pointer;
+                            font-weight: 600;
+                        ">Hủy</button>
+                        <button id="confirmCreateBtn" style="
+                            padding: 10px;
+                            background: #0057FF;
+                            color: white;
+                            border: none;
+                            border-radius: 8px;
+                            cursor: pointer;
+                            font-weight: 600;
+                        ">Tạo nhóm</button>
+                    </div>
+                </div>
+            `;
+
+            const content = parentModal.querySelector('.modal-content');
+            const originalContent = content.innerHTML;
+
+            content.innerHTML = '';
+            content.appendChild(form);
+            content.style.padding = '20px';
+
+            const confirmBtn = form.querySelector('#confirmCreateBtn');
+            const cancelBtn = form.querySelector('#cancelCreateBtn');
+
+            cancelBtn.addEventListener('click', () => {
+                content.innerHTML = originalContent;
+                // Re-attach group click handlers
+                content.querySelectorAll('.group-option').forEach(option => {
+                    option.addEventListener('click', () => {
+                        option.querySelector('input[type="radio"]').checked = true;
+                    });
+                });
+            });
+
+            confirmBtn.addEventListener('click', async () => {
+                const name = form.querySelector('#newGroupName').value.trim();
+
+                if (!name) {
+                    alert('Tên nhóm không được để trống');
+                    return;
+                }
+
+                try {
+                    console.log('📤 Creating group:', { id_nguoi_dung: userId, ten: name });
+                    const response = await fetch('../user.php?endpoint=create_favorite_group', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            id_nguoi_dung: userId,
+                            ten: name
+                        })
+                    });
+
+                    console.log('📥 Create response status:', response.status);
+                    const result = await response.json();
+                    console.log('📋 Create result:', result);
+
+                    if (!response.ok) {
+                        throw new Error(result.message || `HTTP Error ${response.status}`);
+                    }
+
+                    if (result.success) {
+                        // Add to favorite group
+                        console.log('📤 Adding to group:', { id_yeu_thich: favoriteId, id_nhom: result.group_id });
+                        const addResponse = await fetch('../user.php?endpoint=add_to_favorite_group', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                id_yeu_thich: favoriteId,
+                                id_nhom: result.group_id
+                            })
+                        });
+
+                        console.log('📥 Add response status:', addResponse.status);
+                        const addResult = await addResponse.json();
+                        console.log('📋 Add result:', addResult);
+
+                        if (!addResponse.ok) {
+                            throw new Error(addResult.message || `HTTP Error ${addResponse.status}`);
+                        }
+
+                        if (addResult.success) {
+                            favoriteBtn.textContent = '❤️ Đã lưu yêu thích';
+                            favoriteBtn.style.color = '#DC2626';
+                            parentModal.remove();
+                            alert('✓ Tạo nhóm và lưu thành công!');
+                        } else {
+                            throw new Error(addResult.message);
+                        }
+                    } else {
+                        throw new Error(result.message);
+                    }
+                } catch (error) {
+                    console.error('❌ Error:', error);
+                    alert('❌ Lỗi: ' + error.message);
+                }
+            });
+        }
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoutLink = document.querySelector('.logout-link');
+            if (logoutLink) {
+                logoutLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
+                        triptoAuth.logout();
+                    }
+                });
+            }
+        });
+    </script>
+
+    <!-- Tour Detail Data Loading Script -->
+    <script>
+        // Load tour detail data from API
+        async function loadTourDetail() {
+            try {
+                // Get tour ID from URL parameters
+                const params = new URLSearchParams(window.location.search);
+                const tourId = params.get('id');
+                const comboId = params.get('combo');
+
+                // Handle Combo detail if combo parameter provided
+                if (comboId && !tourId) {
+                    console.log('Loading combo detail for ID:', comboId);
+                    await loadComboDetail(comboId);
+                    return;
+                }
+
+                if (!tourId) {
+                    console.log('No tour ID provided');
+                    showScheduleError('Không có ID tour');
+                    return;
+                }
+
+                console.log('Loading tour detail for ID:', tourId);
+
+                // Fetch tour detail from API - use correct relative path
+                // user.php is in USER/ folder, from USER/USER go up one level with ../
+                const response = await fetch(`../user.php?endpoint=get_tour_detail&id=${tourId}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                console.log('API Response:', result);
+
+                if (!result.success) {
+                    console.error('API Error:', result.message);
+                    showScheduleError('Lỗi API: ' + result.message);
+                    alert('Không thể tải thông tin tour: ' + result.message);
+                    return;
+                }
+
+                const tour = result.data;
+                console.log('Tour data loaded:', tour);
+
+                // Store tour data globally for booking button
+                currentTourData = tour;
+
+                // Update page title
+                document.title = `Chi Tiết Tour - ${tour.ten} | Tripto`;
+
+                // Update breadcrumb
+                const breadcrumbTitle = document.querySelector('.breadcrumb span:last-of-type');
+                if (breadcrumbTitle) {
+                    breadcrumbTitle.textContent = tour.ten;
+                }
+
+                // Update main gallery image
+                const mainGallery = document.querySelector('.gallery-photo-main');
+                if (mainGallery) {
+                    mainGallery.style.backgroundImage = `url('${tour.url_anh_chinh}')`;
+                }
+
+                // Update tour title
+                const tourTitle = document.querySelector('.tour-title-detail');
+                if (tourTitle) {
+                    tourTitle.textContent = tour.ten;
+                }
+
+                // Update tour meta (location, rating)
+                const locationMeta = document.querySelector('.tour-meta-detail .meta-item:first-child');
+                if (locationMeta) {
+                    locationMeta.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${tour.dia_diem_ten || 'Việt Nam'}`;
+                }
+
+                // Update rating
+                const ratingMeta = document.querySelector('.tour-meta-detail .meta-item.rating');
+                if (ratingMeta && tour.danh_gia !== null && tour.danh_gia !== undefined) {
+                    const rating = parseFloat(tour.danh_gia) || 0;
+                    ratingMeta.innerHTML = `<i class="fas fa-star"></i> ${rating.toFixed(1)} (${tour.so_danh_gia || 0} đánh giá)`;
+                }
+
+                // Update tour facts chips
+                const durationChip = document.querySelector('.tour-fact-chip.duration-chip');
+                if (durationChip && tour.so_ngay) {
+                    const daysNights = `${tour.so_ngay} ngày ${Math.max(0, tour.so_ngay - 1)} đêm`;
+                    durationChip.innerHTML = `<i class="fas fa-clock"></i> ${daysNights}`;
+                }
+                
+                const locationChip = document.querySelector('.tour-fact-chip.location-chip');
+                if (locationChip) {
+                    locationChip.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${tour.dia_diem_ten || 'Việt Nam'}`;
+                }
+                
+                const ratingChip = document.querySelector('.tour-fact-chip.rating-chip');
+                if (ratingChip && tour.danh_gia !== null) {
+                    const rating = parseFloat(tour.danh_gia).toFixed(1);
+                    ratingChip.innerHTML = `<i class="fas fa-star"></i> ${rating} đánh giá`;
+                }
+                
+                // Update tour description intro
+                const descriptionIntro = document.querySelector('.tour-description-intro');
+                if (descriptionIntro && tour.mo_ta) {
+                    const daysNights = tour.so_ngay ? `${tour.so_ngay} ngày ${Math.max(0, tour.so_ngay - 1)} đêm` : '2 ngày 1 đêm';
+                    const location = tour.dia_diem_ten || 'Quảng Ninh';
+                    descriptionIntro.innerHTML = `${location} là một điểm đến tuyệt vời. Tour du lịch ${daysNights} tuyệt vời này sẽ đưa bạn khám phá những điều tuyệt đẹp nhất. ${tour.mo_ta.substring(0, 200)}...`;
+                }
+
+                // Update description
+                const descriptionText = document.querySelector('.tour-description-text p');
+                if (descriptionText && tour.mo_ta) {
+                    descriptionText.textContent = tour.mo_ta.substring(0, 500) + '...';
+                }
+
+                // Update price in booking card
+                const priceValue = document.querySelector('.booking-card .price-value');
+                if (priceValue && tour.gia) {
+                    const priceFormatted = tour.gia.toLocaleString('vi-VN');
+                    priceValue.innerHTML = priceFormatted + '<span class="price-unit">đ</span>';
+                }
+
+                // Update duration (Days and Nights)
+                const durationValues = document.querySelectorAll('.duration-value');
+                if (durationValues.length >= 1 && tour.so_ngay) {
+                    durationValues[0].textContent = tour.so_ngay; // Days
+                    // Nights = Days - 1
+                    if (durationValues.length >= 2) {
+                        durationValues[1].textContent = Math.max(0, tour.so_ngay - 1); // Nights
+                    }
+                }
+
+                // Update booking details
+                const tourCodeEl = document.querySelector('.tour-code');
+                if (tourCodeEl && tour.id) {
+                    tourCodeEl.textContent = `TOUR-${tour.id}`; // Format as TOUR-576
+                }
+                
+                const detailValues = document.querySelectorAll('.booking-detail-item .detail-value');
+                if (detailValues.length >= 1) {
+                    // Tour code is now handled above
+                }
+                if (detailValues.length >= 2) {
+                    detailValues[1].textContent = tour.dia_diem_ten || 'Việt Nam'; // Departure location
+                }
+                // Skip index 2 (Ship info - keep as is)
+                if (detailValues.length >= 4) {
+                    const ratingDisplay = tour.danh_gia ? `${parseFloat(tour.danh_gia).toFixed(1)} / ${tour.so_danh_gia || 0} đánh giá` : 'Chưa có đánh giá';
+                    detailValues[3].textContent = ratingDisplay; // Rating
+                }
+
+                // Update notice section with tour duration and location
+                const noticeContent = document.querySelector('.notice-container .notice-content');
+                if (noticeContent) {
+                    const daysNights = tour.so_ngay ? `${tour.so_ngay} ngày ${Math.max(0, tour.so_ngay - 1)} đêm` : '2 ngày 1 đêm';
+                    const departureLoc = tour.dia_diem_ten || 'Hà Nội';
+                    const maxPeople = tour.so_nguoi_toi_da || 30;
+                    
+                    noticeContent.innerHTML = `
+                        <strong>⏱️ Thời gian:</strong> ${daysNights}<br><br>
+                        <strong>📍 Điểm khởi hành:</strong> ${departureLoc}<br><br>
+                        <strong>🗣️ Hướng dẫn viên:</strong> Tiếng Anh chuyên nghiệp<br><br>
+                        <strong>👥 Tối đa:</strong> ${maxPeople} khách/tour<br><br>
+                        <strong>🛡️ Bảo hiểm:</strong> Bảo hiểm du lịch toàn diện
+                    `;
+                }
+
+                // Update departure date dropdown with database values
+                const departureDateSelect = document.getElementById('departureDate');
+                if (departureDateSelect && tour.ngay_khoi_hanh) {
+                    // Format ngay_khoi_hanh (from database as YYYY-MM-DD or similar)
+                    const departDate = new Date(tour.ngay_khoi_hanh);
+                    const day = departDate.getDate();
+                    const month = departDate.getMonth() + 1;
+                    const year = departDate.getFullYear();
+                    const formattedDate = `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${year}`;
+                    
+                    // Get available seats
+                    const availableSeats = tour.so_nguoi_toi_da || 15;
+                    
+                    // Update the select dropdown
+                    departureDateSelect.innerHTML = `
+                        <option value="${tour.ngay_khoi_hanh}">${formattedDate} (Còn ${availableSeats} chỗ)</option>
+                    `;
+                    // Set the value
+                    departureDateSelect.value = tour.ngay_khoi_hanh;
+                }
+
+                // Populate schedule with real data
+                console.log('Populating schedule, tour.schedule length:', tour.schedule ? tour.schedule.length : 0);
+                
+                if (tour.schedule && tour.schedule.length > 0) {
+                    populateScheduleDetailTable(tour.schedule);
+                } else {
+                    console.warn('No schedule data available from API');
+                    showScheduleError('Không có dữ liệu lịch trình');
+                }
+
+            } catch (error) {
+                console.error('Error loading tour detail:', error);
+                showScheduleError('Lỗi: ' + error.message);
+            }
+        }
+
+        /**
+         * Load Combo Detail - Simplified version for combos
+         */
+        async function loadComboDetail(comboId) {
+            try {
+                console.log('Loading combo detail for ID:', comboId);
+
+                // Fetch combo detail from API
+                const response = await fetch(`../user.php?endpoint=get_combo_detail&id=${comboId}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                console.log('Combo API Response:', result);
+
+                if (!result.success) {
+                    console.error('API Error:', result.message);
+                    showScheduleError('Lỗi API: ' + result.message);
+                    alert('Không thể tải thông tin combo: ' + result.message);
+                    return;
+                }
+
+                const combo = result.data;
+                console.log('Combo data loaded:', combo);
+
+                // Store combo data globally for booking button
+                currentTourData = combo;
+
+                // Update notice section with combo info
+                const noticeContent = document.querySelector('.notice-container .notice-content');
+                if (noticeContent) {
+                    const maxPeople = combo.so_nguoi_toi_da || 30;
+                    const location = combo.dia_diem_ten || 'Hà Nội';
+                    
+                    noticeContent.innerHTML = `
+                        <strong>📦 Loại:</strong> ${combo.loai_combo || 'Combo du lịch'}<br><br>
+                        <strong>📍 Điểm khởi hành:</strong> ${location}<br><br>
+                        <strong>🗣️ Hướng dẫn viên:</strong> Tiếng Anh chuyên nghiệp<br><br>
+                        <strong>👥 Tối đa:</strong> ${maxPeople} khách/combo<br><br>
+                        <strong>🛡️ Bảo hiểm:</strong> Bảo hiểm dịch vụ toàn diện
+                    `;
+                }
+
+                // Update departure date dropdown with database values (for combos)
+                const departureDateSelect = document.getElementById('departureDate');
+                if (departureDateSelect && combo.ngay_khoi_hanh) {
+                    // Format ngay_khoi_hanh (from database as YYYY-MM-DD or similar)
+                    const departDate = new Date(combo.ngay_khoi_hanh);
+                    const day = departDate.getDate();
+                    const month = departDate.getMonth() + 1;
+                    const year = departDate.getFullYear();
+                    const formattedDate = `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${year}`;
+                    
+                    // Get available seats
+                    const availableSeats = combo.so_nguoi_toi_da || 15;
+                    
+                    // Update the select dropdown
+                    departureDateSelect.innerHTML = `
+                        <option value="${combo.ngay_khoi_hanh}">${formattedDate} (Còn ${availableSeats} chỗ)</option>
+                    `;
+                    // Set the value
+                    departureDateSelect.value = combo.ngay_khoi_hanh;
+                } else if (departureDateSelect) {
+                    // If no ngay_khoi_hanh, clear the hardcoded options
+                    departureDateSelect.innerHTML = `<option value="">Chọn ngày khởi hành</option>`;
+                }
+
+                // Update page title
+                document.title = `Chi Tiết Combo - ${combo.ten} | Tripto`;
+
+                // Update breadcrumb
+                const breadcrumbTitle = document.querySelector('.breadcrumb span:last-of-type');
+                if (breadcrumbTitle) {
+                    breadcrumbTitle.textContent = combo.ten;
+                }
+
+                // Update main gallery image
+                const mainGallery = document.querySelector('.gallery-photo-main');
+                if (mainGallery) {
+                    mainGallery.style.backgroundImage = `url('${combo.url_anh}')`;
+                }
+
+                // Update combo title
+                const tourTitle = document.querySelector('.tour-title-detail');
+                if (tourTitle) {
+                    tourTitle.textContent = combo.ten;
+                }
+
+                // Update tour meta (location, type)
+                const locationMeta = document.querySelector('.tour-meta-detail .meta-item:first-child');
+                if (locationMeta) {
+                    locationMeta.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${combo.dia_diem_ten || combo.location || 'Việt Nam'}`;
+                }
+
+                // Update tour facts chips
+                const typeChip = document.querySelector('.tour-fact-chip.duration-chip');
+                if (typeChip) {
+                    typeChip.innerHTML = `<i class="fas fa-calendar-alt"></i> ${combo.loai_combo || 'Combo du lịch'}`;
+                }
+                
+                const locationChip = document.querySelector('.tour-fact-chip.location-chip');
+                if (locationChip) {
+                    locationChip.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${combo.dia_diem_ten || combo.location || 'Việt Nam'}`;
+                }
+                
+                const priceChip = document.querySelector('.tour-fact-chip.rating-chip');
+                if (priceChip) {
+                    const priceFormatted = new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND',
+                        maximumFractionDigits: 0
+                    }).format(combo.gia_ban || combo.price);
+                    priceChip.innerHTML = `<i class="fas fa-tag"></i> Giá: ${priceFormatted}`;
+                }
+                
+                // Update tour description intro
+                const descriptionIntro = document.querySelector('.tour-description-intro');
+                if (descriptionIntro && combo.mo_ta) {
+                    const location = combo.dia_diem_ten || combo.location || 'Việt Nam';
+                    descriptionIntro.innerHTML = `${location} - ${combo.loai_combo}. Gói combo du lịch này sẽ đưa bạn khám phá những điều tuyệt đẹp. ${combo.mo_ta.substring(0, 200)}...`;
+                }
+
+                // Update description
+                const descriptionText = document.querySelector('.tour-description-text p');
+                if (descriptionText && combo.mo_ta) {
+                    descriptionText.textContent = combo.mo_ta.substring(0, 500) + '...';
+                }
+
+                // Update price in booking card
+                const priceValue = document.querySelector('.booking-card .price-value');
+                if (priceValue && combo.gia_ban) {
+                    const priceFormatted = (combo.gia_ban).toLocaleString('vi-VN');
+                    priceValue.innerHTML = priceFormatted + '<span class="price-unit">đ</span>';
+                }
+
+                // Update original price
+                const originalPrice = document.querySelector('.booking-card .original-price');
+                if (originalPrice && combo.gia_goc) {
+                    const originalFormatted = (combo.gia_goc).toLocaleString('vi-VN');
+                    originalPrice.innerHTML = originalFormatted + '<span class="price-unit">đ</span>';
+                }
+
+                // Update booking details
+                const tourCodeEl = document.querySelector('.tour-code');
+                if (tourCodeEl && combo.id) {
+                    tourCodeEl.textContent = `COMBO-${combo.id}`;
+                }
+                
+                const detailValues = document.querySelectorAll('.booking-detail-item .detail-value');
+                if (detailValues.length >= 2) {
+                    detailValues[1].textContent = combo.dia_diem_ten || combo.location || 'Việt Nam';
+                }
+
+                // Update amenities in description
+                if (combo.tien_ich) {
+                    const amenitiesList = combo.tien_ich.split(';').map(item => item.trim());
+                    const descriptionList = document.querySelector('.tour-description-list');
+                    if (descriptionList) {
+                        descriptionList.innerHTML = amenitiesList
+                            .slice(0, 5)
+                            .map(item => `<li>✓ ${item}</li>`)
+                            .join('');
+                    }
+                }
+
+                // Populate combo schedule using the same function as tours
+                if (combo.schedule && combo.schedule.length > 0) {
+                    console.log('Populating combo schedule, items:', combo.schedule.length);
+                    populateScheduleDetailTable(combo.schedule);
+                } else {
+                    // Show placeholder if no schedule
+                    const scheduleContainer = document.getElementById('schedule-container');
+                    if (scheduleContainer) {
+                        scheduleContainer.innerHTML = `
+                            <div style="padding: 20px; text-align: center; background: #f5f5f5; border-radius: 8px;">
+                                <p style="color: #666; font-size: 14px;">
+                                    <i class="fas fa-info-circle"></i> Gói combo này bao gồm các tiện ích và dịch vụ được liệt kê ở trên.<br/>
+                                    Vui lòng liên hệ với chúng tôi để biết thêm chi tiết lịch trình.
+                                </p>
+                            </div>
+                        `;
+                    }
+                }
+
+            } catch (error) {
+                console.error('Error loading combo detail:', error);
+                showScheduleError('Lỗi: ' + error.message);
+            }
+        }
+
+        function showScheduleError(message) {
+            const container = document.getElementById('schedule-container');
+            if (container) {
+                container.innerHTML = `<div style="color: #d32f2f; padding: 20px; text-align: center;">
+                    <strong>⚠️ ${message}</strong>
+                </div>`;
+            }
+        }
+
+        // Populate schedule table (Lịch trình)
+        function populateScheduleTable(schedules) {
+            const scheduleContainer = document.querySelector('#lich-trinh-tour');
+            if (!scheduleContainer) return;
+
+            let scheduleHTML = '';
+            schedules.forEach((schedule, index) => {
+                scheduleHTML += `
+                    <div class="itinerary-day ${index === 0 ? 'active' : ''}" data-day="${index + 1}">
+                        <div class="day-toggle">
+                            <span><strong>📅 Ngày ${index + 1}:</strong> ${schedule.tieu_de || `Ngày ${index + 1}`}</span>
+                            <span class="toggle-icon">▼</span>
+                        </div>
+                        <div class="day-description">
+                            ${schedule.mo_ta || 'Chi tiết lịch trình'}
+                        </div>
+                    </div>
+                `;
+            });
+
+            const existingSchedules = scheduleContainer.querySelectorAll('.itinerary-day');
+            if (existingSchedules.length > 0) {
+                existingSchedules.forEach(el => el.remove());
+            }
+
+            const headings = scheduleContainer.querySelectorAll('.section-heading');
+            if (headings.length > 0) {
+                const heading = headings[0];
+                heading.insertAdjacentHTML('afterend', scheduleHTML);
+            }
+        }
+
+        // Populate detailed schedule table (Chi tiết lịch trình)
+        // Now handles nested schedule structure: schedule[{ details: [...] }]
+        function populateScheduleDetailTable(scheduleData) {
+            console.log('=== populateScheduleDetailTable START ===');
+            console.log('scheduleData:', scheduleData);
+            
+            const container = document.getElementById('schedule-container');
+            console.log('Container found:', !!container);
+            
+            if (!container) {
+                console.error('ERROR: Schedule container element NOT found!');
+                return;
+            }
+            
+            // Always clear the loading state
+            container.innerHTML = '';
+            
+            // Check if we have data
+            if (!scheduleData || scheduleData.length === 0) {
+                console.warn('No schedule data - showing placeholder');
+                
+                // Show placeholder for no data
+                const dayDiv = document.createElement('div');
+                dayDiv.className = 'itinerary-day active';
+                dayDiv.setAttribute('data-day', '1');
+                
+                const toggleDiv = document.createElement('div');
+                toggleDiv.className = 'day-toggle';
+                toggleDiv.innerHTML = `
+                    <span><strong>📅 Ngày 1:</strong> Chi tiết lịch trình</span>
+                    <span class="toggle-icon">▼</span>
+                `;
+                
+                const descDiv = document.createElement('div');
+                descDiv.className = 'day-description';
+                descDiv.innerHTML = '<em style="color: #6c757d;">Chưa có thông tin lịch trình chi tiết</em>';
+                
+                dayDiv.appendChild(toggleDiv);
+                dayDiv.appendChild(descDiv);
+                container.appendChild(dayDiv);
+                
+                console.log('=== populateScheduleDetailTable END (empty data) ===');
+                attachScheduleToggleHandlers();
+                return;
+            }
+            
+            console.log('Processing', scheduleData.length, 'schedule days');
+            
+            // Process each schedule day
+            scheduleData.forEach((schedule, dayIndex) => {
+                const dayDiv = document.createElement('div');
+                dayDiv.className = 'itinerary-day' + (dayIndex === 0 ? ' active' : '');
+                dayDiv.setAttribute('data-day', (dayIndex + 1).toString());
+                
+                // Create day toggle header
+                const toggleDiv = document.createElement('div');
+                toggleDiv.className = 'day-toggle';
+                
+                const dayTitle = schedule.tieu_de || `Ngày ${dayIndex + 1}`;
+                const dayNum = schedule.so_ngay || (dayIndex + 1);
+                
+                toggleDiv.innerHTML = `
+                    <span><strong>📅 Ngày ${dayNum}:</strong> ${dayTitle}</span>
+                    <span class="toggle-icon">▼</span>
+                `;
+                
+                // Create day description content
+                const descDiv = document.createElement('div');
+                descDiv.className = 'day-description';
+                
+                // Build content from schedule details
+                let content = '';
+                
+                // Add day description if available
+                if (schedule.mo_ta) {
+                    content += `<p><em>${schedule.mo_ta}</em></p>`;
+                }
+                
+                // Add activity details (times and activities)
+                if (schedule.details && schedule.details.length > 0) {
+                    console.log('Day', (dayIndex + 1), 'has', schedule.details.length, 'details');
+                    
+                    schedule.details.forEach((detail, idx) => {
+                        const time = detail.thoi_gian ? String(detail.thoi_gian).trim() : '';
+                        const activity = detail.noi_dung ? String(detail.noi_dung).trim() : '';
+                        
+                        console.log('  Detail', idx, '- time="' + time + '" activity="' + activity + '"');
+                        
+                        if (time || activity) {
+                            if (time && activity) {
+                                content += `<strong style="color: var(--primary);">${time}</strong> ${activity}<br><br>`;
+                            } else if (time) {
+                                content += `<strong style="color: var(--primary);">${time}</strong><br><br>`;
+                            } else {
+                                content += `${activity}<br><br>`;
+                            }
+                        }
+                    });
+                }
+                
+                if (!content) {
+                    content = '<em style="color: #6c757d;">Không có chi tiết lịch trình</em>';
+                }
+                
+                descDiv.innerHTML = content;
+                
+                // Add to container
+                dayDiv.appendChild(toggleDiv);
+                dayDiv.appendChild(descDiv);
+                container.appendChild(dayDiv);
+            });
+            
+            console.log('=== populateScheduleDetailTable END (success) ===');
+            
+            // Attach toggle handlers
+            attachScheduleToggleHandlers();
+        }
+        
+        // Attach click handlers to schedule toggles
+        function attachScheduleToggleHandlers() {
+            const days = document.querySelectorAll('.itinerary-day');
+            days.forEach(day => {
+                const toggle = day.querySelector('.day-toggle');
+                if (toggle) {
+                    toggle.removeEventListener('click', handleDayToggle);
+                    toggle.addEventListener('click', handleDayToggle);
+                }
+            });
+        }
+        
+        // Handle day toggle click
+        function handleDayToggle(e) {
+            const dayDiv = e.currentTarget.closest('.itinerary-day');
+            if (!dayDiv) return;
+            
+            // Get all itinerary days
+            const allDays = document.querySelectorAll('.itinerary-day');
+            
+            // Remove active class from other days
+            allDays.forEach(d => {
+                if (d !== dayDiv) {
+                    d.classList.remove('active');
+                }
+            });
+            
+            // Toggle active class on current day
+            dayDiv.classList.toggle('active');
+        }
+        
+        // Keep populateScheduleTable for compatibility
+        function populateScheduleTable(schedules) {
+            console.log('Main schedule data (not used in layout):', schedules);
+            // This data can be used for other purposes if needed
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTourDetail();
+        });
+    </script>
+
+    <!-- Login Modal -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 class="modal-title">Đăng Nhập</h2>
+                <button class="modal-close" id="closeLoginModal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="loginForm">
+                    <div class="form-group-modal">
+                        <label for="loginEmail">Email / Số điện thoại</label>
+                        <input type="text" id="loginEmail" class="form-input-modal" placeholder="Nhập email hoặc số điện thoại" required>
+                    </div>
+                    <div class="form-group-modal">
+                        <label for="loginPassword">Mật khẩu</label>
+                        <input type="password" id="loginPassword" class="form-input-modal" placeholder="Nhập mật khẩu" required>
+                    </div>
+                    <div class="forgot-password">
+                        <a href="#" id="forgotPasswordLink">Quên mật khẩu?</a>
+                    </div>
+                    <button type="submit" class="btn-submit">Đăng Nhập</button>
+                </form>
+                
+                <div class="divider">
+                    <div class="divider-line"></div>
+                    <span class="divider-text">hoặc</span>
+                    <div class="divider-line"></div>
+                </div>
+                
+                <div class="social-buttons">
+                    <button class="btn-social-modal">
+                        <i style="color: #DB4437;">G</i>
+                        Tiếp tục với Google
+                    </button>
+                    <button class="btn-social-modal">
+                        <i style="color: #1877F2;">f</i>
+                        Tiếp tục với Facebook
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                Chưa có tài khoản? <a href="#" id="switchToSignup">Đăng ký ngay</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div class="modal-overlay" id="signupModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 class="modal-title">Đăng Ký</h2>
+                <button class="modal-close" id="closeSignupModal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="signupForm">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div class="form-group-modal">
+                            <label for="signupFirstName">Họ</label>
+                            <input type="text" id="signupFirstName" name="ten_dau" class="form-input-modal" placeholder="Nhập họ" required>
+                        </div>
+                        <div class="form-group-modal">
+                            <label for="signupLastName">Tên</label>
+                            <input type="text" id="signupLastName" name="ten_cuoi" class="form-input-modal" placeholder="Nhập tên" required>
+                        </div>
+                    </div>
+                    <div class="form-group-modal">
+                        <label for="signupEmail">Email</label>
+                        <input type="email" id="signupEmail" name="email" class="form-input-modal" placeholder="Nhập email" required>
+                    </div>
+                    <div class="form-group-modal">
+                        <label for="signupPhone">Số điện thoại</label>
+                        <input type="tel" id="signupPhone" name="so_dien_thoai" class="form-input-modal" placeholder="Nhập số điện thoại" required>
+                    </div>
+                    <div class="form-group-modal">
+                        <label for="signupPassword">Mật khẩu (tối thiểu 6 ký tự)</label>
+                        <input type="password" id="signupPassword" name="password" class="form-input-modal" placeholder="Nhập mật khẩu" minlength="6" required>
+                    </div>
+                    <button type="submit" class="btn-submit">Đăng Ký</button>
+                </form>
+                
+                <div class="divider">
+                    <div class="divider-line"></div>
+                    <span class="divider-text">hoặc</span>
+                    <div class="divider-line"></div>
+                </div>
+                
+                <div class="social-buttons">
+                    <button class="btn-social-modal">
+                        <i style="color: #DB4437;">G</i>
+                        Tiếp tục với Google
+                    </button>
+                    <button class="btn-social-modal">
+                        <i style="color: #1877F2;">f</i>
+                        Tiếp tục với Facebook
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                Đã có tài khoản? <a href="#" id="switchToLogin">Đăng nhập ngay</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div class="modal-overlay" id="forgotModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 class="modal-title">Quên Mật Khẩu</h2>
+                <button class="modal-close" id="closeForgotModal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 20px; color: var(--neutral-600);">Nhập email của bạn để khôi phục mật khẩu</p>
+                <form id="forgotForm">
+                    <div class="form-group-modal">
+                        <label for="forgotEmail">Email</label>
+                        <input type="email" id="forgotEmail" class="form-input-modal" placeholder="Nhập email đã đăng ký" required>
+                    </div>
+                    <button type="submit" class="btn-submit">Gửi Link Khôi Phục</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a href="#" id="backToLogin"> Quay lại đăng nhập</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal JavaScript -->
+    <script>
+        // Get modal elements
+        const loginModal = document.getElementById('loginModal');
+        const signupModal = document.getElementById('signupModal');
+        const forgotModal = document.getElementById('forgotModal');
+        const loginBtn = document.getElementById('loginBtn');
+        const closeLoginModal = document.getElementById('closeLoginModal');
+        const closeSignupModal = document.getElementById('closeSignupModal');
+        const closeForgotModal = document.getElementById('closeForgotModal');
+        const switchToSignup = document.getElementById('switchToSignup');
+        const switchToLogin = document.getElementById('switchToLogin');
+        const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+        const backToLogin = document.getElementById('backToLogin');
+
+        // Open login modal khi bấm nút Đăng nhập
+        if (loginBtn) {
+            loginBtn.addEventListener('click', () => {
+                loginModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        }
+
+        // Close login modal
+        if (closeLoginModal) {
+            closeLoginModal.addEventListener('click', () => {
+                loginModal.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        }
+
+        // Close signup modal
+        if (closeSignupModal) {
+            closeSignupModal.addEventListener('click', () => {
+                signupModal.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        }
+
+        // Close forgot modal
+        if (closeForgotModal) {
+            closeForgotModal.addEventListener('click', () => {
+                forgotModal.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        }
+
+        // Switch to signup
+        if (switchToSignup) {
+            switchToSignup.addEventListener('click', (e) => {
+                e.preventDefault();
+                loginModal.classList.remove('active');
+                setTimeout(() => {
+                    signupModal.classList.add('active');
+                }, 300);
+            });
+        }
+
+        // Switch to login
+        if (switchToLogin) {
+            switchToLogin.addEventListener('click', (e) => {
+                e.preventDefault();
+                signupModal.classList.remove('active');
+                setTimeout(() => {
+                    loginModal.classList.add('active');
+                }, 300);
+            });
+        }
+
+        // Open forgot password
+        if (forgotPasswordLink) {
+            forgotPasswordLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                loginModal.classList.remove('active');
+                setTimeout(() => {
+                    forgotModal.classList.add('active');
+                }, 300);
+            });
+        }
+
+        // Back to login from forgot
+        if (backToLogin) {
+            backToLogin.addEventListener('click', (e) => {
+                e.preventDefault();
+                forgotModal.classList.remove('active');
+                setTimeout(() => {
+                    loginModal.classList.add('active');
+                }, 300);
+            });
+        }
+
+        // Close modal when clicking outside
+        [loginModal, signupModal, forgotModal].forEach(modal => {
+            if (modal) {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.classList.remove('active');
+                        document.body.style.overflow = '';
+                    }
+                });
+            }
+        });
+
+        // Handle login form submission
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) {
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('loginEmail').value.trim();
+                const password = document.getElementById('loginPassword').value;
+                
+                if (!email || !password) {
+                    alert('❌ Vui lòng nhập email và mật khẩu');
+                    return;
+                }
+                
+                try {
+                    const loginData = {
+                        action: 'login',
+                        email: email,
+                        password: password
+                    };
+                    
+                    console.log('📤 Gửi yêu cầu đăng nhập đến user.php');
+                    
+                    const apiUrl = '../user.php?endpoint=auth&action=login';
+                    console.log('📍 API URL:', apiUrl);
+                    
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(loginData)
+                    });
+                    
+                    const responseText = await response.text();
+                    console.log('📥 Response từ server:', responseText);
+                    
+                    let result;
+                    try {
+                        result = JSON.parse(responseText);
+                    } catch (parseError) {
+                        console.error('❌ Lỗi parse JSON:', parseError);
+                        alert('❌ Lỗi từ server:\n' + responseText.substring(0, 300));
+                        return;
+                    }
+                    
+                    if (result.success) {
+                        console.log('✅ Đăng nhập thành công! User:', result.user);
+                        alert('✅ ' + result.message + '\n\nChào mừng ' + result.user.ho_ten + '!');
+                        document.getElementById('loginForm').reset();
+                        loginModal.classList.remove('active');
+                        document.body.style.overflow = '';
+                        
+                        sessionStorage.setItem('triptoUser', JSON.stringify(result.user));
+                        sessionStorage.setItem('triptoLoggedIn', 'true');
+                        
+                        const loginBtn = document.getElementById('loginBtn');
+                        if (loginBtn) {
+                            loginBtn.innerHTML = '👤 ' + result.user.ho_ten;
+                            loginBtn.style.cursor = 'pointer';
+                            
+                            loginBtn.onclick = function(e) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                window.location.href = 'myReviews.html';
+                            };
+                        }
+                        
+                    } else {
+                        console.error('❌ Đăng nhập thất bại:', result.message);
+                        alert('❌ ' + result.message);
+                    }
+                } catch (error) {
+                    console.error('❌ Fetch error:', error);
+                    alert('❌ Lỗi kết nối:\n\n' + error.message);
+                }
+            });
+        }
+
+        // Handle signup form submission
+        const signupForm = document.getElementById('signupForm');
+        if (signupForm) {
+            signupForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const tenDau = document.getElementById('signupFirstName').value.trim();
+                const tenCuoi = document.getElementById('signupLastName').value.trim();
+                const email = document.getElementById('signupEmail').value.trim();
+                const phone = document.getElementById('signupPhone').value.trim();
+                const password = document.getElementById('signupPassword').value;
+                
+                if (!tenDau || !tenCuoi || !email || !phone || !password) {
+                    alert('❌ Vui lòng điền đầy đủ tất cả trường');
+                    return;
+                }
+                
+                if (password.length < 6) {
+                    alert('❌ Mật khẩu phải có tối thiểu 6 ký tự');
+                    return;
+                }
+                
+                try {
+                    const registerData = {
+                        ten_dau: tenDau,
+                        ten_cuoi: tenCuoi,
+                        email: email,
+                        so_dien_thoai: phone,
+                        password: password,
+                        action: 'register'
+                    };
+                    
+                    console.log('📤 Gửi yêu cầu đăng ký đến user.php');
+                    
+                    const apiUrl = '../user.php?endpoint=auth&action=register';
+                    console.log('📍 API URL:', apiUrl);
+                    
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(registerData)
+                    });
+                    
+                    const responseText = await response.text();
+                    console.log('📥 Response từ server:', responseText);
+                    
+                    let result;
+                    try {
+                        result = JSON.parse(responseText);
+                    } catch (parseError) {
+                        console.error('❌ Lỗi parse JSON:', parseError);
+                        alert('❌ Lỗi từ server:\n' + responseText.substring(0, 300));
+                        return;
+                    }
+                    
+                    if (result.success) {
+                        console.log('✅ Đăng ký thành công! User ID:', result.user_id);
+                        alert('✅ ' + result.message + '\n\nVui lòng đăng nhập để tiếp tục!');
+                        document.getElementById('signupForm').reset();
+                        signupModal.classList.remove('active');
+                        document.body.style.overflow = '';
+                        setTimeout(() => {
+                            loginModal.classList.add('active');
+                            document.body.style.overflow = 'hidden';
+                        }, 300);
+                    } else {
+                        console.error('❌ Đăng ký thất bại:', result.message);
+                        alert('❌ Lỗi đăng ký:\n\n' + result.message);
+                    }
+                } catch (error) {
+                    console.error('❌ Fetch error:', error);
+                    alert('❌ Lỗi kết nối:\n\n' + error.message);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,3204 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tất Cả Gói Du Lịch | Tripto</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/TRANGCHU_UI.css">
+    <style>
+        /* ============================================
+           REDESIGN STYLES - CONVERSION FOCUSED
+           ============================================ */
+        
+        :root {
+            --primary: #0057FF;
+            --primary-400: #3379ff;
+            --primary-dark: #0046cc;
+            --primary-50: #ebeffc;
+            --primary-900: #031230;
+            --neutral-900: #121316;
+            --neutral-700: #283037;
+            --neutral-500: #454C58;
+            --neutral-400: #656F81;
+            --neutral-200: #B5BAC2;
+            --neutral-100: #F1F2F3;
+            --white: #FFFFFF;
+            --success: #06C270;
+            --warning: #FFCC00;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: var(--neutral-900);
+            background-color: var(--white);
+            line-height: 1.5;
+        }
+
+        /* ============================================
+           HEADER - COMPACT & TRUSTWORTHY
+           ============================================ */
+        .header {
+            background-color: var(--white);
+            border-bottom: 1px solid var(--neutral-200);
+            height: 80px;
+            display: flex;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 32px;
+            gap: 24px;
+        }
+
+        .logo img {
+            height: 40px;
+            display: block;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .country {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--neutral-700);
+        }
+
+        .country img {
+            height: 20px;
+        }
+
+        .icon img {
+            height: 40px;
+            cursor: pointer;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 87, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--primary) !important;
+            padding: 10px 20px !important;
+            border: 1px solid var(--primary);
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--primary-50);
+        }
+
+        /* Login Button Style */
+        .btn-login {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-login:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 87, 255, 0.3);
+        }
+
+        .btn-login svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* ============================================
+           LOGIN MODAL STYLES
+           ============================================ */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-container {
+            background: var(--white);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 420px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.9) translateY(20px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-overlay.active .modal-container {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 24px 0;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--neutral-900);
+            margin: 0;
+        }
+
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: var(--neutral-100);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: var(--neutral-200);
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .form-group-modal {
+            margin-bottom: 20px;
+        }
+
+        .form-group-modal label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--neutral-700);
+            margin-bottom: 8px;
+        }
+
+        .form-input-modal {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--neutral-200);
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: 'Roboto', sans-serif;
+            transition: all 0.2s ease;
+        }
+
+        .form-input-modal:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-50);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-submit:hover {
+            background: var(--primary-dark);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 24px 0;
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background: var(--neutral-200);
+        }
+
+        .divider-text {
+            padding: 0 16px;
+            font-size: 14px;
+            color: var(--neutral-400);
+        }
+
+        .social-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn-social-modal {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--neutral-200);
+            border-radius: 10px;
+            background: white;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-social-modal:hover {
+            border-color: var(--primary);
+            background: var(--primary-50);
+        }
+
+        .btn-social-modal i {
+            font-size: 20px;
+        }
+
+        .modal-footer {
+            text-align: center;
+            padding: 0 24px 24px;
+            font-size: 15px;
+            color: var(--neutral-600);
+        }
+
+        .modal-footer a {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .modal-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        .forgot-password a {
+            font-size: 14px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+
+        /* ============================================
+           COMBO CAMPAIGN BANNER - Đồng nhất UUDAI, riêng biệt cho Combo
+           ============================================ */
+        .combo-campaign-section {
+            position: relative;
+            height: 50vh;
+            min-height: 420px;
+            max-height: 550px;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            background: var(--primary-900);
+        }
+
+        .combo-campaign-bg {
+            position: absolute;
+            inset: 0;
+            background-image: url('https://static.vinwonders.com/production/kinh-nghiem-du-lich-phu-quoc-banner.jpg');
+            background-size: cover;
+            background-position: center;
+            filter: saturate(1.1) brightness(1.05) contrast(1.1);
+        }
+
+        .combo-campaign-bg::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(105deg, rgba(3, 18, 48, 0.88) 0%, rgba(3, 18, 48, 0.5) 50%, rgba(5, 36, 97, 0.4) 100%);
+        }
+
+        .combo-campaign-wrapper {
+            position: relative;
+            z-index: 5;
+            width: 100%;
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 48px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 48px;
+        }
+
+        .combo-campaign-content {
+            flex: 0 0 58%;
+        }
+
+        .combo-campaign-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 204, 0, 0.12);
+            border: 1px solid var(--warning);
+            color: var(--warning);
+            font-size: 10px;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            line-height: 1.3;
+        }
+
+        .combo-campaign-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--warning);
+            border-radius: 50%;
+            animation: comboBlink 1.2s infinite;
+        }
+
+        @keyframes comboBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .combo-campaign-headline {
+            font-family: 'Roboto', sans-serif;
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--white);
+            line-height: 1.3;
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
+        }
+
+        .combo-campaign-headline .highlight {
+            color: var(--warning);
+        }
+
+        .combo-campaign-subtitle {
+            font-size: 16px;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.85);
+            line-height: 1.3;
+            margin-bottom: 28px;
+        }
+
+        .combo-stats-inline {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+        }
+
+        .combo-stat-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .combo-stat-icon {
+            width: 44px;
+            height: 44px;
+            background: rgba(0, 87, 255, 0.2);
+            border: 1px solid rgba(51, 121, 255, 0.5);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-400);
+            font-size: 18px;
+        }
+
+        .combo-stat-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--white);
+            line-height: 1.3;
+        }
+
+        .combo-stat-text span {
+            display: block;
+            font-size: 11px;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .combo-campaign-cta {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: var(--primary);
+            color: var(--white);
+            font-size: 16px;
+            font-weight: 600;
+            padding: 14px 32px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 14px rgba(0, 87, 255, 0.35);
+            border: none;
+            cursor: pointer;
+            line-height: 1.3;
+        }
+
+        .combo-campaign-cta:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 87, 255, 0.4);
+        }
+
+        .combo-campaign-visual {
+            flex: 0 0 38%;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .combo-benefit-card {
+            background: rgba(31, 34, 38, 0.92);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 32px;
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.24);
+        }
+
+        .combo-benefit-card-title {
+            font-size: 14px;
+            color: var(--primary-400);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        .combo-benefits-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .combo-benefit-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-align: left;
+        }
+
+        .combo-benefit-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 87, 255, 0.15);
+            border: 1px solid rgba(51, 121, 255, 0.3);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-400);
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .combo-benefit-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .combo-benefit-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--white);
+            line-height: 1.3;
+        }
+
+        .combo-benefit-desc {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.65);
+            font-weight: 400;
+            line-height: 1.3;
+        }
+
+        .combo-benefit-card-footer {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .combo-benefit-card-footer span {
+            font-size: 14px;
+            color: var(--warning);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            line-height: 1.3;
+        }
+
+        .combo-benefit-card-footer span i {
+            font-size: 16px;
+        }
+
+        /* ============================================
+           FILTER SECTION
+           ============================================ */
+        .filter-section {
+            padding: 40px 0;
+            background: linear-gradient(180deg, #f5f8ff 0%, #ffffff 100%);
+        }
+
+        .filter-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        .promo-section-head {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .promo-section-title {
+            font-size: 30px;
+            line-height: 1.25;
+            font-weight: 700;
+            color: var(--neutral-900);
+            margin: 0;
+            letter-spacing: -0.3px;
+        }
+
+        .promo-section-subtitle {
+            margin: 6px 0 0;
+            font-size: 15px;
+            color: var(--neutral-500);
+        }
+
+        .promo-filter-wrap {
+            background: var(--white);
+            border: 1px solid #d8e4ff;
+            border-radius: 20px;
+            box-shadow: 0 12px 28px rgba(0, 87, 255, 0.08);
+            padding: 16px;
+            display: grid;
+            gap: 12px;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+        }
+
+        .promo-filter-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .promo-filter-item label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--neutral-400);
+            font-weight: 700;
+        }
+
+        .promo-select {
+            border: 1px solid var(--neutral-200);
+            border-radius: 12px;
+            background: #fbfcff;
+            color: var(--neutral-700);
+            font-size: 14px;
+            font-weight: 500;
+            padding: 12px 14px;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .promo-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 87, 255, 0.14);
+        }
+
+        .promo-search-btn {
+            border: 0;
+            border-radius: 14px;
+            background: linear-gradient(90deg, var(--primary), #1a6cff);
+            color: var(--white);
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            min-height: 48px;
+            margin-top: 22px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 8px 18px rgba(0, 87, 255, 0.32);
+        }
+
+        .promo-search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 22px rgba(0, 87, 255, 0.35);
+        }
+
+        @media (max-width: 1100px) {
+            .promo-filter-wrap {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .promo-filter-wrap {
+                grid-template-columns: 1fr;
+                border-radius: 16px;
+            }
+
+            .promo-search-btn {
+                margin-top: 0;
+            }
+        }
+
+        /* ============================================
+           COMBOS SECTION
+           ============================================ */
+        .combos-section {
+            padding: 60px 0;
+            background-color: #f8f9fa;
+            min-height: 60vh;
+        }
+
+        .section-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--neutral-900);
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .section-title span {
+            color: var(--primary);
+        }
+
+        .combo-count {
+            font-size: 16px;
+            color: var(--neutral-500);
+            margin-top: 8px;
+        }
+
+        .combo-count strong {
+            color: var(--primary);
+        }
+
+        /* Grid for combos */
+        .combos-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .combo-card {
+            background: var(--white);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .combo-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.15);
+            border-color: var(--primary);
+        }
+
+        .combo-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .combo-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: #c2410c;
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: 8px;
+        }
+
+        .combo-badge.hot {
+            background: var(--primary);
+        }
+
+        .combo-badge.featured {
+            background: var(--success);
+        }
+
+        .combo-wishlist {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 50%;
+            border: none;
+            font-size: 18px;
+            color: #c2410c;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .combo-wishlist:hover {
+            transform: scale(1.1);
+            background: white;
+        }
+
+        .combo-info {
+            padding: 20px;
+        }
+
+        .combo-rating {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .rating-star {
+            color: #FFD700;
+            font-size: 14px;
+        }
+
+        .rating-score {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--neutral-900);
+        }
+
+        .rating-count {
+            font-size: 13px;
+            color: var(--neutral-400);
+        }
+
+        .combo-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--neutral-900);
+            margin: 0 0 8px 0;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            overflow: hidden;
+        }
+
+        .combo-location {
+            font-size: 13px;
+            color: var(--neutral-500);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .combo-location svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .combo-duration {
+            font-size: 13px;
+            color: var(--neutral-500);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .combo-duration svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .combo-includes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .include-tag {
+            font-size: 12px;
+            color: var(--neutral-600);
+            background: var(--neutral-100);
+            padding: 4px 10px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .include-tag svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        .combo-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 12px;
+            border-top: 1px solid var(--neutral-100);
+        }
+
+        .combo-price {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .price-from {
+            font-size: 12px;
+            color: var(--neutral-400);
+        }
+
+        .price-original {
+            font-size: 14px;
+            color: var(--neutral-400);
+            text-decoration: line-through;
+        }
+
+        .price-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .price-value span {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--neutral-500);
+        }
+
+        .btn-book-now {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-book-now:hover {
+            background: var(--primary-dark);
+        }
+
+        /* ============================================
+           PAGINATION
+           ============================================ */
+        .pagination-section {
+            padding: 40px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .pagination {
+            display: flex;
+            gap: 8px;
+        }
+
+        .page-item {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--neutral-200);
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--neutral-700);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .page-item:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .page-item.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        /* ============================================
+           FOOTER - SIMPLIFIED
+           ============================================ */
+        .footer {
+            background: var(--neutral-900);
+            color: #d1d5db;
+            padding: 60px 0 30px;
+        }
+
+        .footer-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 48px;
+            margin-bottom: 48px;
+        }
+
+        .footer-brand {
+            max-width: 360px;
+        }
+
+        .footer-logo {
+            display: block;
+            margin-bottom: 16px;
+        }
+
+        .footer-logo img {
+            height: 44px;
+        }
+
+        .footer-description {
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+            color: #9ca3af;
+        }
+
+        .footer-hotline {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .hotline-label {
+            font-size: 13px;
+            color: #9ca3af;
+            margin-bottom: 4px;
+        }
+
+        .hotline-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hotline-number svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--primary);
+        }
+
+        .footer-column h4 {
+            font-size: 16px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .footer-column ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-column li {
+            margin-bottom: 12px;
+        }
+
+        .footer-column a {
+            color: #9ca3af;
+            font-size: 14px;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-column a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 12px;
+        }
+
+        .social-icon {
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+
+        .social-icon:hover {
+            background: var(--primary);
+        }
+
+        /* ============================================
+           NAVIGATION MENU STYLES
+           ============================================ */
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .nav-menu a {
+            padding: 10px 20px;
+            color: var(--neutral-700);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .nav-menu a:hover {
+            color: var(--primary);
+            background-color: var(--primary-50);
+        }
+
+        .nav-menu a.active {
+            color: var(--primary);
+        }
+
+        .nav-menu a.active::after {
+            content: '';
+            position: absolute;
+            bottom: 6px;
+            left: 20px;
+            right: 20px;
+            height: 3px;
+            background-color: var(--primary);
+            border-radius: 2px;
+        }
+
+        /* ============================================
+           BREADCRUMB
+           ============================================ */
+        .breadcrumb-section {
+            background-color: var(--primary-50);
+            padding: 20px 0;
+            border-bottom: 1px solid var(--neutral-200);
+        }
+
+        .breadcrumb-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--neutral-700);
+        }
+
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumb-separator {
+            color: var(--neutral-400);
+        }
+
+        .breadcrumb span:last-child {
+            color: var(--neutral-900);
+            font-weight: 600;
+        }
+
+        /* ============================================
+           RESPONSIVE STYLES
+           ============================================ */
+        @media (max-width: 1200px) {
+            .combos-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 992px) {
+            .combo-campaign-section {
+                height: auto;
+                min-height: 500px;
+                padding: 40px 0;
+            }
+            .combo-campaign-wrapper {
+                flex-direction: column;
+                padding: 0 32px;
+                gap: 32px;
+            }
+            .combo-campaign-content {
+                flex: 1;
+                text-align: center;
+                width: 100%;
+            }
+            .combo-campaign-visual {
+                flex: 1;
+                justify-content: center;
+                width: 100%;
+            }
+            .combo-campaign-headline {
+                font-size: 40px;
+            }
+            .combo-stats-inline {
+                justify-content: center;
+            }
+            .combo-campaign-cta {
+                padding: 14px 28px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .combo-campaign-headline {
+                font-size: 32px;
+            }
+            .combo-campaign-wrapper {
+                padding: 0 20px;
+            }
+            .combo-stats-inline {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+            
+            .combos-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ============================================
+           MODAL - AUTH SYSTEM
+           ============================================ */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-container {
+            background: var(--white);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 420px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.9) translateY(20px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-overlay.active .modal-container {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 24px 0;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--neutral-900);
+            margin: 0;
+        }
+
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: var(--neutral-100);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: var(--neutral-200);
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .form-group-modal {
+            margin-bottom: 20px;
+        }
+
+        .form-group-modal label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--neutral-700);
+            margin-bottom: 8px;
+        }
+
+        .form-input-modal {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--neutral-200);
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: 'Roboto', sans-serif;
+            transition: all 0.2s ease;
+        }
+
+        .form-input-modal:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-50);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-submit:hover {
+            background: var(--primary-dark);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 24px 0;
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background: var(--neutral-200);
+        }
+
+        .divider-text {
+            padding: 0 16px;
+            font-size: 14px;
+            color: var(--neutral-400);
+        }
+
+        .social-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn-social-modal {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--neutral-200);
+            border-radius: 10px;
+            background: white;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-social-modal:hover {
+            border-color: var(--primary);
+            background: var(--primary-50);
+        }
+
+        .btn-social-modal i {
+            font-size: 20px;
+        }
+
+        .modal-footer {
+            text-align: center;
+            padding: 0 24px 24px;
+            font-size: 15px;
+            color: var(--neutral-600);
+        }
+
+        .modal-footer a {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .modal-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        .forgot-password a {
+            font-size: 14px;
+            color: var(--primary);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .forgot-password a:hover {
+            color: var(--primary-dark);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header/Navigation -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="TRANGCHU.html">
+                    <img src="../image/Logo.png" alt="triptO Logo">
+                </a>
+            </div>
+            <nav class="nav-menu">
+                <a href="TRANGCHU.html">Trang Chủ</a>
+                <a href="UUDAI.html">Ưu Đãi</a>
+                <a href="TATCA_TOUR.html">Chuyến du lịch</a>
+                <a href="TATCA_COMBO.html" class="active">Gói du lịch</a>
+                <a href="BLOG.html">Tin Tức</a>
+            </nav>
+            <div class="nav-right">
+                <div class="country">
+                    <img src="../image/ngonngu.png" alt="Vietnam Flag">
+                    <span>VIETNAM</span>
+                </div>
+                <div class="icon">
+                    <a href="hotro.html" title="Hỗ trợ">
+                        <img src="../image/hotro.png" alt="Support">
+                    </a>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-login" id="loginBtn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        Đăng Nhập
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Breadcrumb -->
+    <section class="breadcrumb-section">
+        <div class="breadcrumb-container">
+            <div class="breadcrumb">
+                <a href="TRANGCHU.html">Trang Chủ</a>
+                <span class="breadcrumb-separator">›</span>
+                <span>Gói du lịch</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Combo Campaign Banner - Đồng nhất UUDAI, riêng biệt cho Combo -->
+    <section class="combo-campaign-section">
+        <div class="combo-campaign-bg"></div>
+        
+        <div class="combo-campaign-wrapper">
+            <div class="combo-campaign-content">
+                <div class="combo-campaign-badge">
+                    <i class="fas fa-gift"></i> Gói Du Lịch Trong Nước
+                </div>
+                
+                <h1 class="combo-campaign-headline">
+                    Tất Cả <span class="highlight">Gói Du Lịch Giá Tốt</span> Việt Nam
+                </h1>
+                
+                <p class="combo-campaign-subtitle">
+                    Khám phá các combo du lịch trọn gói hấp dẫn — Kết hợp điểm đến nổi bật, dịch vụ tiện nghi và mức giá ưu đãi giúp bạn tối ưu chi phí.
+                </p>
+                
+                <div class="combo-stats-inline">
+                    <div class="combo-stat-item">
+                        <div class="combo-stat-icon">
+                            <i class="fas fa-percent"></i>
+                        </div>
+                        <div class="combo-stat-text">
+                            Tiết kiệm đến 30%
+                            <span>Khi đặt combo trọn gói</span>
+                        </div>
+                    </div>
+                    <div class="combo-stat-item">
+                        <div class="combo-stat-icon">
+                            <i class="fas fa-box-open"></i>
+                        </div>
+                        <div class="combo-stat-text">
+                            Trọn gói tiện lợi
+                            <span>Chuyến du lịch + khách sạn + ưu đãi</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <a href="#featured-combos" class="combo-campaign-cta">
+                    <i class="fas fa-search"></i>
+                    Xem tất cả combo
+                </a>
+            </div>
+            
+            <div class="combo-campaign-visual">
+                <div class="combo-benefit-card">
+                    <div class="combo-benefit-card-title">Lợi ích combo trọn gói</div>
+                    
+                    <div class="combo-benefits-list">
+                        <div class="combo-benefit-item">
+                            <div class="combo-benefit-icon">
+                                <i class="fas fa-tags"></i>
+                            </div>
+                            <div class="combo-benefit-text">
+                                <span class="combo-benefit-title">Giá combo ưu đãi</span>
+                                <span class="combo-benefit-desc">Tiết kiệm hơn so với đặt lẻ từng dịch vụ</span>
+                            </div>
+                        </div>
+                        
+                        <div class="combo-benefit-item">
+                            <div class="combo-benefit-icon">
+                                <i class="fas fa-suitcase"></i>
+                            </div>
+                            <div class="combo-benefit-text">
+                                <span class="combo-benefit-title">Trọn gói một chỗ</span>
+                                <span class="combo-benefit-desc">Chuyến du lịch, khách sạn, vé tham quan đã bao gồm</span>
+                            </div>
+                        </div>
+                        
+                        <div class="combo-benefit-item">
+                            <div class="combo-benefit-icon">
+                                <i class="fas fa-map"></i>
+                            </div>
+                            <div class="combo-benefit-text">
+                                <span class="combo-benefit-title">Điểm đến đa dạng</span>
+                                <span class="combo-benefit-desc">Hạ Long, Hội An, Phú Quốc, Đà Nẵng...</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="combo-benefit-card-footer">
+                        <span><i class="fas fa-check-circle"></i> Đặt nhanh, thanh toán linh hoạt</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filter Section -->
+    <section class="filter-section">
+        <div class="filter-container">
+            <div class="promo-section-head">
+                <div>
+                    <h2 class="promo-section-title">Tìm Gói Du Lịch Phù Hợp</h2>
+                    <p class="promo-section-subtitle">Lọc nhanh theo điểm đến, loại gói du lịch, thời gian và mức giá</p>
+                </div>
+            </div>
+            <div class="promo-filter-wrap">
+                <div class="promo-filter-item">
+                    <label for="filterDestination">Điểm đến</label>
+                    <select class="promo-select" id="filterDestination">
+                        <option value="">Tất cả</option>
+                    </select>
+                </div>
+                <div class="promo-filter-item">
+                    <label for="filterComboType">Loại gói du lịch</label>
+                    <select class="promo-select" id="filterComboType">
+                        <option value="">Tất cả</option>
+                    </select>
+                </div>
+                <div class="promo-filter-item">
+                    <label for="filterDuration">Thời gian</label>
+                    <select class="promo-select" id="filterDuration">
+                        <option value="">Tất cả</option>
+                    </select>
+                </div>
+                <div class="promo-filter-item">
+                    <label for="filterPrice">Giá</label>
+                    <select class="promo-select" id="filterPrice">
+                        <option value="">Tất cả</option>
+                    </select>
+                </div>
+                <button class="promo-search-btn" id="filterBtn">Lọc Gói Du Lịch</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Combos Section -->
+    <section class="combos-section" id="featured-combos">
+        <div class="section-container">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">Tất Cả <span>Gói Du Lịch</span></h2>
+                    <p class="combo-count">Hiển thị <strong>24</strong> gói du lịch hấp dẫn</p>
+                </div>
+            </div>
+
+            <div class="combos-grid" id="combosGrid">
+                <div style="text-align: center; padding: 60px 0; grid-column: 1/-1;">
+                    <p style="color: #666; font-size: 16px;">Đang tải dữ liệu gói du lịch...</p>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination-section">
+                <div class="pagination">
+                    <div class="page-item">
+                        <i class="fas fa-chevron-left"></i>
+                    </div>
+                    <div class="page-item">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <a href="TRANGCHU.html" class="footer-logo">
+                        <img src="../image/Logo.png" alt="triptO Logo">
+                    </a>
+                    <p class="footer-description">
+                        Tripto là nền tảng đặt tour du lịch hàng đầu tại Việt Nam. Chúng tôi cung cấp hơn 500+ tour với giá tốt nhất.
+                    </p>
+                </div>
+                <div class="footer-column">
+                    <h4>Công Ty</h4>
+                    <ul>
+                        <li><a href="#">Về Chúng Tôi</a></li>
+                        <li><a href="#">Đội Ngũ</a></li>
+                        <li><a href="#">Liên Hệ</a></li>
+                        <li><a href="#">Tuyển Dụng</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Hỗ Trợ</h4>
+                    <ul>
+                        <li><a href="#">Câu Hỏi Thường Gặp</a></li>
+                        <li><a href="#">Chính Sách Bảo Mật</a></li>
+                        <li><a href="#">Điều Khoản Sử Dụng</a></li>
+                        <li><a href="#">Liên Hệ Hỗ Trợ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Liên Hệ</h4>
+                    <ul>
+                        <li><a href="#">📞 +84 (0) 1234 567 890</a></li>
+                        <li><a href="#">✉️ support@tripto.vn</a></li>
+                        <li><a href="#">📍 Hà Nội, Việt Nam</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>&copy; 2026 Tripto. Bản quyền được bảo lưu.</span>
+                <div class="social-links">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 class="modal-title">Đăng Nhập</h2>
+                <button class="modal-close" id="closeLoginModal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="loginForm">
+                    <div class="form-group-modal">
+                        <label for="loginEmail">Email / Số điện thoại</label>
+                        <input type="text" id="loginEmail" class="form-input-modal" placeholder="Nhập email hoặc số điện thoại" required>
+                    </div>
+                    <div class="form-group-modal">
+                        <label for="loginPassword">Mật khẩu</label>
+                        <input type="password" id="loginPassword" class="form-input-modal" placeholder="Nhập mật khẩu" required>
+                    </div>
+                    <div class="forgot-password">
+                        <a href="#" id="forgotPasswordLink">Quên mật khẩu?</a>
+                    </div>
+                    <button type="submit" class="btn-submit">Đăng Nhập</button>
+                </form>
+                
+                <div class="divider">
+                    <div class="divider-line"></div>
+                    <span class="divider-text">hoặc</span>
+                    <div class="divider-line"></div>
+                </div>
+                
+                <div class="social-buttons">
+                    <button class="btn-social-modal">
+                        <i style="color: #DB4437;">G</i>
+                        Tiếp tục với Google
+                    </button>
+                    <button class="btn-social-modal">
+                        <i style="color: #1877F2;">f</i>
+                        Tiếp tục với Facebook
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                Chưa có tài khoản? <a href="#" id="switchToSignup">Đăng ký ngay</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div class="modal-overlay" id="signupModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 class="modal-title">Đăng Ký</h2>
+                <button class="modal-close" id="closeSignupModal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="signupForm">
+                    <div class="form-group-modal">
+                        <label for="signupName">Họ và tên</label>
+                        <input type="text" id="signupName" class="form-input-modal" placeholder="Nhập họ và tên" required>
+                    </div>
+                    <div class="form-group-modal">
+                        <label for="signupEmail">Email</label>
+                        <input type="email" id="signupEmail" class="form-input-modal" placeholder="Nhập email" required>
+                    </div>
+                    <div class="form-group-modal">
+                        <label for="signupPhone">Số điện thoại</label>
+                        <input type="tel" id="signupPhone" class="form-input-modal" placeholder="Nhập số điện thoại" required>
+                    </div>
+                    <div class="form-group-modal">
+                        <label for="signupPassword">Mật khẩu</label>
+                        <input type="password" id="signupPassword" class="form-input-modal" placeholder="Nhập mật khẩu" required>
+                    </div>
+                    <button type="submit" class="btn-submit">Đăng Ký</button>
+                </form>
+                
+                <div class="divider">
+                    <div class="divider-line"></div>
+                    <span class="divider-text">hoặc</span>
+                    <div class="divider-line"></div>
+                </div>
+                
+                <div class="social-buttons">
+                    <button class="btn-social-modal">
+                        <i style="color: #DB4437;">G</i>
+                        Tiếp tục với Google
+                    </button>
+                    <button class="btn-social-modal">
+                        <i style="color: #1877F2;">f</i>
+                        Tiếp tục với Facebook
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                Đã có tài khoản? <a href="#" id="switchToLogin">Đăng nhập ngay</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div class="modal-overlay" id="forgotModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 class="modal-title">Quên Mật Khẩu</h2>
+                <button class="modal-close" id="closeForgotModal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 20px; color: var(--neutral-600);">Nhập email của bạn để khôi phục mật khẩu</p>
+                <form id="forgotForm">
+                    <div class="form-group-modal">
+                        <label for="forgotEmail">Email</label>
+                        <input type="email" id="forgotEmail" class="form-input-modal" placeholder="Nhập email đã đăng ký" required>
+                    </div>
+                    <button type="submit" class="btn-submit">Gửi Link Khôi Phục</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a href="#" id="backToLogin">Quay lại đăng nhập</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // AUTH KEY for localStorage
+        const AUTH_KEY = 'triptoLoggedIn';
+        
+        // Map to store combo data for navigation
+        window.comboDataMap = {};
+
+        // Get modal elements
+        const loginModal = document.getElementById('loginModal');
+        const signupModal = document.getElementById('signupModal');
+        const forgotModal = document.getElementById('forgotModal');
+        const loginBtn = document.getElementById('loginBtn');
+        const closeLoginModal = document.getElementById('closeLoginModal');
+        const closeSignupModal = document.getElementById('closeSignupModal');
+        const closeForgotModal = document.getElementById('closeForgotModal');
+        const switchToSignup = document.getElementById('switchToSignup');
+        const switchToLogin = document.getElementById('switchToLogin');
+        const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+        const backToLogin = document.getElementById('backToLogin');
+
+        // Check login status
+        function isLoggedIn() {
+            return localStorage.getItem(AUTH_KEY) === 'true';
+        }
+
+        function setLoggedIn() {
+            localStorage.setItem(AUTH_KEY, 'true');
+        }
+
+        // Open login modal
+        if (loginBtn) {
+            loginBtn.addEventListener('click', function() {
+                loginModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        }
+
+        // Close modals
+        if (closeLoginModal) {
+            closeLoginModal.addEventListener('click', () => {
+                loginModal.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        }
+
+        if (closeSignupModal) {
+            closeSignupModal.addEventListener('click', () => {
+                signupModal.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        }
+
+        if (closeForgotModal) {
+            closeForgotModal.addEventListener('click', () => {
+                forgotModal.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        }
+
+        // Switch between modals
+        if (switchToSignup) {
+            switchToSignup.addEventListener('click', (e) => {
+                e.preventDefault();
+                loginModal.classList.remove('active');
+                setTimeout(() => {
+                    signupModal.classList.add('active');
+                }, 300);
+            });
+        }
+
+        if (switchToLogin) {
+            switchToLogin.addEventListener('click', (e) => {
+                e.preventDefault();
+                signupModal.classList.remove('active');
+                setTimeout(() => {
+                    loginModal.classList.add('active');
+                }, 300);
+            });
+        }
+
+        // Forgot password
+        if (forgotPasswordLink) {
+            forgotPasswordLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                loginModal.classList.remove('active');
+                setTimeout(() => {
+                    forgotModal.classList.add('active');
+                }, 300);
+            });
+        }
+
+        if (backToLogin) {
+            backToLogin.addEventListener('click', (e) => {
+                e.preventDefault();
+                forgotModal.classList.remove('active');
+                setTimeout(() => {
+                    loginModal.classList.add('active');
+                }, 300);
+            });
+        }
+
+        // Close modal when clicking outside
+        [loginModal, signupModal, forgotModal].forEach(modal => {
+            if (modal) {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.classList.remove('active');
+                        document.body.style.overflow = '';
+                    }
+                });
+            }
+        });
+
+        // Handle login form submission
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) {
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+                
+                if(!email || !password) {
+                    alert('Vui lòng nhập email và mật khẩu');
+                    return;
+                }
+                
+                try {
+                    const response = await fetch('../user.php?endpoint=auth&action=login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({action: 'login', email: email, password: password})
+                    });
+                    
+                    const responseText = await response.text();
+                    const result = JSON.parse(responseText);
+                    
+                    if (result.success) {
+                        sessionStorage.setItem('triptoUser', JSON.stringify(result.user));
+                        sessionStorage.setItem('triptoLoggedIn', 'true');
+                        setLoggedIn();
+                        console.log('✅ Đăng nhập thành công! User:', result.user);
+                        alert('✅ ' + result.message + '\n\nChào mừng ' + result.user.ho_ten + '!');
+                        loginModal.classList.remove('active');
+                        document.body.style.overflow = '';
+                        window.location.reload();
+                    } else {
+                        alert(result.message || 'Đăng nhập thất bại. Vui lòng kiểm tra lại email và mật khẩu.');
+                    }
+                } catch (error) {
+                    console.error('Login error:', error);
+                    alert('Lỗi kết nối. Vui lòng thử lại.');
+                }
+            });
+        }
+     
+
+        // Handle signup form submission
+        const signupForm = document.getElementById('signupForm');
+        if (signupForm) {
+            signupForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const name = document.getElementById('signupName').value;
+                const email = document.getElementById('signupEmail').value;
+                const phone = document.getElementById('signupPhone').value;
+                const password = document.getElementById('signupPassword').value;
+                
+                if(name && email && phone && password) {
+                    setLoggedIn();
+                    alert('Đăng ký thành công! Vui lòng kiểm tra email để xác nhận.');
+                    signupModal.classList.remove('active');
+                    document.body.style.overflow = '';
+                    window.location.href = 'trangcanhan.html';
+                }
+            });
+        }
+
+        // Handle forgot password form submission
+        const forgotForm = document.getElementById('forgotForm');
+        if (forgotForm) {
+            forgotForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = document.getElementById('forgotEmail').value;
+                
+                if(email) {
+                    alert('Link khôi phục mật khẩu đã được gửi đến email của bạn!');
+                    forgotModal.classList.remove('active');
+                    document.body.style.overflow = '';
+                    loginModal.classList.add('active');
+                }
+            });
+        }
+
+        // Support link gating
+        const supportLink = document.querySelector('a[href="hotro.html"][title="Hỗ trợ"]');
+        if (supportLink) {
+            supportLink.addEventListener('click', function (e) {
+                if (!isLoggedIn()) {
+                    e.preventDefault();
+                    alert('Vui lòng đăng nhập trước khi vào Hỗ trợ.');
+                    if (loginBtn) {
+                        loginBtn.click();
+                    }
+                }
+            });
+        }
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update UI with logged-in user on page load
+            const userData = sessionStorage.getItem('triptoUser');
+            const isLoggedInSession = sessionStorage.getItem('triptoLoggedIn') === 'true';
+            if (isLoggedInSession && userData) {
+                try {
+                    const user = JSON.parse(userData);
+                    const loginBtn = document.getElementById('loginBtn');
+                    if (loginBtn) {
+                        loginBtn.innerHTML = `<i class="fas fa-user"></i> ${user.ho_ten || user.email}`;
+                    }
+                } catch (e) {
+                    console.error('Error parsing user data:', e);
+                }
+            }
+            const logoutLink = document.querySelector('.logout-link');
+            if (logoutLink) {
+                logoutLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
+                        triptoAuth.logout();
+                    }
+                });
+            }
+        });
+    </script>
+
+    <!-- Load Combos from Database -->
+    <script>
+        /**
+         * Toggle combo favorite
+         */
+        // Favorite button
+        const favoriteBtn = document.querySelector('.booking-btn.outline');
+        let isFavoritedNow = false; // Track favorite state
+
+        if (favoriteBtn) {
+            favoriteBtn.addEventListener('click', async function(e) {
+                e.preventDefault();
+                
+                // Check if user is logged in
+                const isLoggedIn = sessionStorage.getItem('triptoLoggedIn') === 'true';
+                const userData = sessionStorage.getItem('triptoUser');
+                
+                if (!isLoggedIn || !userData) {
+                    alert('❌ Vui lòng đăng nhập để lưu yêu thích!');
+                    const loginModal = document.getElementById('loginModal');
+                    if (loginModal) {
+                        loginModal.classList.add('active');
+                        document.body.style.overflow = 'hidden';
+                    }
+                    return;
+                }
+
+                // Determine if this is a tour or combo
+                const params = new URLSearchParams(window.location.search);
+                const tourId = params.get('id');
+                const comboId = params.get('combo');
+
+                try {
+                    const user = JSON.parse(userData);
+                    const userId = user.id;
+
+                    let endpoint = '';
+
+                    if (comboId && !tourId) {
+                        // It's a combo
+                        console.log(`❤️ Toggle favorite for combo ${comboId}`);
+                        endpoint = `toggle_combo_favorite&id_goi_combo=${comboId}&id_nguoi_dung=${userId}`;
+                    } else if (tourId) {
+                        // It's a tour
+                        console.log(`❤️ Toggle favorite for tour ${tourId}`);
+                        endpoint = `toggle_favorite&id_tour=${tourId}&id_nguoi_dung=${userId}`;
+                    } else {
+                        alert('❌ Không thể xác định tour/combo');
+                        return;
+                    }
+
+                    const response = await fetch(`../user.php?endpoint=${endpoint}`);
+                    const result = await response.json();
+
+                    if (result.success && result.isFavorited) {
+                        // Now show modal to select or create a group
+                        showFavoriteGroupsModal(userId, result.id);
+                    } else if (result.success && !result.isFavorited) {
+                        // Removed from favorites
+                        favoriteBtn.textContent = '❤️ Thêm vào yêu thích';
+                        favoriteBtn.style.color = '';
+                    } else {
+                        alert('❌ Lỗi: ' + result.message);
+                    }
+                } catch (error) {
+                    console.error('Lỗi toggle favorite:', error);
+                    alert('Lỗi khi lưu yêu thích: ' + error.message);
+                }
+            });
+        }
+
+        // Show modal for selecting/creating favorite groups
+        async function showFavoriteGroupsModal(userId, favoriteId) {
+            const modal = document.createElement('div');
+            modal.className = 'favorite-groups-modal';
+            modal.innerHTML = `
+                <div class="modal-wrapper">
+                    <div class="modal-header">
+                        <h3>📁 Lưu vào nhóm yêu thích</h3>
+                        <button class="modal-close">✕</button>
+                    </div>
+                    <div class="modal-content" id="groupsContainer">
+                        <div style="text-align: center; padding: 24px;">
+                            <div class="spinner"></div>
+                            <p>Đang tải...</p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn-create-group" id="createGroupBtn">➕ Tạo nhóm mới</button>
+                        <button class="btn-cancel">Hủy</button>
+                    </div>
+                </div>
+            `;
+            modal.style.cssText = `
+                position: fixed;
+                top: 0; left: 0; right: 0; bottom: 0;
+                background: rgba(0,0,0,0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 2000;
+            `;
+
+            document.body.appendChild(modal);
+
+            const wrapper = modal.querySelector('.modal-wrapper');
+            wrapper.style.cssText = `
+                background: white;
+                border-radius: 12px;
+                width: 90%;
+                max-width: 500px;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+                display: flex;
+                flex-direction: column;
+                max-height: 80vh;
+            `;
+
+            const header = modal.querySelector('.modal-header');
+            header.style.cssText = `
+                padding: 24px;
+                border-bottom: 1px solid #e5e7eb;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            `;
+
+            const content = modal.querySelector('.modal-content');
+            content.style.cssText = `
+                padding: 20px;
+                overflow-y: auto;
+                flex: 1;
+                min-height: 200px;
+            `;
+
+            const footer = modal.querySelector('.modal-footer');
+            footer.style.cssText = `
+                padding: 16px 24px;
+                border-top: 1px solid #e5e7eb;
+                display: flex;
+                gap: 12px;
+                justify-content: flex-end;
+            `;
+
+            const buttons = modal.querySelectorAll('button');
+            buttons.forEach(btn => {
+                btn.style.cssText = `
+                    padding: 10px 20px;
+                    border-radius: 8px;
+                    border: none;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                `;
+            });
+
+            const closeBtn = modal.querySelector('.modal-close');
+            closeBtn.style.cssText = `
+                background: none;
+                border: none;
+                font-size: 24px;
+                cursor: pointer;
+                color: #6b7280;
+            `;
+
+            // Load groups
+            try {
+                // First, initialize tables
+                console.log('🔧 Initializing favorite tables...');
+                const initResponse = await fetch(`../user.php?endpoint=init_favorite_tables`);
+                const initData = await initResponse.json();
+                console.log('📋 Init Result:', initData);
+                
+                // Now load groups
+                const response = await fetch(`../user.php?endpoint=get_favorite_groups&id_nguoi_dung=${userId}`);
+                
+                console.log('🔍 Groups API Response Status:', response.status);
+                
+                if (!response.ok) {
+                    const errorData = await response.text();
+                    console.error('📌 Full Error Response:', errorData);
+                    throw new Error(`HTTP error! status: ${response.status} - ${errorData}`);
+                }
+                
+                const data = await response.json();
+                console.log('📦 Groups Data:', data);
+
+                if (data.success && data.groups.length > 0) {
+                    let html = '<div style="display: grid; gap: 10px;">';
+                    data.groups.forEach(group => {
+                        html += `
+                            <div class="group-option" data-group-id="${group.id}" style="
+                                padding: 16px;
+                                border: 2px solid #e5e7eb;
+                                border-radius: 8px;
+                                cursor: pointer;
+                                transition: all 0.2s ease;
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                            ">
+                                <div>
+                                    <div style="font-weight: 600; color: #1f2937;">${group.ten}</div>
+                                    <div style="font-size: 12px; color: #6b7280;">${group.so_tour} tour/combo</div>
+                                </div>
+                                <input type="radio" name="group" value="${group.id}" style="cursor: pointer; margin: 0; width: 20px; height: 20px;">
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                    content.innerHTML = html;
+
+                    // Add click handler to group options
+                    modal.querySelectorAll('.group-option').forEach(option => {
+                        option.addEventListener('click', () => {
+                            option.querySelector('input[type="radio"]').checked = true;
+                        });
+                        option.addEventListener('mouseenter', () => {
+                            option.style.borderColor = '#0057FF';
+                            option.style.backgroundColor = '#f0f4ff';
+                        });
+                        option.addEventListener('mouseleave', () => {
+                            option.style.borderColor = '#e5e7eb';
+                            option.style.backgroundColor = 'transparent';
+                        });
+                    });
+                } else {
+                    content.innerHTML = '<p style="text-align: center; color: #6b7280;">Bạn chưa có nhóm nào. Hãy tạo nhóm mới!</p>';
+                }
+            } catch (error) {
+                console.error('❌ Error loading groups:', error);
+                content.innerHTML = '<p style="color: #dc2626;">Lỗi tải nhóm: ' + error.message + '<br><small>Kiểm tra Console (F12) để xem chi tiết</small></p>';
+            }
+
+            // Create group button
+            const createGroupBtn = modal.querySelector('#createGroupBtn');
+            createGroupBtn.style.cssText = `
+                background: #0057FF;
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                border: none;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            `;
+            createGroupBtn.addEventListener('click', () => showComboCreateNewGroupForm(userId, comboId, modal, button));
+
+            const cancelBtn = modal.querySelector('.btn-cancel');
+            cancelBtn.style.cssText = `
+                background: #f3f4f6;
+                color: #6b7280;
+                padding: 10px 20px;
+                border-radius: 8px;
+                border: 1px solid #d1d5db;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            `;
+
+            const closeModalBtn = modal.querySelector('.modal-close');
+            const removeModal = () => {
+                modal.remove();
+                document.body.style.overflow = '';
+            };
+
+            closeModalBtn.addEventListener('click', removeModal);
+            cancelBtn.addEventListener('click', removeModal);
+
+            // Save button
+            const saveBtn = document.createElement('button');
+            saveBtn.className = 'btn-save-group';
+            saveBtn.textContent = '✓ Thêm vào nhóm';
+            saveBtn.style.cssText = `
+                background: #10b981;
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                border: none;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            `;
+            
+            saveBtn.addEventListener('click', async () => {
+                const selectedGroup = modal.querySelector('input[name="group"]:checked');
+                if (!selectedGroup) {
+                    alert('Vui lòng chọn hoặc tạo nhóm');
+                    return;
+                }
+
+                try {
+                    const createFavResponse = await fetch(`../user.php?endpoint=create_combo_favorite_with_group`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            id_goi_combo: comboId,
+                            id_nguoi_dung: userId,
+                            id_nhom: parseInt(selectedGroup.value)
+                        })
+                    });
+
+                    const favResult = await createFavResponse.json();
+                    if (favResult.success) {
+                        button.textContent = '♥';
+                        button.style.color = '#d32f2f';
+                        removeModal();
+                        alert('✓ Đã thêm vào nhóm yêu thích!');
+                    } else {
+                        alert('❌ ' + favResult.message);
+                    }
+                } catch (error) {
+                    alert('Lỗi: ' + error.message);
+                }
+            });
+
+            footer.insertBefore(saveBtn, footer.querySelector('.btn-cancel'));
+        }
+        
+        /**
+         * Toggle combo favorite
+         */
+        async function toggleComboFavorite(comboId, button) {
+            const isLoggedIn = localStorage.getItem('triptoLoggedIn') === 'true';
+            if (!isLoggedIn) {
+                alert('Vui lòng đăng nhập để lưu yêu thích');
+                document.getElementById('loginBtn').click();
+                return;
+            }
+            
+            const userData = sessionStorage.getItem('triptoUser');
+            if (!userData) {
+                alert('Vui lòng đăng nhập để lưu yêu thích');
+                document.getElementById('loginBtn').click();
+                return;
+            }
+            
+            let user;
+            try {
+                user = JSON.parse(userData);
+            } catch (e) {
+                console.error('Error parsing user data:', e);
+                alert('Vui lòng đăng nhập để lưu yêu thích');
+                document.getElementById('loginBtn').click();
+                return;
+            }
+            
+            const id_nguoi_dung = user.id;
+            
+            try {
+                // First, check if combo is already favorited
+                const checkResponse = await fetch(`../user.php?endpoint=check_combo_favorite&id_goi_combo=${comboId}&id_nguoi_dung=${id_nguoi_dung}`);
+                const checkData = await checkResponse.json();
+                
+                if (checkData.isFavorited) {
+                    // If already favorited, remove it
+                    const deleteResponse = await fetch(`../user.php?endpoint=remove_combo_favorite&id_goi_combo=${comboId}&id_nguoi_dung=${id_nguoi_dung}`);
+                    const deleteData = await deleteResponse.json();
+                    if (deleteData.success) {
+                        button.textContent = '♡';
+                        button.style.color = '#c2410c';
+                    }
+                } else {
+                    // If not favorited, show modal for group selection
+                    showComboAddToGroupModal(id_nguoi_dung, comboId, button);
+                }
+            } catch (error) {
+                console.error('Lỗi toggle favorite:', error);
+                alert('Lỗi khi lưu yêu thích: ' + error.message);
+            }
+        }
+        
+        // Show modal to add combo to group WITHOUT creating favorite first
+        async function showComboAddToGroupModal(userId, comboId, button) {
+            const modal = document.createElement('div');
+            modal.className = 'favorite-groups-modal';
+            modal.innerHTML = `
+                <div class="modal-wrapper">
+                    <div class="modal-header">
+                        <h3>📁 Lưu vào nhóm yêu thích</h3>
+                        <button class="modal-close">✕</button>
+                    </div>
+                    <div class="modal-content" id="groupsContainer">
+                        <div style="text-align: center; padding: 24px;">
+                            <div class="spinner"></div>
+                            <p>Đang tải...</p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn-create-group" id="createGroupBtn">➕ Tạo nhóm mới</button>
+                        <button class="btn-cancel">Hủy</button>
+                    </div>
+                </div>
+            `;
+            modal.style.cssText = `
+                position: fixed;
+                top: 0; left: 0; right: 0; bottom: 0;
+                background: rgba(0,0,0,0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 2000;
+            `;
+
+            document.body.appendChild(modal);
+
+            const wrapper = modal.querySelector('.modal-wrapper');
+            wrapper.style.cssText = `
+                background: white;
+                border-radius: 12px;
+                width: 90%;
+                max-width: 500px;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+                display: flex;
+                flex-direction: column;
+                max-height: 80vh;
+            `;
+
+            const header = modal.querySelector('.modal-header');
+            header.style.cssText = `
+                padding: 24px;
+                border-bottom: 1px solid #e5e7eb;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            `;
+
+            const content = modal.querySelector('.modal-content');
+            content.style.cssText = `
+                padding: 20px;
+                overflow-y: auto;
+                flex: 1;
+                min-height: 200px;
+            `;
+
+            const footer = modal.querySelector('.modal-footer');
+            footer.style.cssText = `
+                padding: 16px 24px;
+                border-top: 1px solid #e5e7eb;
+                display: flex;
+                gap: 12px;
+                justify-content: flex-end;
+            `;
+
+            const buttons = modal.querySelectorAll('button');
+            buttons.forEach(btn => {
+                btn.style.cssText = `
+                    padding: 10px 20px;
+                    border-radius: 8px;
+                    border: none;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                `;
+            });
+
+            const closeBtn = modal.querySelector('.modal-close');
+            closeBtn.style.cssText = `
+                background: none;
+                border: none;
+                font-size: 24px;
+                cursor: pointer;
+                color: #6b7280;
+            `;
+
+            // Load groups
+            try {
+                // First, initialize tables
+                console.log('🔧 Initializing favorite tables...');
+                const initResponse = await fetch(`../user.php?endpoint=init_favorite_tables`);
+                const initData = await initResponse.json();
+                console.log('📋 Init Result:', initData);
+                
+                // Now load groups
+                const response = await fetch(`../user.php?endpoint=get_favorite_groups&id_nguoi_dung=${userId}`);
+                
+                console.log('🔍 Groups API Response Status:', response.status);
+                
+                if (!response.ok) {
+                    const errorData = await response.text();
+                    console.error('📌 Full Error Response:', errorData);
+                    throw new Error(`HTTP error! status: ${response.status} - ${errorData}`);
+                }
+                
+                const data = await response.json();
+                console.log('📦 Groups Data:', data);
+
+                if (data.success && data.groups.length > 0) {
+                    let html = '<div style="display: grid; gap: 10px;">';
+                    data.groups.forEach(group => {
+                        html += `
+                            <div class="group-option" data-group-id="${group.id}" style="
+                                padding: 16px;
+                                border: 2px solid #e5e7eb;
+                                border-radius: 8px;
+                                cursor: pointer;
+                                transition: all 0.2s ease;
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                            ">
+                                <div>
+                                    <div style="font-weight: 600; color: #1f2937;">${group.ten}</div>
+                                    <div style="font-size: 12px; color: #6b7280;">${group.so_tour} tour/combo</div>
+                                </div>
+                                <input type="radio" name="group" value="${group.id}" style="cursor: pointer; margin: 0; width: 20px; height: 20px;">
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                    content.innerHTML = html;
+
+                    // Add click handler to group options
+                    modal.querySelectorAll('.group-option').forEach(option => {
+                        option.addEventListener('click', () => {
+                            option.querySelector('input[type="radio"]').checked = true;
+                        });
+                        option.addEventListener('mouseenter', () => {
+                            option.style.borderColor = '#0057FF';
+                            option.style.backgroundColor = '#f0f4ff';
+                        });
+                        option.addEventListener('mouseleave', () => {
+                            option.style.borderColor = '#e5e7eb';
+                            option.style.backgroundColor = 'transparent';
+                        });
+                    });
+                } else {
+                    content.innerHTML = '<p style="text-align: center; color: #6b7280;">Bạn chưa có nhóm nào. Hãy tạo nhóm mới!</p>';
+                }
+            } catch (error) {
+                console.error('❌ Error loading groups:', error);
+                content.innerHTML = '<p style="color: #dc2626;">Lỗi tải nhóm: ' + error.message + '<br><small>Kiểm tra Console (F12) để xem chi tiết</small></p>';
+            }
+
+            // Create group button
+            const createGroupBtn = modal.querySelector('#createGroupBtn');
+            createGroupBtn.style.cssText = `
+                background: #0057FF;
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                border: none;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            `;
+            createGroupBtn.addEventListener('click', () => showComboCreateNewGroupForm(userId, comboId, modal, button));
+
+            const cancelBtn = modal.querySelector('.btn-cancel');
+            cancelBtn.style.cssText = `
+                background: #f3f4f6;
+                color: #6b7280;
+                padding: 10px 20px;
+                border-radius: 8px;
+                border: 1px solid #d1d5db;
+            `;
+
+            const closeModalBtn = modal.querySelector('.modal-close');
+            const removeModal = () => {
+                modal.remove();
+                document.body.style.overflow = '';
+            };
+
+            closeModalBtn.addEventListener('click', removeModal);
+            cancelBtn.addEventListener('click', removeModal);
+
+            // Save button
+            const saveBtn = document.createElement('button');
+            saveBtn.className = 'btn-save-group';
+            saveBtn.textContent = '💾 Lưu';
+            saveBtn.style.cssText = `
+                background: #10b981;
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                border: none;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            `;
+            
+            saveBtn.addEventListener('click', async () => {
+                const selectedGroup = modal.querySelector('input[name="group"]:checked');
+                if (!selectedGroup) {
+                    alert('Vui lòng chọn hoặc tạo nhóm');
+                    return;
+                }
+
+                try {
+                    const response = await fetch('../user.php?endpoint=create_combo_favorite_with_group', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            id_goi_combo: comboId,
+                            id_nguoi_dung: userId,
+                            id_nhom: parseInt(selectedGroup.value)
+                        })
+                    });
+
+                    const result = await response.json();
+                    if (result.success) {
+                        button.textContent = '♥';
+                        button.style.color = '#dc2626';
+                        removeModal();
+                    } else {
+                        alert('❌ ' + result.message);
+                    }
+                } catch (error) {
+                    alert('Lỗi: ' + error.message);
+                }
+            });
+
+            footer.insertBefore(saveBtn, footer.querySelector('.btn-cancel'));
+        }
+        
+        // Show create group form for combo
+        async function showComboCreateNewGroupForm(userId, comboId, parentModal, button) {
+            const form = document.createElement('div');
+            form.innerHTML = `
+                <div style="display: grid; gap: 16px;">
+                    <div>
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #1f2937;">Tên nhóm</label>
+                        <input type="text" id="newGroupName" placeholder="Ví dụ: Các combo thích nhất" style="
+                            width: 100%;
+                            padding: 12px;
+                            border: 1px solid #d1d5db;
+                            border-radius: 8px;
+                            font-size: 14px;
+                            box-sizing: border-box;
+                        ">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <button id="cancelCreateBtn" style="
+                            padding: 10px;
+                            background: #f3f4f6;
+                            color: #6b7280;
+                            border: 1px solid #d1d5db;
+                            border-radius: 8px;
+                            cursor: pointer;
+                            font-weight: 600;
+                        ">Hủy</button>
+                        <button id="confirmCreateBtn" style="
+                            padding: 10px;
+                            background: #0057FF;
+                            color: white;
+                            border: none;
+                            border-radius: 8px;
+                            cursor: pointer;
+                            font-weight: 600;
+                        ">Tạo nhóm</button>
+                    </div>
+                </div>
+            `;
+
+            const content = parentModal.querySelector('.modal-content');
+            const originalContent = content.innerHTML;
+
+            content.innerHTML = '';
+            content.appendChild(form);
+            content.style.padding = '20px';
+
+            const confirmBtn = form.querySelector('#confirmCreateBtn');
+            const cancelBtn = form.querySelector('#cancelCreateBtn');
+
+            cancelBtn.addEventListener('click', () => {
+                content.innerHTML = originalContent;
+                // Re-attach group click handlers
+                content.querySelectorAll('.group-option').forEach(option => {
+                    option.addEventListener('click', () => {
+                        option.querySelector('input[type="radio"]').checked = true;
+                    });
+                });
+            });
+
+            confirmBtn.addEventListener('click', async () => {
+                const name = form.querySelector('#newGroupName').value.trim();
+
+                if (!name) {
+                    alert('Tên nhóm không được để trống');
+                    return;
+                }
+
+                try {
+                    const response = await fetch('../user.php?endpoint=create_favorite_group', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            id_nguoi_dung: userId,
+                            ten: name
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        // Create combo favorite WITH group in one call
+                        const createFavResponse = await fetch(`../user.php?endpoint=create_combo_favorite_with_group`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                id_goi_combo: comboId,
+                                id_nguoi_dung: userId,
+                                id_nhom: result.group_id
+                            })
+                        });
+
+                        const favResult = await createFavResponse.json();
+
+                        if (favResult.success) {
+                            button.textContent = '♥';
+                            button.style.color = '#d32f2f';
+                            parentModal.remove();
+                            alert('✓ Tạo nhóm và lưu combo thành công!');
+                        } else {
+                            throw new Error(favResult.message);
+                        }
+                    } else {
+                        throw new Error(result.message);
+                    }
+                } catch (error) {
+                    console.error('❌ Error:', error);
+                    alert('❌ Lỗi: ' + error.message);
+                }
+            });
+        }
+        
+        /**
+         * Load và render combos từ database
+         */
+        
+        async function loadCombos() {
+            try {
+                console.log('Loading all combos...');
+                const response = await fetch('../user.php?endpoint=get_combos');
+                const data = await response.json();
+                
+                console.log('Load combos response:', data);
+                
+                if (data.success && data.data && Array.isArray(data.data) && data.data.length > 0) {
+                    const grid = document.getElementById('combosGrid');
+                    const html = data.data.map(combo => createComboCardHTML(combo)).join('');
+                    grid.innerHTML = html;
+                    
+                    // Update combo count
+                    const countBadge = document.querySelector('.combo-count strong');
+                    if (countBadge) {
+                        countBadge.textContent = data.count;
+                    }
+                    console.log('Loaded ' + data.count + ' combos successfully');
+                    
+                    // Check favorite status for each combo if user is logged in
+                    const isLoggedIn = localStorage.getItem('triptoLoggedIn') === 'true';
+                    if (isLoggedIn) {
+                        updateFavoriteHearts();
+                    }
+                } else {
+                    const grid = document.getElementById('combosGrid');
+                    const errorMsg = data.message || 'Không tìm thấy gói combo nào';
+                    grid.innerHTML = '<div style="text-align: center; padding: 60px 0; grid-column: 1/-1;"><p style="color: #d32f2f;">' + errorMsg + '</p></div>';
+                    console.log('No combos found:', errorMsg);
+                }
+            } catch (error) {
+                console.error('Lỗi load combos:', error);
+                const grid = document.getElementById('combosGrid');
+                grid.innerHTML = '<div style="text-align: center; padding: 60px 0; grid-column: 1/-1;"><p style="color: #d32f2f;">Lỗi khi tải dữ liệu: ' + error.message + '</p></div>';
+            }
+        }
+        
+        /**
+         * Update heart icons based on favorite status
+         */
+        async function updateFavoriteHearts() {
+            const userData = sessionStorage.getItem('triptoUser');
+            if (!userData) return;
+            
+            try {
+                const user = JSON.parse(userData);
+                const id_nguoi_dung = user.id;
+                
+                // Get all heart buttons
+                const hearts = document.querySelectorAll('.combo-wishlist');
+                
+                for (const heart of hearts) {
+                    const card = heart.closest('.combo-card');
+                    if (!card) continue;
+                    
+                    // Extract combo ID from onclick attribute of parent card
+                    const onclickAttr = card.getAttribute('onclick');
+                    const comboIdMatch = onclickAttr.match(/viewComboDetail\((\d+)\)/);
+                    if (!comboIdMatch) continue;
+                    
+                    const comboId = parseInt(comboIdMatch[1]);
+                    
+                    try {
+                        const response = await fetch(`../user.php?endpoint=check_combo_favorite&id_goi_combo=${comboId}&id_nguoi_dung=${id_nguoi_dung}`);
+                        const data = await response.json();
+                        
+                        // Check for authentication errors
+                        if (response.status === 401) {
+                            console.warn('User not authenticated, skipping favorite check');
+                            return;
+                        }
+                        
+                        if (data.success && data.isFavorited) {
+                            heart.textContent = '♥';
+                            heart.style.color = '#d32f2f';
+                        }
+                    } catch (e) {
+                        console.error('Error checking favorite:', e);
+                    }
+                }
+            } catch (e) {
+                console.error('Error parsing user data:', e);
+            }
+        }
+        
+        function createComboCardHTML(combo) {
+            // Store combo data in map for later navigation
+            window.comboDataMap[combo.id] = combo;
+            
+            const badgeClass = combo.discount_percent > 25 ? 'featured' : (combo.discount_percent > 20 ? 'hot' : '');
+            const badgeText = combo.discount_percent > 0 ? `-${combo.discount_percent}%` : 'Mới';
+            
+            const originalPrice = new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND',
+                maximumFractionDigits: 0
+            }).format(combo.original_price);
+            
+            const sellingPrice = new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND',
+                maximumFractionDigits: 0
+            }).format(combo.price);
+            
+            // Tách tiện ích từ chuỗi (cách nhau bằng dấu ;)
+            const tienIchArray = combo.tien_ich ? combo.tien_ich.split(';').map(t => t.trim()).filter(t => t) : [];
+            const tienIchHTML = tienIchArray.map(tien => `<span class="include-tag">✓ ${tien}</span>`).join('');
+            
+            // Format start date
+            let startDateText = 'Linh hoạt';
+            if (combo.start_date) {
+                const date = new Date(combo.start_date);
+                if (!isNaN(date.getTime())) {
+                    const day = String(date.getDate()).padStart(2, '0');
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const year = date.getFullYear();
+                    startDateText = `${day}/${month}/${year}`;
+                }
+            }
+            
+            return `
+                <div class="combo-card" style="cursor: pointer;" onclick="viewComboDetail(${combo.id})">
+                    <div class="combo-image" style="background-image: url('${combo.image}');">
+                        <span class="combo-badge ${badgeClass}">${badgeText}</span>
+                        <button class="combo-wishlist" onclick="event.stopPropagation(); toggleComboFavorite(${combo.id}, this)">♡</button>
+                    </div>
+                    <div class="combo-info">
+                        <div class="combo-rating">
+                            <span class="rating-star">★★★★★</span>
+                            <span class="rating-score">4.8</span>
+                            <span class="rating-count">(200 đánh giá)</span>
+                        </div>
+                        <h3 class="combo-title">${combo.name || 'N/A'}</h3>
+                        <p class="combo-location">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                            </svg>
+                            ${combo.location || 'Việt Nam'}
+                        </p>
+                        <p class="combo-duration">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                <line x1="16" y1="2" x2="16" y2="6"/>
+                                <line x1="8" y1="2" x2="8" y2="6"/>
+                                <line x1="3" y1="10" x2="21" y2="10"/>
+                            </svg>
+                            ✈️ Khởi hành: ${startDateText}
+                        </p>
+                        <div class="combo-includes">
+                            ${tienIchHTML}
+                        </div>
+                        <div class="combo-footer">
+                            <div class="combo-price">
+                                <span class="price-original">${originalPrice}</span>
+                                <span class="price-value">${sellingPrice}</span>
+                            </div>
+                            <button class="btn-book-now" onclick="bookCombo(${combo.id})">Đặt Ngay</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function viewComboDetail(comboId) {
+            // Get combo data from map and save to localStorage
+            const comboData = window.comboDataMap[comboId];
+            if (comboData) {
+                localStorage.setItem('selectedCombo', JSON.stringify(comboData));
+            }
+            // Navigate to tour detail page
+            window.location.href = 'chitiettour.html?combo=' + comboId;
+        }
+        
+        function bookCombo(comboId) {
+            const isLoggedIn = localStorage.getItem('triptoLoggedIn') === 'true';
+            if (!isLoggedIn) {
+                document.getElementById('loginBtn').click();
+                return;
+            }
+            // Get combo data from map and save to localStorage
+            const comboData = window.comboDataMap[comboId];
+            if (comboData) {
+                localStorage.setItem('selectedCombo', JSON.stringify(comboData));
+            }
+            // Redirect to payment page with combo ID
+            window.location.href = 'thanhtoan_chitiet.html?combo=' + comboId;
+        }
+        
+        /**
+         * Load dữ liệu filter từ database vào dropdowns
+         */
+        async function loadFilterData() {
+            try {
+                const response = await fetch('../user.php?endpoint=get_filter_data&type=combos');
+                const data = await response.json();
+                
+                console.log('Filter data response:', data);
+                
+                if (data.success) {
+                    // Populate locations
+                    const locationSelect = document.getElementById('filterDestination');
+                    const locationOptions = data.data.locations.map(loc => 
+                        `<option value="${loc.name}">${loc.name}</option>`
+                    ).join('');
+                    locationSelect.innerHTML = '<option value="">Tất cả</option>' + locationOptions;
+                    
+                    // Populate combo types
+                    const typeSelect = document.getElementById('filterComboType');
+                    const typeOptions = data.data.combo_types.map(type => 
+                        `<option value="${type}">${type}</option>`
+                    ).join('');
+                    typeSelect.innerHTML = '<option value="">Tất cả</option>' + typeOptions;
+                    
+                    // Populate durations
+                    const durationSelect = document.getElementById('filterDuration');
+                    console.log('Available durations:', data.data.durations);
+                    const durationOptions = data.data.durations.map(duration => {
+                        console.log('Duration item:', duration, `Creating option value="${duration.value}" label="${duration.label}"`);
+                        return `<option value="${duration.value}">${duration.label}</option>`;
+                    }).join('');
+                    durationSelect.innerHTML = '<option value="">Tất cả</option>' + durationOptions;
+                    console.log('Duration select innerHTML:', durationSelect.innerHTML);
+                    
+                    // Populate price ranges
+                    const priceSelect = document.getElementById('filterPrice');
+                    const priceOptions = data.data.price_ranges.map(range => 
+                        `<option value="${range.min}-${range.max}">${range.label}</option>`
+                    ).join('');
+                    priceSelect.innerHTML = '<option value="">Tất cả</option>' + priceOptions;
+                }
+            } catch (error) {
+                console.error('Lỗi load filter data:', error);
+            }
+        }
+        
+        /**
+         * Lọc gói combo dựa trên filter đã chọn
+         */
+        async function searchCombos() {
+            try {
+                const location = document.getElementById('filterDestination').value;
+                const comboType = document.getElementById('filterComboType').value;
+                const duration = document.getElementById('filterDuration').value;
+                const priceRange = document.getElementById('filterPrice').value;
+                
+                console.log('Filter values:', {location, comboType, duration, priceRange});
+                
+                // Nếu không có bộ lọc nào được chọn, hiển thị tất cả combo
+                if (!location && !comboType && !duration && !priceRange) {
+                    console.log('No filters selected, loading all combos');
+                    loadCombos();
+                    return;
+                }
+                
+                let params = new URLSearchParams();
+                if (location) params.append('location', location);
+                if (comboType) params.append('combo_type', comboType);
+                if (duration) params.append('duration', duration);
+                
+                if (priceRange) {
+                    const [minPrice, maxPrice] = priceRange.split('-');
+                    params.append('price_min', minPrice);
+                    params.append('price_max', maxPrice);
+                }
+                
+                const url = '../user.php?endpoint=search_combos&' + params.toString();
+                console.log('Searching combos with URL:', url);
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                console.log('Search response:', data);
+                
+                if (data.success && data.data && Array.isArray(data.data) && data.data.length > 0) {
+                    const grid = document.getElementById('combosGrid');
+                    const html = data.data.map(combo => createComboCardHTML(combo)).join('');
+                    grid.innerHTML = html;
+                    
+                    // Update combo count
+                    const countBadge = document.querySelector('.combo-count strong');
+                    if (countBadge) {
+                        countBadge.textContent = data.count;
+                    }
+                } else {
+                    const grid = document.getElementById('combosGrid');
+                    const errorMsg = data.message || 'Không tìm thấy gói combo phù hợp với tiêu chí lọc';
+                    grid.innerHTML = '<div style="text-align: center; padding: 60px 0; grid-column: 1/-1;"><p style="color: #d32f2f;">' + errorMsg + '</p></div>';
+                }
+                
+                // Check favorite status for each combo if user is logged in
+                const isLoggedIn = localStorage.getItem('triptoLoggedIn') === 'true';
+                if (isLoggedIn) {
+                    updateFavoriteHearts();
+                }
+            } catch (error) {
+                console.error('Lỗi search combos:', error);
+                const grid = document.getElementById('combosGrid');
+                grid.innerHTML = '<div style="text-align: center; padding: 60px 0; grid-column: 1/-1;"><p style="color: #d32f2f;">Lỗi khi tìm kiếm: ' + error.message + '</p></div>';
+            }
+        }
+        
+        // Load combos when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFilterData();
+            loadCombos();
+            
+            // Handle filter button click
+            const filterBtn = document.getElementById('filterBtn');
+            if (filterBtn) {
+                filterBtn.addEventListener('click', searchCombos);
+            }
+        });
+    </script>
+
+    <script src="./js/auth.js"></script>
+    <script src="../js/scroll-reveal.js"></script>
+</body>
+</html>

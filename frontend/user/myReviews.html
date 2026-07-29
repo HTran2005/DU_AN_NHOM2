@@ -1,0 +1,418 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đánh giá của tôi - Tripto</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary: #0057FF; --primary-light: #E8EFFC; --primary-dark: #003dd4; --neutral-900: #121316; --neutral-700: #383E48; --neutral-500: #454546; --neutral-400: #737374; --neutral-200: #D7D7D7; --neutral-100: #F3F3F4; --white: #FFFFFF; --danger: #DC2626; --danger-light: #FEE2E2; --background: #f5f6f8; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; color: var(--neutral-900); background-color: var(--background); line-height: 1.5; }
+        .header { background-color: var(--white); border-bottom: 1px solid var(--neutral-200); height: 80px; display: flex; align-items: center; position: fixed; top: 0; left: 0; right: 0; z-index: 200; }
+        .header-container { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 32px; gap: 24px; }
+        .logo img { height: 40px; display: block; }
+        .nav-right { display: flex; align-items: center; gap: 24px; }
+        .country { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--neutral-700); }
+        .nav-menu-top { display: flex; justify-content: center; gap: 8px; flex: 1; }
+        .nav-menu-top a { padding: 10px 20px; color: var(--neutral-700); text-decoration: none; font-weight: 600; font-size: 15px; border-radius: 8px; transition: all 0.2s ease; }
+        .nav-menu-top a:hover { color: var(--primary); background-color: var(--primary-light); }
+        .country img { height: 20px; }
+        .icon img { height: 40px; cursor: pointer; }
+        .btn-login { display: flex; align-items: center; gap: 8px; background-color: var(--primary); color: var(--white); padding: 10px 24px; border-radius: 8px; font-weight: 600; font-size: 14px; border: none; cursor: pointer; }
+        .dashboard { display: flex; min-height: calc(100vh - 80px); padding-top: 80px; }
+        .sidebar { width: 280px; background: var(--white); border-right: 1px solid var(--neutral-200); display: flex; flex-direction: column; position: sticky; top: 80px; height: calc(100vh - 80px); align-self: flex-start; z-index: 100; }
+        .sidebar-header { padding: 24px; text-align: center; border-bottom: 1px solid var(--neutral-100); }
+        .avatar { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary-light); margin-bottom: 12px; }
+        .user-name { font-size: 18px; font-weight: 700; color: var(--neutral-900); margin-bottom: 4px; }
+        .user-role { font-size: 13px; color: var(--neutral-500); }
+        .sidebar-nav { flex: 1; padding: 16px 12px; overflow-y: auto; }
+        .nav-menu { list-style: none; }
+        .nav-item { margin-bottom: 4px; }
+        .nav-link { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px; color: var(--neutral-700); text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.3s ease; }
+        .nav-link:hover { background: var(--neutral-100); color: var(--neutral-900); }
+        .nav-link.active { background: var(--primary-light); color: var(--primary); }
+        .nav-link.active i { color: var(--primary); }
+        .nav-link i { width: 20px; text-align: center; font-size: 16px; color: var(--neutral-500); }
+        .sidebar-footer { padding: 16px 12px; border-top: 1px solid var(--neutral-100); }
+        .logout-link { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px; color: #C2410C; text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.3s ease; cursor: pointer; }
+        .logout-link:hover { background: var(--danger-light); }
+        .logout-link i { width: 20px; text-align: center; font-size: 16px; }
+        .main-content { flex: 1; padding: 32px; min-height: calc(100vh - 80px); }
+        .content-wrapper { max-width: 1000px; margin: 0 auto; }
+        .page-header { margin-bottom: 32px; }
+        .page-title { font-size: 32px; font-weight: 700; color: var(--neutral-900); margin-bottom: 8px; }
+        .page-description { font-size: 15px; color: var(--neutral-500); max-width: 600px; line-height: 1.6; }
+
+        /* Review Item Styles */
+        .reviews-container { display: flex; flex-direction: column; gap: 24px; }
+        .review-item { background: var(--white); border: 1px solid var(--neutral-200); border-radius: 12px; padding: 24px; transition: all 0.3s ease; }
+        .review-item:hover { border-color: var(--primary); box-shadow: 0 4px 12px rgba(0,87,255,0.1); }
+
+        .review-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--neutral-100); }
+        .review-user-info { display: flex; gap: 12px; flex: 1; }
+        .review-avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+        .review-user-details h4 { font-size: 14px; font-weight: 600; color: var(--neutral-900); margin-bottom: 2px; }
+        .review-user-details p { font-size: 12px; color: var(--neutral-500); }
+        .review-status { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .review-status.posted { background: #E0F2FE; color: #0369a1; }
+        .review-status.rejected { background: #FEE2E2; color: #DC2626; }
+        .review-status.pending { background: #FEF3C7; color: #D97706; }
+
+        .review-more-btn { width: 40px; height: 40px; border-radius: 50%; border: none; background: var(--neutral-100); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--neutral-500); transition: all 0.2s ease; }
+        .review-more-btn:hover { background: var(--neutral-200); }
+
+        .review-content { display: grid; grid-template-columns: 200px 1fr; gap: 24px; margin-bottom: 16px; }
+        .review-image { width: 200px; height: 140px; border-radius: 8px; object-fit: cover; }
+        .review-text-section h3 { font-size: 15px; font-weight: 600; color: var(--primary); margin-bottom: 8px; }
+        .review-tour-link { text-decoration: none; color: var(--primary); cursor: pointer; }
+        .review-tour-link:hover { text-decoration: underline; }
+
+        .review-meta { display: flex; gap: 16px; align-items: center; margin-bottom: 12px; }
+        .review-date { font-size: 13px; color: var(--neutral-500); }
+        .review-rating { display: flex; align-items: center; gap: 6px; }
+        .rating-score { font-size: 16px; font-weight: 700; color: var(--neutral-900); }
+        .rating-label { font-size: 13px; color: var(--neutral-500); }
+
+        .review-comment { font-size: 14px; color: var(--neutral-700); line-height: 1.6; margin-bottom: 12px; }
+
+        .review-footer { display: flex; align-items: center; gap: 16px; padding-top: 16px; border-top: 1px solid var(--neutral-100); }
+        .helpful-count { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--neutral-500); }
+        .helpful-count i { font-size: 14px; }
+
+        .property-response { background: var(--neutral-100); padding: 16px; border-radius: 8px; margin-top: 16px; }
+        .response-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+        .response-header i { font-size: 16px; color: var(--neutral-900); }
+        .response-header strong { font-size: 14px; font-weight: 600; color: var(--neutral-900); }
+        .response-text { font-size: 14px; color: var(--neutral-700); line-height: 1.5; }
+
+        /* Footer Styles */
+        .footer { background: var(--neutral-900); color: #d1d5db; padding: 60px 0 30px; margin-top: auto; }
+        .footer-container { max-width: 1440px; margin: 0 auto; padding: 0 32px; }
+        .footer-content { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+        .footer-brand { max-width: 360px; }
+        .footer-logo { display: block; margin-bottom: 16px; }
+        .footer-logo img { height: 44px; }
+        .footer-description { font-size: 15px; line-height: 1.6; margin-bottom: 24px; color: #9ca3af; }
+        .footer-column h4 { font-size: 16px; font-weight: 700; color: white; margin-bottom: 20px; }
+        .footer-column ul { list-style: none; padding: 0; margin: 0; }
+        .footer-column li { margin-bottom: 12px; }
+        .footer-column a { color: #9ca3af; font-size: 14px; text-decoration: none; transition: color 0.2s; }
+        .footer-column a:hover { color: white; }
+        .footer-bottom { border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: #6b7280; }
+        .social-links { display: flex; gap: 12px; }
+        .social-icon { width: 36px; height: 36px; background: rgba(255, 255, 255, 0.1); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: all 0.2s; }
+        .social-icon:hover { background: var(--primary); }
+
+        @media (max-width: 768px) {
+            .review-content { grid-template-columns: 1fr; }
+            .review-image { width: 100%; height: auto; }
+            .footer-content { grid-template-columns: 1fr; }
+            .footer-bottom { flex-direction: column; gap: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <div class="logo"><a href="TRANGCHU.html"><img src="../image/Logo.png" alt="Tripto Logo"></a></div>
+            <nav class="nav-menu-top">
+                <a href="TRANGCHU.html">Trang Chủ</a>
+                <a href="UUDAI.html">Ưu Đãi</a>
+                <a href="TATCA_TOUR.html">Chuyến du lịch</a>             
+                <a href="TATCA_COMBO.html">Gói du lịch</a>
+                <a href="BLOG.html">Tin Tức</a>
+            </nav>
+            <div class="nav-right">
+                <div class="country"><img src="../image/ngonngu.png" alt="Vietnam Flag"><span>VIETNAM</span></div>
+                <div class="icon"><a href="hotro.html" title="Hỗ trợ"><img src="../image/hotro.png" alt="Support"></a></div>
+                <button class="btn-login" id="loginBtn">Đăng Nhập</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="../image/avt_pr.jpg" alt="Avatar" class="avatar">
+                <h3 class="user-name">Giao Nguyen</h3>
+                <p class="user-role">Bộ phận Chăm sóc Khách hàng</p>
+            </div>
+            <nav class="sidebar-nav">
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="trangcanhan.html" class="nav-link"><i class="fas fa-user"></i>Thông tin cá nhân</a></li>
+                    <li class="nav-item"><a href="thanhtoan.html" class="nav-link"><i class="fas fa-credit-card"></i>Tài khoản thanh toán</a></li>
+                    <li class="nav-item"><a href="chuyendi.html" class="nav-link"><i class="fas fa-plane"></i>Chuyến đi</a></li>
+                    <li class="nav-item"><a href="yeuthich.html" class="nav-link"><i class="fas fa-heart"></i>Yêu thích</a></li>
+                    <li class="nav-item"><a href="hotro.html" class="nav-link"><i class="fas fa-headset"></i>Hỗ trợ</a></li>
+                    <li class="nav-item"><a href="myReviews.html" class="nav-link active"><i class="fas fa-star"></i>Đánh giá của tôi</a></li>
+                    <li class="nav-item"><a href="caidat.html" class="nav-link"><i class="fas fa-cog"></i>Cài đặt</a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer"><a href="#" class="logout-link"><i class="fas fa-sign-out-alt"></i>Đăng xuất</a></div>
+        </aside>
+
+        <main class="main-content">
+            <div class="content-wrapper">
+                <div class="page-header">
+                    <h1 class="page-title">Đánh giá của tôi</h1>
+                    <p class="page-description">Quản lý và xem lại các đánh giá mà bạn đã gửi cho các tour du lịch.</p>
+                </div>
+
+                <div class="reviews-container">
+                    <!-- Review 1 -->
+                    <div class="review-item">
+                        <div class="review-header">
+                            <div class="review-user-info">
+                                <img src="../image/avatar_user_3.jpg" alt="Avatar" class="review-avatar">
+                                <div class="review-user-details">
+                                    <h4>Giao Nguyen</h4>
+                                    <p>Đánh giá đã đăng</p>
+                                </div>
+                                <span class="review-status posted">Đánh giá đã đăng</span>
+                            </div>
+                            <button class="review-more-btn"><i class="fas fa-ellipsis-h"></i></button>
+                        </div>
+
+                        <div class="review-content">
+                            <img src="https://tse1.mm.bing.net/th/id/OIP.Z6alStysRwa2ewm3G01KogHaE7?rs=1&pid=ImgDetMain&o=7&rm=3" alt="Da Lat Highland Retreat Tour" class="review-image">
+                            <div class="review-text-section">
+                                <div>
+                                    <h3>Bạn đã đánh giá <a href="#" class="review-tour-link">Tour Nghỉ Dưỡng Đà Lạt Highland</a></h3>
+                                    <div class="review-meta">
+                                        <span class="review-date">24 tháng 10, 2024</span>
+                                        <div class="review-rating">
+                                            <span class="rating-score">3.0</span>
+                                            <span class="rating-label">Tệ</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="review-comment">
+                                    <p><i class="fas fa-quote-left"></i> Hướng dẫn viên rất tuyệt vời.</p>
+                                </div>
+                                <div class="review-comment">
+                                    <p><i class="fas fa-quote-left"></i> Tuy nhiên, tour thiếu sự điều phối hàng ngày. Không có nước đóng chai. Lịch trình quá vội vàng và một số hoạt động bị bỏ qua.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="review-footer">
+                            <div class="helpful-count">
+                                <i class="fas fa-thumbs-up"></i>
+                                <span>2 người thấy đánh giá này hữu ích</span>
+                            </div>
+                        </div>
+
+                        <div class="property-response">
+                            <div class="response-header">
+                                <i class="fas fa-building"></i>
+                                <strong>Phản hồi từ tour</strong>
+                            </div>
+                            <p class="response-text">Xin chào Giao, cảm ơn bạn về phản hồi của bạn. Chúng tôi rất tiếc khi trải nghiệm không đáp ứng kỳ vọng của bạn. Khu nghỉ dưỡng của chúng tôi kết hợp nghệ thuật Việt Nam và văn hóa địa phương, một số dịch vụ có thể khác với tiêu chuẩn khách sạn. Chúng tôi cảm ơn các bình luận của bạn và sẽ cố gắng cải thiện sự thoải mái của khách và rõ ràng về lịch trình. Cảm ơn bạn đã chọn chúng tôi!</p>
+                        </div>
+                    </div>
+
+                    <!-- Review 2 -->
+                    <div class="review-item">
+                        <div class="review-header">
+                            <div class="review-user-info">
+                                <img src="../image/anh2.jpg" alt="Avatar" class="review-avatar">
+                                <div class="review-user-details">
+                                    <h4>Giao Nguyen</h4>
+                                    <p>Đánh giá bị từ chối</p>
+                                </div>
+                                <span class="review-status rejected">Đánh giá bị từ chối</span>
+                            </div>
+                            <button class="review-more-btn"><i class="fas fa-ellipsis-h"></i></button>
+                        </div>
+
+                        <div class="review-content">
+                            <img src="https://th.bing.com/th/id/OIP.tMBoYTjQKiMg6uXib-hqGgHaEC?o=7rm=3&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Phu Quoc Island Escape Tour" class="review-image">
+                            <div class="review-text-section">
+                                <div>
+                                    <h3>Bạn đã đánh giá <a href="#" class="review-tour-link">Tour Tắm Biển Phú Quốc</a></h3>
+                                    <div class="review-meta">
+                                        <span class="review-date">24 tháng 7, 2023</span>
+                                        <div class="review-rating">
+                                            <span class="rating-score">3.0</span>
+                                            <span class="rating-label">Tệ</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="review-comment">
+                                    <p><i class="fas fa-quote-left"></i> Không có gì tốt cả. Đây là trải nghiệm tồi tệ nhất của tôi.</p>
+                                </div>
+                                <div class="review-comment">
+                                    <p><i class="fas fa-quote-left"></i> Tour thiếu sự điều phối phù hợp. Không có nước đóng chai. Lịch trình quá vội vàng và một số hoạt động bị bỏ qua.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="review-footer">
+                            <div class="helpful-count">
+                                <i class="fas fa-thumbs-up"></i>
+                                <span>0 người thấy đánh giá này hữu ích</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Review 3 -->
+                    <div class="review-item">
+                        <div class="review-header">
+                            <div class="review-user-info">
+                                <img src="../image/anh2.jpg" alt="Avatar" class="review-avatar">
+                                <div class="review-user-details">
+                                    <h4>Giao Nguyen</h4>
+                                    <p>Đánh giá đang chờ duyệt</p>
+                                </div>
+                                <span class="review-status pending">Đánh giá đang chờ duyệt</span>
+                            </div>
+                            <button class="review-more-btn"><i class="fas fa-ellipsis-h"></i></button>
+                        </div>
+
+                        <div class="review-content">
+                            <img src="https://th.bing.com/th/id/R.667b90108e521832ab7a7cc242eddade?rik=gZVp2eJvUs%2f%2fmA&riu=http%3a%2f%2fwww.exploreshaw.com%2fwp-content%2fuploads%2f2018%2f10%2fDSCF3582.jpg&ehk=0VBn8M5Rj0zsHrgW5Tv66kp06Lt5HziowWwENpaBt2M%3d&risl=&pid=ImgRaw&r=0" alt="Hoi An Ancient Charm Tour" class="review-image">
+                            <div class="review-text-section">
+                                <div>
+                                    <h3>Bạn đã đánh giá <a href="#" class="review-tour-link">Tour Phố Cổ Hội An Thương</a></h3>
+                                    <div class="review-meta">
+                                        <span class="review-date">24 tháng 7, 2023</span>
+                                        <div class="review-rating">
+                                            <span class="rating-score">7.0</span>
+                                            <span class="rating-label">Tốt</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="review-comment">
+                                    <p><i class="fas fa-quote-left"></i> Không có gì tốt cả. Đây là trải nghiệm tồi tệ nhất của tôi.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="review-footer">
+                            <div class="helpful-count">
+                                <i class="fas fa-thumbs-up"></i>
+                                <span>77 người thấy đánh giá này hữu ích</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <a href="TRANGCHU.html" class="footer-logo">
+                        <img src="../image/Logo.png" alt="triptO Logo">
+                    </a>
+                    <p class="footer-description">Tripto là nền tảng đặt tour du lịch hàng đầu tại Việt Nam. Chúng tôi cung cấp hơn 500+ tour với giá tốt nhất.</p>
+                </div>
+                <div class="footer-column">
+                    <h4>Công Ty</h4>
+                    <ul>
+                        <li><a href="#">Về Chúng Tôi</a></li>
+                        <li><a href="#">Đội Ngũ</a></li>
+                        <li><a href="#">Liên Hệ</a></li>
+                        <li><a href="#">Tuyển Dụng</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Hỗ Trợ</h4>
+                    <ul>
+                        <li><a href="#">Câu Hỏi Thường Gặp</a></li>
+                        <li><a href="#">Chính Sách Bảo Mật</a></li>
+                        <li><a href="#">Điều Khoản Sử Dụng</a></li>
+                        <li><a href="#">Liên Hệ Hỗ Trợ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Liên Hệ</h4>
+                    <ul>
+                        <li><a href="#">📞 +84 (0) 1234 567 890</a></li>
+                        <li><a href="#">✉️ support@tripto.vn</a></li>
+                        <li><a href="#">📍 Hà Nội, Việt Nam</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <span>&copy; 2026 Tripto. Bản quyền được bảo lưu.</span>
+                <div class="social-links">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="./js/auth.js"></script>
+    <script>
+        // Kiểm tra người dùng đã đăng nhập chưa
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = triptoAuth.getUser();
+            if (!user) {
+                alert('❌ Vui lòng đăng nhập để xem đánh giá của bạn');
+                window.location.href = 'TRANGCHU.html';
+                return;
+            }
+
+            // Gọi updateUI() lại để chắc chắn button được cập nhật
+            triptoAuth.updateUI();
+
+            // Cập nhật tên người dùng trong sidebar
+            const userNameElement = document.querySelector('.user-name');
+            if (userNameElement) {
+                userNameElement.textContent = user.ho_ten;
+            }
+
+            // Cập nhật các tên trong review items
+            const reviewUserDetails = document.querySelectorAll('.review-user-details h4');
+            reviewUserDetails.forEach(element => {
+                element.textContent = user.ho_ten;
+            });
+
+            // 🖼️ Cập nhật avatar trong các review items từ cơ sở dữ liệu
+            const avatarUrl = user.anh_dai_dien || user.avatar || '../image/avt_pr.jpg';
+            const reviewAvatars = document.querySelectorAll('.review-avatar');
+            reviewAvatars.forEach(avatar => {
+                avatar.src = avatarUrl;
+                console.log('✅ Updated review avatar:', avatar);
+            });
+
+            console.log('✅ Trang myReviews đã tải thành công cho:', user.ho_ten);
+
+            // Xử lý nút đăng xuất
+            const logoutLink = document.querySelector('.logout-link');
+            if (logoutLink) {
+                logoutLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
+                        triptoAuth.logout();
+                    }
+                });
+            }
+
+            // 🔥 Lắng nghe sự kiện cập nhật avatar từ các trang khác
+            window.addEventListener('userAvatarUpdated', (e) => {
+                console.log('📢 Nhận sự kiện cập nhật avatar, cập nhật review avatars');
+                if (e.detail && e.detail.avatar_url) {
+                    const reviewAvatars = document.querySelectorAll('.review-avatar');
+                    reviewAvatars.forEach(avatar => {
+                        avatar.src = e.detail.avatar_url;
+                        console.log('✅ Updated review avatar to:', e.detail.avatar_url);
+                    });
+                }
+            });
+        });
+    </script>
+    <script src="../js/scroll-reveal.js"></script>
+</body>
+</html>

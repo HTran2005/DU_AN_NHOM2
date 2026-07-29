@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hoạt Động Thống Kê</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/Trangchu_ad.css">
+    <style>
+        /* Stats Card */
+        .activity-stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            min-height: 100px;
+        }
+
+        .activity-stat-card:nth-child(1) {
+            background: linear-gradient(135deg, rgba(13, 110, 253, 0.08) 0%, rgba(13, 110, 253, 0.04) 100%);
+            border-left: 4px solid #0d6efd;
+        }
+
+        .activity-stat-card:nth-child(2) {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.08) 0%, rgba(255, 193, 7, 0.04) 100%);
+            border-left: 4px solid #ffc107;
+        }
+
+        .activity-stat-card:nth-child(3) {
+            background: linear-gradient(135deg, rgba(25, 135, 84, 0.08) 0%, rgba(25, 135, 84, 0.04) 100%);
+            border-left: 4px solid #198754;
+        }
+
+        .activity-stat-card:nth-child(4) {
+            background: linear-gradient(135deg, rgba(13, 202, 240, 0.08) 0%, rgba(13, 202, 240, 0.04) 100%);
+            border-left: 4px solid #0dcaf0;
+        }
+
+        .activity-stat-card:nth-child(5) {
+            background: linear-gradient(135deg, rgba(13, 110, 253, 0.08) 0%, rgba(13, 110, 253, 0.04) 100%);
+            border-left: 4px solid #0d6efd;
+        }
+
+        .activity-stat-card:nth-child(6) {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.08) 0%, rgba(255, 193, 7, 0.04) 100%);
+            border-left: 4px solid #ffc107;
+        }
+
+        .activity-stat-card:nth-child(7) {
+            background: linear-gradient(135deg, rgba(25, 135, 84, 0.08) 0%, rgba(25, 135, 84, 0.04) 100%);
+            border-left: 4px solid #198754;
+        }
+
+        .activity-stat-card:nth-child(8) {
+            background: linear-gradient(135deg, rgba(13, 202, 240, 0.08) 0%, rgba(13, 202, 240, 0.04) 100%);
+            border-left: 4px solid #0dcaf0;
+        }
+
+        .activity-stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+
+        .activity-stat-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .activity-stat-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .activity-stat-label {
+            font-size: 14px;
+            color: #6c757d;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .activity-stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #052461;
+            margin: 0;
+            line-height: 1;
+        }
+
+        .activity-stat-change {
+            font-size: 12px;
+            margin-top: 4px;
+            font-weight: 600;
+        }
+
+        .change-up {
+            color: #198754;
+        }
+
+        .change-down {
+            color: #dc3545;
+        }
+
+        /* Chart Card */
+        .chart-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .chart-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #052461;
+            margin-bottom: 20px;
+        }
+
+        .chart-placeholder {
+            height: 300px;
+            background: linear-gradient(135deg, #f0f0f0 0%, #e9ecef 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        /* Activity Timeline */
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .timeline-marker {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #052461;
+            margin-top: 6px;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .timeline-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 30px;
+            width: 2px;
+            height: calc(100% - 12px);
+            background: #e9ecef;
+        }
+
+        .timeline-content {
+            flex: 1;
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .timeline-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #052461;
+        }
+
+        .timeline-time {
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        .timeline-desc {
+            font-size: 13px;
+            color: #6c757d;
+            line-height: 1.5;
+        }
+
+        .timeline-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        .badge-create {
+            background: rgba(13, 110, 253, 0.1);
+            color: #0d6efd;
+        }
+
+        .badge-update {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+        }
+
+        .badge-delete {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+
+        .badge-booking {
+            background: rgba(25, 135, 84, 0.1);
+            color: #198754;
+        }
+
+        /* Filter Pills */
+        .filter-pill {
+            padding: 8px 20px;
+            border-radius: 25px;
+            border: 1px solid #e9ecef;
+            background: white;
+            color: #6c757d;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-pill:hover, .filter-pill.active {
+            background: #052461;
+            color: white;
+            border-color: #052461;
+        }
+
+        /* Activity Type Legend */
+        .activity-legend {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #6c757d;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Left Sidebar -->
+        <aside class="sidebar bg-white shadow-sm">
+            <div class="logo-container">
+                <img src="../image/Logo.png" alt="Tripto Logo" class="logo-img">
+            </img>
+            
+            <nav class="sidebar-nav">
+                <a href="Trangchu_ad.html" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Bảng Điều Khiển</span>
+                </a>
+                <a href="Tour_ad.html" class="nav-item">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <span>Tour Du Lịch</span>
+                </a>
+                <a href="TourDaDat_ad.html" class="nav-item">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Tour Đã Đặt</span>
+                </a>
+                <a href="Lich_ad.html" class="nav-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Lịch</span>
+                </a>
+                <a href="ThanhToan.html" class="nav-item">
+                    <i class="fas fa-credit-card"></i>
+                    <span>Thanh Toán</span>
+                </a>
+                <a href="KhachHang.html" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>Khách Hàng</span>
+                </a>
+                <a href="TinNhan.html" class="nav-item">
+                    <i class="fas fa-comments"></i>
+                    <span>Tin Nhắn</span>
+                </a>
+                <a href="HoatDong.html" class="nav-item  active">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Hoạt Động Thống Kê</span>
+                </a>
+            </nav>
+        </aside>
+
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-inner">
+                <!-- Header -->
+                <header class="content-header">
+                    <h1 class="dashboard-title" style="color: #052461;">Hoạt Động Thống Kê</h1>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="search-bar flex-grow-1">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="Tìm kiếm...">
+                        </div>
+                        <!-- User Menu in Header -->
+                        <div class="user-menu-header">
+                            <div class="notification-wrapper">
+                                <button class="icon-btn notification-btn" id="notificationBell" onclick="toggleNotifications()">
+                                    <i class="fas fa-bell"></i>
+                                    <span class="notification-badge" id="notificationBadge">3</span>
+                                </button>
+                            </div>
+                            <button class="icon-btn" id="settingsBtn" onclick="toggleSettings()">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                            <div class="user-profile">
+                                <div class="user-info">
+                                    <strong class="d-block">GTD</strong>
+                                    <small class="text-muted">Quản Trị Viên</small>
+                                </div>
+                                <div class="avatar-circle">GT</div>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- Stats Overview -->
+                <section class="overview-section mb-4">
+                    <div class="row g-4">
+                        <div class="col-xl-3 col-md-6">
+                            <div class="activity-stat-card">
+                                <div class="activity-stat-icon bg-primary bg-opacity-10">
+                                    <i class="fas fa-mouse text-primary"></i>
+                                </div>
+                                <div class="activity-stat-info">
+                                    <p class="activity-stat-label">Lượt Truy Cập</p>
+                                    <h3 class="activity-stat-value">12,485</h3>
+                                    <div class="activity-stat-change change-up"><i class="fas fa-arrow-up"></i> 18% từ tuần trước</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="activity-stat-card">
+                                <div class="activity-stat-icon bg-success bg-opacity-10">
+                                    <i class="fas fa-user-check text-success"></i>
+                                </div>
+                                <div class="activity-stat-info">
+                                    <p class="activity-stat-label">Người Dùng Mới</p>
+                                    <h3 class="activity-stat-value">1,342</h3>
+                                    <div class="activity-stat-change change-up"><i class="fas fa-arrow-up"></i> 24% từ tuần trước</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="activity-stat-card">
+                                <div class="activity-stat-icon bg-warning bg-opacity-10">
+                                    <i class="fas fa-shopping-cart text-warning"></i>
+                                </div>
+                                <div class="activity-stat-info">
+                                    <p class="activity-stat-label">Đơn Hàng Mới</p>
+                                    <h3 class="activity-stat-value">856</h3>
+                                    <div class="activity-stat-change change-up"><i class="fas fa-arrow-up"></i> 11% từ tuần trước</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="activity-stat-card">
+                                <div class="activity-stat-icon bg-info bg-opacity-10">
+                                    <i class="fas fa-dollar-sign text-info"></i>
+                                </div>
+                                <div class="activity-stat-info">
+                                    <p class="activity-stat-label">Doanh Thu</p>
+                                    <h3 class="activity-stat-value">245.8M</h3>
+                                    <div class="activity-stat-change change-up"><i class="fas fa-arrow-up"></i> 22% từ tuần trước</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Filter Section -->
+                <section class="mb-4">
+                    <div class="d-flex gap-2 align-items-center" style="flex-wrap: nowrap; overflow-x: auto; background: white; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                        <button class="filter-pill active" style="flex-shrink: 0;">Tất cả</button>
+                        <button class="filter-pill" style="flex-shrink: 0;">Tạo Mới</button>
+                        <button class="filter-pill" style="flex-shrink: 0;">Cập Nhật</button>
+                        <button class="filter-pill" style="flex-shrink: 0;">Đặt Tour</button>
+                        <button class="filter-pill" style="flex-shrink: 0;">Thanh Toán</button>
+                    </div>
+                </section>
+
+                <!-- Charts Section -->
+                <section class="row g-4 mb-4">
+                    <div class="col-lg-6">
+                        <div class="chart-card">
+                            <h5 class="chart-title">Thống Kê Truy Cập 7 Ngày Gần Nhất</h5>
+                            <div class="chart-placeholder">
+                                <div style="text-align: center;">
+                                    <i class="fas fa-chart-bar" style="font-size: 32px; color: #052461; margin-bottom: 8px; display: block;"></i>
+                                    Biểu Đồ Cột - Lượt Truy Cập Hàng Ngày
+                                    <div style="font-size: 12px; color: #999; margin-top: 8px;">Thứ 2: 1,245 | Thứ 3: 1,456 | Thứ 4: 1,678 | Thứ 5: 1,823 | Thứ 6: 2,145 | Thứ 7: 2,456 | Chủ Nhật: 1,682</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="chart-card">
+                            <h5 class="chart-title">Phân Bố Nguồn Truy Cập</h5>
+                            <div class="chart-placeholder">
+                                <div style="text-align: center;">
+                                    <i class="fas fa-chart-pie" style="font-size: 32px; color: #ff8c00; margin-bottom: 8px; display: block;"></i>
+                                    Biểu Đồ Tròn - Phân Bố Nguồn
+                                    <div style="font-size: 12px; color: #999; margin-top: 8px;">Desktop: 45% | Mobile: 35% | Tablet: 15% | Khác: 5%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="chart-card">
+                            <h5 class="chart-title">Doanh Thu Theo Danh Mục Tour</h5>
+                            <div class="chart-placeholder">
+                                <div style="text-align: center;">
+                                    <i class="fas fa-chart-line" style="font-size: 32px; color: #198754; margin-bottom: 8px; display: block;"></i>
+                                    Biểu Đồ Đường - Doanh Thu Hàng Tuần
+                                    <div style="font-size: 12px; color: #999; margin-top: 8px;">Tuần 1: 42M | Tuần 2: 48M | Tuần 3: 52M | Tuần 4: 58M</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="chart-card">
+                            <h5 class="chart-title">So Sánh Loại Giao Dịch</h5>
+                            <div style="padding: 20px 0;">
+                                <div style="margin-bottom: 16px;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                                        <span style="font-size: 13px; color: #6c757d;">Đặt Tour</span>
+                                        <span style="font-weight: 600; color: #052461;">856/1000 (85.6%)</span>
+                                    </div>
+                                    <div style="height: 8px; background: #e9ecef; border-radius: 4px; overflow: hidden;">
+                                        <div style="width: 85.6%; height: 100%; background: #0d6efd;"></div>
+                                    </div>
+                                </div>
+                                <div style="margin-bottom: 16px;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                                        <span style="font-size: 13px; color: #6c757d;">Thanh Toán</span>
+                                        <span style="font-weight: 600; color: #052461;">245/1000 (24.5%)</span>
+                                    </div>
+                                    <div style="height: 8px; background: #e9ecef; border-radius: 4px; overflow: hidden;">
+                                        <div style="width: 24.5%; height: 100%; background: #198754;"></div>
+                                    </div>
+                                </div>
+                                <div style="margin-bottom: 16px;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                                        <span style="font-size: 13px; color: #6c757d;">Hủy/Hoàn Lại</span>
+                                        <span style="font-weight: 600; color: #052461;">24/1000 (2.4%)</span>
+                                    </div>
+                                    <div style="height: 8px; background: #e9ecef; border-radius: 4px; overflow: hidden;">
+                                        <div style="width: 2.4%; height: 100%; background: #dc3545;"></div>
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Detailed Analytics Section -->
+                <section class="row g-4 mb-4">
+                    <div class="col-lg-6">
+                        <div class="card" style="border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                            <div class="card-body">
+                                <h5 style="color: #052461; font-weight: 600; margin-bottom: 16px;">
+                                    <i class="fas fa-map-marker-alt" style="margin-right: 8px; color: #ff8c00;"></i>Top Địa Điểm Du Lịch
+                                </h5>
+                                <div style="display: flex; flex-direction: column; gap: 12px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8f9fa; border-radius: 8px;">
+                                        <span style="font-size: 13px; color: #6c757d;">
+                                            <strong>1.</strong> Hạ Long Bay
+                                        </span>
+                                        <span style="font-weight: 600; color: #052461;">256 đơn</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8f9fa; border-radius: 8px;">
+                                        <span style="font-size: 13px; color: #6c757d;">
+                                            <strong>2.</strong> Nha Trang Beach
+                                        </span>
+                                        <span style="font-weight: 600; color: #052461;">198 đơn</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8f9fa; border-radius: 8px;">
+                                        <span style="font-size: 13px; color: #6c757d;">
+                                            <strong>3.</strong> Đà Lạt City
+                                        </span>
+                                        <span style="font-weight: 600; color: #052461;">145 đơn</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8f9fa; border-radius: 8px;">
+                                        <span style="font-size: 13px; color: #6c757d;">
+                                            <strong>4.</strong> Phú Quốc Island
+                                        </span>
+                                        <span style="font-weight: 600; color: #052461;">128 đơn</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8f9fa; border-radius: 8px;">
+                                        <span style="font-size: 13px; color: #6c757d;">
+                                            <strong>5.</strong> Đà Nẵng Resort
+                                        </span>
+                                        <span style="font-weight: 600; color: #052461;">89 đơn</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card" style="border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                            <div class="card-body">
+                                <h5 style="color: #052461; font-weight: 600; margin-bottom: 16px;">
+                                    <i class="fas fa-user-tie" style="margin-right: 8px; color: #ff8c00;"></i>Top Người Dùng Quản Lý Tour
+                                </h5>
+                                <div style="display: flex; flex-direction: column; gap: 12px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8f9fa; border-radius: 8px;">
+                                        <div style="display: flex; align-items: center; gap: 10px; flex: 1;">
+                                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=32&h=32&fit=crop" alt="" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
+                                            <span style="font-size: 13px; color: #6c757d;">Nguyễn Văn A</span>
+                                        </div>
+                                        <span style="font-weight: 600; color: #052461;">42 tour</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8f9fa; border-radius: 8px;">
+                                        <div style="display: flex; align-items: center; gap: 10px; flex: 1;">
+                                            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=32&h=32&fit=crop" alt="" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
+                                            <span style="font-size: 13px; color: #6c757d;">Trần Thị B</span>
+                                        </div>
+                                        <span style="font-weight: 600; color: #052461;">38 tour</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8f9fa; border-radius: 8px;">
+                                        <div style="display: flex; align-items: center; gap: 10px; flex: 1;">
+                                            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=32&h=32&fit=crop" alt="" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
+                                            <span style="font-size: 13px; color: #6c757d;">Lê Văn C</span>
+                                        </div>
+                                        <span style="font-weight: 600; color: #052461;">35 tour</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8f9fa; border-radius: 8px;">
+                                        <div style="display: flex; align-items: center; gap: 10px; flex: 1;">
+                                            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=32&h=32&fit=crop" alt="" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
+                                            <span style="font-size: 13px; color: #6c757d;">Phạm Thị D</span>
+                                        </div>
+                                        <span style="font-weight: 600; color: #052461;">28 tour</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8f9fa; border-radius: 8px;">
+                                        <div style="display: flex; align-items: center; gap: 10px; flex: 1;">
+                                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop" alt="" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
+                                            <span style="font-size: 13px; color: #6c757d;">Hoàng Văn E</span>
+                                        </div>
+                                        <span style="font-weight: 600; color: #052461;">24 tour</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Activity Legend -->
+                <section class="mb-4">
+                    <div class="activity-legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #0d6efd;"></div>
+                            <span>Tạo Mới</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #ffc107;"></div>
+                            <span>Cập Nhật</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #198754;"></div>
+                            <span>Đặt Tour</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #dc3545;"></div>
+                            <span>Xoá</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Activity Timeline -->
+                <section class="card" style="border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                    <div class="card-body">
+                        <h5 style="color: #052461; font-weight: 600; margin-bottom: 24px;">
+                            <i class="fas fa-history" style="margin-right: 8px; color: #ff8c00;"></i>Lịch Sử Hoạt Động Chi Tiết (150+ sự kiện)
+                        </h5>
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-marker"></div>
+                                <div class="timeline-content">
+                                    <div class="timeline-header">
+                                        <span class="timeline-title">Khách hàng Nguyễn Văn A đặt tour</span>
+                                        <span class="timeline-time">Hôm nay 14:35 PM</span>
+                                    </div>
+                                    <p class="timeline-desc">Đặt tour "Hạ Long 3 ngày 2 đêm" cho 4 người - Phòng Deluxe - Tổng giá: 12.000.000 VNĐ</p>
+                                    <div style="margin-top: 8px; font-size: 12px; color: #999;">ID: #TK-2024-0856 | Hạn thanh toán: 28/03/2024</div>
+                                    <span class="timeline-badge badge-booking"><i class="fas fa-check-circle"></i> Đặt Thành Công</span>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-marker"></div>
+                                <div class="timeline-content">
+                                    <div class="timeline-header">
+                                        <span class="timeline-title">Cập nhật chi tiết tour "Đà Lạt City Tour"</span>
+                                        <span class="timeline-time">Hôm nay 13:20 PM</span>
+                                    </div>
+                                    <p class="timeline-desc">Cập nhật giá từ 2.500.000 → 2.350.000 VNĐ, thêm 5 ảnh mới, cập nhật mô tả chi tiết</p>
+                                    <div style="margin-top: 8px; font-size: 12px; color: #999;">Người chỉnh sửa: Trần Thị B | Số thay đổi: 8 trường</div>
+                                    <span class="timeline-badge badge-update"><i class="fas fa-edit"></i> Cập Nhật</span>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-marker"></div>
+                                <div class="timeline-content">
+                                    <div class="timeline-header">
+                                        <span class="timeline-title">Khách hàng Trần Thị B thanh toán đơn hàng</span>
+                                        <span class="timeline-time">Hôm nay 12:45 PM</span>
+                                    </div>
+                                    <p class="timeline-desc">Thanh toán 25.000.000 VNĐ cho 2 tour "Nha Trang 5 sao" bằng thẻ tín dụng</p>
+                                    <div style="margin-top: 8px; font-size: 12px; color: #999;">ID: #TK-2024-0845 | Mã giao dịch: TXN-892345</div>
+                                    <span class="timeline-badge badge-booking"><i class="fas fa-credit-card"></i> Thanh Toán Thành Công</span>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-marker"></div>
+                                <div class="timeline-content">
+                                    <div class="timeline-header">
+                                        <span class="timeline-title">Thêm tour mới "Phú Quốc Discovery"</span>
+                                        <span class="timeline-time">Hôm qua 16:30 PM</span>
+                                    </div>
+                                    <p class="timeline-desc">Tour 4 ngày 3 đêm, giá 3.500.000 VNĐ, sức chứa 30 khách, bao gồm vé máy bay + khách sạn 4 sao</p>
+                                    <div style="margin-top: 8px; font-size: 12px; color: #999;">Người tạo: Nguyễn Văn A | Trạng thái: Hoạt động</div>
+                                    <span class="timeline-badge badge-create"><i class="fas fa-plus-circle"></i> Tạo Mới</span>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-marker"></div>
+                                <div class="timeline-content">
+                                    <div class="timeline-header">
+                                        <span class="timeline-title">Cập nhật hình ảnh tour "Đà Nẵng Beach"</span>
+                                        <span class="timeline-time">Hôm qua 14:20 PM</span>
+                                    </div>
+                                    <p class="timeline-desc">Thêm 8 ảnh mới từ phòng khách sạn, bãi biển, nhà hàng, và hoạt động du lịch</p>
+                                    <div style="margin-top: 8px; font-size: 12px; color: #999;">Người cập nhật: Lê Văn C | Số ảnh mới: 8/12</div>
+                                    <span class="timeline-badge badge-update"><i class="fas fa-image"></i> Cập Nhật Hình Ảnh</span>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-marker"></div>
+                                <div class="timeline-content">
+                                    <div class="timeline-header">
+                                        <span class="timeline-title">Khách hàng Phạm Thị D hủy đặt tour</span>
+                                        <span class="timeline-time">2 ngày trước 11:00 AM</span>
+                                    </div>
+                                    <p class="timeline-desc">Hủy tour "Sapa Winter 2023" - Hoàn lại 100% tiền cọc (2.000.000 VNĐ) do tour bị hủy</p>
+                                    <div style="margin-top: 8px; font-size: 12px; color: #999;">ID: #TK-2024-0834 | Nguyên nhân: Tour bị hủy</div>
+                                    <span class="timeline-badge badge-delete"><i class="fas fa-times-circle"></i> Hủy/Hoàn Lại</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Right Sidebar -->
+        <aside class="right-sidebar bg-white">
+            <div class="user-menu">
+                <div class="notification-wrapper">
+                    <button class="icon-btn notification-btn" id="notificationBell" onclick="toggleNotifications()">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge" id="notificationBadge">5</span>
+                    </button>
+                    
+                    <div class="notification-dropdown" id="notificationDropdown">
+                        <div class="notification-header">
+                            <h6>Thông Báo</h6>
+                            <button class="mark-all-read" onclick="markAllRead()">Đánh dấu đã đọc</button>
+                        </div>
+                        <div class="notification-list" id="notificationList">
+                            <div class="notification-item unread" onclick="markAsRead(this)">
+                                <div class="notification-icon bg-danger">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                </div>
+                                <div class="notification-content">
+                                    <p class="notification-title">Cảnh báo doanh thu</p>
+                                    <p class="notification-desc">Doanh thu từ nay thấp hơn dự kiến 15%</p>
+                                    <span class="notification-time">5 phút trước</span>
+                                </div>
+                            </div>
+                            <div class="notification-item unread" onclick="markAsRead(this)">
+                                <div class="notification-icon bg-success">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="notification-content">
+                                    <p class="notification-title">Đặt tập mới xác nhận</p>
+                                    <p class="notification-desc">Có 8 đặt tập mới cần xác nhận</p>
+                                    <span class="notification-time">15 phút trước</span>
+                                </div>
+                            </div>
+                            <div class="notification-item unread" onclick="markAsRead(this)">
+                                <div class="notification-icon bg-warning">
+                                    <i class="fas fa-hourglass-start"></i>
+                                </div>
+                                <div class="notification-content">
+                                    <p class="notification-title">Lịch khởi hành sắp tới</p>
+                                    <p class="notification-desc">3 tour sắp khởi hành trong 24 giờ</p>
+                                    <span class="notification-time">1 giờ trước</span>
+                                </div>
+                            </div>
+                            <div class="notification-item" onclick="markAsRead(this)">
+                                <div class="notification-icon bg-info">
+                                    <i class="fas fa-user-plus"></i>
+                                </div>
+                                <div class="notification-content">
+                                    <p class="notification-title">Khách hàng mới đăng ký</p>
+                                    <p class="notification-desc">12 khách hàng mới đăng ký hôm nay</p>
+                                    <span class="notification-time">2 giờ trước</span>
+                                </div>
+                            </div>
+                            <div class="notification-item" onclick="markAsRead(this)">
+                                <div class="notification-icon bg-primary">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </div>
+                                <div class="notification-content">
+                                    <p class="notification-title">Thanh toán thành công</p>
+                                    <p class="notification-desc">Thanh toán 5.2M vĩ từ khách hàng</p>
+                                    <span class="notification-time">3 giờ trước</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="icon-btn" id="settingsBtn" onclick="toggleSettings()">
+                    <i class="fas fa-cog"></i>
+                </button>
+                
+                <div class="settings-dropdown" id="settingsDropdown">
+                    <div class="settings-header">
+                        <h6>Cài Đặt</h6>
+                    </div>
+                    <div class="settings-list">
+                        <div class="settings-item">
+                            <div class="settings-item-icon">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="settings-item-content">
+                                <p class="settings-item-title">Thông Tin Cá Nhân</p>
+                                <p class="settings-item-desc">Cập nhật thông tin profile</p>
+                            </div>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-item-icon">
+                                <i class="fas fa-bar-chart"></i>
+                            </div>
+                            <div class="settings-item-content">
+                                <p class="settings-item-title">Báo Cáo</p>
+                                <p class="settings-item-desc">Cài đặt báo cáo</p>
+                            </div>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-item-icon">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                            <div class="settings-item-content">
+                                <p class="settings-item-title">Bảo Mật</p>
+                                <p class="settings-item-desc">Đổi mật khẩu</p>
+                            </div>
+                        </div>
+                        <div class="settings-divider"></div>
+                        <div class="settings-item logout-item">
+                            <div class="settings-item-icon">
+                                <i class="fas fa-sign-out-alt"></i>
+                            </div>
+                            <div class="settings-item-content">
+                                <p class="settings-item-title">Đăng Xuất</p>
+                                <p class="settings-item-desc">Thoát khỏi hệ thống</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="user-profile">
+                    <div class="user-info">
+                        <strong class="d-block">GTD</strong>
+                        <small class="text-muted">Quản Trị Viên</small>
+                    </div>
+                    <div class="avatar-circle">GT</div>
+                </div>
+            </div>
+
+            <!-- Quick Insights -->
+            <section class="sidebar-section">
+                <h6 class="mb-3" style="font-weight: 700; color: #052461;">Thống Kê Nhanh</h6>
+                <div style="background: linear-gradient(135deg, rgba(13, 110, 253, 0.08) 0%, rgba(13, 110, 253, 0.04) 100%); border-left: 4px solid #0d6efd; padding: 16px; border-radius: 12px; margin-bottom: 12px;">
+                    <div style="font-size: 12px; color: #6c757d; margin-bottom: 4px; font-weight: 500;">Hôm Nay</div>
+                    <div style="font-size: 28px; font-weight: 700; color: #052461;">2,485</div>
+                    <div style="font-size: 11px; color: #198754; margin-top: 4px;"><i class="fas fa-arrow-up"></i> 18% từ hôm qua</div>
+                </div>
+                <div style="background: linear-gradient(135deg, rgba(255, 193, 7, 0.08) 0%, rgba(255, 193, 7, 0.04) 100%); border-left: 4px solid #ffc107; padding: 16px; border-radius: 12px; margin-bottom: 12px;">
+                    <div style="font-size: 12px; color: #6c757d; margin-bottom: 4px; font-weight: 500;">Tuần Này</div>
+                    <div style="font-size: 28px; font-weight: 700; color: #052461;">12,485</div>
+                    <div style="font-size: 11px; color: #198754; margin-top: 4px;"><i class="fas fa-arrow-up"></i> 24% từ tuần trước</div>
+                </div>
+                <div style="background: linear-gradient(135deg, rgba(13, 202, 240, 0.08) 0%, rgba(13, 202, 240, 0.04) 100%); border-left: 4px solid #0dcaf0; padding: 16px; border-radius: 12px;">
+                    <div style="font-size: 12px; color: #6c757d; margin-bottom: 4px; font-weight: 500;">Tháng Này</div>
+                    <div style="font-size: 28px; font-weight: 700; color: #052461;">45.2M</div>
+                    <div style="font-size: 11px; color: #198754; margin-top: 4px;"><i class="fas fa-arrow-up"></i> 15% từ tháng trước</div>
+                </div>
+            </section>
+
+            <!-- Top Activities -->
+            <section class="sidebar-section">
+                <h6 class="mb-3" style="font-weight: 700; color: #052461;">Hoạt Động Hàng Đầu</h6>
+                <div class="customer-list">
+                    <div class="customer-item">
+                        <div style="width: 40px; height: 40px; border-radius: 50%; background: #0d6efd; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; flex-shrink: 0;">
+                            <i class="fas fa-plus" style="font-size: 16px;"></i>
+                        </div>
+                        <div>
+                            <strong>Tạo Mới</strong>
+                            <small class="text-muted d-block">185 lần</small>
+                        </div>
+                    </div>
+                    <div class="customer-item">
+                        <div style="width: 40px; height: 40px; border-radius: 50%; background: #ffc107; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; flex-shrink: 0;">
+                            <i class="fas fa-edit" style="font-size: 16px;"></i>
+                        </div>
+                        <div>
+                            <strong>Cập Nhật</strong>
+                            <small class="text-muted d-block">156 lần</small>
+                        </div>
+                    </div>
+                    <div class="customer-item">
+                        <div style="width: 40px; height: 40px; border-radius: 50%; background: #198754; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; flex-shrink: 0;">
+                            <i class="fas fa-shopping-cart" style="font-size: 16px;"></i>
+                        </div>
+                        <div>
+                            <strong>Đặt Mới</strong>
+                            <small class="text-muted d-block">856 lần</small>
+                        </div>
+                    </div>
+                    <div class="customer-item">
+                        <div style="width: 40px; height: 40px; border-radius: 50%; background: #17a2b8; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; flex-shrink: 0;">
+                            <i class="fas fa-money-bill" style="font-size: 16px;"></i>
+                        </div>
+                        <div>
+                            <strong>Thanh Toán</strong>
+                            <small class="text-muted d-block">245 lần</small>
+                        </div>
+                    </div>
+                    <div class="customer-item">
+                        <div style="width: 40px; height: 40px; border-radius: 50%; background: #dc3545; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; flex-shrink: 0;">
+                            <i class="fas fa-times" style="font-size: 16px;"></i>
+                        </div>
+                        <div>
+                            <strong>Hủy/Hoàn Lại</strong>
+                            <small class="text-muted d-block">24 lần</small>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- System Performance -->
+            <section class="sidebar-section">
+                <h6 class="mb-3" style="font-weight: 700; color: #052461;">Hiệu Suất Hệ Thống</h6>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                            <span style="font-size: 12px; color: #6c757d;">Tính Khả Dụng</span>
+                            <span style="font-weight: 600; color: #198754;">99.8%</span>
+                        </div>
+                        <div style="height: 6px; background: #e9ecef; border-radius: 3px; overflow: hidden;">
+                            <div style="width: 99.8%; height: 100%; background: #198754;"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                            <span style="font-size: 12px; color: #6c757d;">Tốc Độ</span>
+                            <span style="font-weight: 600; color: #0d6efd;">185ms</span>
+                        </div>
+                        <div style="height: 6px; background: #e9ecef; border-radius: 3px; overflow: hidden;">
+                            <div style="width: 65%; height: 100%; background: #0d6efd;"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                            <span style="font-size: 12px; color: #6c757d;">CPU</span>
+                            <span style="font-weight: 600; color: #ffc107;">45%</span>
+                        </div>
+                        <div style="height: 6px; background: #e9ecef; border-radius: 3px; overflow: hidden;">
+                            <div style="width: 45%; height: 100%; background: #ffc107;"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recent Users -->
+            <section class="sidebar-section">
+                <h6 class="mb-3" style="font-weight: 700; color: #052461;">Người Dùng Mới (Hôm Nay)</h6>
+                <div class="customer-list">
+                    <div class="customer-item">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop" alt="User" class="avatar-placeholder" style="border-radius: 50%;">
+                        <div>
+                            <strong>Nguyễn Văn A</strong>
+                            <small class="text-muted d-block">2 giờ trước</small>
+                        </div>
+                    </div>
+                    <div class="customer-item">
+                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop" alt="User" class="avatar-placeholder" style="border-radius: 50%;">
+                        <div>
+                            <strong>Trần Thị B</strong>
+                            <small class="text-muted d-block">4 giờ trước</small>
+                        </div>
+                    </div>
+                    <div class="customer-item">
+                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop" alt="User" class="avatar-placeholder" style="border-radius: 50%;">
+                        <div>
+                            <strong>Lê Văn C</strong>
+                            <small class="text-muted d-block">6 giờ trước</small>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </aside>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Initialize admin name from localStorage
+        function initializeAdminProfile() {
+            const adminName = localStorage.getItem('adminName') || 'Admin';
+            const nameParts = adminName.trim().split(' ');
+            const initials = nameParts.map(part => part.charAt(0).toUpperCase()).join('');
+            const nameElement = document.querySelector('.user-info strong');
+            if (nameElement) nameElement.textContent = adminName;
+            const avatarElement = document.querySelector('.avatar-circle');
+            if (avatarElement) avatarElement.textContent = initials.substring(0, 2);
+        }
+        window.addEventListener('DOMContentLoaded', initializeAdminProfile);
+
+        // Toggle notification dropdown
+        function toggleNotifications() {
+            const dropdown = document.getElementById('notificationDropdown');
+            const settingsDropdown = document.getElementById('settingsDropdown');
+            const bell = document.getElementById('notificationBell');
+            
+            if (settingsDropdown.style.display === 'block') {
+                settingsDropdown.style.display = 'none';
+            }
+            
+            if (dropdown.style.display === 'block') {
+                dropdown.style.display = 'none';
+                bell.classList.remove('bell-ringing');
+            } else {
+                dropdown.style.display = 'block';
+                ringBell();
+            }
+        }
+        
+        // Ring bell animation
+        function ringBell() {
+            const bell = document.getElementById('notificationBell');
+            bell.classList.add('bell-ringing');
+            setTimeout(() => {
+                bell.classList.remove('bell-ringing');
+            }, 3000);
+        }
+        
+        // Mark single notification as read
+        function markAsRead(element) {
+            element.classList.remove('unread');
+            updateNotificationCount();
+        }
+        
+        // Mark all notifications as read
+        function markAllRead() {
+            const items = document.querySelectorAll('.notification-item.unread');
+            items.forEach(item => {
+                item.classList.remove('unread');
+            });
+            updateNotificationCount();
+        }
+        
+        // Update notification badge count
+        function updateNotificationCount() {
+            const unreadItems = document.querySelectorAll('.notification-item.unread');
+            const badge = document.getElementById('notificationBadge');
+            badge.textContent = unreadItems.length;
+            if (unreadItems.length === 0) {
+                badge.style.display = 'none';
+            }
+        }
+        
+        // Toggle settings dropdown
+        function toggleSettings() {
+            const settingsDropdown = document.getElementById('settingsDropdown');
+            const dropdown = document.getElementById('notificationDropdown');
+            
+            if (dropdown.style.display === 'block') {
+                dropdown.style.display = 'none';
+            }
+            
+            if (settingsDropdown.style.display === 'block') {
+                settingsDropdown.style.display = 'none';
+            } else {
+                settingsDropdown.style.display = 'block';
+            }
+        }
+        
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(event) {
+            const notificationDropdown = document.getElementById('notificationDropdown');
+            const settingsDropdown = document.getElementById('settingsDropdown');
+            const notificationBell = document.getElementById('notificationBell');
+            const settingsBtn = document.getElementById('settingsBtn');
+            
+            if (!notificationBell.contains(event.target) && !notificationDropdown.contains(event.target)) {
+                notificationDropdown.style.display = 'none';
+            }
+            if (!settingsBtn.contains(event.target) && !settingsDropdown.contains(event.target)) {
+                settingsDropdown.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

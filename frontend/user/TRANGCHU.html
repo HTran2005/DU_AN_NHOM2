@@ -1,0 +1,3651 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tripto - Đặt Chuyến Du Lịch Việt Nam | Chuyến Du Lịch Giá Tốt</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/TRANGCHU_UI.css">
+    <style>
+        /* ============================================
+           REDESIGN STYLES - CONVERSION FOCUSED
+           ============================================ */
+        
+:root {
+            --primary: #0057FF;
+            --primary-dark: #003dd4;
+            --primary-50: #E8EFFC;
+            --neutral-900: #121316;
+            --neutral-700: #283037;
+            --neutral-600: #383E48;
+            --neutral-500: #454546;
+            --neutral-400: #737374;
+            --neutral-200: #D7D7D7;
+            --neutral-100: #F3F3F4;
+            --white: #FFFFFF;
+            --success: #049153;
+            --warning: #F59E0B;
+            --danger: #DC2626;
+            --gold: #FFD700;
+            --orange: #FF6B35;
+        }
+
+        /* Urgent Banner - Đặt gói du lịch trong nước */
+        .urgent-banner {
+            width: 100%;
+            align-self: flex-start;
+            background: linear-gradient(90deg, #0057FF, #0046cc, #0057FF);
+            background-size: 200% 100%;
+            color: white;
+            padding: 12px 0;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            animation: gradientShift 3s ease infinite;
+        }
+
+        @keyframes gradientShift { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+        .urgent-banner-content { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 12px; 
+            font-weight: 700; 
+            font-size: 16px; 
+            font-family: 'Roboto', sans-serif;
+            text-transform: uppercase; 
+            letter-spacing: 1px;
+        }
+        .urgent-banner i { font-size: 20px; animation: pulse 1.5s infinite; color: #FFCC00; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: var(--neutral-900);
+            background-color: var(--white);
+            line-height: 1.5;
+        }
+        /* Video styling */
+
+.hero-video{
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+}
+
+        /* ============================================
+           HEADER - COMPACT & TRUSTWORTHY
+           ============================================ */
+        .header {
+            background-color: var(--white);
+            border-bottom: 1px solid var(--neutral-200);
+            height: 80px;
+            display: flex;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 32px;
+            gap: 24px;
+        }
+
+        .logo img {
+            height: 40px;
+            display: block;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .country {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--neutral-700);
+        }
+
+        .country img {
+            height: 20px;
+        }
+
+        .icon img {
+            height: 40px;
+            cursor: pointer;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 87, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--primary) !important;
+            padding: 10px 20px !important;
+            border: 1px solid var(--primary);
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--primary-50);
+        }
+
+        /* Login Button Style */
+        .btn-login {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-login:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 87, 255, 0.3);
+        }
+
+        .btn-login svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* ============================================
+           LOGIN MODAL STYLES
+           ============================================ */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-container {
+            background: var(--white);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 420px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.9) translateY(20px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-overlay.active .modal-container {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 24px 0;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--neutral-900);
+            margin: 0;
+        }
+
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: var(--neutral-100);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: var(--neutral-200);
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .form-group-modal {
+            margin-bottom: 20px;
+        }
+
+        .form-group-modal label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--neutral-700);
+            margin-bottom: 8px;
+        }
+
+        .form-input-modal {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--neutral-200);
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: 'Roboto', sans-serif;
+            transition: all 0.2s ease;
+        }
+
+        .form-input-modal:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-50);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-submit:hover {
+            background: var(--primary-dark);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 24px 0;
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background: var(--neutral-200);
+        }
+
+        .divider-text {
+            padding: 0 16px;
+            font-size: 14px;
+            color: var(--neutral-400);
+        }
+
+        .social-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn-social-modal {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--neutral-200);
+            border-radius: 10px;
+            background: white;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-social-modal:hover {
+            border-color: var(--primary);
+            background: var(--primary-50);
+        }
+
+        .btn-social-modal i {
+            font-size: 20px;
+        }
+
+        .modal-footer {
+            text-align: center;
+            padding: 0 24px 24px;
+            font-size: 15px;
+            color: var(--neutral-600);
+        }
+
+        .modal-footer a {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .modal-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        .forgot-password a {
+            font-size: 14px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+
+        /* ============================================
+   HERO SECTION - TOUR BOOKING FOCUSED
+============================================ */
+
+.hero{
+    position: relative;
+    height: 600px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    margin-bottom: 0;
+}
+
+/* Slider container */
+
+.hero-slider{
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.hero-track{
+    position: relative;
+    height: 100%;
+}
+
+/* Overlay giúp chữ nổi bật */
+
+.hero-overlay{
+    position: absolute;
+    inset: 0;
+
+    background: linear-gradient(
+        180deg,
+        rgba(3,18,48,0.35) 0%,
+        rgba(0,0,0,0.55) 100%
+    );
+
+    z-index: 1;
+}
+
+/* Content */
+
+.hero-content{
+    position: relative;
+    z-index: 2;
+
+    max-width: 1100px;
+    padding: 0 32px;
+
+    text-align: center;
+    margin-top: auto;
+}
+
+/* Subtitle */
+
+.hero-subtitle{
+    font-size: 20px;
+    font-weight: 500;
+    font-family: 'Roboto', sans-serif;
+
+    color: rgba(255,255,255,0.95);
+
+    margin-bottom: 12px;
+
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    line-height: 1.3;
+}
+
+/* Title */
+
+.hero-title{
+    font-size: 56px;
+    font-weight: 900;
+    font-family: 'Roboto', sans-serif;
+
+    line-height: 1.2;
+    margin-bottom: 16px;
+
+    color: white;
+
+    text-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+
+.hero-title span{
+    color:#FFCC00;
+}
+
+/* Description */
+
+.hero-description{
+    font-size: 18px;
+    font-weight: 400;
+    font-family: 'Roboto', sans-serif;
+
+    line-height: 1.5;
+
+    color: rgba(255,255,255,0.95);
+
+    margin-bottom: 32px;
+
+    max-width: 720px;
+
+    margin-left: auto;
+    margin-right: auto;
+}
+
+        /* ============================================
+           TOUR SEARCH FORM - TOUR BOOKING STYLE
+           ============================================ */
+        .search-form-wrapper {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 32px;
+            margin-bottom: auto;
+        }
+
+
+        .search-form {
+            background-color: var(--white);
+            border-radius: 16px;
+            padding: 24px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 140px;
+            gap: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            align-items: end;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-label {
+            font-size: 12px;
+            font-weight: 600;
+            font-family: 'Roboto', sans-serif;
+            color: var(--neutral-600);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-input,
+        .form-select {
+            width: 100%;
+            padding: 14px 16px;
+            padding-right: 40px;
+            background-color: var(--neutral-100);
+            border: 2px solid var(--neutral-200);
+            border-radius: 8px;
+            font-family: 'Roboto', sans-serif;
+            font-size: 15px;
+            color: var(--neutral-900);
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background-color: var(--white);
+            box-shadow: 0 0 0 3px var(--primary-50);
+        }
+
+        .form-select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            color: var(--neutral-900);
+        }
+
+        .form-input::placeholder {
+            color: var(--neutral-400);
+        }
+
+        .search-form .form-input[type="date"] {
+            padding-right: 8px;
+        }
+
+        .search-form .form-input[type="date"]::-webkit-calendar-picker-indicator {
+            margin-right: -4px;
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 14px;
+            color: var(--neutral-400);
+            width: 18px;
+            height: 18px;
+            pointer-events: none;
+        }
+
+        .btn-search {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 15px;
+            text-transform: uppercase;
+            text-align: center;
+            cursor: pointer;
+            height: 52px;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .btn-search:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 87, 255, 0.4);
+        }
+
+        .btn-search svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* ============================================
+           TRUST BADGES SECTION
+           ============================================ */
+        .trust-section {
+            padding: 40px 0;
+            background-color: var(--white);
+            border-bottom: 1px solid var(--neutral-100);
+        }
+
+        .trust-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        .trust-badges {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            flex-wrap: wrap;
+        }
+
+        .trust-badge {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .trust-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary) 0%, #003dd4 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .trust-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        .trust-text h4 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--neutral-900);
+            margin: 0 0 2px 0;
+        }
+
+        .trust-text p {
+            font-size: 13px;
+            color: var(--neutral-400);
+            margin: 0;
+        }
+
+        /* ============================================
+           EXPERIENCES SECTION
+           ============================================ */
+        .experiences-section {
+            padding: 80px 0;
+            background-color: var(--white);
+        }
+
+        .experiences-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .experiences-header h2 {
+            font-size: 42px;
+            font-weight: 900;
+            color: var(--neutral-900);
+            margin: 0 0 16px 0;
+            line-height: 1.3;
+        }
+
+        .experiences-header h2 span {
+            color: var(--primary);
+        }
+
+        .experiences-header p {
+            font-size: 16px;
+            color: var(--neutral-500);
+            margin: 0 0 24px 0;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .experiences-header-bottom {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 48px;
+            width: 100%;
+        }
+
+        .btn-explore {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 24px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .btn-explore:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 87, 255, 0.2);
+        }
+
+        .experiences-filters {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .filter-tag {
+            padding: 10px 20px;
+            border: 2px solid var(--neutral-200);
+            background: white;
+            color: var(--neutral-700);
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-tag:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 87, 255, 0.1);
+        }
+
+        .filter-tag.active {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 87, 255, 0.3);
+        }
+
+        .destinations-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 20px;
+        }
+
+        .destination-card {
+            position: relative;
+            height: 240px;
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .destination-card:hover {
+            transform: translateY(-8px) scale(1);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .destination-image {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            transition: transform 0.3s ease;
+        }
+
+        .destination-card:hover .destination-image {
+            transform: scale(1.1);
+        }
+
+        .destination-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.6) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 20px;
+            color: white;
+            z-index: 2;
+        }
+
+        .destination-overlay h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0 0 4px 0;
+        }
+
+        .destination-overlay p {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.9);
+            margin: 0;
+        }
+
+        /* ============================================
+           FEATURED TOURS SECTION
+           ============================================ */
+        .featured-section {
+            padding: 80px 0;
+            background-color: #f8f9fa;
+        }
+
+        .section-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--neutral-900);
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .section-title span {
+            color: var(--primary);
+        }
+
+        .view-all-link {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .view-all-link:hover {
+            gap: 10px;
+        }
+
+        .tours-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+
+        .tour-card {
+            background: var(--white);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .tour-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.15);
+            border-color: var(--primary);
+        }
+
+        .tour-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .tour-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: var(--success);
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        .tour-badge.featured {
+            background: var(--primary);
+        }
+
+        .tour-wishlist {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 50%;
+            border: none;
+            font-size: 18px;
+            color: #c2410c;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .tour-wishlist:hover {
+            transform: scale(1.1);
+            background: white;
+        }
+
+        .tour-info {
+            padding: 20px;
+        }
+
+        .tour-rating {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .rating-star {
+            color: #FFD700;
+            font-size: 14px;
+        }
+
+        .rating-score {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--neutral-900);
+        }
+
+        .rating-count {
+            font-size: 13px;
+            color: var(--neutral-400);
+        }
+
+        .tour-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--neutral-900);
+            margin: 0 0 8px 0;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            overflow: hidden;
+        }
+
+        .tour-location {
+            font-size: 13px;
+            color: var(--neutral-500);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .tour-location svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .tour-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 12px;
+            border-top: 1px solid var(--neutral-100);
+        }
+
+        .tour-price {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .price-from {
+            font-size: 12px;
+            color: var(--neutral-400);
+        }
+
+        .price-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .price-value span {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--neutral-500);
+        }
+
+        .tour-duration {
+            font-size: 13px;
+            color: var(--neutral-500);
+            background: var(--neutral-100);
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        /* ============================================
+           TOURS BY REGION SECTION
+           ============================================ */
+        .region-section {
+            padding: 80px 0;
+            background-color: var(--white);
+        }
+
+        .region-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 40px;
+        }
+
+        .region-tab {
+            padding: 12px 32px;
+            border: 2px solid var(--neutral-200);
+            border-radius: 30px;
+            background: var(--white);
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--neutral-700);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .region-tab:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .region-tab.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .region-content {
+            display: none;
+        }
+
+        .region-content.active {
+            display: block;
+        }
+
+        .region-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .region-card {
+            border-radius: 16px;
+            overflow: hidden;
+            height: 380px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .region-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .region-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.2) 60%, transparent 100%);
+        }
+
+        .region-content-card {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 24px;
+            color: white;
+        }
+
+        .region-content-card h3 {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+        }
+
+        .region-content-card p {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            margin: 0 0 12px 0;
+        }
+
+        .region-tour-count {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .region-tour-count strong {
+            color: #FFD700;
+        }
+
+        /* ============================================
+           BEST VALUE COMBOS SECTION
+           ============================================ */
+        .combos-section {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e8effc 100%);
+        }
+
+        .combos-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .combo-card {
+            background: var(--white);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .combo-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.15);
+            border-color: var(--primary);
+        }
+
+        .combo-image {
+            height: 180px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .combo-discount {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: #c2410c;
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: 8px;
+        }
+
+        .combo-info {
+            padding: 20px;
+        }
+
+        .combo-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--neutral-900);
+            margin: 0 0 8px 0;
+            line-height: 1.3;
+        }
+
+        .combo-duration {
+            font-size: 13px;
+            color: var(--neutral-500);
+            margin-bottom: 12px;
+        }
+
+        .combo-includes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .include-tag {
+            font-size: 12px;
+            color: var(--neutral-600);
+            background: var(--neutral-100);
+            padding: 4px 10px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .include-tag svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        .combo-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 12px;
+            border-top: 1px solid var(--neutral-100);
+        }
+
+        .combo-price {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .combo-original {
+            font-size: 14px;
+            color: var(--neutral-400);
+            text-decoration: line-through;
+        }
+
+        .combo-sale {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .combo-sale span {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .btn-book-now {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-book-now:hover {
+            background: var(--primary-dark);
+        }
+
+        /* ============================================
+           CUSTOMER REVIEWS SECTION - VIETNAMESE FOCUSED
+           ============================================ */
+        .reviews-section {
+            padding: 80px 0;
+            background-color: var(--white);
+        }
+
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .review-card {
+            background: var(--white);
+            border: 1px solid var(--neutral-200);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .review-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary);
+        }
+
+        .review-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .review-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary-50);
+        }
+
+        .review-author {
+            flex: 1;
+        }
+
+        .review-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--neutral-900);
+            margin: 0 0 2px 0;
+        }
+
+        .review-location {
+            font-size: 13px;
+            color: var(--neutral-500);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .review-location svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .review-rating {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-bottom: 12px;
+        }
+
+        .review-stars {
+            color: #FFD700;
+            font-size: 14px;
+        }
+
+        .review-score {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--neutral-900);
+        }
+
+        .review-text {
+            font-size: 14px;
+            color: var(--neutral-700);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .review-meta {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .review-tag {
+            font-size: 11px;
+            color: var(--primary);
+            background: var(--primary-50);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        /* ============================================
+           FOOTER - SIMPLIFIED
+           ============================================ */
+        .footer {
+            background: var(--neutral-900);
+            color: #d1d5db;
+            padding: 60px 0 30px;
+        }
+
+        .footer-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 48px;
+            margin-bottom: 48px;
+        }
+
+        .footer-brand {
+            max-width: 360px;
+        }
+
+        .footer-logo {
+            display: block;
+            margin-bottom: 16px;
+        }
+
+        .footer-logo img {
+            height: 44px;
+        }
+
+        .footer-description {
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+            color: #9ca3af;
+        }
+
+        .footer-hotline {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .hotline-label {
+            font-size: 13px;
+            color: #9ca3af;
+            margin-bottom: 4px;
+        }
+
+        .hotline-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hotline-number svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--primary);
+        }
+
+        .footer-column h4 {
+            font-size: 16px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .footer-column ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-column li {
+            margin-bottom: 12px;
+        }
+
+        .footer-column a {
+            color: #9ca3af;
+            font-size: 14px;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-column a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 12px;
+        }
+
+        .social-icon {
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+
+        .social-icon:hover {
+            background: var(--primary);
+        }
+
+        /* ============================================
+           NAVIGATION MENU STYLES
+           ============================================ */
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .nav-menu a {
+            padding: 10px 20px;
+            color: var(--neutral-700);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .nav-menu a:hover {
+            color: var(--primary);
+            background-color: var(--primary-50);
+        }
+
+        .nav-menu a.active {
+            color: var(--primary);
+        }
+
+        .nav-menu a.active::after {
+            content: '';
+            position: absolute;
+            bottom: 6px;
+            left: 20px;
+            right: 20px;
+            height: 3px;
+            background-color: var(--primary);
+            border-radius: 2px;
+        }
+
+        /* ============================================
+           RESPONSIVE STYLES
+           ============================================ */
+        @media (max-width: 1200px) {
+            .tours-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .destinations-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .region-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .combos-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .search-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero-title {
+                font-size: 36px;
+            }
+            
+            .trust-badges {
+                gap: 24px;
+            }
+            
+            .experiences-header h2 {
+                font-size: 28px;
+            }
+            
+            .experiences-header-bottom {
+                flex-direction: column;
+                gap: 16px;
+            }
+            
+            .btn-explore {
+                width: 100%;
+            }
+            
+            .experiences-filters {
+                flex-direction: row;
+                gap: 8px;
+                width: 100%;
+            }
+            
+            .filter-tag {
+                flex: 1;
+                text-align: center;
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+            
+            .destinations-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .destinations-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+            
+            .tours-grid,
+            .region-grid,
+            .combos-grid,
+            .reviews-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+
+    </style>
+</head>
+
+<body>
+    <!-- Header/Navigation -->
+
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <img src="../image/Logo.png" alt="triptO Logo">
+            </div>
+            <nav class="nav-menu">
+                <a href="TRANGCHU.html" class="active">Trang Chủ</a>
+                <a href="UUDAI.html">Ưu Đãi</a>
+                <a href="TATCA_TOUR.html">Chuyến du lịch</a>
+                <a href="TATCA_COMBO.html">Gói du lịch</a>
+                <a href="BLOG.html">Tin Tức</a>
+            </nav>
+            <div class="nav-right">
+                <div class="country">
+                    <img src="../image/ngonngu.png" alt="Vietnam Flag">
+                    <span>VIETNAM</span>
+                </div>
+                <div class="icon">
+                    <a href="hotro.html" title="Hỗ trợ">
+                        <img src="../image/hotro.png" alt="Support">
+                    </a>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-login" id="loginBtn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        Đăng Nhập
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SECTION - TOUR BOOKING FOCUSED -->
+    <section class="hero">
+        <!-- Urgent Banner -->
+        <div class="urgent-banner">
+            <div class="urgent-banner-content">
+                <i class="fas fa-bolt"></i>
+                ĐẶT GÓI DU LỊCH TRONG NƯỚC - HÀNH TRÌNH ĐẲNG CẤP, TRẢI NGHIỆM 5 SAO VỚI MỨC GIÁ TỐT NHẤT
+                <i class="fas fa-lightbulb"></i>
+            </div>
+        </div>
+
+
+        <div class="hero-slider">
+            <video class="hero-video" autoplay muted loop playsinline>
+                <source src="../image/video/Video Project 5.mp4" type="video/mp4">
+            </video>
+        </div>
+        </div>
+        <div class="hero-overlay"></div>
+
+        <div class="hero-content">
+            <p class="hero-subtitle">Vietnam Tour Specialists</p>
+            <h1 class="hero-title">Đặt <span>Gói Du Lịch Việt Nam</span><br>Dễ Dàng & Giá Tốt</h1>
+            <p class="hero-description">Hơn 500+ tour du lịch khắp Việt Nam. Khám phá Hạ Long, Hội An, Sapa, Đà Lạt... Hướng dẫn viên địa phương. Đảm bảo giá tốt nhất.</p>
+        </div>
+
+        <!-- Tour Search Form - Đặt gói du lịch trong nước -->
+        <div class="search-form-wrapper">
+            <form class="search-form" action="timkiem_chitiet.html" method="get">
+                <div class="form-group">
+                    <label class="form-label">ĐIỂM ĐẾN</label>
+                    <div class="form-input-wrapper">
+                        <input type="text" class="form-input" name="destination" list="destinationOptions" placeholder="Chọn địa điểm">
+                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+                            <circle cx="12" cy="10" r="3"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">LOẠI TOUR</label>
+                    <div class="form-input-wrapper">
+                        <select class="form-select" name="tourType">
+                            <option value="">Chọn loại tour</option>
+                            <option value="bien-dao">Biển & Đảo</option>
+                            <option value="gia-dinh">Gia đình</option>
+                            <option value="nghi-duong">Nghỉ dưỡng</option>
+                            <option value="mao-hiem">Mạo hiểm</option>
+                            <option value="van-hoa">Văn hóa & Lịch sử</option>
+                        </select>
+                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">NGÀY KHỞI HÀNH</label>
+                    <div class="form-input-wrapper">
+                        <input id="homeDepartDate" type="date" class="form-input" name="departDate" placeholder="Chọn ngày">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-search">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="M21 21l-4.35-4.35"/>
+                    </svg>
+                    TÌM KIẾM
+                </button>
+            </form>
+            <datalist id="destinationOptions">
+                <!-- Locations sẽ được load từ database -->
+            </datalist>
+        </div>
+    </section>
+
+    <!-- TRUST BADGES SECTION -->
+    <section class="trust-section">
+        <div class="trust-container">
+            <div class="trust-badges">
+                <div class="trust-badge">
+                    <div class="trust-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                    </div>
+                    <div class="trust-text">
+                        <h4>Best Price Guarantee</h4>
+                        <p>Hoàn tiền chênh lệch nếu tìm được giá thấp hơn</p>
+                    </div>
+                </div>
+
+                <div class="trust-badge">
+                    <div class="trust-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+                            <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+                        </svg>
+                    </div>
+                    <div class="trust-text">
+                        <h4>Hướng Dẫn Viên Địa Phương</h4>
+                        <p>Chuyên gia am hiểu văn hóa & cảnh đẹp Việt Nam</p>
+                    </div>
+                </div>
+
+                <div class="trust-badge">
+                    <div class="trust-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/>
+                        </svg>
+                    </div>
+                    <div class="trust-text">
+                        <h4>Hỗ Trợ 24/7</h4>
+                        <p>Luôn sẵn sàng hỗ trợ bạn mọi lúc, mọi nơi</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- UNFORGETTABLE EXPERIENCES SECTION -->
+<section class="experiences-section">
+    <div class="section-container"> 
+        <div class="experiences-header">
+            <h2>Những Trải Nghiệm <span>Không Thể Bỏ Lỡ</span><br>Khi Du Lịch Việt Nam</h2>
+            <p>Từ những danh lam thắng cảnh hùng vĩ đến ẩm thực đường phố đặc sắc - khám phá ngay những điều làm nên sức hút của Việt Nam!</p>
+            
+            <div class="experiences-header-bottom">
+                <div class="experiences-filters">
+                    <button class="filter-tag active" data-filter="explore">Khám Phá</button>
+                    <button class="filter-tag" data-filter="beach">Bãi Biển</button>
+                    <button class="filter-tag" data-filter="museum">Bảo Tàng</button>
+                    <button class="filter-tag" data-filter="food">Ẩm Thực</button>
+                    <button class="filter-tag" data-filter="nightlife">Cuộc Sống Về Đêm</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="destinations-grid">
+            <!-- EXPLORE -->
+            <div class="destination-card" data-category="explore"><div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1576673442511-7e39b6545c87?w=800&q=80');"></div><div class="destination-overlay"><h3>Sapa</h3><p>85+ Chuyến du lịch</p></div></div>
+            <div class="destination-card" data-category="explore"><div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?w=800&q=80');"></div><div class="destination-overlay"><h3>Ninh Bình</h3><p>65+ Chuyến du lịch</p></div></div>
+            <div class="destination-card" data-category="explore"><div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1527137341507-602b4d2c1b2c?w=800&q=80');"></div><div class="destination-overlay"><h3>Phong Nha</h3><p>40+ Chuyến du lịch</p></div></div>
+            <div class="destination-card" data-category="explore"><div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1509744666574-e8462ab524a0?w=800&q=80');"></div><div class="destination-overlay"><h3>Pú Luông</h3><p>35+ Chuyến du lịch</p></div></div>
+            <div class="destination-card" data-category="explore"><div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1529480780361-4db4eb267204?w=800&q=80');"></div><div class="destination-overlay"><h3>Mai Châu</h3><p>30+ Chuyến du lịch</p></div></div>
+            <div class="destination-card" data-category="explore"><div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80');"></div><div class="destination-overlay"><h3>Tam Cốc</h3><p>55+ Chuyến du lịch</p></div></div>
+
+            <!-- BEACH -->
+            <div class="destination-card" data-category="beach"><div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80');"></div><div class="destination-overlay"><h3>Bãi biển Mỹ Khê</h3><p>90+ Chuyến du lịch</p></div></div>
+            <div class="destination-card" data-category="beach"><div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=800&q=80');"></div><div class="destination-overlay"><h3>Phú Quốc – Bãi Sao</h3><p>75+ Chuyến du lịch</p></div></div>
+            <div class="destination-card" data-category="beach"><div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1519058082700-08a0b56da9b4?w=800&q=80');"></div><div class="destination-overlay"><h3>Nha Trang</h3><p>80+ Chuyến du lịch</p></div></div>
+            <div class="destination-card" data-category="beach"><div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1559599238-308793637427?w=800&q=80');"></div><div class="destination-overlay"><h3>Côn Đảo</h3><p>50+ Chuyến du lịch</p></div></div>
+            <div class="destination-card" data-category="beach"><div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1534067783941-51c9c23ecefd?w=800&q=80');"></div><div class="destination-overlay"><h3>Mũi Né</h3><p>65+ Chuyến du lịch</p></div></div>
+            <div class="destination-card" data-category="beach"><div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=800&q=80');"></div><div class="destination-overlay"><h3>Bãi biển Cửa Lò</h3><p>65+ Chuyến du lịch</p></div></div>
+
+
+            <!-- MUSEUM -->
+            <div class="destination-card" data-category="museum"><div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800&q=80');"></div><div class="destination-overlay"><h3>Bảo tàng Chứng tích Chiến tranh</h3><p>50+ Chuyến du lịch</p></div></div>
+            <div class="destination-card" data-category="museum"><div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80');"></div><div class="destination-overlay"><h3>Bảo tàng Dân tộc học</h3><p>45+ Chuyến du lịch</p></div></div>
+            <div class="destination-card" data-category="museum"><div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1572947650440-e8a97ef053b2?w=800&q=80');"></div><div class="destination-overlay"><h3>Bảo tàng Mỹ thuật</h3><p>40+ Chuyến du lịch</p></div></div>
+            <div class="destination-card" data-category="museum"><div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1548717902-57984faa8f3d?w=800&q=80');"></div><div class="destination-overlay"><h3>Bảo tàng Cổ vật Cung đình Huế</h3><p>35+ Chuyến du lịch</p></div></div>
+            <div class="destination-card" data-category="museum"><div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1568723459933-93e3b05eb1eb?w=800&q=80');"></div><div class="destination-overlay"><h3>Bảo tàng Chăm – Đà Nẵng</h3><p>30+ Chuyến du lịch</p></div></div>
+            <div class="destination-card" data-category="museum"><div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1533114816937-6fe4f1a4e364?w=800&q=80');"></div><div class="destination-overlay"><h3>Bảo tàng Hồ Chí Minh</h3><p>55+ Chuyến du lịch</p></div></div>
+
+            <!-- FOOD -->
+            <div class="destination-card" data-category="food"><div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1552566626-52f8b828add9?w=800&q=80');"></div><div class="destination-overlay"><h3>Ẩm thực Hội An</h3><p>70+ Chuyến du lịch</p></div></div>
+            <div class="destination-card" data-category="food"><div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=80');"></div><div class="destination-overlay"><h3>Ẩm thực Huế</h3><p>65+ Chuyến du lịch</p></div></div>
+            <div class="destination-card" data-category="food"><div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&q=80');"></div><div class="destination-overlay"><h3>Ẩm thực Hà Nội</h3><p>80+ Chuyến du lịch</p></div></div>
+            <div class="destination-card" data-category="food"><div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=800&q=80');"></div><div class="destination-overlay"><h3>Ẩm thực Sài Gòn</h3><p>90+ Chuyến du lịch</p></div></div>
+            <div class="destination-card" data-category="food"><div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=80');"></div><div class="destination-overlay"><h3>Ẩm thực Đà Nẵng</h3><p>55+ Chuyến du lịch</p></div></div>
+            <div class="destination-card" data-category="food"><div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80');"></div><div class="destination-overlay"><h3>Ẩm thực Cần Thơ</h3><p>45+ Tours</p></div></div>
+
+            <!-- NIGHTLIFE -->
+            <div class="destination-card" data-category="nightlife"><div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=800&q=80');"></div><div class="destination-overlay"><h3>Phố Tây Bùi Viện</h3><p>60+ Tours</p></div></div>
+            <div class="destination-card" data-category="nightlife"><div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1516245834210-c4c142787335?w=800&q=80');"></div><div class="destination-overlay"><h3>Phố Tạ Hiện – Hà Nội</h3><p>55+ Tours</p></div></div>
+            <div class="destination-card" data-category="nightlife"><div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1551782450-a2132b4ba21d?w=800&q=80');"></div><div class="destination-overlay"><h3>Phố cổ Hội An về đêm</h3><p>70+ Tours</p></div></div>
+            <div class="destination-card" data-category="nightlife"><div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80');"></div><div class="destination-overlay"><h3>Đà Nẵng – Cầu Rồng về đêm</h3><p>65+ Tours</p></div></div>
+            <div class="destination-card" data-category="nightlife"><div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1533240332313-0db49b459ad6?w=800&q=80');"></div><div class="destination-overlay"><h3>Nha Trang về đêm</h3><p>50+ Tours</p></div></div>
+            <div class="destination-card" data-category="nightlife"><div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1570710887834-4530514128b8?w=800&q=80');"></div><div class="destination-overlay"><h3>Phú Quốc về đêm</h3><p>45+ Tours</p></div></div>
+        </div>
+    </div>
+</section>
+
+
+    <!-- FEATURED TOURS THIS MONTH -->
+    <section class="featured-section">
+        <div class="section-container">
+            <div class="section-header">
+                <h2 class="section-title">Chuyến Du Lịch <span>Nổi Bật</span> Tháng Này</h2>
+                <a href="TATCA_TOUR.html" class="view-all-link">
+                    Xem tất cả chuyến du lịch
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </div>
+
+            <div class="tours-grid" id="toursContainer">
+                <!-- Tours sẽ được load từ database bằng JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- TOURS BY REGION -->
+    <section class="region-section">
+        <div class="section-container">
+            <div class="section-header">
+                <h2 class="section-title">Chuyến Du Lịch Theo <span>Vùng Miền</span></h2>
+            </div>
+
+            <div class="region-tabs">
+                <button class="region-tab active" data-region="north">Miền Bắc</button>
+                <button class="region-tab" data-region="central">Miền Trung</button>
+                <button class="region-tab" data-region="south">Miền Nam</button>
+                <button class="region-tab" data-region="highland">Tây Nguyên</button>
+            </div>
+
+            <!-- Miền Bắc -->
+            <div class="region-content active" id="north">
+                <div class="region-grid">
+                    <!-- Dữ liệu sẽ được load từ database bằng JavaScript -->
+                </div>
+            </div>
+
+            <!-- Miền Trung -->
+            <div class="region-content" id="central">
+                <div class="region-grid">
+                    <!-- Dữ liệu sẽ được load từ database bằng JavaScript -->
+                </div>
+            </div>
+
+            <!-- Miền Nam -->
+            <div class="region-content" id="south">
+                <div class="region-grid">
+                    <!-- Dữ liệu sẽ được load từ database bằng JavaScript -->
+                </div>
+            </div>
+
+            <!-- Tây Nguyên -->
+            <div class="region-content" id="highland">
+                <div class="region-grid">
+                    <!-- Dữ liệu sẽ được load từ database bằng JavaScript -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BEST VALUE COMBOS -->
+    <section class="combos-section">
+        <div class="section-container">
+            <div class="section-header">
+                <h2 class="section-title">Gói Du Lịch <span>Giá Tốt</span> - Khởi Hành Hàng Tuần</h2>
+                <a href="TATCA_COMBO.html" class="view-all-link">
+                    Xem tất cả gói du lịch
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </div>
+
+            <div class="combos-grid" id="combosContainer">
+                <!-- Combos được load từ database bằng JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- CUSTOMER REVIEWS - VIETNAMESE FOCUSED -->
+    <section class="reviews-section">
+        <div class="section-container">
+            <div class="section-header">
+                <h2 class="section-title">Khách Hàng <span>Nói Gì</span></h2>
+                <a href="TATCA_DANHGIA.html" class="view-all-link">
+                    Xem tất cả đánh giá
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </div>
+
+            <div class="reviews-grid" id="reviewsContainer">
+                <!-- Reviews được load từ database bằng JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <img src="../image/Logo.png" alt="triptO Logo" class="footer-logo">
+                    <p class="footer-description">Tripto là nền tảng đặt tour du lịch hàng đầu tại Việt Nam. Chúng tôi cung cấp hơn 500+ tour với giá tốt nhất.</p>
+                </div>
+                <div class="footer-column">
+                    <h4>Công Ty</h4>
+                    <ul>
+                        <li><a href="#">Về Chúng Tôi</a></li>
+                        <li><a href="#">Đội Ngũ</a></li>
+                        <li><a href="#">Liên Hệ</a></li>
+                        <li><a href="#">Tuyển Dụng</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Hỗ Trợ</h4>
+                    <ul>
+                        <li><a href="#">Câu Hỏi Thường Gặp</a></li>
+                        <li><a href="#">Chính Sách Bảo Mật</a></li>
+                        <li><a href="#">Điều Khoản Sử Dụng</a></li>
+                        <li><a href="#">Liên Hệ Hỗ Trợ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Liên Hệ</h4>
+                    <ul>
+                        <li><a href="#">📞 +84 (0) 1234 567 890</a></li>
+                        <li><a href="#">✉️ support@tripto.vn</a></li>
+                        <li><a href="#">📍 Hà Nội, Việt Nam</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <span>&copy; 2026 Tripto. Bản quyền được bảo lưu.</span>
+                <div class="social-links">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 class="modal-title">Đăng Nhập</h2>
+                <button class="modal-close" id="closeLoginModal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="loginForm">
+                    <div class="form-group-modal">
+                        <label for="loginEmail">Email / Số điện thoại</label>
+                        <input type="text" id="loginEmail" class="form-input-modal" placeholder="Nhập email hoặc số điện thoại" required>
+                    </div>
+                    <div class="form-group-modal">
+                        <label for="loginPassword">Mật khẩu</label>
+                        <input type="password" id="loginPassword" class="form-input-modal" placeholder="Nhập mật khẩu" required>
+                    </div>
+                    <div class="forgot-password">
+                        <a href="#" id="forgotPasswordLink">Quên mật khẩu?</a>
+                    </div>
+                    <button type="submit" class="btn-submit">Đăng Nhập</button>
+                </form>
+                
+                <div class="divider">
+                    <div class="divider-line"></div>
+                    <span class="divider-text">hoặc</span>
+                    <div class="divider-line"></div>
+                </div>
+                
+                <div class="social-buttons">
+                    <button class="btn-social-modal">
+                        <i style="color: #DB4437;">G</i>
+                        Tiếp tục với Google
+                    </button>
+                    <button class="btn-social-modal">
+                        <i style="color: #1877F2;">f</i>
+                        Tiếp tục với Facebook
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                Chưa có tài khoản? <a href="#" id="switchToSignup">Đăng ký ngay</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div class="modal-overlay" id="signupModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 class="modal-title">Đăng Ký</h2>
+                <button class="modal-close" id="closeSignupModal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="signupForm">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div class="form-group-modal">
+                            <label for="signupFirstName">Họ</label>
+                            <input type="text" id="signupFirstName" name="ten_dau" class="form-input-modal" placeholder="Nhập họ" required>
+                        </div>
+                        <div class="form-group-modal">
+                            <label for="signupLastName">Tên</label>
+                            <input type="text" id="signupLastName" name="ten_cuoi" class="form-input-modal" placeholder="Nhập tên" required>
+                        </div>
+                    </div>
+                    <div class="form-group-modal">
+                        <label for="signupEmail">Email</label>
+                        <input type="email" id="signupEmail" name="email" class="form-input-modal" placeholder="Nhập email" required>
+                    </div>
+                    <div class="form-group-modal">
+                        <label for="signupPhone">Số điện thoại</label>
+                        <input type="tel" id="signupPhone" name="so_dien_thoai" class="form-input-modal" placeholder="Nhập số điện thoại" required>
+                    </div>
+                    <div class="form-group-modal">
+                        <label for="signupPassword">Mật khẩu (tối thiểu 6 ký tự)</label>
+                        <input type="password" id="signupPassword" name="password" class="form-input-modal" placeholder="Nhập mật khẩu" minlength="6" required>
+                    </div>
+                    <button type="submit" class="btn-submit">Đăng Ký</button>
+                </form>
+                
+                <div class="divider">
+                    <div class="divider-line"></div>
+                    <span class="divider-text">hoặc</span>
+                    <div class="divider-line"></div>
+                </div>
+                
+                <div class="social-buttons">
+                    <button class="btn-social-modal">
+                        <i style="color: #DB4437;">G</i>
+                        Tiếp tục với Google
+                    </button>
+                    <button class="btn-social-modal">
+                        <i style="color: #1877F2;">f</i>
+                        Tiếp tục với Facebook
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                Đã có tài khoản? <a href="#" id="switchToLogin">Đăng nhập ngay</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div class="modal-overlay" id="forgotModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 class="modal-title">Quên Mật Khẩu</h2>
+                <button class="modal-close" id="closeForgotModal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 20px; color: var(--neutral-600);">Nhập email của bạn để khôi phục mật khẩu</p>
+                <form id="forgotForm">
+                    <div class="form-group-modal">
+                        <label for="forgotEmail">Email</label>
+                        <input type="email" id="forgotEmail" class="form-input-modal" placeholder="Nhập email đã đăng ký" required>
+                    </div>
+                    <button type="submit" class="btn-submit">Gửi Link Khôi Phục</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a href="#" id="backToLogin"> Quay lại đăng nhập</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Region Tabs Script -->
+    <script>
+        // Map data-region to database vung_mien values
+        const regionMap = {
+            'north': 'Miền Bắc',
+            'central': 'Miền Trung',
+            'south': 'Miền Nam',
+            'highland': 'Tây Nguyên'
+        };
+
+        // Helper function to format image path
+        function getImagePath(imagePath) {
+            // Default fallback image
+            const defaultImage = '../image/avt_pr.jpg';
+            
+            // If empty or null
+            if (!imagePath || imagePath.trim() === '') {
+                console.warn('Empty image path, using default');
+                return defaultImage;
+            }
+            
+            imagePath = imagePath.trim();
+            
+            // If already has full path, return as-is
+            if (imagePath.startsWith('../') || imagePath.startsWith('http')) return imagePath;
+            
+            // Use absolute path from root /img/
+            const finalPath = '/img/' + imagePath;
+            console.log(`Image path: ${finalPath}`);
+            return finalPath;
+        }
+
+        // Helper function to shuffle array and get random items
+        function getRandomItems(array, count) {
+            if (array.length <= count) return array;
+            
+            // Fisher-Yates shuffle
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled.slice(0, count);
+        }
+
+        // Function to fetch and render locations for selected region
+        async function loadLocationsByRegion(regionCode) {
+            try {
+                const regionName = regionMap[regionCode];
+                const apiUrl = `../user.php?endpoint=get_locations&vung_mien=${encodeURIComponent(regionName)}`;
+                console.log('Fetching from:', apiUrl);
+                
+                const response = await fetch(apiUrl);
+                
+                if (!response.ok) {
+                    console.error('API response not ok:', response.status);
+                    return;
+                }
+                
+                const data = await response.json();
+                console.log('API Response:', data);
+                
+                if (!data.success || !data.data) {
+                    console.error('Invalid API response:', data);
+                    return;
+                }
+                
+                // Get random 3 locations from all locations
+                const locations = getRandomItems(data.data, 3);
+                const container = document.querySelector(`#${regionCode} .region-grid`);
+                
+                if (!container) {
+                    console.error(`Container not found for region: ${regionCode}`);
+                    return;
+                }
+                
+                container.innerHTML = '';
+                
+                locations.forEach(location => {
+                    const imagePath = getImagePath(location.url_anh);
+                    const tourCount = location.tour_count || 0;
+                    console.log(`Location: ${location.ten}, Image: ${location.url_anh}, Processed: ${imagePath}, Tours: ${tourCount}`);
+                    
+                    // Create card element using DOM API
+                    const cardDiv = document.createElement('div');
+                    cardDiv.className = 'region-card';
+                    cardDiv.style.backgroundImage = `url('${imagePath}')`;
+                    cardDiv.dataset.locationId = location.id;
+                    cardDiv.dataset.locationName = location.ten;
+                    cardDiv.dataset.region = location.vung_mien;
+                    
+                    cardDiv.innerHTML = `
+                        <div class="region-overlay"></div>
+                        <div class="region-content-card">
+                            <h3>${location.ten}</h3>
+                            <p>${location.mo_ta || location.quoc_gia}</p>
+                            <span class="region-tour-count">${tourCount}+ <strong>Chuyến du lịch</strong></span>
+                        </div>
+                    `;
+                    
+                    // Attach click handler
+                    cardDiv.style.cursor = 'pointer';
+                    cardDiv.addEventListener('click', function(e) {
+                        console.log('Card clicked!', this.dataset.locationName);
+                        
+                        const locationName = this.dataset.locationName;
+                        const region = this.dataset.region;
+                        
+                        console.log(`Navigating to: Name=${locationName}, Region=${region}`);
+                        
+                        // Navigate to timkiem_chitiet with region parameter
+                        const params = new URLSearchParams();
+                        params.set('region', region);
+                        params.set('destination', locationName);
+                        
+                        const finalUrl = `timkiem_chitiet.html?${params.toString()}`;
+                        console.log('Final URL:', finalUrl);
+                        window.location.href = finalUrl;
+                    });
+                    
+                    // Append to container
+                    container.appendChild(cardDiv);
+                    console.log(`Card created and appended for: ${location.ten}`);
+                });
+                
+            } catch (error) {
+                console.error('Error loading locations:', error);
+            }
+        }
+
+        // Initialize region tabs
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load initial region (north) with random locations
+            loadLocationsByRegion('north');
+            
+            // Add click handlers for all tabs
+            document.querySelectorAll('.region-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const regionCode = this.dataset.region;
+                    
+                    // Remove active from all tabs
+                    document.querySelectorAll('.region-tab').forEach(t => t.classList.remove('active'));
+                    // Add active to clicked tab
+                    this.classList.add('active');
+                    
+                    // Hide all content
+                    document.querySelectorAll('.region-content').forEach(content => content.classList.remove('active'));
+                    // Show selected content
+                    document.getElementById(regionCode).classList.add('active');
+                    
+                    // Load random locations for selected region
+                    loadLocationsByRegion(regionCode);
+                });
+            });
+        });
+    </script>
+
+    <!-- Hero Slider Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const track = document.querySelector('.hero-track');
+            if (!track) return;
+
+            const slides = Array.from(document.querySelectorAll('.hero-slide'));
+            if (!slides.length) return;
+
+            slides.forEach((s) => s.classList.remove('active', 'prev'));
+            slides[0].classList.add('active');
+            let index = 0;
+            const DURATION = 1200;
+            const INTERVAL = 4500;
+
+            function goTo(nextIndex) {
+                if (nextIndex === index) return;
+                const current = slides[index];
+                const next = slides[nextIndex];
+
+                current.classList.remove('active');
+                current.classList.add('prev');
+                next.classList.add('active');
+
+                const cleanup = (e) => {
+                    if (e.propertyName === 'opacity') {
+                        current.classList.remove('prev');
+                        current.removeEventListener('transitionend', cleanup);
+                    }
+                };
+                current.addEventListener('transitionend', cleanup);
+
+                index = nextIndex;
+            }
+
+            let timer = setInterval(() => {
+                goTo((index + 1) % slides.length);
+            }, INTERVAL);
+
+            const slider = document.querySelector('.hero-slider');
+            if (slider) {
+                slider.addEventListener('mouseenter', () => clearInterval(timer));
+                slider.addEventListener('mouseleave', () => {
+                    clearInterval(timer);
+                    timer = setInterval(() => goTo((index + 1) % slides.length), INTERVAL);
+                });
+            }
+        });
+    </script>
+
+    <!-- Modal JavaScript -->
+    <script>
+        // Get modal elements
+        const loginModal = document.getElementById('loginModal');
+        const signupModal = document.getElementById('signupModal');
+        const forgotModal = document.getElementById('forgotModal');
+        const loginBtn = document.getElementById('loginBtn');
+        const closeLoginModal = document.getElementById('closeLoginModal');
+        const closeSignupModal = document.getElementById('closeSignupModal');
+        const closeForgotModal = document.getElementById('closeForgotModal');
+        const switchToSignup = document.getElementById('switchToSignup');
+        const switchToLogin = document.getElementById('switchToLogin');
+        const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+        const backToLogin = document.getElementById('backToLogin');
+
+        // Open login modal khi bấm nút Đăng nhập
+        loginBtn.addEventListener('click', () => {
+            loginModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+
+        // Close login modal
+        closeLoginModal.addEventListener('click', () => {
+            loginModal.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+
+        // Close signup modal
+        closeSignupModal.addEventListener('click', () => {
+            signupModal.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+
+        // Close forgot modal
+        closeForgotModal.addEventListener('click', () => {
+            forgotModal.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+
+        // Switch to signup
+        switchToSignup.addEventListener('click', (e) => {
+            e.preventDefault();
+            loginModal.classList.remove('active');
+            setTimeout(() => {
+                signupModal.classList.add('active');
+            }, 300);
+        });
+
+        // Switch to login
+        switchToLogin.addEventListener('click', (e) => {
+            e.preventDefault();
+            signupModal.classList.remove('active');
+            setTimeout(() => {
+                loginModal.classList.add('active');
+            }, 300);
+        });
+
+        // Open forgot password
+        forgotPasswordLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            loginModal.classList.remove('active');
+            setTimeout(() => {
+                forgotModal.classList.add('active');
+            }, 300);
+        });
+
+        // Back to login from forgot
+        backToLogin.addEventListener('click', (e) => {
+            e.preventDefault();
+            forgotModal.classList.remove('active');
+            setTimeout(() => {
+                loginModal.classList.add('active');
+            }, 300);
+        });
+
+        // Close modal when clicking outside
+        [loginModal, signupModal, forgotModal].forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+
+        // Prefill homepage search with valid defaults and keep URL params if available.
+        (function initHomeSearch() {
+            const homeSearchForm = document.querySelector('.search-form[action="timkiem_chitiet.html"]');
+            if (!homeSearchForm) {
+                return;
+            }
+
+            const destinationField = homeSearchForm.querySelector('input[name="destination"]');
+            const tourTypeField = homeSearchForm.querySelector('select[name="tourType"]');
+            const departDateField = homeSearchForm.querySelector('input[name="departDate"]');
+            const params = new URLSearchParams(window.location.search);
+
+            const today = new Date();
+            const todayText = today.toISOString().split('T')[0];
+
+            if (departDateField) {
+                departDateField.min = todayText;
+            }
+
+            // Chỉ điền giá trị nếu có trong URL params
+            if (destinationField && params.has('destination')) {
+                destinationField.value = params.get('destination');
+            }
+
+            if (tourTypeField && params.has('tourType')) {
+                tourTypeField.value = params.get('tourType');
+            }
+
+            if (departDateField && params.has('departDate')) {
+                departDateField.value = params.get('departDate');
+            }
+        })();
+
+        // Handle login form submission
+        // Xử lý Form đăng nhập - Gửi dữ liệu JSON đến login.php
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            
+            // Kiểm tra validation
+            if (!email || !password) {
+                alert('❌ Vui lòng nhập email và mật khẩu');
+                return;
+            }
+            
+            try {
+                // Tạo object dữ liệu để gửi
+                const loginData = {
+                    action: 'login',
+                    email: email,
+                    password: password
+                };
+                
+                console.log('📤 Gửi yêu cầu đăng nhập đến user.php');
+                
+                // Xác định đường dẫn API - sử dụng user.php unified API
+                const apiUrl = '../user.php?endpoint=auth&action=login';
+                console.log('📍 API URL:', apiUrl);
+                
+                // Gửi POST request với JSON content-type
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(loginData)
+                });
+                
+                // Lấy response text trước
+                const responseText = await response.text();
+                console.log('📥 Response từ server:', responseText);
+                
+                // Parse JSON an toàn
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (parseError) {
+                    console.error('❌ Lỗi parse JSON:', parseError);
+                    alert('❌ Lỗi từ server:\n' + responseText.substring(0, 300));
+                    return;
+                }
+                
+                if (result.success) {
+                    console.log('✅ Đăng nhập thành công! User:', result.user);
+                    alert('✅ ' + result.message + '\n\nChào mừng ' + result.user.ho_ten + '!');
+                    document.getElementById('loginForm').reset();
+                    loginModal.classList.remove('active');
+                    document.body.style.overflow = '';
+                    
+                    // Lưu user info vào sessionStorage
+                    sessionStorage.setItem('triptoUser', JSON.stringify(result.user));
+                    sessionStorage.setItem('triptoLoggedIn', 'true');
+                    
+                    // Cập nhật nút Đăng nhập thành tên người dùng
+                    const loginBtn = document.getElementById('loginBtn');
+                    if (loginBtn) {
+                        loginBtn.innerHTML = '👤 ' + result.user.ho_ten;
+                        loginBtn.style.cursor = 'pointer';
+                        
+                        // Thêm click handler để chuyển hướng đến myReviews.html
+                        loginBtn.onclick = function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            window.location.href = 'myReviews.html';
+                        };
+                    }
+                    
+                } else {
+                    console.error('❌ Đăng nhập thất bại:', result.message);
+                    alert('❌ ' + result.message);
+                }
+            } catch (error) {
+                console.error('❌ Fetch error:', error);
+                alert('❌ Lỗi kết nối:\n\n' + error.message);
+            }
+        });
+
+        // Handle signup form submission
+        // Xử lý Form đăng ký - Gửi dữ liệu JSON đến register.php
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const tenDau = document.getElementById('signupFirstName').value.trim();
+            const tenCuoi = document.getElementById('signupLastName').value.trim();
+            const email = document.getElementById('signupEmail').value.trim();
+            const phone = document.getElementById('signupPhone').value.trim();
+            const password = document.getElementById('signupPassword').value;
+            
+            // Kiểm tra validation
+            if (!tenDau || !tenCuoi || !email || !phone || !password) {
+                alert('❌ Vui lòng điền đầy đủ tất cả trường');
+                return;
+            }
+            
+            if (password.length < 6) {
+                alert('❌ Mật khẩu phải có tối thiểu 6 ký tự');
+                return;
+            }
+            
+            try {
+                // Tạo object dữ liệu để gửi
+                const registerData = {
+                    ten_dau: tenDau,
+                    ten_cuoi: tenCuoi,
+                    email: email,
+                    so_dien_thoai: phone,
+                    password: password
+                };
+                
+                console.log('📤 Gửi yêu cầu đăng ký đến user.php');
+                
+                // Xác định đường dẫn API - sử dụng user.php unified API
+                const apiUrl = '../user.php?endpoint=auth&action=register';
+                console.log('📍 API URL:', apiUrl);
+                
+                // Gửi POST request với JSON content-type
+                registerData.action = 'register';
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(registerData)
+                });
+                
+                // Lấy response text trước
+                const responseText = await response.text();
+                console.log('📥 Response từ server:', responseText);
+                
+                // Parse JSON an toàn
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (parseError) {
+                    console.error('❌ Lỗi parse JSON:', parseError);
+                    alert('❌ Lỗi từ server:\n' + responseText.substring(0, 300));
+                    return;
+                }
+                
+                if (result.success) {
+                    console.log('✅ Đăng ký thành công! User ID:', result.user_id);
+                    alert('✅ ' + result.message + '\n\nVui lòng đăng nhập để tiếp tục!');
+                    document.getElementById('signupForm').reset();
+                    signupModal.classList.remove('active');
+                    document.body.style.overflow = '';
+                    // Chuyển sang form đăng nhập
+                    setTimeout(() => {
+                        loginModal.classList.add('active');
+                        document.body.style.overflow = 'hidden';
+                    }, 300);
+                } else {
+                    console.error('❌ Đăng ký thất bại:', result.message);
+                    alert('❌ Lỗi đăng ký:\n\n' + result.message);
+                }
+            } catch (error) {
+                console.error('❌ Fetch error:', error);
+                alert('❌ Lỗi kết nối:\n\n' + error.message);
+            }
+        });
+
+        // Handle forgot password form submission
+        document.getElementById('forgotForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('forgotEmail').value;
+            
+            if(email) {
+                alert('Link khôi phục mật khẩu đã được gửi đến email của bạn!');
+                forgotModal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+
+// Destination Card Filtering
+        const filterTags = document.querySelectorAll('.filter-tag');
+        const destinationCards = document.querySelectorAll('.destination-card');
+        const destinationsGrid = document.querySelector('.destinations-grid');
+        const MAX_CARDS = 6;
+        let isAnimating = false;
+
+        // Function to filter and limit cards with smooth animation
+        function filterCards(filterValue) {
+            if (isAnimating) return;
+            isAnimating = true;
+
+            // Step 1: Slide out to the right and fade out
+            if (destinationsGrid) {
+                destinationsGrid.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+                destinationsGrid.style.transform = 'translateX(50px)';
+                destinationsGrid.style.opacity = '0';
+            }
+
+            // Step 2: Update cards after slide out
+            setTimeout(() => {
+                let visibleCount = 0;
+                
+                destinationCards.forEach(card => {
+                    const categories = card.getAttribute('data-category').split(' ');
+                    
+                    if (filterValue === 'all' || categories.includes(filterValue)) {
+                        if (visibleCount < MAX_CARDS) {
+                            card.style.display = 'block';
+                            // Force reflow
+                            void card.offsetWidth;
+                            card.style.opacity = '1';
+                            card.style.transform = 'translateX(0)';
+                            visibleCount++;
+                        } else {
+                            card.style.opacity = '0';
+                            card.style.transform = 'translateX(30px)';
+                            setTimeout(() => {
+                                card.style.display = 'none';
+                            }, 200);
+                        }
+                    } else {
+                        card.style.opacity = '0';
+                        card.style.transform = 'translateX(30px)';
+                        setTimeout(() => {
+                            card.style.display = 'none';
+                        }, 200);
+                    }
+                });
+
+                // Step 3: Slide back in from left
+                setTimeout(() => {
+                    if (destinationsGrid) {
+                        destinationsGrid.style.transform = 'translateX(-30px)';
+                        destinationsGrid.style.opacity = '1';
+                        
+                        // Reset to original position with animation
+                        requestAnimationFrame(() => {
+                            if (destinationsGrid) {
+                                destinationsGrid.style.transition = 'transform 0.4s ease, opacity 0.4s ease';
+                                destinationsGrid.style.transform = 'translateX(0)';
+                            }
+                        });
+                    }
+                    
+                    // Allow next animation after this completes
+                    setTimeout(() => {
+                        isAnimating = false;
+                    }, 400);
+                }, 100);
+            }, 300);
+        }
+
+// Initialize with explore filter (show only 6 cards on page load)
+        document.addEventListener('DOMContentLoaded', function() {
+            // First hide all cards immediately
+            destinationCards.forEach(card => {
+                card.style.display = 'none';
+            });
+            // Then show only 6 explore cards
+            filterCards('explore');
+        });
+
+        // Filter tag click event
+        filterTags.forEach(tag => {
+            tag.addEventListener('click', () => {
+                // Update active state
+                filterTags.forEach(t => t.classList.remove('active'));
+                tag.classList.add('active');
+
+                const filterValue = tag.getAttribute('data-filter');
+                filterCards(filterValue);
+            });
+        });
+    </script>
+
+    <script>
+        (function () {
+            const AUTH_KEY = 'triptoLoggedIn';
+
+            function isLoggedIn() {
+                return sessionStorage.getItem(AUTH_KEY) === 'true';
+            }
+
+            function setLoggedIn() {
+                sessionStorage.setItem(AUTH_KEY, 'true');
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                const loginBtn = document.getElementById('loginBtn');
+                const loginModal = document.getElementById('loginModal');
+                const loginForm = document.getElementById('loginForm') || document.querySelector('#loginModal form');
+                const supportLink = document.querySelector('a[href="hotro.html"][title="Hỗ trợ"]');
+
+                if (loginForm) {
+                    loginForm.addEventListener('submit', function (e) {
+                        const emailInput = loginForm.querySelector('input[type="email"], input[type="text"]');
+                        const passwordInput = loginForm.querySelector('input[type="password"]');
+                        const emailValue = emailInput ? emailInput.value.trim() : '';
+                        const passwordValue = passwordInput ? passwordInput.value.trim() : '';
+
+                        if (!emailValue || !passwordValue) {
+                            e.preventDefault();
+                            alert('Vui lòng nhập đầy đủ thông tin đăng nhập.');
+                            return;
+                        }
+
+                        setLoggedIn();
+                    });
+                }
+
+                if (supportLink) {
+                    supportLink.addEventListener('click', function (e) {
+                        if (!isLoggedIn()) {
+                            e.preventDefault();
+                            alert('Vui lòng đăng nhập trước khi vào Hỗ trợ.');
+                            if (loginBtn) {
+                                loginBtn.click();
+                            }
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+
+    <!-- Load Tours from Database -->
+    <script>
+        /**
+         * Hàm để load tour từ API user.php (chỉ hiển thị 4 tour)
+         */
+        async function loadFeaturedTours() {
+            try {
+                const response = await fetch('../user.php?endpoint=get_tours&limit=4&offset=0');
+                const result = await response.json();
+
+                if (!result.success) {
+                    console.error('Lỗi load tour:', result.message);
+                    return;
+                }
+
+                const tours = result.data;
+                const container = document.getElementById('toursContainer');
+
+                // Clear container
+                container.innerHTML = '';
+
+                // Render tour cards từ dữ liệu API
+                tours.forEach(tour => {
+                    const badgeClass = tour.badge_type === 'featured' ? 'featured' : 'default';
+                    const tourHTML = `
+                        <a href="chitiettour.html?id=${tour.id}" style="text-decoration: none; color: inherit;">
+                            <div class="tour-card">
+                                <div class="tour-image" style="background-image: url('${tour.url_anh_chinh}');">
+                                    <span class="tour-badge ${badgeClass}">${tour.badge}</span>
+                                    <button class="tour-wishlist" data-tour-id="${tour.id}" onclick="event.preventDefault(); event.stopPropagation(); handleFavoriteClick(event);">♡</button>
+                                </div>
+                                <div class="tour-info">
+                                    <div class="tour-rating">
+                                        <span class="rating-star">★★★★★</span>
+                                        <span class="rating-score">${tour.danh_gia.toFixed(1)}</span>
+                                        <span class="rating-count">(${tour.so_danh_gia} đánh giá)</span>
+                                    </div>
+                                    <h3 class="tour-title">${tour.ten}</h3>
+                                    <p class="tour-location">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+                                            <circle cx="12" cy="10" r="3"/>
+                                        </svg>
+                                        ${tour.location}
+                                    </p>
+                                    <div class="tour-meta">
+                                        <div class="tour-price">
+                                            <span class="price-from">Từ</span>
+                                            <span class="price-value">${tour.gia_formatted}<span>đ</span></span>
+                                        </div>
+                                        <span class="tour-duration">${tour.duration}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    `;
+                    container.insertAdjacentHTML('beforeend', tourHTML);
+                });
+
+                console.log(`✅ Đã load ${tours.length} tour nổi bật từ database`);
+            } catch (error) {
+                console.error('❌ Lỗi load tour:', error);
+            }
+        }
+
+        /**
+         * Hàm để load combo từ API user.php (chỉ hiển thị 3 combo top)
+         */
+        async function loadFeaturedCombos() {
+            try {
+                console.log('📥 Đang load combos từ user.php...');
+                const response = await fetch('../user.php?endpoint=get_combos');
+                const result = await response.json();
+
+                if (!result.success) {
+                    console.error('❌ Lỗi load combo:', result.message);
+                    return;
+                }
+
+                // Chỉ lấy 3 combo đầu tiên
+                const combos = result.data.slice(0, 3);
+                const container = document.getElementById('combosContainer');
+
+                // Clear container
+                container.innerHTML = '';
+
+                // Render combo cards từ dữ liệu API
+                combos.forEach(combo => {
+                    // Tính discount - kiểm tra xem đã là phần trăm hay còn là thập phân
+                    let discountPercent = combo.discount_percent || 0;
+                    if (discountPercent > 0 && discountPercent < 1) {
+                        discountPercent = Math.round(discountPercent * 100);
+                    } else {
+                        discountPercent = Math.round(discountPercent);
+                    }
+                    
+                    // Định dạng giá
+                    const formattedOriginalPrice = new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND',
+                        maximumFractionDigits: 0
+                    }).format(combo.original_price || combo.gia_goc);
+
+                    const formattedSalePrice = new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND',
+                        maximumFractionDigits: 0
+                    }).format(combo.price || combo.gia_ban);
+
+                    // Xử lý amenities - chia chuỗi bằng dấu ;
+                    const amenitiesList = combo.tien_ich 
+                        ? combo.tien_ich.split(';').map(item => item.trim()).slice(0, 4)
+                        : [];
+                    
+                    const amenitiesHTML = amenitiesList
+                        .map(item => `<span class="include-tag">✓ ${item}</span>`)
+                        .join('');
+
+                    // Xử lý ảnh - fallback nếu không có
+                    const comboImage = combo.image || '../image/default.jpg';
+
+                    // Format start date
+                    let startDateText = 'Linh hoạt';
+                    if (combo.start_date) {
+                        const date = new Date(combo.start_date);
+                        if (!isNaN(date.getTime())) {
+                            const day = String(date.getDate()).padStart(2, '0');
+                            const month = String(date.getMonth() + 1).padStart(2, '0');
+                            const year = date.getFullYear();
+                            startDateText = `${day}/${month}/${year}`;
+                        }
+                    }
+
+                    const comboHTML = `
+                        <div class="combo-card" 
+                             data-combo-id="${combo.id}"
+                             data-combo-name="${(combo.name || combo.ten || 'Combo du lịch').replace(/"/g, '&quot;')}"
+                             data-combo-price="${combo.price || combo.gia_ban}"
+                             data-combo-original-price="${combo.original_price || combo.gia_goc}"
+                             style="cursor: pointer;">
+                            <div class="combo-image" style="background-image: url('${comboImage}');">
+                                ${discountPercent > 0 ? `<span class="combo-discount">-${discountPercent}%</span>` : ''}
+                            </div>
+                            <div class="combo-info">
+                                <h3 class="combo-title">${combo.name || combo.ten || 'Combo du lịch'}</h3>
+                                <p class="combo-duration">✈️ Khởi hành: ${startDateText}</p>
+                                <div class="combo-includes">
+                                    ${amenitiesHTML}
+                                </div>
+                                <div class="combo-footer">
+                                    <div class="combo-price">
+                                        <span class="combo-original">${formattedOriginalPrice}</span>
+                                        <span class="combo-sale">${formattedSalePrice}</span>
+                                    </div>
+                                    <button class="btn-book-now" data-combo-id="${combo.id}">Đặt Ngay</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    container.insertAdjacentHTML('beforeend', comboHTML);
+                });
+
+                // Add click handlers sau khi render
+                addComboClickHandlers();
+                
+                console.log(`✅ Đã load ${combos.length} combo nổi bật từ database`);
+            } catch (error) {
+                console.error('❌ Lỗi load combo:', error);
+            }
+        }
+
+        /**
+         * Thêm click handlers cho combo cards
+         */
+        function addComboClickHandlers() {
+            // Handle combo card click - navigate to detail page
+            document.querySelectorAll('.combo-card').forEach(card => {
+                card.addEventListener('click', function(e) {
+                    // Bỏ qua nếu click vào button
+                    if (e.target.classList.contains('btn-book-now')) {
+                        return;
+                    }
+                    
+                    const comboId = this.getAttribute('data-combo-id');
+                    if (comboId) {
+                        console.log('📍 Click vào combo ID:', comboId);
+                        window.location.href = `chitiettour.html?combo=${comboId}`;
+                    }
+                });
+            });
+
+            // Handle "Đặt Ngay" button click - navigate to checkout with combo data
+            document.querySelectorAll('.btn-book-now').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // Check if user is logged in
+                    const isLoggedIn = sessionStorage.getItem('triptoLoggedIn') === 'true';
+                    
+                    if (!isLoggedIn) {
+                        alert('⚠️ Vui lòng đăng nhập để đặt combo!');
+                        // Open login modal
+                        const loginModal = document.getElementById('loginModal');
+                        if (loginModal) {
+                            loginModal.classList.add('active');
+                            document.body.style.overflow = 'hidden';
+                        }
+                        return;
+                    }
+                    
+                    const comboId = this.getAttribute('data-combo-id');
+                    if (comboId) {
+                        console.log('📍 Click Đặt Ngay combo ID:', comboId);
+                        window.location.href = `thanhtoan_chitiet.html?combo=${comboId}`;
+                    }
+                });
+            });
+        }
+
+        // Load tour và combo khi page ready
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFeaturedTours();
+            loadFeaturedCombos();
+            loadReviews();
+        });
+
+        function loadReviews() {
+            console.log('🔍 loadReviews called');
+            // Lấy 3 đánh giá từ API
+            fetch('../user.php?endpoint=get_reviews&limit=3')
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('API Response:', data);
+                    if (data.success && data.data && data.data.length > 0) {
+                        const reviewsContainer = document.getElementById('reviewsContainer');
+                        reviewsContainer.innerHTML = ''; // Clear placeholder
+                        console.log('Found ' + data.data.length + ' reviews');
+                        
+                        // Render mỗi review
+                        data.data.forEach((review, index) => {
+                            console.log('Rendering review ' + (index + 1) + ':', review);
+                            const reviewCard = document.createElement('div');
+                            reviewCard.className = 'review-card';
+                            
+                            // Build tags HTML
+                            let tagsHTML = '';
+                            if (review.tags && Array.isArray(review.tags)) {
+                                review.tags.forEach(tag => {
+                                    tagsHTML += `<span class="review-tag">${tag}</span>`;
+                                });
+                            }
+                            
+                            reviewCard.innerHTML = `
+                                <div class="review-header">
+                                    <img src="${review.anh_dai_dien}" alt="Avatar" class="review-avatar">
+                                    <div class="review-author">
+                                        <h4 class="review-name">${review.ho_ten}</h4>
+                                        <p class="review-location">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+                                                <circle cx="12" cy="10" r="3"/>
+                                            </svg>
+                                            ${review.thanh_pho}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="review-rating">
+                                    <span class="review-stars">${review.stars}</span>
+                                    <span class="review-score">${review.diem_so_format}</span>
+                                </div>
+                                <p class="review-text">"${review.noi_dung || 'Đánh giá tuyệt vời'}"</p>
+                                <div class="review-meta">
+                                    ${tagsHTML}
+                                </div>
+                            `;
+                            
+                            reviewsContainer.appendChild(reviewCard);
+                        });
+                        
+                        console.log('✓ Rendered ' + data.data.length + ' reviews');
+                    } else {
+                        console.warn('No reviews in data or success=false', data);
+                    }
+                })
+                .catch(error => {
+                    console.error('❌ Error loading reviews:', error);
+                });
+        }
+    </script>
+
+    <script src="./js/auth.js"></script>
+    <script src="../js/scroll-reveal.js"></script>
+
+    <!-- Load Locations from Database -->
+    <script>
+        let locationsLoaded = false;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const destinationInput = document.querySelector('input[name="destination"]');
+            
+            // Load locations chỉ khi user click/focus vào input
+            destinationInput.addEventListener('focus', function() {
+                if (!locationsLoaded) {
+                    loadLocations();
+                }
+            });
+            
+            // Hoặc load khi user bắt đầu gõ
+            destinationInput.addEventListener('input', function() {
+                if (!locationsLoaded) {
+                    loadLocations();
+                }
+            });
+        });
+
+        function loadLocations() {
+            // Lấy danh sách địa điểm từ API user.php
+            fetch('../user.php?endpoint=get_locations')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.data) {
+                        const datalistElement = document.getElementById('destinationOptions');
+                        
+                        // Xóa các option cũ
+                        datalistElement.innerHTML = '';
+                        
+                        // Thêm các option mới từ database
+                        data.data.forEach(location => {
+                            const option = document.createElement('option');
+                            option.value = location.ten;
+                            datalistElement.appendChild(option);
+                        });
+                        
+                        locationsLoaded = true;
+                        console.log('Loaded ' + data.data.length + ' locations from database');
+                    } else {
+                        console.error('Failed to load locations:', data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching locations:', error);
+                });
+        }
+
+        /**
+         * Handle heart icon click - toggle favorite for logged-in user
+         */
+        async function handleFavoriteClick(event) {
+            try {
+                const button = event.target.closest('.tour-wishlist');
+                const tourId = button.getAttribute('data-tour-id');
+                
+                // Check if user is logged in
+                const isLoggedIn = sessionStorage.getItem('triptoLoggedIn') === 'true';
+                
+                if (!isLoggedIn) {
+                    alert('Vui lòng đăng nhập để thêm vào yêu thích');
+                    return;
+                }
+                
+                // Get user ID from sessionStorage
+                const userDataStr = sessionStorage.getItem('triptoUser');
+                const userData = userDataStr ? JSON.parse(userDataStr) : null;
+                const userId = userData?.id;
+                
+                if (!userId) {
+                    alert('Lỗi: Không thể lấy thông tin người dùng');
+                    return;
+                }
+                
+                // Check if already favorited
+                const response = await fetch(`../user.php?endpoint=check_favorite&id_tour=${tourId}&id_nguoi_dung=${userId}`);
+                const checkResult = await response.json();
+                
+                if (checkResult.isFavorited) {
+                    // Remove favorite
+                    console.log(`❤️ Remove favorite for tour ${tourId}`);
+                    const deleteResponse = await fetch(`../user.php?endpoint=toggle_favorite&id_tour=${tourId}&id_nguoi_dung=${userId}`, {
+                        method: 'POST'
+                    });
+                    const deleteResult = await deleteResponse.json();
+                    
+                    if (deleteResult.success) {
+                        button.textContent = '♡';
+                        button.style.color = '';
+                        console.log('✓ Removed from favorites');
+                    } else {
+                        alert('Lỗi: ' + deleteResult.message);
+                    }
+                } else {
+                    // Show modal for adding to group
+                    console.log(`🔔 Show modal to add tour ${tourId} to group`);
+                    showHomeAddToGroupModal(userId, tourId, button);
+                }
+            } catch (error) {
+                console.error('Error toggling favorite:', error);
+                alert('Lỗi khi cập nhật yêu thích');
+            }
+        }
+        
+        // Show modal to add tour to group WITHOUT creating favorite first
+        async function showHomeAddToGroupModal(userId, tourId, button) {
+            const modal = document.createElement('div');
+            modal.className = 'favorite-groups-modal';
+            modal.innerHTML = `
+                <div class="modal-wrapper">
+                    <div class="modal-header">
+                        <h3>📁 Lưu vào nhóm yêu thích</h3>
+                        <button class="modal-close">✕</button>
+                    </div>
+                    <div class="modal-content" id="groupsContainer">
+                        <div style="text-align: center; padding: 24px;">
+                            <div class="spinner"></div>
+                            <p>Đang tải...</p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn-create-group" id="createGroupBtn">➕ Tạo nhóm mới</button>
+                        <button class="btn-cancel">Hủy</button>
+                    </div>
+                </div>
+            `;
+            modal.style.cssText = `
+                position: fixed;
+                top: 0; left: 0; right: 0; bottom: 0;
+                background: rgba(0,0,0,0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 2000;
+            `;
+
+            document.body.appendChild(modal);
+
+            const wrapper = modal.querySelector('.modal-wrapper');
+            wrapper.style.cssText = `
+                background: white;
+                border-radius: 12px;
+                width: 90%;
+                max-width: 500px;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+                display: flex;
+                flex-direction: column;
+                max-height: 80vh;
+            `;
+
+            const header = modal.querySelector('.modal-header');
+            header.style.cssText = `
+                padding: 24px;
+                border-bottom: 1px solid #e5e7eb;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            `;
+
+            const content = modal.querySelector('.modal-content');
+            content.style.cssText = `
+                padding: 20px;
+                overflow-y: auto;
+                flex: 1;
+                min-height: 200px;
+            `;
+
+            const footer = modal.querySelector('.modal-footer');
+            footer.style.cssText = `
+                padding: 16px 24px;
+                border-top: 1px solid #e5e7eb;
+                display: flex;
+                gap: 12px;
+                justify-content: flex-end;
+            `;
+
+            const buttons = modal.querySelectorAll('button');
+            buttons.forEach(btn => {
+                btn.style.cssText = `
+                    padding: 10px 20px;
+                    border-radius: 8px;
+                    border: none;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                `;
+            });
+
+            const closeBtn = modal.querySelector('.modal-close');
+            closeBtn.style.cssText = `
+                background: none;
+                border: none;
+                font-size: 24px;
+                cursor: pointer;
+                color: #6b7280;
+            `;
+
+            // Load groups
+            try {
+                // First, initialize tables
+                console.log('🔧 Initializing favorite tables...');
+                const initResponse = await fetch(`../user.php?endpoint=init_favorite_tables`);
+                const initData = await initResponse.json();
+                console.log('📋 Init Result:', initData);
+                
+                // Now load groups
+                const response = await fetch(`../user.php?endpoint=get_favorite_groups&id_nguoi_dung=${userId}`);
+                
+                console.log('🔍 Groups API Response Status:', response.status);
+                
+                if (!response.ok) {
+                    const errorData = await response.text();
+                    console.error('📌 Full Error Response:', errorData);
+                    throw new Error(`HTTP error! status: ${response.status} - ${errorData}`);
+                }
+                
+                const data = await response.json();
+                console.log('📦 Groups Data:', data);
+
+                if (data.success && data.groups.length > 0) {
+                    let html = '<div style="display: grid; gap: 10px;">';
+                    data.groups.forEach(group => {
+                        html += `
+                            <div class="group-option" data-group-id="${group.id}" style="
+                                padding: 16px;
+                                border: 2px solid #e5e7eb;
+                                border-radius: 8px;
+                                cursor: pointer;
+                                transition: all 0.2s ease;
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                            ">
+                                <div>
+                                    <div style="font-weight: 600; color: #1f2937;">${group.ten}</div>
+                                    <div style="font-size: 12px; color: #6b7280;">${group.so_tour} tour/combo</div>
+                                </div>
+                                <input type="radio" name="group" value="${group.id}" style="cursor: pointer; margin: 0; width: 20px; height: 20px;">
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                    content.innerHTML = html;
+
+                    // Add click handler to group options
+                    modal.querySelectorAll('.group-option').forEach(option => {
+                        option.addEventListener('click', () => {
+                            option.querySelector('input[type="radio"]').checked = true;
+                        });
+                        option.addEventListener('mouseenter', () => {
+                            option.style.borderColor = '#0057FF';
+                            option.style.backgroundColor = '#f0f4ff';
+                        });
+                        option.addEventListener('mouseleave', () => {
+                            option.style.borderColor = '#e5e7eb';
+                            option.style.backgroundColor = 'transparent';
+                        });
+                    });
+                } else {
+                    content.innerHTML = '<p style="text-align: center; color: #6b7280;">Bạn chưa có nhóm nào. Hãy tạo nhóm mới!</p>';
+                }
+            } catch (error) {
+                console.error('❌ Error loading groups:', error);
+                content.innerHTML = '<p style="color: #dc2626;">Lỗi tải nhóm: ' + error.message + '<br><small>Kiểm tra Console (F12) để xem chi tiết</small></p>';
+            }
+
+            // Create group button
+            const createGroupBtn = modal.querySelector('#createGroupBtn');
+            createGroupBtn.style.cssText = `
+                background: #0057FF;
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                border: none;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            `;
+            createGroupBtn.addEventListener('click', () => showHomeCreateNewGroupForm(userId, tourId, modal, button));
+
+            const cancelBtn = modal.querySelector('.btn-cancel');
+            cancelBtn.style.cssText = `
+                background: #f3f4f6;
+                color: #6b7280;
+                padding: 10px 20px;
+                border-radius: 8px;
+                border: 1px solid #d1d5db;
+            `;
+
+            const closeModalBtn = modal.querySelector('.modal-close');
+            const removeModal = () => {
+                modal.remove();
+                document.body.style.overflow = '';
+            };
+
+            closeModalBtn.addEventListener('click', removeModal);
+            cancelBtn.addEventListener('click', removeModal);
+
+            // Save button
+            const saveBtn = document.createElement('button');
+            saveBtn.className = 'btn-save-group';
+            saveBtn.textContent = '💾 Lưu';
+            saveBtn.style.cssText = `
+                background: #10b981;
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                border: none;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            `;
+            
+            saveBtn.addEventListener('click', async () => {
+                const selectedGroup = modal.querySelector('input[name="group"]:checked');
+                if (!selectedGroup) {
+                    alert('Vui lòng chọn hoặc tạo nhóm');
+                    return;
+                }
+
+                try {
+                    const response = await fetch('../user.php?endpoint=create_favorite_with_group', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            id_tour: tourId,
+                            id_nguoi_dung: userId,
+                            id_nhom: parseInt(selectedGroup.value)
+                        })
+                    });
+
+                    const result = await response.json();
+                    if (result.success) {
+                        button.textContent = '♥';
+                        button.style.color = '#dc2626';
+                        removeModal();
+                    } else {
+                        alert('❌ ' + result.message);
+                    }
+                } catch (error) {
+                    alert('Lỗi: ' + error.message);
+                }
+            });
+
+            footer.insertBefore(saveBtn, footer.querySelector('.btn-cancel'));
+        }
+        
+        // Create new group while adding to group
+        async function showHomeCreateNewGroupForm(userId, tourId, parentModal, button) {
+            const form = document.createElement('div');
+            form.innerHTML = `
+                <div style="display: grid; gap: 16px;">
+                    <div>
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #1f2937;">Tên nhóm mới</label>
+                        <input type="text" id="newGroupName" placeholder="Ví dụ: Các tour thích nhất" style="
+                            width: 100%;
+                            padding: 12px;
+                            border: 1px solid #d1d5db;
+                            border-radius: 8px;
+                            font-size: 14px;
+                            box-sizing: border-box;
+                        ">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <button id="cancelBtn" style="
+                            padding: 10px;
+                            background: #f3f4f6;
+                            color: #6b7280;
+                            border: 1px solid #d1d5db;
+                            border-radius: 8px;
+                            cursor: pointer;
+                            font-weight: 600;
+                        ">Hủy</button>
+                        <button id="confirmBtn" style="
+                            padding: 10px;
+                            background: #0057FF;
+                            color: white;
+                            border: none;
+                            border-radius: 8px;
+                            cursor: pointer;
+                            font-weight: 600;
+                        ">Tạo & Thêm</button>
+                    </div>
+                </div>
+            `;
+
+            const content = parentModal.querySelector('div:nth-child(2)');
+            const originalContent = content.innerHTML;
+
+            content.innerHTML = '';
+            content.appendChild(form);
+
+            form.querySelector('#cancelBtn').addEventListener('click', () => {
+                content.innerHTML = originalContent;
+            });
+
+            form.querySelector('#confirmBtn').addEventListener('click', async () => {
+                const name = form.querySelector('#newGroupName').value.trim();
+                if (!name) {
+                    alert('Tên nhóm không được để trống');
+                    return;
+                }
+
+                try {
+                    const groupResponse = await fetch('../user.php?endpoint=create_favorite_group', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id_nguoi_dung: userId, ten: name })
+                    });
+
+                    const groupResult = await groupResponse.json();
+                    if (!groupResult.success) {
+                        throw new Error(groupResult.message);
+                    }
+
+                    // Create favorite WITH new group
+                    const favResponse = await fetch(`../user.php?endpoint=create_favorite_with_group`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            id_tour: tourId,
+                            id_nguoi_dung: userId,
+                            id_nhom: groupResult.group_id
+                        })
+                    });
+
+                    const favResult = await favResponse.json();
+                    if (favResult.success) {
+                        parentModal.remove();
+                        button.textContent = '♥';
+                        button.style.color = '#e74c3c';
+                        alert('✓ Tạo nhóm và thêm thành công!');
+                    } else {
+                        throw new Error(favResult.message);
+                    }
+                } catch (error) {
+                    alert('❌ Lỗi: ' + error.message);
+                }
+            });
+        }
+
+        /**
+         * Check and update favorite status on page load
+         */
+        async function updateFavoriteStatus() {
+            try {
+                const isLoggedIn = sessionStorage.getItem('triptoLoggedIn') === 'true';
+                
+                if (!isLoggedIn) {
+                    return;
+                }
+                
+                const userDataStr = sessionStorage.getItem('triptoUser');
+                const userData = userDataStr ? JSON.parse(userDataStr) : null;
+                const userId = userData?.id;
+                
+                if (!userId) {
+                    return;
+                }
+                
+                const wishlistButtons = document.querySelectorAll('.tour-wishlist');
+                console.log(`🔍 Checking favorite status for ${wishlistButtons.length} buttons`);
+                
+                wishlistButtons.forEach(button => {
+                    const tourId = button.getAttribute('data-tour-id');
+                    if (!tourId) return;
+                    
+                    const apiUrl = `../user.php?endpoint=check_favorite&id_tour=${tourId}&id_nguoi_dung=${userId}`;
+                    
+                    fetch(apiUrl)
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success && result.isFavorited) {
+                                button.textContent = '♥'; // Filled heart
+                                button.style.color = '#e74c3c';
+                            }
+                        })
+                        .catch(error => {
+                            console.error('❌ Error checking favorite:', error);
+                        });
+                });
+            } catch (error) {
+                console.error('Error in updateFavoriteStatus:', error);
+            }
+        }
+
+        // Update favorite status when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Original loads
+            loadFeaturedTours();
+            loadFeaturedCombos();
+            loadReviews();
+            
+            // Update favorite status for logged-in users
+            if (sessionStorage.getItem('triptoLoggedIn') === 'true') {
+                // Wait a bit for tours to be rendered
+                setTimeout(updateFavoriteStatus, 500);
+            }
+        });
+
+        // Listen for login event to update favorite status
+        document.addEventListener('userLogin', function() {
+            // Reload favorite status when user logs in
+            console.log('✓ User logged in, updating favorite status');
+            updateFavoriteStatus();
+        });
+    </script>
+</body>
+
+</html>
+    

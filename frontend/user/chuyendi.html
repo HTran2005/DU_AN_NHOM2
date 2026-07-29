@@ -1,0 +1,1295 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chuyến đi - Tripto</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary: #0057FF; --primary-light: #E8EFFC; --primary-dark: #003dd4; --neutral-900: #121316; --neutral-700: #383E48; --neutral-500: #454546; --neutral-400: #737374; --neutral-200: #D7D7D7; --neutral-100: #F3F3F4; --white: #FFFFFF; --danger: #DC2626; --danger-light: #FEE2E2; --background: #f5f6f8; --success: #059669; --warning: #F59E0B; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; color: var(--neutral-900); background-color: var(--background); line-height: 1.5; }
+        .header { background-color: var(--white); border-bottom: 1px solid var(--neutral-200); height: 80px; display: flex; align-items: center; position: fixed; top: 0; left: 0; right: 0; z-index: 200; }
+        .header-container { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 32px; gap: 24px; }
+        .logo img { height: 40px; display: block; }
+        .nav-right { display: flex; align-items: center; gap: 24px; }
+        .country { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--neutral-700); }
+        .nav-menu-top { display: flex; justify-content: center; gap: 8px; flex: 1; }
+        .nav-menu-top a { padding: 10px 20px; color: var(--neutral-700); text-decoration: none; font-weight: 600; font-size: 15px; border-radius: 8px; transition: all 0.2s ease; }
+        .nav-menu-top a:hover { color: var(--primary); background-color: var(--primary-light); }
+        .country img { height: 20px; }
+        .icon img { height: 40px; cursor: pointer; }
+        .btn-login { display: flex; align-items: center; gap: 8px; background-color: var(--primary); color: var(--white); padding: 10px 24px; border-radius: 8px; font-weight: 600; font-size: 14px; border: none; cursor: pointer; }
+        .dashboard { display: flex; min-height: calc(100vh - 80px); padding-top: 80px; }
+        .sidebar { width: 280px; background: var(--white); border-right: 1px solid var(--neutral-200); display: flex; flex-direction: column; position: sticky; top: 80px; height: calc(100vh - 80px); align-self: flex-start; z-index: 100; }
+        .sidebar-header { padding: 24px; text-align: center; border-bottom: 1px solid var(--neutral-100); }
+        .avatar { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary-light); margin-bottom: 12px; }
+        .user-name { font-size: 18px; font-weight: 700; color: var(--neutral-900); margin-bottom: 4px; }
+        .user-role { font-size: 13px; color: var(--neutral-500); }
+        .sidebar-nav { flex: 1; padding: 16px 12px; overflow-y: auto; }
+        .nav-menu { list-style: none; }
+        .nav-item { margin-bottom: 4px; }
+        .nav-link { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px; color: var(--neutral-700); text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.3s ease; }
+        .nav-link:hover { background: var(--neutral-100); color: var(--neutral-900); }
+        .nav-link.active { background: var(--primary-light); color: var(--primary); }
+        .nav-link.active i { color: var(--primary); }
+        .nav-link i { width: 20px; text-align: center; font-size: 16px; color: var(--neutral-500); }
+        .sidebar-footer { padding: 16px 12px; border-top: 1px solid var(--neutral-100); }
+        .logout-link { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px; color: #C2410C; text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.3s ease; cursor: pointer; }
+        .logout-link:hover { background: var(--danger-light); }
+        .logout-link i { width: 20px; text-align: center; font-size: 16px; }
+        .main-content { flex: 1; padding: 32px; min-height: calc(100vh - 80px); }
+        .content-wrapper { max-width: 900px; margin: 0 auto; }
+        .page-header { margin-bottom: 32px; }
+        .page-title { font-size: 32px; font-weight: 700; color: var(--neutral-900); margin-bottom: 8px; }
+        .page-description { font-size: 15px; color: var(--neutral-500); max-width: 600px; line-height: 1.6; }
+
+        /* Tabs */
+        .tabs-container { display: flex; gap: 0; margin-bottom: 24px; border-bottom: 1px solid var(--neutral-200); }
+        .tab-btn { padding: 16px 20px; background: none; border: none; font-size: 15px; font-weight: 600; color: var(--neutral-500); cursor: pointer; position: relative; transition: all 0.3s ease; }
+        .tab-btn:hover { color: var(--neutral-700); }
+        .tab-btn.active { color: var(--primary); }
+        .tab-btn.active::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 3px; background: var(--primary); }
+
+        /* Trip Cards */
+        .trips-list { display: flex; flex-direction: column; gap: 20px; }
+        .trip-card { background: var(--white); border: 1px solid var(--neutral-200); border-radius: 12px; padding: 24px; transition: all 0.3s ease; display: grid; grid-template-columns: 120px 1fr; gap: 20px; }
+        .trip-card:hover { border-color: var(--primary); box-shadow: 0 8px 24px rgba(0,87,255,0.1); }
+        .trip-image { width: 120px; height: 100px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.5); font-size: 32px; flex-shrink: 0; }
+        .trip-info { display: flex; flex-direction: column; }
+        .trip-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+        .trip-title { font-size: 18px; font-weight: 700; color: var(--neutral-900); margin-bottom: 4px; }
+        .trip-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; width: fit-content; }
+        .badge-upcoming { background: #BFDBFE; color: #1e40af; }
+        .badge-ongoing { background: #DCFCE7; color: var(--success); }
+        .badge-completed { background: #F3E8FF; color: #7e22ce; }
+        .trip-meta { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 16px; }
+        .meta-item { font-size: 13px; color: var(--neutral-500); display: flex; align-items: center; gap: 6px; }
+        .meta-item i { color: var(--neutral-400); width: 16px; text-align: center; }
+        .trip-actions { display: flex; gap: 12px; }
+        .btn-primary { padding: 10px 20px; background: var(--primary); color: var(--white); border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-secondary { padding: 10px 20px; background: var(--neutral-100); color: var(--neutral-700); border: 1px solid var(--neutral-200); border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .btn-secondary:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+
+        .empty-state { text-align: center; padding: 60px 32px; }
+        .empty-icon { font-size: 64px; color: var(--neutral-200); margin-bottom: 20px; }
+        .empty-title { font-size: 24px; font-weight: 600; color: var(--neutral-900); margin-bottom: 12px; }
+        .empty-description { font-size: 15px; color: var(--neutral-500); margin-bottom: 32px; }
+
+        /* Footer Styles */
+        .footer { background: var(--neutral-900); color: #d1d5db; padding: 60px 0 30px; margin-top: auto; }
+        .footer-container { max-width: 1440px; margin: 0 auto; padding: 0 32px; }
+        .footer-content { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+        .footer-brand { max-width: 360px; }
+        .footer-logo { display: block; margin-bottom: 16px; }
+        .footer-logo img { height: 44px; }
+        .footer-description { font-size: 15px; line-height: 1.6; margin-bottom: 24px; color: #9ca3af; }
+        .footer-column h4 { font-size: 16px; font-weight: 700; color: white; margin-bottom: 20px; }
+        .footer-column ul { list-style: none; padding: 0; margin: 0; }
+        .footer-column li { margin-bottom: 12px; }
+        .footer-column a { color: #9ca3af; font-size: 14px; text-decoration: none; transition: color 0.2s; }
+        .footer-column a:hover { color: white; }
+        .footer-bottom { border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: #6b7280; }
+        .social-links { display: flex; gap: 12px; }
+        .social-icon { width: 36px; height: 36px; background: rgba(255, 255, 255, 0.1); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: all 0.2s; }
+        .social-icon:hover { background: var(--primary); }
+
+        @media (max-width: 768px) {
+            .trip-card { grid-template-columns: 1fr; }
+            .trip-meta { grid-template-columns: 1fr; }
+            .footer-content { grid-template-columns: 1fr; }
+            .footer-bottom { flex-direction: column; gap: 16px; }
+        }
+
+        /* Modal Styles */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); }
+        .modal.active { display: flex; align-items: center; justify-content: center; }
+        .modal-content { background-color: white; border-radius: 12px; max-width: 700px; width: 90%; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 24px; border-bottom: 1px solid var(--neutral-200); }
+        .modal-title { font-size: 24px; font-weight: 700; color: var(--neutral-900); }
+        .modal-close { background: none; border: none; font-size: 24px; color: var(--neutral-500); cursor: pointer; transition: color 0.2s; }
+        .modal-close:hover { color: var(--neutral-900); }
+        .modal-body { padding: 24px; }
+
+        /* Booking Detail Sections */
+        .detail-section { margin-bottom: 24px; }
+        .detail-section-title { font-size: 16px; font-weight: 700; color: var(--neutral-900); margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid var(--primary-light); }
+        .detail-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        .detail-label { font-size: 13px; color: var(--neutral-500); font-weight: 600; text-transform: uppercase; margin-bottom: 4px; }
+        .detail-value { font-size: 15px; color: var(--neutral-900); font-weight: 500; }
+
+        /* Tour Image in Modal */
+        .booking-tour-image { width: 100%; height: 300px; object-fit: cover; border-radius: 8px; margin-bottom: 24px; }
+        .tour-rating-section { display: flex; align-items: center; gap: 12px; }
+        .rating-stars { color: var(--warning); font-size: 16px; }
+        .rating-text { font-size: 14px; color: var(--neutral-700); }
+
+        /* Modal Footer Actions */
+        .modal-footer { display: flex; gap: 12px; justify-content: flex-end; padding: 20px 24px; border-top: 1px solid var(--neutral-200); background-color: var(--neutral-100); }
+        .btn-cancel-modal { padding: 12px 24px; background: var(--neutral-100); color: var(--neutral-700); border: 1px solid var(--neutral-200); border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .btn-cancel-modal:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+        .btn-cancel-booking { padding: 12px 24px; background: var(--danger); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .btn-cancel-booking:hover { background: #b91c1c; }
+        .btn-cancel-booking:disabled { background: var(--neutral-400); cursor: not-allowed; }
+
+        /* Loading & Success States */
+        .loading { display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .spinner { border: 3px solid var(--neutral-200); border-top: 3px solid var(--primary); border-radius: 50%; width: 20px; height: 20px; animation: spin 0.6s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .alert { padding: 16px; border-radius: 8px; margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+        .alert-success { background: #d1fae5; border: 1px solid #6ee7b7; color: #065f46; }
+        .alert-error { background: #fee2e2; border: 1px solid #fca5a5; color: #991b1b; }
+        .alert-icon { font-size: 18px; }
+
+        /* Star Rating */
+        .star { color: #d1d5db; transition: all 0.2s ease; }
+        .star:hover { color: var(--warning); transform: scale(1.2); }
+        .star.active { color: var(--warning); }
+
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <div class="logo"><a href="TRANGCHU.html"><img src="../image/Logo.png" alt="Tripto Logo"></a></div>
+            <nav class="nav-menu-top">
+                <a href="TRANGCHU.html">Trang Chủ</a>
+                <a href="UUDAI.html">Ưu Đãi</a>
+                <a href="TATCA_TOUR.html">Chuyến du lịch</a>             
+                <a href="TATCA_COMBO.html">Gói du lịch</a>
+                <a href="BLOG.html">Tin Tức</a>
+            </nav>
+            <div class="nav-right">
+                <div class="country"><img src="../image/ngonngu.png" alt="Vietnam Flag"><span>VIETNAM</span></div>
+                <div class="icon"><a href="hotro.html" title="Hỗ trợ"><img src="../image/hotro.png" alt="Support"></a></div>
+                <button class="btn-login" id="loginBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Đăng Nhập</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="../image/avt_pr.jpg" alt="Avatar" class="avatar">
+                <h3 class="user-name">Giao Nguyen</h3>
+                <p class="user-role">Bộ phận Chăm sóc Khách hàng</p>
+            </div>
+            <nav class="sidebar-nav">
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="trangcanhan.html" class="nav-link"><i class="fas fa-user"></i>Thông tin cá nhân</a></li>
+                    <li class="nav-item"><a href="thanhtoan.html" class="nav-link"><i class="fas fa-credit-card"></i>Tài khoản thanh toán</a></li>
+                    <li class="nav-item"><a href="chuyendi.html" class="nav-link active"><i class="fas fa-plane"></i>Chuyến đi</a></li>
+                    <li class="nav-item"><a href="yeuthich.html" class="nav-link"><i class="fas fa-heart"></i>Yêu thích</a></li>
+                    <li class="nav-item"><a href="hotro.html" class="nav-link"><i class="fas fa-headset"></i>Hỗ trợ</a></li>
+                    <li class="nav-item"><a href="myReviews.html" class="nav-link"><i class="fas fa-star"></i>Đánh giá của tôi</a></li>
+                    <li class="nav-item"><a href="caidat.html" class="nav-link"><i class="fas fa-cog"></i>Cài đặt</a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer"><a href="#" class="logout-link"><i class="fas fa-sign-out-alt"></i>Đăng xuất</a></div>
+        </aside>
+
+        <main class="main-content">
+            <div class="content-wrapper">
+                <div class="page-header">
+                    <h1 class="page-title">Chuyến đi của tôi</h1>
+                    <p class="page-description">Xem và quản lý tất cả các chuyến đi du lịch của bạn</p>
+                </div>
+
+                <!-- Tabs -->
+                <div class="tabs-container">
+                    <button class="tab-btn active" onclick="filterTrips('all')">Tất cả</button>
+                    <button class="tab-btn" onclick="filterTrips('upcoming')">Sắp tới</button>
+                    <button class="tab-btn" onclick="filterTrips('ongoing')">Đang diễn ra</button>
+                    <button class="tab-btn" onclick="filterTrips('completed')">Đã hoàn thành</button>
+                </div>
+
+                <!-- Trips List -->
+                <div class="trips-list" id="tripsList">
+                    <!-- Trips will be loaded dynamically here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Booking Detail Modal -->
+    <div id="bookingDetailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Chi tiết chuyến đi</h2>
+                <button type="button" class="modal-close" onclick="closeBookingModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <span>Đang tải thông tin...</span>
+                </div>
+            </div>
+            <div class="modal-footer" id="modalFooter">
+            </div>
+        </div>
+    </div>
+
+    <!-- Invoice Modal -->
+    <div id="invoiceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Hóa đơn</h2>
+                <button type="button" class="modal-close" onclick="closeInvoiceModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="invoiceBody">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <span>Đang tải hóa đơn...</span>
+                </div>
+            </div>
+            <div class="modal-footer" id="invoiceFooter">
+            </div>
+        </div>
+    </div>
+
+    <!-- Review Modal -->
+    <div id="reviewModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Đánh giá tour</h2>
+                <button type="button" class="modal-close" onclick="closeReviewModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="reviewBody">
+                <div id="reviewForm">
+                    <!-- Tour name display -->
+                    <div class="detail-section">
+                        <div class="detail-label">Tour</div>
+                        <div id="reviewTourName" class="detail-value" style="font-size: 16px; margin-bottom: 16px;"></div>
+                    </div>
+                    
+                    <!-- Star rating -->
+                    <div class="detail-section">
+                        <div class="detail-label">Đánh giá sao</div>
+                        <div id="starRating" style="font-size: 28px; cursor: pointer; margin: 16px 0; display: flex; gap: 8px;" onclick="selectRating(event)">
+                            <span class="star" data-value="1">☆</span>
+                            <span class="star" data-value="2">☆</span>
+                            <span class="star" data-value="3">☆</span>
+                            <span class="star" data-value="4">☆</span>
+                            <span class="star" data-value="5">☆</span>
+                        </div>
+                        <input type="hidden" id="ratingValue" value="0">
+                    </div>
+                    
+                    <!-- Comment -->
+                    <div class="detail-section">
+                        <div class="detail-label">Mô tả đánh giá</div>
+                        <textarea id="reviewComment" placeholder="Chia sẻ trải nghiệm của bạn về tour này..." style="width: 100%; padding: 12px; border: 1px solid var(--neutral-200); border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 14px; min-height: 120px; resize: vertical;"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" id="reviewFooter">
+                <button type="button" class="btn-cancel-modal" onclick="closeReviewModal()">Hủy</button>
+                <button type="button" class="btn-primary" onclick="submitReview()"><i class="fas fa-check"></i> Gửi đánh giá</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <a href="TRANGCHU.html" class="footer-logo">
+                        <img src="../image/Logo.png" alt="triptO Logo">
+                    </a>
+                    <p class="footer-description">Tripto là nền tảng đặt tour du lịch hàng đầu tại Việt Nam. Chúng tôi cung cấp hơn 500+ tour với giá tốt nhất.</p>
+                </div>
+                <div class="footer-column">
+                    <h4>Công Ty</h4>
+                    <ul>
+                        <li><a href="#">Về Chúng Tôi</a></li>
+                        <li><a href="#">Đội Ngũ</a></li>
+                        <li><a href="#">Liên Hệ</a></li>
+                        <li><a href="#">Tuyển Dụng</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Hỗ Trợ</h4>
+                    <ul>
+                        <li><a href="#">Câu Hỏi Thường Gặp</a></li>
+                        <li><a href="#">Chính Sách Bảo Mật</a></li>
+                        <li><a href="#">Điều Khoản Sử Dụng</a></li>
+                        <li><a href="#">Liên Hệ Hỗ Trợ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Liên Hệ</h4>
+                    <ul>
+                        <li><a href="#">📞 +84 (0) 1234 567 890</a></li>
+                        <li><a href="#">✉️ support@tripto.vn</a></li>
+                        <li><a href="#">📍 Hà Nội, Việt Nam</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <span>&copy; 2026 Tripto. Bản quyền được bảo lưu.</span>
+                <div class="social-links">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // =====================================================
+        // LOAD AND RENDER BOOKED TOURS
+        // =====================================================
+        
+        async function loadBookedTours() {
+            const user = triptoAuth.getUser();
+            if (!user || !user.id) {
+                console.error('❌ Người dùng không đăng nhập hoặc không có ID');
+                alert('❌ Vui lòng đăng nhập để xem chuyến đi');
+                window.location.href = 'TRANGCHU.html';
+                return;
+            }
+
+            try {
+                console.log('📤 Fetching booked tours for user ID:', user.id);
+                const response = await fetch(`../user.php?endpoint=get_booked_tours&user_id=${user.id}`);
+                const text = await response.text();
+                
+                console.log('📥 API Response:', text);
+                
+                let result;
+                try {
+                    result = JSON.parse(text);
+                } catch (e) {
+                    console.error('❌ Lỗi parse JSON:', e);
+                    console.error('Response text:', text);
+                    displayEmptyState('Lỗi định dạng dữ liệu từ server. Vui lòng thử lại.');
+                    return;
+                }
+
+                if (!response.ok || !result.success) {
+                    console.error('❌ Lỗi từ API:', result.message);
+                    displayEmptyState(result.message || 'Lỗi tải dữ liệu. Vui lòng thử lại.');
+                    return;
+                }
+
+                const bookings = result.data || [];
+                console.log('✅ Đã tải', bookings.length, 'chuyến đi');
+                
+                if (bookings.length === 0) {
+                    displayEmptyState('Bạn chưa có chuyến đi nào');
+                    return;
+                }
+
+                renderBookedTours(bookings);
+                
+                // Filter after rendering
+                setTimeout(() => {
+                    filterTrips('all');
+                }, 100);
+            } catch (error) {
+                console.error('❌ Lỗi khi tải chuyến đi:', error);
+                displayEmptyState('Lỗi kết nối đến server. Vui lòng thử lại.');
+            }
+        }
+
+        function renderBookedTours(bookings) {
+            const tripsList = document.getElementById('tripsList');
+            tripsList.innerHTML = ''; // Clear existing content
+
+            bookings.forEach(booking => {
+                const tripCard = createTripCard(booking);
+                tripsList.appendChild(tripCard);
+            });
+        }
+
+        function createTripCard(booking) {
+            const card = document.createElement('div');
+            card.className = 'trip-card';
+            card.setAttribute('data-status', booking.trip_status);
+            card.setAttribute('data-booking-id', booking.booking_id);
+
+            // Determine badge class
+            let badgeClass = 'badge-completed';
+            let badgeText = 'Đã hoàn thành';
+            
+            if (booking.trip_status === 'upcoming') {
+                badgeClass = 'badge-upcoming';
+                badgeText = 'Sắp tới';
+            } else if (booking.trip_status === 'ongoing') {
+                badgeClass = 'badge-ongoing';
+                badgeText = 'Đang diễn ra';
+            }
+
+            // Format dates - convert 2026-03-15 to "15 tháng 3, 2026"
+            const departDate = new Date(booking.departure_date + 'T00:00:00');
+            const formattedDate = formatDateVN(departDate);
+            const numPeople = booking.num_adults + booking.num_children;
+
+            // Use tour image or default icon
+            const image = booking.tour_image ? 
+                `<img src="${booking.tour_image}" alt="${booking.tour_name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">` :
+                '<i class="fas fa-plane"></i>';
+
+            // Format price
+            const formattedPrice = formatCurrency(booking.total_amount);
+
+            // Determine action buttons based on trip status
+            let actionButtons = '';
+            if (booking.trip_status === 'upcoming') {
+                // Get status from database - just add icon based on booking_status
+                let paymentStatusIcon = '⏳';  // Default icon
+                if (booking.booking_status === 'Đã xác nhận') {
+                    paymentStatusIcon = '✅';
+                } else if (booking.booking_status === 'Da huy' || booking.booking_status === 'Chờ Xác Nhận Hủy') {
+                    paymentStatusIcon = '❌';
+                }
+                
+                // Show detail and status - use booking_status from database
+                actionButtons = `
+                    <button class="btn-primary" onclick="viewBookingDetail(${booking.booking_id})"><i class="fas fa-eye"></i> Xem chi tiết</button>
+                    <button class="btn-secondary" disabled style="opacity: 0.6; cursor: default;"><span style="font-size: 18px; margin-right: 6px;">${paymentStatusIcon}</span>${booking.booking_status}</button>
+                `;
+            } else if (booking.trip_status === 'ongoing') {
+                actionButtons = `
+                    <button class="btn-primary" onclick="viewBookingDetail(${booking.booking_id})"><i class="fas fa-eye"></i> Xem chi tiết</button>
+                    <button class="btn-secondary" onclick="supportBooking(${booking.booking_id})"><i class="fas fa-headset"></i> Hỗ trợ</button>
+                `;
+            } else {
+                // Completed tour - show detail, and rate button (if not reviewed)
+                if (booking.has_reviewed) {
+                    actionButtons = `
+                        <button class="btn-primary" onclick="viewBookingDetail(${booking.booking_id})"><i class="fas fa-eye"></i> Xem chi tiết</button>
+                        <button class="btn-secondary" disabled style="opacity: 0.6; cursor: default;"><i class="fas fa-star"></i> Đã đánh giá</button>
+                    `;
+                } else {
+                    actionButtons = `
+                        <button class="btn-primary" onclick="viewBookingDetail(${booking.booking_id})"><i class="fas fa-eye"></i> Xem chi tiết</button>
+                        <button class="btn-secondary" onclick="rateBooking(${booking.booking_id}, '${booking.tour_name}')"><i class="fas fa-star"></i> Đánh giá</button>
+                    `;
+                }
+            }
+
+            card.innerHTML = `
+                <div class="trip-image">${image}</div>
+                <div class="trip-info">
+                    <div class="trip-header">
+                        <div>
+                            <h3 class="trip-title">${booking.tour_name}</h3>
+                            <span class="trip-badge ${badgeClass}">${badgeText}</span>
+                        </div>
+                    </div>
+                    <div class="trip-meta">
+                        <div class="meta-item"><i class="fas fa-calendar"></i> ${formattedDate}</div>
+                        <div class="meta-item"><i class="fas fa-users"></i> ${numPeople} người</div>
+                        <div class="meta-item"><i class="fas fa-map-marker-alt"></i> ${booking.location}</div>
+                        <div class="meta-item"><i class="fas fa-money-bill"></i> ${formattedPrice}</div>
+                    </div>
+                    <div class="trip-actions">
+                        ${actionButtons}
+                    </div>
+                </div>
+            `;
+
+            return card;
+        }
+
+        function formatDateVN(date) {
+            const months = ['tháng 1', 'tháng 2', 'tháng 3', 'tháng 4', 'tháng 5', 'tháng 6',
+                           'tháng 7', 'tháng 8', 'tháng 9', 'tháng 10', 'tháng 11', 'tháng 12'];
+            
+            const day = date.getDate();
+            const month = months[date.getMonth()];
+            const year = date.getFullYear();
+            
+            return `${day} ${month}, ${year}`;
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+
+        function displayEmptyState(message = 'Bạn chưa có chuyến đi nào') {
+            const tripsList = document.getElementById('tripsList');
+            tripsList.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon"><i class="fas fa-inbox"></i></div>
+                    <h3 class="empty-title">Không có chuyến đi</h3>
+                    <p class="empty-description">${message}</p>
+                </div>
+            `;
+        }
+
+        // Action handlers
+        function viewTourDetail(tourId) {
+            window.location.href = `chitiettour.html?id=${tourId}`;
+        }
+
+        function editBooking(bookingId) {
+            alert('Chức năng chỉnh sửa sẽ được triển khai sớm!');
+            // TODO: Implement edit booking
+        }
+
+        function supportBooking(bookingId) {
+            // Redirect to support page with booking ID
+            window.location.href = `hotro.html?booking_id=${bookingId}`;
+        }
+
+        function rateBooking(bookingId, tourName) {
+            // Load booking detail and open review modal
+            openReviewModalForBooking(bookingId);
+        }
+        
+        // =====================================================
+        // REVIEW MODAL FUNCTIONS
+        // =====================================================
+        
+        let currentReviewBooking = null;  // Store booking for review
+        
+        async function openReviewModalForBooking(bookingId) {
+            try {
+                const response = await fetch(`../user.php?endpoint=get_booking_detail&booking_id=${bookingId}`);
+                const text = await response.text();
+                let result = JSON.parse(text);
+                
+                if (!response.ok || !result.success) {
+                    alert('Lỗi tải thông tin tour');
+                    return;
+                }
+                
+                const booking = result.data;
+                currentReviewBooking = booking;
+                
+                // If already reviewed, show alert
+                if (booking.has_reviewed) {
+                    alert('Bạn đã đánh giá tour/combo này rồi!');
+                    return;
+                }
+                
+                // Check if already reviewed
+                // Display tour name
+                document.getElementById('reviewTourName').textContent = booking.tour_name;
+                document.getElementById('ratingValue').value = '0';
+                document.getElementById('reviewComment').value = '';
+                
+                // Reset stars
+                document.querySelectorAll('.star').forEach(star => {
+                    star.classList.remove('active');
+                    star.textContent = '☆';
+                });
+                
+                const modal = document.getElementById('reviewModal');
+                modal.classList.add('active');
+            } catch (error) {
+                console.error('❌ Lỗi khi mở form đánh giá:', error);
+                alert('Lỗi khi mở form đánh giá. Vui lòng thử lại.');
+            }
+        }
+        
+        function selectRating(event) {
+            if (event.target.classList.contains('star')) {
+                const rating = parseInt(event.target.dataset.value);
+                document.getElementById('ratingValue').value = rating;
+                
+                // Update star display
+                document.querySelectorAll('.star').forEach(star => {
+                    const starValue = parseInt(star.dataset.value);
+                    if (starValue <= rating) {
+                        star.classList.add('active');
+                        star.textContent = '★';
+                    } else {
+                        star.classList.remove('active');
+                        star.textContent = '☆';
+                    }
+                });
+            }
+        }
+        
+        function closeReviewModal() {
+            const modal = document.getElementById('reviewModal');
+            modal.classList.remove('active');
+            currentReviewBooking = null;
+        }
+        
+        async function submitReview() {
+            if (!currentReviewBooking) {
+                alert('Lỗi: Thông tin tour không hợp lệ');
+                return;
+            }
+            
+            const user = triptoAuth.getUser();
+            if (!user || !user.id) {
+                alert('Vui lòng đăng nhập để đánh giá');
+                return;
+            }
+            
+            const rating = parseInt(document.getElementById('ratingValue').value);
+            if (rating === 0) {
+                alert('Vui lòng chọn số sao');
+                return;
+            }
+            
+            const comment = document.getElementById('reviewComment').value.trim();
+            if (!comment) {
+                alert('Vui lòng nhập mô tả đánh giá');
+                return;
+            }
+            
+            try {
+                const formData = new FormData();
+                formData.append('endpoint', 'create_review');
+                formData.append('user_id', user.id);
+                
+                // Send tour_id or combo_id depending on item type
+                if (currentReviewBooking.item_type === 'tour') {
+                    formData.append('tour_id', currentReviewBooking.tour_id);
+                    formData.append('combo_id', 0);  // Explicitly set combo_id to 0
+                } else {
+                    formData.append('tour_id', 0);   // Explicitly set tour_id to 0
+                    formData.append('combo_id', currentReviewBooking.combo_id);  // Use combo_id from booking
+                }
+                
+                formData.append('rating', rating);
+                formData.append('comment', comment);
+                
+                console.log('📤 Sending review data:', {
+                    endpoint: 'create_review',
+                    user_id: user.id,
+                    tour_id: currentReviewBooking.item_type === 'tour' ? currentReviewBooking.tour_id : 0,
+                    combo_id: currentReviewBooking.item_type === 'combo' ? currentReviewBooking.combo_id : 0,
+                    rating: rating,
+                    comment: comment,
+                    item_type: currentReviewBooking.item_type
+                });
+                
+                const response = await fetch('../user.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const text = await response.text();
+                let result = JSON.parse(text);
+                
+                if (!response.ok || !result.success) {
+                    throw new Error(result.message || 'Lỗi gửi đánh giá');
+                }
+                
+                // Success
+                alert('✅ Cảm ơn bạn! Đánh giá của bạn đã được ghi lại.');
+                closeReviewModal();
+                
+                // Update review status
+                if (currentReviewBooking) {
+                    currentReviewBooking.has_reviewed = true;
+                }
+                
+                // Reload bookings list
+                loadBookedTours();
+            } catch (error) {
+                console.error('❌ Lỗi gửi đánh giá:', error);
+                alert('Lỗi: ' + error.message);
+            }
+        }
+        
+        // Close review modal when clicking outside
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('reviewModal');
+            if (event.target === modal) {
+                closeReviewModal();
+            }
+        });
+
+        // Update filterTrips function to handle dynamic content
+        function filterTrips(status) {
+            // Update active tab - handle both direct calls and event handlers
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            // Find which button was clicked or set the first one active
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => {
+                if (btn.textContent.includes('Tất cả') && status === 'all') {
+                    btn.classList.add('active');
+                } else if (btn.textContent.includes('Sắp tới') && status === 'upcoming') {
+                    btn.classList.add('active');
+                } else if (btn.textContent.includes('Đang diễn ra') && status === 'ongoing') {
+                    btn.classList.add('active');
+                } else if (btn.textContent.includes('Đã hoàn thành') && status === 'completed') {
+                    btn.classList.add('active');
+                }
+            });
+
+            // Filter trips
+            const trips = document.querySelectorAll('.trip-card');
+            let visibleCount = 0;
+
+            trips.forEach(trip => {
+                if (status === 'all' || trip.dataset.status === status) {
+                    trip.style.display = 'grid';
+                    visibleCount++;
+                } else {
+                    trip.style.display = 'none';
+                }
+            });
+
+            // Show empty state if no trips
+            if (visibleCount === 0) {
+                displayEmptyState('Bạn chưa có chuyến đi nào ở danh mục này');
+            }
+        }
+
+        // =====================================================
+        // MODAL FUNCTIONS FOR BOOKING DETAILS
+        // =====================================================
+
+        async function viewBookingDetail(bookingId) {
+            const modal = document.getElementById('bookingDetailModal');
+            const modalBody = document.getElementById('modalBody');
+            const modalFooter = document.getElementById('modalFooter');
+            
+            // Show loading state
+            modalBody.innerHTML = `<div class="loading"><div class="spinner"></div><span>Đang tải thông tin...</span></div>`;
+            modalFooter.innerHTML = '';
+            modal.classList.add('active');
+
+            try {
+                const response = await fetch(`../user.php?endpoint=get_booking_detail&booking_id=${bookingId}`);
+                const text = await response.text();
+                
+                let result;
+                try {
+                    result = JSON.parse(text);
+                } catch (e) {
+                    throw new Error('Lỗi định dạng dữ liệu từ server');
+                }
+
+                if (!response.ok || !result.success) {
+                    throw new Error(result.message || 'Lỗi tải dữ liệu');
+                }
+
+                const booking = result.data;
+                renderBookingDetailModal(booking);
+                updateModalFooter(booking);
+            } catch (error) {
+                console.error('❌ Lỗi khi tải chi tiết:', error);
+                modalBody.innerHTML = `
+                    <div class="alert alert-error">
+                        <span class="alert-icon">⚠️</span>
+                        <span>Lỗi: ${error.message}. Vui lòng thử lại.</span>
+                    </div>
+                `;
+            }
+        }
+
+        function renderBookingDetailModal(booking) {
+            const modalBody = document.getElementById('modalBody');
+            
+            const departDate = new Date(booking.departure_date + 'T00:00:00');
+            const formattedDate = formatDateVN(departDate);
+            const formattedPrice = formatCurrency(booking.total_amount);
+            const bookingDateObj = new Date(booking.booking_date);
+            const formattedBookingDate = formatDateVN(bookingDateObj);
+            
+            // Determine status color and text
+            let statusBadgeClass = 'badge-completed';
+            let statusText = 'Đã hoàn thành';
+            
+            if (booking.trip_status === 'upcoming') {
+                statusBadgeClass = 'badge-upcoming';
+                statusText = 'Sắp tới';
+            } else if (booking.trip_status === 'ongoing') {
+                statusBadgeClass = 'badge-ongoing';
+                statusText = 'Đang diễn ra';
+            }
+            
+            const bookingStatusText = booking.booking_status === 'Da huy' ? '❌ Đã hủy' : 
+                                      booking.booking_status === 'Chờ Xác Nhận Hủy' ? '⏳ Chờ xác nhận hủy' : '✓ Xác nhận';
+            
+            const tourImage = booking.tour_image ? 
+                `<img src="${booking.tour_image}" alt="${booking.tour_name}" class="booking-tour-image">` :
+                `<div class="booking-tour-image" style="display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: rgba(255,255,255,0.5); font-size: 80px;"><i class="fas fa-plane"></i></div>`;
+            
+            const ratingHTML = booking.tour_rating > 0 ? `
+                <div class="tour-rating-section">
+                    <span class="rating-stars">★ ${booking.tour_rating.toFixed(1)}</span>
+                    <span class="rating-text">(${booking.tour_reviews} đánh giá)</span>
+                </div>
+            ` : '';
+            
+            const comboInfo = booking.combo_name ? `
+                <div class="detail-section">
+                    <div class="detail-section-title">Thông tin gói combo</div>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Tên gói</div>
+                            <div class="detail-value">${booking.combo_name}</div>
+                        </div>
+                    </div>
+                </div>
+            ` : '';
+            
+            modalBody.innerHTML = `
+                <!-- Tour Image and Header -->
+                ${tourImage}
+                
+                <!-- Tour Info -->
+                <div class="detail-section">
+                    <div class="detail-section-title">${booking.tour_name}</div>
+                    <div class="detail-grid" style="grid-template-columns: 1fr;">
+                        <div class="detail-item">
+                            <div class="detail-label">Địa điểm</div>
+                            <div class="detail-value"><i class="fas fa-map-marker-alt"></i> ${booking.location}</div>
+                        </div>
+                        <div class="detail-item" style="margin-top: 12px;">
+                            <div class="detail-label">Mô tả</div>
+                            <div class="detail-value">${booking.tour_description}</div>
+                        </div>
+                        <div class="detail-item" style="margin-top: 12px;">
+                            ${ratingHTML}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Booking Details -->
+                <div class="detail-section">
+                    <div class="detail-section-title">Thông tin đặt tour</div>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Mã đặt tour</div>
+                            <div class="detail-value">${booking.so_dat_tour}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Trạng thái chuyến</div>
+                            <div class="detail-value"><span class="trip-badge ${statusBadgeClass}">${statusText}</span></div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Trạng thái đặt</div>
+                            <div class="detail-value">${bookingStatusText}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Ngày đặt</div>
+                            <div class="detail-value">${formattedBookingDate}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Ngày khởi hành</div>
+                            <div class="detail-value"><i class="fas fa-calendar"></i> ${formattedDate}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Thời lượng</div>
+                            <div class="detail-value">${booking.duration_text}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hành khách -->
+                <div class="detail-section">
+                    <div class="detail-section-title">Hành khách</div>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Số người lớn</div>
+                            <div class="detail-value">${booking.num_adults} người</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Số trẻ em</div>
+                            <div class="detail-value">${booking.num_children} người</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Tổng cộng</div>
+                            <div class="detail-value">${booking.total_people} người</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Tổng tiền</div>
+                            <div class="detail-value" style="color: var(--primary); font-weight: 700; font-size: 16px;">${formattedPrice}</div>
+                        </div>
+                    </div>
+                </div>
+
+                ${comboInfo}
+
+                <!-- Tour Details -->
+                <div class="detail-section">
+                    <div class="detail-section-title">Chi tiết tour</div>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Số người tối đa</div>
+                            <div class="detail-value">${booking.tour_max_people} người</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Giá tour (1 người)</div>
+                            <div class="detail-value">${formatCurrency(booking.tour_price)}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customer Info -->
+                <div class="detail-section">
+                    <div class="detail-section-title">Thông tin khách hàng</div>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Email</div>
+                            <div class="detail-value">${booking.customer_email}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                ${booking.customer_notes ? `
+                    <div class="detail-section">
+                        <div class="detail-section-title">Ghi chú</div>
+                        <div class="detail-item">
+                            <div class="detail-value">${booking.customer_notes}</div>
+                        </div>
+                    </div>
+                ` : ''}
+            `;
+        }
+
+        function updateModalFooter(booking) {
+            const modalFooter = document.getElementById('modalFooter');
+            
+            let footerHTML = `<button type="button" class="btn-cancel-modal" onclick="closeBookingModal()">Đóng</button>`;
+            
+            // Chỉ cho phép hủy nếu: can_cancel=true AND trạng thái booking != "Chờ Xác Nhận Hủy"
+            if (booking.can_cancel && booking.booking_status !== 'Chờ Xác Nhận Hủy' && booking.booking_status !== 'Da huy') {
+                footerHTML = `
+                    <button type="button" class="btn-cancel-modal" onclick="closeBookingModal()">Đóng</button>
+                    <button type="button" class="btn-cancel-booking" onclick="confirmCancelBooking(${booking.booking_id})">
+                        <i class="fas fa-times"></i> Hủy tour
+                    </button>
+                `;
+            }
+            
+            modalFooter.innerHTML = footerHTML;
+        }
+
+        function closeBookingModal() {
+            const modal = document.getElementById('bookingDetailModal');
+            modal.classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('bookingDetailModal');
+            if (event.target === modal) {
+                closeBookingModal();
+            }
+        });
+
+        async function confirmCancelBooking(bookingId) {
+            const reason = prompt('Vui lòng nhập lý do hủy tour (tùy chọn):', 'Thay đổi kế hoạch');
+            
+            if (reason === null) return; // User cancelled
+
+            const cancelBtn = event && event.target ? event.target : document.activeElement;
+            if (cancelBtn) {
+                cancelBtn.disabled = true;
+            }
+            const originalText = cancelBtn ? cancelBtn.innerHTML : '';
+            if (cancelBtn) {
+                cancelBtn.innerHTML = '<div class="spinner" style="width: 16px; height: 16px; border-width: 2px;"></div>';
+            }
+
+            try {
+                const response = await fetch('../user.php?endpoint=cancel_booking', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `booking_id=${bookingId}&reason=${encodeURIComponent(reason)}`
+                });
+
+                const text = await response.text();
+                let result;
+                try {
+                    result = JSON.parse(text);
+                } catch (e) {
+                    throw new Error('Lỗi định dạng dữ liệu từ server');
+                }
+
+                if (!response.ok || !result.success) {
+                    throw new Error(result.message || 'Lỗi hủy tour');
+                }
+
+                // Show success message with refund info
+                alert('✅ ' + result.message);
+                
+                // Reload tour list to show actual status from database
+                setTimeout(() => {
+                    loadBookedTours();
+                }, 500);
+                
+                // Disable cancel button in modal without closing
+                updateModalFooter({ booking_status: 'Chờ Xác Nhận Hủy', can_cancel: true, booking_id: bookingId });
+
+            } catch (error) {
+                console.error('❌ Lỗi khi hủy tour:', error);
+                alert('❌ Lỗi: ' + error.message);
+            } finally {
+                if (cancelBtn) {
+                    cancelBtn.disabled = false;
+                    cancelBtn.innerHTML = originalText;
+                }
+            }
+        }
+
+        function cancelTourPrompt(bookingId) {
+            if (confirm('Bạn có chắc chắn muốn hủy tour này?')) {
+                confirmCancelBooking(bookingId);
+            }
+        }
+
+        // =====================================================
+        // INVOICE FUNCTIONS
+        // =====================================================
+
+        async function downloadInvoice(bookingId) {
+            const modal = document.getElementById('invoiceModal');
+            const invoiceBody = document.getElementById('invoiceBody');
+            const invoiceFooter = document.getElementById('invoiceFooter');
+            
+            // Show loading state
+            invoiceBody.innerHTML = `<div class="loading"><div class="spinner"></div><span>Đang tải hóa đơn...</span></div>`;
+            invoiceFooter.innerHTML = '';
+            modal.classList.add('active');
+
+            try {
+                const response = await fetch(`../user.php?endpoint=get_invoice&booking_id=${bookingId}`);
+                const text = await response.text();
+                
+                let result;
+                try {
+                    result = JSON.parse(text);
+                } catch (e) {
+                    throw new Error('Lỗi định dạng dữ liệu từ server');
+                }
+
+                if (!response.ok || !result.success) {
+                    throw new Error(result.message || 'Lỗi tải hóa đơn');
+                }
+
+                const invoice = result.data;
+                renderInvoiceModal(invoice);
+                updateInvoiceFooter(invoice);
+            } catch (error) {
+                console.error('❌ Lỗi khi tải hóa đơn:', error);
+                invoiceBody.innerHTML = `
+                    <div class="alert alert-error">
+                        <span class="alert-icon">⚠️</span>
+                        <span>Lỗi: ${error.message}. Vui lòng thử lại.</span>
+                    </div>
+                `;
+            }
+        }
+
+        function renderInvoiceModal(invoice) {
+            const invoiceBody = document.getElementById('invoiceBody');
+            
+            const bookingDate = new Date(invoice.booking_date);
+            const formattedBookingDate = formatDateVN(bookingDate);
+            const departDate = new Date(invoice.departure_date + 'T00:00:00');
+            const formattedDepartDate = formatDateVN(departDate);
+            
+            // Determine payment status color and icon
+            let paymentStatusClass = 'badge-completed';
+            let paymentStatusIcon = '⏳';
+            if (invoice.payment_status === 'Chờ xử lý') {
+                paymentStatusClass = 'badge-upcoming';
+                paymentStatusIcon = '⏳';
+            } else if (invoice.payment_status === 'Đã xác nhận') {
+                paymentStatusClass = 'badge-ongoing';
+                paymentStatusIcon = '✅';
+            } else if (invoice.payment_status === 'Đã hủy') {
+                paymentStatusClass = 'badge-completed';
+                paymentStatusIcon = '❌';
+            }
+            
+            const formattedSubtotal = formatCurrency(invoice.subtotal);
+            const formattedTotal = formatCurrency(invoice.total_amount);
+            
+            invoiceBody.innerHTML = `
+                <div style="text-align: center; margin-bottom: 24px;">
+                    <h3 style="color: var(--primary); margin-bottom: 8px;">HÓA ĐƠN THANH TOÁN</h3>
+                    <p style="color: var(--neutral-500); font-size: 13px;">Mã đơn: ${invoice.so_dat_tour}</p>
+                </div>
+
+                <!-- Booking Info -->
+                <div class="detail-section">
+                    <div class="detail-section-title">Thông tin đặt tour</div>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Ngày đặt</div>
+                            <div class="detail-value">${formattedBookingDate}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Trạng thái thanh toán</div>
+                            <div class="detail-value"><span class="trip-badge ${paymentStatusClass}">${paymentStatusIcon} ${invoice.payment_status}</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tour Info -->
+                <div class="detail-section">
+                    <div class="detail-section-title">Thông tin tour</div>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Tên tour</div>
+                            <div class="detail-value">${invoice.tour_name}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Ngày khởi hành</div>
+                            <div class="detail-value">${formattedDepartDate}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Thời lượng</div>
+                            <div class="detail-value">${invoice.tour_duration}N${invoice.tour_duration - 1}Đ</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Passenger Info -->
+                <div class="detail-section">
+                    <div class="detail-section-title">Người tham gia</div>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Người lớn</div>
+                            <div class="detail-value">${invoice.num_adults} người</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Trẻ em</div>
+                            <div class="detail-value">${invoice.num_children} người</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Tổng cộng</div>
+                            <div class="detail-value">${invoice.total_people} người</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pricing -->
+                <div class="detail-section">
+                    <div class="detail-section-title">Chi tiết thanh toán</div>
+                    <div class="detail-grid" style="grid-template-columns: 1fr;">
+                        <div class="detail-item" style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--neutral-200); padding-bottom: 12px;">
+                            <div class="detail-label">Giá tour / người</div>
+                            <div class="detail-value">${formatCurrency(invoice.tour_price_per_person)}</div>
+                        </div>
+                        <div class="detail-item" style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--neutral-200); padding: 12px 0;">
+                            <div class="detail-label">Tổng tiền hàng (${invoice.total_people} người)</div>
+                            <div class="detail-value">${formattedSubtotal}</div>
+                        </div>
+                        <div class="detail-item" style="display: flex; justify-content: space-between; padding-top: 12px;">
+                            <div class="detail-label" style="font-weight: 700; font-size: 16px;">Cộng tiền</div>
+                            <div class="detail-value" style="color: var(--primary); font-weight: 700; font-size: 18px;">${formattedTotal}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateInvoiceFooter(invoice) {
+            const invoiceFooter = document.getElementById('invoiceFooter');
+            
+            invoiceFooter.innerHTML = `
+                <button type="button" class="btn-cancel-modal" onclick="closeInvoiceModal()">Đóng</button>
+                <button type="button" class="btn-primary" onclick="printInvoice('${invoice.so_dat_tour}')">
+                    <i class="fas fa-print"></i> In hóa đơn
+                </button>
+            `;
+        }
+
+        function closeInvoiceModal() {
+            const modal = document.getElementById('invoiceModal');
+            modal.classList.remove('active');
+        }
+
+        // Close invoice modal when clicking outside
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('invoiceModal');
+            if (event.target === modal) {
+                closeInvoiceModal();
+            }
+        });
+
+        function printInvoice(soDateTour) {
+            window.print();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = triptoAuth.getUser();
+            if (!user) {
+                alert('❌ Vui lòng đăng nhập để xem chuyến đi');
+                window.location.href = 'TRANGCHU.html';
+                return;
+            }
+
+            // Update avatar
+            const avatarUrl = user.anh_dai_dien || user.avatar || '../image/avt_pr.jpg';
+            const avatarElement = document.querySelector('.avatar');
+            if (avatarElement) {
+                avatarElement.src = avatarUrl;
+                console.log('✅ Updated avatar:', avatarUrl);
+            }
+
+            // Update user name
+            const userNameElement = document.querySelector('.user-name');
+            if (userNameElement && user.ho_ten) {
+                userNameElement.textContent = user.ho_ten;
+            }
+
+            // Listen for avatar updates from other pages
+            window.addEventListener('userAvatarUpdated', (e) => {
+                console.log('📢 Nhận sự kiện cập nhật avatar từ trangcanhan');
+                if (e.detail && e.detail.avatar_url) {
+                    const avatarElement = document.querySelector('.avatar');
+                    if (avatarElement) {
+                        avatarElement.src = e.detail.avatar_url;
+                        console.log('✅ Updated avatar to:', e.detail.avatar_url);
+                    }
+                }
+            });
+
+            // Logout handler
+            const logoutLink = document.querySelector('.logout-link');
+            if (logoutLink) {
+                logoutLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
+                        triptoAuth.logout();
+                    }
+                });
+            }
+
+            // Load booked tours from database
+            loadBookedTours();
+        });
+    </script>
+    <script src="./js/auth.js"></script>
+    <script>
+        // Khi page load xong, cập nhật UI từ auth.js
+        document.addEventListener('DOMContentLoaded', function() {
+            // Gắn click handler cho loginBtn để navigate đến myReviews
+            const loginBtn = document.getElementById('loginBtn');
+            if (loginBtn) {
+                const originalOnClick = loginBtn.onclick;
+                loginBtn.addEventListener('click', function(e) {
+                    if (triptoAuth.isLoggedIn()) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        window.location.href = 'myReviews.html';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

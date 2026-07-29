@@ -1,0 +1,2681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Tour Du Lịch</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/Trangchu_ad.css">
+    <style>
+        /* Tour Card Styling */
+        .tour-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+
+        .tour-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+
+        .tour-card-img {
+            height: 180px;
+            object-fit: cover;
+            width: 100%;
+        }
+
+        .tour-card-body {
+            padding: 20px;
+        }
+
+        .tour-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #052461;
+            margin-bottom: 8px;
+        }
+
+        .tour-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 12px;
+        }
+
+        .tour-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 13px;
+            color: #6c757d;
+        }
+
+        .tour-price {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0d6efd;
+        }
+
+        .tour-price span {
+            font-size: 14px;
+            font-weight: 400;
+            color: #6c757d;
+        }
+
+        .tour-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: rgba(25, 135, 84, 0.1);
+            color: #198754;
+        }
+
+        .status-inactive {
+            background: rgba(108, 117, 125, 0.1);
+            color: #6c757d;
+        }
+
+        .status-full {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+
+        /* Filter Pills */
+        .filter-pill {
+            padding: 8px 20px;
+            border-radius: 25px;
+            border: 1px solid #e9ecef;
+            background: white;
+            color: #6c757d;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-pill:hover, .filter-pill.active {
+            background: #052461;
+            color: white;
+            border-color: #052461;
+        }
+
+        /* Search Box */
+        .search-box {
+            background: white;
+            border-radius: 12px;
+            padding: 12px 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .search-box input {
+            border: none;
+            outline: none;
+            width: 100%;
+            font-size: 14px;
+        }
+
+        .search-box i {
+            color: #6c757d;
+            margin-right: 10px;
+        }
+
+        /* Stats Cards */
+        .tour-stats-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .tour-stats-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        /* Table Styling */
+        .tour-table {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .tour-table table {
+            table-layout: fixed;
+            width: 100%;
+        }
+
+        .tour-table table th:nth-child(1),
+        .tour-table table td:nth-child(1) {
+            width: 50px;
+            text-align: center;
+        }
+
+        .tour-table table th:nth-child(2),
+        .tour-table table td:nth-child(2) {
+            width: 80px;
+            text-align: center;
+        }
+
+        .tour-table table th:nth-child(3),
+        .tour-table table td:nth-child(3) {
+            width: auto;
+            min-width: 200px;
+        }
+
+        .tour-table table th:nth-child(4),
+        .tour-table table td:nth-child(4) {
+            width: 130px;
+        }
+
+        .tour-table table th:nth-child(5),
+        .tour-table table td:nth-child(5) {
+            width: 100px;
+            text-align: center;
+        }
+
+        .tour-table table th:nth-child(6),
+        .tour-table table td:nth-child(6) {
+            width: 110px;
+            text-align: right;
+        }
+
+        .tour-table table th:nth-child(7),
+        .tour-table table td:nth-child(7) {
+            width: 110px;
+            text-align: center;
+        }
+
+        .tour-table table th:nth-child(8),
+        .tour-table table td:nth-child(8) {
+            width: 130px;
+            text-align: center;
+        }
+
+        .tour-table th {
+            background: #f8f9fa;
+            color: #6c757d;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            padding: 16px;
+            border: none;
+            white-space: nowrap;
+        }
+
+        .tour-table td {
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: middle;
+        }
+
+        .tour-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .tour-table-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .tour-name-cell {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: block;
+            max-width: 100%;
+        }
+
+        /* Action Buttons */
+        .btn-action {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-view {
+            background: rgba(13, 110, 253, 0.1);
+            color: #0d6efd;
+        }
+
+        .btn-view:hover {
+            background: #0d6efd;
+            color: white;
+        }
+
+        .btn-edit {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+        }
+
+        .btn-edit:hover {
+            background: #ffc107;
+            color: white;
+        }
+
+        .btn-delete {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+
+        .btn-delete:hover {
+            background: #dc3545;
+            color: white;
+        }
+
+        /* Pagination */
+        .pagination-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .page-info {
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        .pagination {
+            display: flex;
+            gap: 8px;
+        }
+
+        .page-item {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid #e9ecef;
+            background: white;
+            color: #6c757d;
+        }
+
+        .page-item:hover, .page-item.active {
+            background: #052461;
+            color: white;
+            border-color: #052461;
+        }
+
+        /* Gradient title */
+        .section-title {
+            background: linear-gradient(135deg, #052461 0%, #0d6efd 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Tour stats in overview section */
+        .tour-overview-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            height: 100%;
+            min-height: 100px;
+        }
+
+        .tour-overview-card:nth-child(1) {
+            background: linear-gradient(135deg, rgba(13, 110, 253, 0.08) 0%, rgba(13, 110, 253, 0.04) 100%);
+            border-left: 4px solid #0d6efd;
+        }
+
+        .tour-overview-card:nth-child(2) {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.08) 0%, rgba(255, 193, 7, 0.04) 100%);
+            border-left: 4px solid #ffc107;
+        }
+
+        .tour-overview-card:nth-child(3) {
+            background: linear-gradient(135deg, rgba(25, 135, 84, 0.08) 0%, rgba(25, 135, 84, 0.04) 100%);
+            border-left: 4px solid #198754;
+        }
+
+        .tour-overview-card:nth-child(4) {
+            background: linear-gradient(135deg, rgba(13, 202, 240, 0.08) 0%, rgba(13, 202, 240, 0.04) 100%);
+            border-left: 4px solid #0dcaf0;
+        }
+
+        .tour-overview-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+
+        .tour-overview-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .tour-overview-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .tour-overview-label {
+            font-size: 14px;
+            color: #6c757d;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .tour-overview-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #003499;
+            margin: 0;
+            line-height: 1.3;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+
+        /* Modal Styling */
+        .modal-header {
+            border-bottom: 2px solid #f0f0f0;
+            background: linear-gradient(135deg, #052461 0%, #0a3a8a 100%);
+            color: white;
+        }
+
+        .modal-title {
+            font-weight: 600;
+            font-size: 20px;
+        }
+
+        .btn-close-modal {
+            background: rgba(255,255,255,0.8);
+            border: none;
+            opacity: 1;
+        }
+
+        .btn-close-modal:hover {
+            background: white;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #052461;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-control, .form-select {
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 10px 12px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #052461;
+            box-shadow: 0 0 0 0.2rem rgba(5, 36, 97, 0.15);
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .form-row.full {
+            grid-template-columns: 1fr;
+        }
+
+        .modal-body {
+            background: #f8f9fa;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .modal-footer {
+            border-top: 1px solid #e0e0e0;
+            background: white;
+            gap: 10px;
+        }
+
+        .btn-submit-tour {
+            background: #052461;
+            border: none;
+            color: white;
+            font-weight: 500;
+            padding: 10px 24px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit-tour:hover {
+            background: #0a3a8a;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(5, 36, 97, 0.3);
+        }
+
+        .btn-cancel-tour {
+            background: #e9ecef;
+            border: none;
+            color: #495057;
+            font-weight: 500;
+            padding: 10px 24px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cancel-tour:hover {
+            background: #dde1e6;
+            color: #212529;
+        }
+
+        .input-group-icon {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #052461;
+            pointer-events: none;
+        }
+
+        .form-text {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 4px;
+        }
+
+        .required-field::after {
+            content: "*";
+            color: #dc3545;
+            margin-left: 3px;
+        }
+
+        /* Image Upload Styling */
+        .image-upload-section {
+            margin-bottom: 20px;
+        }
+
+        .image-upload-zone {
+            border: 2px dashed #052461;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            background: #f0f4ff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .image-upload-zone:hover {
+            background: #e6ecff;
+            border-color: #0a3a8a;
+        }
+
+        .image-upload-zone.active {
+            background: #e6ecff;
+            border-color: #0a3a8a;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            color: #052461;
+            margin-bottom: 12px;
+        }
+
+        .upload-text {
+            color: #052461;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .upload-hint {
+            color: #6c757d;
+            font-size: 12px;
+        }
+
+        .image-preview-container {
+            display: none;
+            margin-top: 16px;
+            padding: 16px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+        }
+
+        .image-preview-container.show {
+            display: block;
+        }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+            object-fit: cover;
+            display: block;
+            margin: 0 auto 12px;
+        }
+
+        .image-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        .image-filename {
+            color: #052461;
+            font-weight: 500;
+            font-size: 13px;
+        }
+
+        .image-size {
+            color: #6c757d;
+            font-size: 12px;
+        }
+
+        .btn-remove-image {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-remove-image:hover {
+            background: #c82333;
+        }
+
+        #tourImageInput {
+            display: none;
+        }
+
+        /* View Tour Modal Styling */
+        .modal-body .form-control-plaintext {
+            border-bottom: 1px solid #e9ecef;
+            padding: 12px 0;
+            margin: 0;
+            font-size: 15px;
+            font-weight: 500;
+            color: #052461;
+        }
+
+        .modal-body .form-label {
+            font-size: 13px;
+            text-transform: uppercase;
+            color: #6c757d;
+            margin-bottom: 8px;
+        }
+
+        .modal-body img {
+            border: 1px solid #e9ecef;
+        }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Left Sidebar -->
+        <aside class="sidebar bg-white shadow-sm">
+            <div class="logo-container">
+                <img src="../image/Logo.png" alt="Tripto Logo" class="logo-img">
+            </img>
+            
+            <nav class="sidebar-nav">
+                <a href="Trangchu_ad.html" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Bảng Điều Khiển</span>
+                </a>
+                <a href="Tour_ad.html" class="nav-item active">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <span>Tour Du Lịch</span>
+                </a>
+                <a href="TourDaDat_ad.html" class="nav-item">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Tour Đã Đặt</span>
+                </a>
+                <a href="Lich_ad.html" class="nav-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Lịch</span>
+                </a>
+                <a href="ThanhToan.html" class="nav-item">
+                    <i class="fas fa-credit-card"></i>
+                    <span>Thanh Toán</span>
+                </a>
+                <a href="KhachHang.html" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>Khách Hàng</span>
+                </a>
+                <a href="TinNhan.html" class="nav-item">
+                    <i class="fas fa-comments"></i>
+                    <span>Tin Nhắn</span>
+                </a>
+                <a href="HoatDong.html" class="nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Hoạt Động Thống Kê</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-inner">
+                <!-- Header -->
+                <header class="content-header">
+                    <h1 class="dashboard-title" style="color: #052461;">Quản Lý Tour Du Lịch</h1>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="search-bar flex-grow-1">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="tourSearchInput" placeholder="Tìm kiếm ở đây..." class="form-control">
+                        </div>
+                        <!-- Add Tour Button in Header -->
+                        <button class="btn btn-primary" style="background: #052461; white-space: nowrap;" data-bs-toggle="modal" data-bs-target="#addTourModal">
+                            <i class="fas fa-plus me-2"></i>Thêm Tour
+                        </button>
+                        <!-- User Menu in Header -->
+                        <div class="user-menu-header">
+                            <div class="notification-wrapper">
+                                <button class="icon-btn notification-btn" id="notificationBell" onclick="toggleNotifications()">
+                                    <i class="fas fa-bell"></i>
+                                    <span class="notification-badge" id="notificationBadge">3</span>
+                                </button>
+                            </div>
+                            <button class="icon-btn" id="settingsBtn" onclick="toggleSettings()">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                            <div class="user-profile">
+                                <div class="user-info">
+                                    <strong class="d-block">GTD</strong>
+                                    <small class="text-muted">Quản Trị Viên</small>
+                                </div>
+                                <div class="avatar-circle">GT</div>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- Stats Cards -->
+                <section class="overview-section">
+                    <div class="row g-4">
+                        <div class="col-xl-3 col-md-6">
+                            <div class="tour-overview-card">
+                                <div class="tour-overview-icon bg-primary bg-opacity-10">
+                                    <i class="fas fa-map-marked-alt text-primary"></i>
+                                </div>
+                                <div class="tour-overview-info">
+                                    <p class="tour-overview-label">Tổng Số Tour</p>
+                                    <h3 class="tour-overview-value" id="totalToursValue">0</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="tour-overview-card">
+                                <div class="tour-overview-icon bg-success bg-opacity-10">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                </div>
+                                <div class="tour-overview-info">
+                                    <p class="tour-overview-label">Tour Hoạt Động</p>
+                                    <h3 class="tour-overview-value" id="activeToursValue">0</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="tour-overview-card">
+                                <div class="tour-overview-icon bg-warning bg-opacity-10">
+                                    <i class="fas fa-calendar-check text-warning"></i>
+                                </div>
+                                <div class="tour-overview-info">
+                                    <p class="tour-overview-label">Tour Đã Đặt</p>
+                                    <h3 class="tour-overview-value" id="totalBookingsValue">0</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="tour-overview-card">
+                                <div class="tour-overview-icon bg-info bg-opacity-10">
+                                    <i class="fas fa-dollar-sign text-info"></i>
+                                </div>
+                                <div class="tour-overview-info">
+                                    <p class="tour-overview-label">Doanh Thu Tour</p>
+                                    <h3 class="tour-overview-value" id="totalRevenueValue">$0</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Filter Section -->
+                <section class="mb-4">
+                    <div class="d-flex gap-2 align-items-center" style="flex-wrap: nowrap; overflow-x: auto; background: white; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                        <button class="filter-pill active" style="flex-shrink: 0;">Tất Cả</button>
+                        <button class="filter-pill" style="flex-shrink: 0;">Hoạt Động</button>
+                        <button class="filter-pill" style="flex-shrink: 0;">Tạm Dừng</button>
+                        <select id="sortSelect" class="form-select sort-select" style="border-radius: 25px; padding: 8px 16px; border: 1px solid #e9ecef; flex-shrink: 0; width: 160px; color: #6c757d; font-size: 14px; font-weight: 500;">
+                            <option>Sắp xếp theo: Mới nhất</option>
+                            <option>Giá tăng dần</option>
+                            <option>Giá giảm dần</option>
+                            <option>Tên A-Z</option>
+                        </select>
+                    </div>
+                </section>
+
+                <!-- Tour Table -->
+                <section class="tour-table-container">
+                    <div class="tour-table">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Hình Ảnh</th>
+                                    <th>Tên Tour</th>
+                                    <th>Điểm Đến</th>
+                                    <th>Thời Gian</th>
+                                    <th>Giá Tour</th>
+                                    <th>Trạng Thái</th>
+                                    <th>Thao Tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td><img src="https://images.unsplash.com/photo-1528127269322-539801943592?w=100&h=100&fit=crop" alt="Tour" class="tour-table-img"></td>
+                                    <td>
+                                        <strong style="color: #052461;">Du Lịch Vịnh Hạ Long</strong>
+                                        <p class="mb-0 text-muted" style="font-size: 12px;">3 ngày 2 đêm</p>
+                                    </td>
+                                    <td><i class="fas fa-map-marker-alt text-danger me-1"></i> Hạ Long, Quảng Ninh</td>
+                                    <td>3 ngày</td>
+                                    <td><strong style="color: #0d6efd;">$350</strong></td>
+                                    <td><span class="tour-status status-active">Hoạt động</span></td>
+                                    <td>
+                                        <div class="d-flex gap-1">
+                                            <button class="btn-action btn-view" title="Xem chi tiết"><i class="fas fa-eye"></i></button>
+                                            <button class="btn-action btn-edit" title="Chỉnh sửa"><i class="fas fa-edit"></i></button>
+                                            <button class="btn-action btn-delete" title="Xóa"><i class="fas fa-trash"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td><img src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=100&h=100&fit=crop" alt="Tour" class="tour-table-img"></td>
+                                    <td>
+                                        <strong style="color: #052461;">Kỳ Nghỉ Bãi Biển Nha Trang</strong>
+                                        <p class="mb-0 text-muted" style="font-size: 12px;">4 ngày 3 đêm</p>
+                                    </td>
+                                    <td><i class="fas fa-map-marker-alt text-danger me-1"></i> Nha Trang, Khánh Hòa</td>
+                                    <td>4 ngày</td>
+                                    <td><strong style="color: #0d6efd;">$420</strong></td>
+                                    <td><span class="tour-status status-active">Hoạt động</span></td>
+                                    <td>
+                                        <div class="d-flex gap-1">
+                                            <button class="btn-action btn-view" title="Xem chi tiết"><i class="fas fa-eye"></i></button>
+                                            <button class="btn-action btn-edit" title="Chỉnh sửa"><i class="fas fa-edit"></i></button>
+                                            <button class="btn-action btn-delete" title="Xóa"><i class="fas fa-trash"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td><img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=100&h=100&fit=crop" alt="Tour" class="tour-table-img"></td>
+                                    <td>
+                                        <strong style="color: #052461;">Phiêu Lưu Vòng Hà Giang</strong>
+                                        <p class="mb-0 text-muted" style="font-size: 12px;">5 ngày 4 đêm</p>
+                                    </td>
+                                    <td><i class="fas fa-map-marker-alt text-danger me-1"></i> Hà Giang</td>
+                                    <td>5 ngày</td>
+                                    <td><strong style="color: #0d6efd;">$550</strong></td>
+                                    <td><span class="tour-status status-active">Hoạt động</span></td>
+                                    <td>
+                                        <div class="d-flex gap-1">
+                                            <button class="btn-action btn-view" title="Xem chi tiết"><i class="fas fa-eye"></i></button>
+                                            <button class="btn-action btn-edit" title="Chỉnh sửa"><i class="fas fa-edit"></i></button>
+                                            <button class="btn-action btn-delete" title="Xóa"><i class="fas fa-trash"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td><img src="https://images.unsplash.com/photo-1509023464722-18d996393ca8?w=100&h=100&fit=crop" alt="Tour" class="tour-table-img"></td>
+                                    <td>
+                                        <strong style="color: #052461;">Tour Di Sản Huế & Hội An</strong>
+                                        <p class="mb-0 text-muted" style="font-size: 12px;">3 ngày 2 đêm</p>
+                                    </td>
+                                    <td><i class="fas fa-map-marker-alt text-danger me-1"></i> Huế, Đà Nẵng</td>
+                                    <td>3 ngày</td>
+                                    <td><strong style="color: #0d6efd;">$280</strong></td>
+                                    <td><span class="tour-status status-full">Đã đặt đầy</span></td>
+                                    <td>
+                                        <div class="d-flex gap-1">
+                                            <button class="btn-action btn-view" title="Xem chi tiết"><i class="fas fa-eye"></i></button>
+                                            <button class="btn-action btn-edit" title="Chỉnh sửa"><i class="fas fa-edit"></i></button>
+                                            <button class="btn-action btn-delete" title="Xóa"><i class="fas fa-trash"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td><img src="https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=100&h=100&fit=crop" alt="Tour" class="tour-table-img"></td>
+                                    <td>
+                                        <strong style="color: #052461;">Phiêu Lưu Núi Sapa</strong>
+                                        <p class="mb-0 text-muted" style="font-size: 12px;">2 ngày 1 đêm</p>
+                                    </td>
+                                    <td><i class="fas fa-map-marker-alt text-danger me-1"></i> Sapa, Lào Cai</td>
+                                    <td>2 ngày</td>
+                                    <td><strong style="color: #0d6efd;">$180</strong></td>
+                                    <td><span class="tour-status status-inactive">Tạm dừng</span></td>
+                                    <td>
+                                        <div class="d-flex gap-1">
+                                            <button class="btn-action btn-view" title="Xem chi tiết"><i class="fas fa-eye"></i></button>
+                                            <button class="btn-action btn-edit" title="Chỉnh sửa"><i class="fas fa-edit"></i></button>
+                                            <button class="btn-action btn-delete" title="Xóa"><i class="fas fa-trash"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td><img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=100&h=100&fit=crop" alt="Tour" class="tour-table-img"></td>
+                                    <td>
+                                        <strong style="color: #052461;">Kỳ Nghỉ Đảo Côn Đảo</strong>
+                                        <p class="mb-0 text-muted" style="font-size: 12px;">3 ngày 2 đêm</p>
+                                    </td>
+                                    <td><i class="fas fa-map-marker-alt text-danger me-1"></i> Côn Đảo, Bà Rịa - Vũng Tàu</td>
+                                    <td>3 ngày</td>
+                                    <td><strong style="color: #0d6efd;">$390</strong></td>
+                                    <td><span class="tour-status status-active">Hoạt động</span></td>
+                                    <td>
+                                        <div class="d-flex gap-1">
+                                            <button class="btn-action btn-view" title="Xem chi tiết"><i class="fas fa-eye"></i></button>
+                                            <button class="btn-action btn-edit" title="Chỉnh sửa"><i class="fas fa-edit"></i></button>
+                                            <button class="btn-action btn-delete" title="Xóa"><i class="fas fa-trash"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td><img src="https://images.unsplash.com/photo-1528127269322-539801943592?w=100&h=100&fit=crop" alt="Tour" class="tour-table-img"></td>
+                                    <td>
+                                        <strong style="color: #052461;">Khám Phá Đà Lạt</strong>
+                                        <p class="mb-0 text-muted" style="font-size: 12px;">4 ngày 3 đêm</p>
+                                    </td>
+                                    <td><i class="fas fa-map-marker-alt text-danger me-1"></i> Đà Lạt, Lâm Đồng</td>
+                                    <td>4 ngày</td>
+                                    <td><strong style="color: #0d6efd;">$320</strong></td>
+                                    <td><span class="tour-status status-active">Hoạt động</span></td>
+                                    <td>
+                                        <div class="d-flex gap-1">
+                                            <button class="btn-action btn-view" title="Xem chi tiết"><i class="fas fa-eye"></i></button>
+                                            <button class="btn-action btn-edit" title="Chỉnh sửa"><i class="fas fa-edit"></i></button>
+                                            <button class="btn-action btn-delete" title="Xóa"><i class="fas fa-trash"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>8</td>
+                                    <td><img src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=100&h=100&fit=crop" alt="Tour" class="tour-table-img"></td>
+                                    <td>
+                                        <strong style="color: #052461;">Du Lịch Phú Quốc</strong>
+                                        <p class="mb-0 text-muted" style="font-size: 12px;">5 ngày 4 đêm</p>
+                                    </td>
+                                    <td><i class="fas fa-map-marker-alt text-danger me-1"></i> Phú Quốc, Kiên Giang</td>
+                                    <td>5 ngày</td>
+                                    <td><strong style="color: #0d6efd;">$480</strong></td>
+                                    <td><span class="tour-status status-active">Hoạt động</span></td>
+                                    <td>
+                                        <div class="d-flex gap-1">
+                                            <button class="btn-action btn-view" title="Xem chi tiết"><i class="fas fa-eye"></i></button>
+                                            <button class="btn-action btn-edit" title="Chỉnh sửa"><i class="fas fa-edit"></i></button>
+                                            <button class="btn-action btn-delete" title="Xóa"><i class="fas fa-trash"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="pagination-container">
+                        <span class="page-info">Trang 1/1 - Tổng 0 tour</span>
+                        <div class="pagination"></div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Right Sidebar -->
+        <aside class="right-sidebar bg-white">
+            <!-- User Menu -->
+            <div class="user-menu">
+<!-- Notification Bell with Animation -->
+            <div class="notification-wrapper">
+                <button class="icon-btn notification-btn" id="notificationBell" onclick="toggleNotifications()">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge" id="notificationBadge">3</span>
+                </button>
+                
+                <!-- Notification Dropdown -->
+                <div class="notification-dropdown" id="notificationDropdown">
+                    <div class="notification-header">
+                        <h6>Thông Báo</h6>
+                        <button class="mark-all-read" onclick="markAllRead()">Đánh dấu đã đọc</button>
+                    </div>
+                    <div class="notification-list" id="notificationList">
+                        <div class="notification-item unread" onclick="markAsRead(this)">
+                            <div class="notification-icon bg-danger">
+                                <i class="fas fa-exclamation-circle"></i>
+                            </div>
+                            <div class="notification-content">
+                                <p class="notification-title">Tour sắp hết chỗ</p>
+                                <p class="notification-desc">Tour Vịnh Hạ Long ngày 20/3 chỉ còn 5 chỗ</p>
+                                <span class="notification-time">5 phút trước</span>
+                            </div>
+                        </div>
+                        <div class="notification-item unread" onclick="markAsRead(this)">
+                            <div class="notification-icon bg-success">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="notification-content">
+                                <p class="notification-title">Đơn đặt tour mới</p>
+                                <p class="notification-desc">Có 3 đơn đặt tour mới cần xác nhận</p>
+                                <span class="notification-time">15 phút trước</span>
+                            </div>
+                        </div>
+                        <div class="notification-item unread" onclick="markAsRead(this)">
+                            <div class="notification-icon bg-warning">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div class="notification-content">
+                                <p class="notification-title">Lịch khởi hành sắp tới</p>
+                                <p class="notification-desc">Tour Sapa ngày 22/3 sắp đến ngày khởi hành</p>
+                                <span class="notification-time">1 giờ trước</span>
+                            </div>
+                        </div>
+                        <div class="notification-item" onclick="markAsRead(this)">
+                            <div class="notification-icon bg-info">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <div class="notification-content">
+                                <p class="notification-title">Khách hàng mới đăng ký</p>
+                                <p class="notification-desc">12 khách hàng mới đăng ký hôm nay</p>
+                                <span class="notification-time">2 giờ trước</span>
+                            </div>
+                        </div>
+                        <div class="notification-item" onclick="markAsRead(this)">
+                            <div class="notification-icon bg-primary">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <div class="notification-content">
+                                <p class="notification-title">Thanh toán thành công</p>
+                                <p class="notification-desc">Thanh toán $1,250 từ khách hàng ABC</p>
+                                <span class="notification-time">3 giờ trước</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="icon-btn" id="settingsBtn" onclick="toggleSettings()">
+                <i class="fas fa-cog"></i>
+            </button>
+                <!-- Settings Dropdown -->
+            <div class="settings-dropdown" id="settingsDropdown">
+                <div class="settings-header">
+                    <h6>Cài Đặt</h6>
+                </div>
+                <div class="settings-list">
+                    <div class="settings-item">
+                        <div class="settings-item-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="settings-item-content">
+                            <p class="settings-item-title">Thông Tin Cá Nhân</p>
+                            <p class="settings-item-desc">Cập nhật thông tin profile</p>
+                        </div>
+                    </div>
+<div class="settings-item">
+                        <div class="settings-item-icon">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                        <div class="settings-item-content">
+                            <p class="settings-item-title">Bảo Mật</p>
+                            <p class="settings-item-desc">Đổi mật khẩu</p>
+                        </div>
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-item-icon">
+                            <i class="fas fa-palette"></i>
+                        </div>
+                        <div class="settings-item-content">
+                            <p class="settings-item-title">Giao Diện</p>
+                            <p class="settings-item-desc">Tùy chỉnh giao diện</p>
+                        </div>
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-item-icon">
+                            <i class="fas fa-language"></i>
+                        </div>
+                        <div class="settings-item-content">
+                            <p class="settings-item-title">Ngôn Ngữ</p>
+                            <p class="settings-item-desc">Chọn ngôn ngữ</p>
+                        </div>
+                    </div>
+                    <div class="settings-divider"></div>
+                    <div class="settings-item logout-item">
+                        <div class="settings-item-icon">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </div>
+                        <div class="settings-item-content">
+                            <p class="settings-item-title">Đăng Xuất</p>
+                            <p class="settings-item-desc">Thoát khỏi hệ thống</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                <div class="user-profile">
+                    <div class="user-info">
+                        <strong class="d-block">GTD</strong>
+                        <small class="text-muted">Quản Trị Viên</small>
+                    </div>
+                    <div class="avatar-circle">GT</div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <section class="sidebar-section">
+                <h6 class="mb-3" style="color: #052461; font-weight: 600;">Thao Tác Nhanh</h6>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary" style="background: #052461;" data-bs-toggle="modal" data-bs-target="#addTourModal">
+                        <i class="fas fa-plus me-2"></i>Thêm Tour Mới
+                    </button>
+                    <button class="btn btn-outline-primary">
+                        <i class="fas fa-file-export me-2"></i>Xuất Danh Sách
+                    </button>
+                    <button class="btn btn-outline-primary">
+                        <i class="fas fa-chart-bar me-2"></i>Báo Cáo
+                    </button>
+                </div>
+            </section>
+
+            <!-- Popular Destinations -->
+            <section class="sidebar-section">
+                <h6 class="mb-3" style="color: #052461; font-weight: 600;">Điểm Đến Phổ Biến</h6>
+                <div class="tour-list">
+                    <div class="tour-card">
+                        <img src="https://images.unsplash.com/photo-1528127269322-539801943592?w=400&h=200&fit=crop" alt="Hạ Long" class="tour-image">
+                        <h6 class="mt-2 mb-1">Vịnh Hạ Long</h6>
+                        <small class="text-muted">45 tours</small>
+                    </div>
+                    <div class="tour-card">
+                        <img src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&h=200&fit=crop" alt="Nha Trang" class="tour-image">
+                        <h6 class="mt-2 mb-1">Nha Trang</h6>
+                        <small class="text-muted">38 tours</small>
+                    </div>
+                    <div class="tour-card">
+                        <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=200&fit=crop" alt="Đà Lạt" class="tour-image">
+                        <h6 class="mt-2 mb-1">Đà Lạt</h6>
+                        <small class="text-muted">32 tours</small>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recent Bookings -->
+            <section class="sidebar-section">
+                <h6 class="mb-3" style="color: #052461; font-weight: 600;">Đặt Chỗ Gần Đây</h6>
+                <div class="customer-list">
+                    <div class="customer-item">
+                        <img src="https://images.unsplash.com/photo-1528127269322-539801943592?w=100&h=100&fit=crop" alt="Tour" class="avatar-placeholder">
+                        <div>
+                            <strong>Du Lịch Vịnh Hạ Long</strong>
+                            <small class="text-muted d-block">Nguyễn Văn A - 5 người</small>
+                        </div>
+                    </div>
+                    <div class="customer-item">
+                        <img src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=100&h=100&fit=crop" alt="Tour" class="avatar-placeholder">
+                        <div>
+                            <strong>Tour Di Sản Huế</strong>
+                            <small class="text-muted d-block">Trần Thị B - 3 người</small>
+                        </div>
+                    </div>
+                    <div class="customer-item">
+                        <img src="https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=100&h=100&fit=crop" alt="Tour" class="avatar-placeholder">
+                        <div>
+                            <strong>Phiêu Lưu Sapa</strong>
+                            <small class="text-muted d-block">Đang chờ xác nhận</small>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </aside>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Initialize admin name from localStorage
+        function initializeAdminProfile() {
+            const adminName = localStorage.getItem('adminName') || 'Admin';
+            const nameParts = adminName.trim().split(' ');
+            const initials = nameParts.map(part => part.charAt(0).toUpperCase()).join('');
+            const nameElement = document.querySelector('.user-info strong');
+            if (nameElement) nameElement.textContent = adminName;
+            const avatarElement = document.querySelector('.avatar-circle');
+            if (avatarElement) avatarElement.textContent = initials.substring(0, 2);
+        }
+        window.addEventListener('DOMContentLoaded', initializeAdminProfile);
+
+        // Global variables
+        let toursData = [];
+        let currentFilter = 'all';
+        let currentPage = 1;
+        let totalPages = 1;
+        let currentSort = 'newest';
+        let isSearching = false;
+        let searchResults = [];
+        const ITEMS_PER_PAGE = 10;
+
+        // Status mapping for display
+        const statusMap = {
+            'active': { label: 'Hoạt động', class: 'status-active' },
+            'inactive': { label: 'Tạm dừng', class: 'status-inactive' }
+        };
+
+        /**
+         * Lấy dữ liệu thống kê tour từ API
+         */
+        function loadTourStats() {
+            const apiUrl = '../admin.php?action=get_dashboard_stats';
+            
+            fetch(apiUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Lỗi kết nối server: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success && data.data) {
+                        // Cập nhật Tổng Số Tour
+                        document.getElementById('totalToursValue').textContent = data.data.total_tours;
+                        
+                        // Cập nhật Tour Hoạt Động
+                        document.getElementById('activeToursValue').textContent = data.data.active_tours;
+                        
+                        // Cập nhật Tour Đã Đặt
+                        document.getElementById('totalBookingsValue').textContent = data.data.total_bookings;
+                        
+                        // Cập nhật Doanh Thu Tour
+                        document.getElementById('totalRevenueValue').textContent = data.data.total_revenue_formatted;
+                    } else {
+                        console.error('Lỗi từ API:', data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Lỗi:', error);
+                });
+        }
+
+        // Load tours from API
+        async function loadTours(filter = 'all', sort = 'newest', page = 1) {
+            try {
+                isSearching = false;  // Exit search mode when loading tours
+                searchResults = [];   // Clear search results
+                
+                let apiUrl = '../admin.php?action=get_tours&sort=' + encodeURIComponent(sort) + '&page=' + page;
+                
+                if (filter !== 'all') {
+                    apiUrl += '&filter=' + encodeURIComponent(filter);
+                }
+                
+                const response = await fetch(apiUrl);
+                
+                // Kiểm tra HTTP response
+                if (!response.ok) {
+                    throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    toursData = data.data;
+                    currentPage = page;
+                    totalPages = data.pagination.total_pages;
+                    currentSort = sort;
+                    renderTours(filter);
+                    updatePagination(data.pagination);
+                } else {
+                    console.error('API Error:', data.message);
+                    alert('Lỗi tải dữ liệu:\n' + data.message);
+                    const tbody = document.querySelector('.tour-table tbody');
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px;"><span style="color: #dc3545;">❌ Lỗi tải dữ liệu từ server. Vui lòng kiểm tra console.</span></td></tr>';
+                }
+            } catch (error) {
+                console.error('Error loading tours:', error);
+                alert('Lỗi kết nối server:\n' + error.message + '\n\nVui lòng kiểm tra:\n1. Server PHP đang chạy\n2. Database kết nối được\n3. Bảng tour tồn tại');
+                
+                const tbody = document.querySelector('.tour-table tbody');
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px;"><span style="color: #dc3545;">❌ Lỗi kết nối server</span></td></tr>';
+            }
+        }
+
+        // Function to render tours
+        function renderTours(filter = 'all') {
+            const tbody = document.querySelector('.tour-table tbody');
+            let filteredTours = toursData;
+
+            if (filter !== 'all') {
+                filteredTours = toursData.filter(tour => tour.status === filter);
+            }
+
+            tbody.innerHTML = filteredTours.map((tour, index) => `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td><img src="${tour.image}" alt="Tour" class="tour-table-img"></td>
+                    <td>
+                        <div class="tour-name-cell">
+                            <strong style="color: #052461;">${tour.name}</strong> <span class="text-muted" style="font-size: 12px;">${tour.duration}</span>
+                        </div>
+                    </td>
+                    <td><i class="fas fa-map-marker-alt text-danger me-1"></i> ${tour.location}</td>
+                    <td>${tour.days} ngày</td>
+                    <td><strong style="color: #0d6efd;">${tour.price_formatted}</strong></td>
+                    <td><span class="tour-status ${statusMap[tour.status].class}">${statusMap[tour.status].label}</span></td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            <button class="btn-action btn-view" title="Xem chi tiết" onclick="viewTour(${tour.id})"><i class="fas fa-eye"></i></button>
+                            <button class="btn-action btn-edit" title="Chỉnh sửa" onclick="editTour(${tour.id})"><i class="fas fa-edit"></i></button>
+                            <button class="btn-action btn-delete" title="Xóa" onclick="deleteTour(${tour.id})"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+
+            // Update page info
+            document.querySelector('.page-info').textContent = `Hiển thị 1-${filteredTours.length} từ ${toursData.length} tour`;
+        }
+
+        // Search tours by keyword from database
+        async function searchTours(keyword) {
+            const tbody = document.querySelector('.tour-table tbody');
+            
+            if (!keyword.trim()) {
+                // If search is empty, return to normal view
+                isSearching = false;
+                searchResults = [];
+                currentPage = 1;
+                loadTours(currentFilter, currentSort, 1);
+                return;
+            }
+            
+            try {
+                // Call API to search in database
+                const response = await fetch(`../admin.php?action=search_tours&keyword=${encodeURIComponent(keyword)}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    searchResults = data.data;
+                    
+                    // If filter is active, apply it too
+                    if (currentFilter !== 'all') {
+                        searchResults = searchResults.filter(tour => tour.status === currentFilter);
+                    }
+                    
+                    // Set search state
+                    isSearching = true;
+                    currentPage = 1;
+                    
+                    // Calculate total pages for search results
+                    totalPages = Math.ceil(searchResults.length / ITEMS_PER_PAGE);
+                    
+                    // Display paginated search results
+                    renderSearchResults(currentPage);
+                    
+                    // Update pagination
+                    updatePagination({
+                        has_prev: currentPage > 1,
+                        has_next: currentPage < totalPages,
+                        total_pages: totalPages
+                    });
+                } else {
+                    console.error('Search error:', data.message);
+                    isSearching = false;
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px;"><span style="color: #dc3545;">❌ Lỗi tìm kiếm: ' + data.message + '</span></td></tr>';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                isSearching = false;
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px;"><span style="color: #dc3545;">❌ Lỗi kết nối server</span></td></tr>';
+            }
+        }
+        
+        // Render paginated search results
+        function renderSearchResults(page = 1) {
+            const tbody = document.querySelector('.tour-table tbody');
+            
+            // Calculate pagination
+            const startIdx = (page - 1) * ITEMS_PER_PAGE;
+            const endIdx = startIdx + ITEMS_PER_PAGE;
+            const paginatedResults = searchResults.slice(startIdx, endIdx);
+            
+            // Render results
+            tbody.innerHTML = paginatedResults.length > 0 ? 
+                paginatedResults.map((tour, index) => `
+                    <tr>
+                        <td>${startIdx + index + 1}</td>
+                        <td><img src="${tour.image}" alt="Tour" class="tour-table-img"></td>
+                        <td>
+                            <div class="tour-name-cell">
+                                <strong style="color: #052461;">${tour.name}</strong> <span class="text-muted" style="font-size: 12px;">${tour.duration}</span>
+                            </div>
+                        </td>
+                        <td><i class="fas fa-map-marker-alt text-danger me-1"></i> ${tour.location}</td>
+                        <td>${tour.days} ngày</td>
+                        <td><strong style="color: #0d6efd;">${tour.price_formatted}</strong></td>
+                        <td><span class="tour-status ${statusMap[tour.status].class}">${statusMap[tour.status].label}</span></td>
+                        <td>
+                            <div class="d-flex gap-1">
+                                <button class="btn-action btn-view" title="Xem chi tiết" onclick="viewTour(${tour.id})"><i class="fas fa-eye"></i></button>
+                                <button class="btn-action btn-edit" title="Chỉnh sửa" onclick="editTour(${tour.id})"><i class="fas fa-edit"></i></button>
+                                <button class="btn-action btn-delete" title="Xóa" onclick="deleteTour(${tour.id})"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('')
+            :
+            '<tr><td colspan="8" style="text-align: center; padding: 20px;"><span style="color: #999;">Không tìm thấy tour phù hợp</span></td></tr>';
+            
+            // Update page info
+            document.querySelector('.page-info').textContent = `Tìm thấy ${searchResults.length} tour - Trang ${page}/${totalPages}`;
+        }
+
+        // Initialize search handler
+        function initSearchHandler() {
+            const searchInput = document.getElementById('tourSearchInput');
+            if (!searchInput) return;
+            
+            searchInput.addEventListener('input', function(e) {
+                const keyword = e.target.value;
+                searchTours(keyword);
+            });
+        }
+        function updatePagination(pagination) {
+            const paginationContainer = document.querySelector('.pagination');
+            if (!paginationContainer) return;
+            
+            let html = '';
+            
+            // Previous button
+            if (pagination.has_prev) {
+                html += `<button class="page-item" onclick="goToPage(${currentPage - 1})"><i class="fas fa-chevron-left"></i></button>`;
+            } else {
+                html += `<button class="page-item" disabled style="opacity: 0.5; cursor: not-allowed;"><i class="fas fa-chevron-left"></i></button>`;
+            }
+            
+            // Page numbers
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(totalPages, currentPage + 2);
+            
+            if (startPage > 1) {
+                html += `<button class="page-item" onclick="goToPage(1)">1</button>`;
+                if (startPage > 2) {
+                    html += `<button class="page-item" disabled>...</button>`;
+                }
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                if (i === currentPage) {
+                    html += `<button class="page-item active">${i}</button>`;
+                } else {
+                    html += `<button class="page-item" onclick="goToPage(${i})">${i}</button>`;
+                }
+            }
+            
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    html += `<button class="page-item" disabled>...</button>`;
+                }
+                html += `<button class="page-item" onclick="goToPage(${totalPages})">${totalPages}</button>`;
+            }
+            
+            // Next button
+            if (pagination.has_next) {
+                html += `<button class="page-item" onclick="goToPage(${currentPage + 1})"><i class="fas fa-chevron-right"></i></button>`;
+            } else {
+                html += `<button class="page-item" disabled style="opacity: 0.5; cursor: not-allowed;"><i class="fas fa-chevron-right"></i></button>`;
+            }
+            
+            paginationContainer.innerHTML = html;
+            
+            // Update page info (skip if in search mode - renderSearchResults handles it)
+            if (!isSearching) {
+                const pageInfo = document.querySelector('.page-info');
+                if (pageInfo) {
+                    pageInfo.textContent = `Trang ${currentPage}/${totalPages} - Tổng ${pagination.total_tours} tour`;
+                }
+            }
+        }
+
+        // Go to specific page
+        function goToPage(page) {
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                
+                if (isSearching) {
+                    // If in search mode, render paginated search results
+                    renderSearchResults(page);
+                } else {
+                    // Otherwise, load tours from API
+                    loadTours(currentFilter, currentSort, page);
+                }
+                
+                // Scroll to table
+                document.querySelector('.tour-table').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Helper functions
+        function viewTourDetail(id) {
+            console.log('View tour:', id);
+            window.location.href = '../../USER/USER/chitiettour.html?id=' + id;
+        }
+
+        function editTour(id) {
+            // Fetch tour details from server
+            fetch(`../admin.php?action=get_tour_detail&id=${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const tour = data.data;
+                        
+                        // Populate form fields
+                        document.getElementById('editTourId').value = tour.id;
+                        document.getElementById('editTourName').value = tour.ten;
+                        document.getElementById('editTourDescription').value = tour.mo_ta;
+                        document.getElementById('editTourDestination').value = tour.id_dia_diem;
+                        document.getElementById('editTourPrice').value = tour.gia;
+                        document.getElementById('editTourDays').value = tour.so_ngay;
+                        document.getElementById('editMaxPeople').value = tour.so_nguoi_toi_da;
+                        document.getElementById('editDepartureDate').value = tour.ngay_khoi_hanh;
+                        document.getElementById('editTourStatus').value = tour.trang_thai;
+                        
+                        // Display current image
+                        if (tour.url_anh_chinh) {
+                            const imgSrc = tour.url_anh_chinh.startsWith('/') ? tour.url_anh_chinh : `/img/${tour.url_anh_chinh}`;
+                            document.getElementById('editCurrentImage').src = imgSrc;
+                            document.getElementById('editCurrentImageContainer').style.display = 'block';
+                        } else {
+                            document.getElementById('editCurrentImageContainer').style.display = 'none';
+                        }
+                        
+                        // Reset new image upload
+                        editUploadedImageData = null;
+                        document.getElementById('editImagePreviewContainer').style.display = 'none';
+                        document.getElementById('editTourImageInput').value = '';
+                        
+                        // Open modal
+                        const modal = new bootstrap.Modal(document.getElementById('editTourModal'));
+                        modal.show();
+                    } else {
+                        alert('Lỗi: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Lỗi kết nối server: ' + error.message);
+                });
+        }
+
+        function viewTour(id) {
+            // Fetch tour details from server
+            fetch(`../admin.php?action=get_tour_detail&id=${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const tour = data.data;
+                        
+                        // Populate basic info
+                        document.getElementById('viewTourName').textContent = tour.ten || '';
+                        document.getElementById('viewTourType').textContent = tour.loai_tour || 'N/A';
+                        document.getElementById('viewTourDestination').textContent = tour.dia_diem_name || 'N/A';
+                        document.getElementById('viewTourDuration').textContent = tour.so_ngay + ' ngày' || 'N/A';
+                        document.getElementById('viewTourMaxPeople').textContent = tour.so_nguoi_toi_da || 'N/A';
+                        
+                        // Format prices
+                        document.getElementById('viewTourPrice').textContent = new Intl.NumberFormat('vi-VN', {
+                            style: 'currency',
+                            currency: 'VND'
+                        }).format(tour.gia || 0);
+                        
+                        document.getElementById('viewTourPromoPrice').textContent = tour.gia_khuyen_mai 
+                            ? new Intl.NumberFormat('vi-VN', {
+                                style: 'currency',
+                                currency: 'VND'
+                            }).format(tour.gia_khuyen_mai)
+                            : 'Không có';
+                        
+                        // Format dates
+                        document.getElementById('viewTourDepartureDate').textContent = tour.ngay_khoi_hanh 
+                            ? new Date(tour.ngay_khoi_hanh).toLocaleDateString('vi-VN')
+                            : 'N/A';
+                        
+                        document.getElementById('viewTourCreatedDate').textContent = tour.ngay_tao 
+                            ? new Date(tour.ngay_tao).toLocaleDateString('vi-VN')
+                            : 'N/A';
+                        
+                        // Rating count
+                        document.getElementById('viewTourRatingCount').textContent = tour.so_danh_gia || '0';
+                        
+                        // Status with styling
+                        document.getElementById('viewTourStatus').innerHTML = `<span class="tour-status status-${tour.trang_thai === 'Hoạt động' ? 'active' : 'inactive'}">${tour.trang_thai || 'N/A'}</span>`;
+                        
+                        // Description
+                        document.getElementById('viewTourDescription').textContent = tour.mo_ta || 'Chưa có mô tả';
+                        
+                        // Display image
+                        if (tour.url_anh_chinh) {
+                            const imgSrc = tour.url_anh_chinh.startsWith('/') ? tour.url_anh_chinh : `/img/${tour.url_anh_chinh}`;
+                            document.getElementById('viewTourImage').src = imgSrc;
+                        } else {
+                            document.getElementById('viewTourImage').src = 'https://via.placeholder.com/600x400?text=Không+có+ảnh';
+                        }
+                        
+                        // Open modal
+                        const modal = new bootstrap.Modal(document.getElementById('viewTourModal'));
+                        modal.show();
+                    } else {
+                        alert('Lỗi: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Lỗi kết nối server: ' + error.message);
+                });
+        }
+
+        function deleteTour(id) {
+            if (confirm('Bạn có chắc chắn muốn xóa tour này không?')) {
+                // Gọi API xóa tour
+                fetch('../admin.php?action=delete_tour&id=' + id)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Xóa tour thành công!');
+                            loadTours(currentFilter, currentSort, 1);
+                        } else {
+                            alert('Lỗi xóa tour: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        alert('Lỗi kết nối server: ' + error.message);
+                    });
+            }
+        }
+
+        // Filter pill click handlers - wrap in function
+        function initFilterHandlers() {
+            document.querySelectorAll('.filter-pill').forEach(pill => {
+                pill.addEventListener('click', function() {
+                    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+                    this.classList.add('active');
+
+                    const filterText = this.textContent.trim();
+                    let filterValue = 'all';
+
+                    switch(filterText) {
+                        case 'Hoạt Động':
+                            filterValue = 'active';
+                            break;
+                        case 'Tạm Dừng':
+                            filterValue = 'inactive';
+                            break;
+                        case 'Tất Cả':
+                        default:
+                            filterValue = 'all';
+                    }
+
+                    currentFilter = filterValue;
+                    loadTours(filterValue, currentSort, 1);
+                });
+            });
+        }
+
+        // Sort dropdown handler - wrap in function
+        function initSortHandlers() {
+            document.querySelectorAll('.form-select').forEach(select => {
+                if (select.classList.contains('sort-select')) {
+                    select.addEventListener('change', function() {
+                        const sortValue = this.value;
+                        let sortParam = 'newest';
+
+                        switch(sortValue) {
+                            case 'Giá tăng dần':
+                                sortParam = 'price-asc';
+                                break;
+                            case 'Giá giảm dần':
+                                sortParam = 'price-desc';
+                                break;
+                            case 'Tên A-Z':
+                                sortParam = 'name-asc';
+                                break;
+                            case 'Tên Z-A':
+                                sortParam = 'name-desc';
+                                break;
+                            case 'Sắp xếp theo: Mới nhất':
+                            default:
+                                sortParam = 'newest';
+                        }
+
+                        loadTours(currentFilter, sortParam, 1);
+                    });
+                }
+            });
+        }
+
+        // Load tours on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            loadTourStats(); // Load stats from API
+            loadTours();
+            initFilterHandlers(); // Initialize filter handlers
+            initSortHandlers(); // Initialize sort handlers
+            initSearchHandler(); // Initialize search handler
+            initImageUploadHandlers(); // Initialize image upload handlers
+            initEditImageUploadHandlers(); // Initialize edit image upload handlers
+            initFormSubmissionHandler(); // Initialize form submission handler
+            initEditFormSubmissionHandler(); // Initialize edit form submission handler
+            initModalResetHandler(); // Initialize modal reset handler
+            
+            // Load dropdown data
+            loadDestinations(); // Load destinations
+            loadTourTypes(); // Load tour types
+            
+            // Notification initialization
+            notificationInterval = setInterval(simulateNewNotification, 30000);
+            updateNotificationCount();
+            setTimeout(ringBell, 2000);
+        });
+        
+        // ============================================
+        // NOTIFICATION BELL FUNCTIONALITY
+        // ============================================
+        
+        let notificationInterval;
+        
+        // Toggle notification dropdown
+        function toggleNotifications() {
+            const dropdown = document.getElementById('notificationDropdown');
+            const bell = document.getElementById('notificationBell');
+            
+            if (dropdown.style.display === 'block') {
+                dropdown.style.display = 'none';
+                bell.classList.remove('bell-ringing');
+            } else {
+                dropdown.style.display = 'block';
+                ringBell();
+            }
+        }
+        
+        // Ring bell animation
+        function ringBell() {
+            const bell = document.getElementById('notificationBell');
+            bell.classList.add('bell-ringing');
+            setTimeout(() => {
+                bell.classList.remove('bell-ringing');
+            }, 3000);
+        }
+        
+        // Mark single notification as read
+        function markAsRead(element) {
+            element.classList.remove('unread');
+            updateNotificationCount();
+        }
+        
+        // Mark all notifications as read
+        function markAllRead() {
+            const items = document.querySelectorAll('.notification-item.unread');
+            items.forEach(item => {
+                item.classList.remove('unread');
+            });
+            updateNotificationCount();
+        }
+        
+        // Update notification badge count
+        function updateNotificationCount() {
+            const unreadItems = document.querySelectorAll('.notification-item.unread');
+            const badge = document.getElementById('notificationBadge');
+            badge.textContent = unreadItems.length;
+            if (unreadItems.length === 0) {
+                badge.style.display = 'none';
+            } else {
+                badge.style.display = 'flex';
+            }
+        }
+        
+        // Simulate new notifications coming in
+        function simulateNewNotification() {
+            const notifications = [
+                { title: 'Tour mới được đặt', desc: 'Khách hàng Nguyễn Văn A đặt tour Đà Nẵng', icon: 'fa-check-circle', bg: 'bg-success' },
+                { title: 'Cần xác nhận', desc: '5 tour cần xác nhận ngay', icon: 'fa-exclamation-triangle', bg: 'bg-warning' },
+                { title: 'Khách hàng phản hồi', desc: 'Có phản hồi mới từ khách hàng', icon: 'fa-comments', bg: 'bg-info' },
+                { title: 'Tour sắp hết chỗ', desc: 'Tour Vịnh Hạ Long ngày 20/3 chỉ còn 5 chỗ', icon: 'fa-exclamation-circle', bg: 'bg-danger' }
+            ];
+            
+            const randomNotification = notifications[Math.floor(Math.random() * notifications.length)];
+            const notificationList = document.getElementById('notificationList');
+            
+            const newItem = document.createElement('div');
+            newItem.className = 'notification-item unread';
+            newItem.onclick = function() { markAsRead(this); };
+            newItem.innerHTML = `
+                <div class="notification-icon ${randomNotification.bg}">
+                    <i class="fas ${randomNotification.icon}"></i>
+                </div>
+                <div class="notification-content">
+                    <p class="notification-title">${randomNotification.title}</p>
+                    <p class="notification-desc">${randomNotification.desc}</p>
+                    <span class="notification-time">Vừa xong</span>
+                </div>`;
+            
+            notificationList.insertBefore(newItem, notificationList.firstChild);
+            updateNotificationCount();
+            ringBell();
+        }
+        
+        // Close notification dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('notificationDropdown');
+            const bell = document.getElementById('notificationBell');
+            if (dropdown && !dropdown.contains(event.target) && !bell.contains(event.target)) {
+                dropdown.style.display = 'none';
+                bell.classList.remove('bell-ringing');
+            }
+        });
+
+        // ============================================
+        // SETTINGS DROPDOWN FUNCTIONALITY
+        // ============================================
+        
+        // Toggle settings dropdown
+        function toggleSettings() {
+            const dropdown = document.getElementById('settingsDropdown');
+            const settingsBtn = document.getElementById('settingsBtn');
+            const notificationDropdown = document.getElementById('notificationDropdown');
+            
+            // Close notification dropdown if open
+            if (notificationDropdown && notificationDropdown.style.display === 'block') {
+                notificationDropdown.style.display = 'none';
+            }
+            
+            if (dropdown.style.display === 'block') {
+                dropdown.style.display = 'none';
+            } else {
+                dropdown.style.display = 'block';
+            }
+        }
+        
+        // Close settings dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const settingsDropdown = document.getElementById('settingsDropdown');
+            const settingsBtn = document.getElementById('settingsBtn');
+            if (settingsDropdown && !settingsDropdown.contains(event.target) && !settingsBtn.contains(event.target)) {
+                settingsDropdown.style.display = 'none';
+            }
+        });
+
+        // ============================================
+        // ADD TOUR MODAL FUNCTIONALITY
+        // ============================================
+        
+        let uploadedImageData = null; // Lưu trữ dữ liệu ảnh
+        
+        // Initialize modal reset handler
+        function initModalResetHandler() {
+            const addTourModal = document.getElementById('addTourModal');
+            if (!addTourModal) return;
+
+            addTourModal.addEventListener('show.bs.modal', function() {
+                const addTourForm = document.getElementById('addTourForm');
+                if (addTourForm) addTourForm.reset();
+                uploadedImageData = null;
+                
+                const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+                const imageUploadZone = document.getElementById('imageUploadZone');
+                if (imagePreviewContainer) imagePreviewContainer.classList.remove('show');
+                if (imageUploadZone) imageUploadZone.classList.remove('active');
+            });
+        }
+
+        // Load destinations from API
+        async function loadDestinations() {
+            try {
+                const response = await fetch('../admin.php?action=get_destinations');
+                const data = await response.json();
+
+                if (data.success) {
+                    // Populate for Add Tour Modal
+                    const select = document.getElementById('tourDestination');
+                    if (select) {
+                        // Clear existing options except the default one
+                        select.innerHTML = '<option value="">-- Chọn điểm đến --</option>';
+
+                        // Add options from API
+                        data.data.forEach(destination => {
+                            const option = document.createElement('option');
+                            option.value = destination.id;
+                            option.textContent = destination.name;
+                            select.appendChild(option);
+                        });
+                    }
+
+                    // Populate for Edit Tour Modal
+                    const editSelect = document.getElementById('editTourDestination');
+                    if (editSelect) {
+                        // Clear existing options except the default one
+                        editSelect.innerHTML = '<option value="">-- Chọn điểm đến --</option>';
+
+                        // Add options from API
+                        data.data.forEach(destination => {
+                            const option = document.createElement('option');
+                            option.value = destination.id;
+                            option.textContent = destination.name;
+                            editSelect.appendChild(option);
+                        });
+                    }
+                } else {
+                    console.error('Error loading destinations:', data.message);
+                }
+            } catch (error) {
+                console.error('Error fetching destinations:', error);
+            }
+        }
+
+        // Load tour types from API
+        async function loadTourTypes() {
+            try {
+                const response = await fetch('../admin.php?action=get_tour_types');
+                const data = await response.json();
+
+                if (data.success) {
+                    const select = document.getElementById('tourType');
+                    if (!select) return;
+
+                    // Clear existing options except the default one
+                    select.innerHTML = '<option value="">-- Chọn loại tour --</option>';
+
+                    // Add options from API
+                    data.data.forEach(tourType => {
+                        const option = document.createElement('option');
+                        option.value = tourType.value;
+                        option.textContent = tourType.label;
+                        select.appendChild(option);
+                    });
+                } else {
+                    console.error('Error loading tour types:', data.message);
+                }
+            } catch (error) {
+                console.error('Error fetching tour types:', error);
+            }
+        }
+
+        // ============================================
+        // IMAGE UPLOAD HANDLERS
+        // ============================================
+        
+        // Initialize image upload handlers after DOM is loaded
+        function initImageUploadHandlers() {
+            const imageUploadZone = document.getElementById('imageUploadZone');
+            const tourImageInput = document.getElementById('tourImageInput');
+            const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+            const imagePreview = document.getElementById('imagePreview');
+            const imageFilename = document.getElementById('imageFilename');
+            const imageSize = document.getElementById('imageSize');
+            const btnRemoveImage = document.getElementById('btnRemoveImage');
+
+            // Check if elements exist
+            if (!imageUploadZone || !tourImageInput) {
+                console.error('Image upload elements not found');
+                return;
+            }
+
+            // Click to upload
+            imageUploadZone.addEventListener('click', function() {
+                tourImageInput.click();
+            });
+
+            // Handle file input change
+            tourImageInput.addEventListener('change', function(e) {
+                if (this.files && this.files[0]) {
+                    handleImageUpload(this.files[0]);
+                }
+            });
+
+            // Drag and drop - Dragover
+            imageUploadZone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                imageUploadZone.classList.add('active');
+            });
+
+            // Drag and drop - Dragleave
+            imageUploadZone.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                // Check if we're actually leaving the zone
+                if (e.target === imageUploadZone) {
+                    imageUploadZone.classList.remove('active');
+                }
+            });
+
+            // Drag and drop - Drop
+            imageUploadZone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                imageUploadZone.classList.remove('active');
+                
+                const files = e.dataTransfer.files;
+                if (files && files.length > 0) {
+                    handleImageUpload(files[0]);
+                }
+            });
+
+            // Remove image button
+            if (btnRemoveImage) {
+                btnRemoveImage.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    uploadedImageData = null;
+                    tourImageInput.value = '';
+                    document.getElementById('tourImage').value = '';
+                    imagePreviewContainer.classList.remove('show');
+                    imageUploadZone.classList.remove('active');
+                });
+            }
+        }
+
+        // Handle image upload
+        function handleImageUpload(file) {
+            const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+            const imagePreview = document.getElementById('imagePreview');
+            const imageFilename = document.getElementById('imageFilename');
+            const imageSize = document.getElementById('imageSize');
+
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                alert('Vui lòng chọn file ảnh (JPG, PNG, GIF)');
+                return;
+            }
+
+            // Validate file size (max 5MB)
+            const maxSize = 5 * 1024 * 1024; // 5MB
+            if (file.size > maxSize) {
+                alert('Kích thước ảnh không được vượt quá 5MB');
+                return;
+            }
+
+            // Read file and convert to base64 or URL
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                uploadedImageData = {
+                    name: file.name,
+                    size: file.size,
+                    type: file.type,
+                    base64: e.target.result, // Base64 encoded image data
+                    file: file
+                };
+
+                // Display preview
+                displayImagePreview();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Display image preview
+        function displayImagePreview() {
+            const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+            const imagePreview = document.getElementById('imagePreview');
+            const imageFilename = document.getElementById('imageFilename');
+            const imageSize = document.getElementById('imageSize');
+
+            if (uploadedImageData) {
+                if (imagePreview) imagePreview.src = uploadedImageData.base64;
+                if (imageFilename) imageFilename.textContent = uploadedImageData.name;
+                if (imageSize) imageSize.textContent = 'Size: ' + (uploadedImageData.size / 1024).toFixed(2) + ' KB';
+                if (imagePreviewContainer) imagePreviewContainer.classList.add('show');
+                
+                // Set hidden input value
+                const tourImageInput = document.getElementById('tourImage');
+                if (tourImageInput) tourImageInput.value = uploadedImageData.base64;
+            }
+        }
+
+        // Initialize Edit Image Upload Handlers
+        let editUploadedImageData = null;
+        function initEditImageUploadHandlers() {
+            const editImageUploadZone = document.getElementById('editImageUploadZone');
+            const editTourImageInput = document.getElementById('editTourImageInput');
+            const editBtnRemoveImage = document.getElementById('editBtnRemoveImage');
+
+            // Check if elements exist
+            if (!editImageUploadZone || !editTourImageInput) {
+                console.error('Edit image upload elements not found');
+                return;
+            }
+
+            // Click to upload
+            editImageUploadZone.addEventListener('click', function() {
+                editTourImageInput.click();
+            });
+
+            // Handle file input change
+            editTourImageInput.addEventListener('change', function(e) {
+                if (this.files && this.files[0]) {
+                    handleEditImageUpload(this.files[0]);
+                }
+            });
+
+            // Drag and drop - Dragover
+            editImageUploadZone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                editImageUploadZone.classList.add('active');
+            });
+
+            // Drag and drop - Dragleave
+            editImageUploadZone.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (e.target === editImageUploadZone) {
+                    editImageUploadZone.classList.remove('active');
+                }
+            });
+
+            // Drag and drop - Drop
+            editImageUploadZone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                editImageUploadZone.classList.remove('active');
+                
+                const files = e.dataTransfer.files;
+                if (files && files.length > 0) {
+                    handleEditImageUpload(files[0]);
+                }
+            });
+
+            // Remove image button
+            if (editBtnRemoveImage) {
+                editBtnRemoveImage.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    editUploadedImageData = null;
+                    editTourImageInput.value = '';
+                    document.getElementById('editImagePreviewContainer').style.display = 'none';
+                    editImageUploadZone.classList.remove('active');
+                });
+            }
+        }
+
+        // Handle edit image upload
+        function handleEditImageUpload(file) {
+            const editImagePreviewContainer = document.getElementById('editImagePreviewContainer');
+            const editImagePreview = document.getElementById('editImagePreview');
+            const editImageFilename = document.getElementById('editImageFilename');
+            const editImageSize = document.getElementById('editImageSize');
+
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                alert('Vui lòng chọn file ảnh (JPG, PNG, GIF)');
+                return;
+            }
+
+            // Validate file size (max 5MB)
+            const maxSize = 5 * 1024 * 1024;
+            if (file.size > maxSize) {
+                alert('Kích thước ảnh không được vượt quá 5MB');
+                return;
+            }
+
+            // Read file and convert to base64
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                editUploadedImageData = {
+                    name: file.name,
+                    size: file.size,
+                    type: file.type,
+                    base64: e.target.result,
+                    file: file
+                };
+
+                // Display preview
+                if (editImagePreview) editImagePreview.src = editUploadedImageData.base64;
+                if (editImageFilename) editImageFilename.textContent = editUploadedImageData.name;
+                if (editImageSize) editImageSize.textContent = 'Size: ' + (editUploadedImageData.size / 1024).toFixed(2) + ' KB';
+                if (editImagePreviewContainer) editImagePreviewContainer.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Handle form submission - wrap in function to call later
+        function initFormSubmissionHandler() {
+            const addTourForm = document.getElementById('addTourForm');
+            if (!addTourForm) return;
+
+            addTourForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Check if image is uploaded
+                if (!uploadedImageData) {
+                    alert('Vui lòng chọn ảnh cho tour');
+                    return;
+                }
+                
+                // Get form values
+                const formData = new FormData();
+                formData.append('ten', document.getElementById('tourName').value);
+                formData.append('mo_ta', document.getElementById('tourDescription').value);
+                formData.append('id_dia_diem', document.getElementById('tourDestination').value);
+                formData.append('gia', document.getElementById('tourPrice').value);
+                formData.append('so_ngay', document.getElementById('tourDays').value);
+                formData.append('so_nguoi_toi_da', document.getElementById('maxPeople').value);
+                formData.append('trang_thai', document.getElementById('tourStatus').value);
+                formData.append('ngay_khoi_hanh', document.getElementById('departureDate').value);
+                formData.append('anh_file', uploadedImageData.file);
+                formData.append('anh_base64', uploadedImageData.base64);
+                formData.append('anh_filename', uploadedImageData.name);
+                
+                console.log('Form data with image:', {
+                    ten: formData.get('ten'),
+                    mo_ta: formData.get('mo_ta'),
+                    id_dia_diem: formData.get('id_dia_diem'),
+                    gia: formData.get('gia'),
+                    anh_filename: uploadedImageData.name,
+                    anh_size: uploadedImageData.size
+                });
+                
+                // Gửi request tới server
+                fetch('../admin.php?action=add_tour', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Thêm tour thành công!');
+                        loadTours();
+                        loadTourStats(); // Reload statistics data
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('addTourModal'));
+                        modal.hide();
+                    } else {
+                        alert('Lỗi: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Lỗi kết nối server: ' + error.message);
+                });
+            });
+        }
+
+        // Handle edit form submission
+        function initEditFormSubmissionHandler() {
+            const editTourForm = document.getElementById('editTourForm');
+            if (!editTourForm) return;
+
+            editTourForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get form values
+                const tourId = document.getElementById('editTourId').value;
+                const formData = new FormData();
+                formData.append('id', tourId);
+                formData.append('ten', document.getElementById('editTourName').value);
+                formData.append('mo_ta', document.getElementById('editTourDescription').value);
+                formData.append('id_dia_diem', document.getElementById('editTourDestination').value);
+                formData.append('gia', document.getElementById('editTourPrice').value);
+                formData.append('so_ngay', document.getElementById('editTourDays').value);
+                formData.append('so_nguoi_toi_da', document.getElementById('editMaxPeople').value);
+                formData.append('trang_thai', document.getElementById('editTourStatus').value);
+                formData.append('ngay_khoi_hanh', document.getElementById('editDepartureDate').value);
+                
+                // Only add image if new image is uploaded
+                if (editUploadedImageData) {
+                    formData.append('anh_file', editUploadedImageData.file);
+                    formData.append('anh_base64', editUploadedImageData.base64);
+                    formData.append('anh_filename', editUploadedImageData.name);
+                }
+                
+                // Gửi request tới server
+                fetch('../admin.php?action=update_tour', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Cập nhật tour thành công!');
+                        loadTours();
+                        loadTourStats();
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('editTourModal'));
+                        modal.hide();
+                    } else {
+                        alert('Lỗi: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Lỗi kết nối server: ' + error.message);
+                });
+            });
+        }
+    
+    </script>
+
+    <!-- Modal Add Tour -->
+    <div class="modal fade" id="addTourModal" tabindex="-1" aria-labelledby="addTourModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addTourModalLabel">
+                        <i class="fas fa-plus-circle me-2"></i>Thêm Tour Du Lịch Mới
+                    </h5>
+                    <button type="button" class="btn-close btn-close-modal" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="addTourForm">
+                    <div class="modal-body">
+                        <!-- Tên Tour -->
+                        <div class="form-group">
+                            <label for="tourName" class="form-label required-field">Tên Tour</label>
+                            <input type="text" class="form-control" id="tourName" placeholder="Nhập tên tour" required>
+                            <div class="form-text">VD: Du lịch Vịnh Hạ Long 3 ngày</div>
+                        </div>
+
+                        <!-- Mô Tả -->
+                        <div class="form-group">
+                            <label for="tourDescription" class="form-label required-field">Mô Tả</label>
+                            <textarea class="form-control" id="tourDescription" rows="3" placeholder="Nhập mô tả chi tiết về tour" required></textarea>
+                            <div class="form-text">Mô tả ngắn gọn về hành trình và các điểm tham quan</div>
+                        </div>
+
+                        <!-- Hàng chứa: Điểm Đến + Loại Tour -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="tourDestination" class="form-label required-field">Điểm Đến</label>
+                                <select class="form-select" id="tourDestination" required>
+                                    <option value="">-- Đang tải --</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="tourType" class="form-label required-field">Loại Tour</label>
+                                <select class="form-select" id="tourType" required>
+                                    <option value="">-- Đang tải --</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Hàng chứa: Giá + Giá Khuyến Mãi -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="tourPrice" class="form-label required-field">Giá Tour (VNĐ)</label>
+                                <input type="number" class="form-control" id="tourPrice" placeholder="VD: 2500000" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="discountPrice" class="form-label">Giá Khuyến Mãi (VNĐ)</label>
+                                <input type="number" class="form-control" id="discountPrice" placeholder="Để trống nếu không có khuyến mãi" step="0.01">
+                            </div>
+                        </div>
+
+                        <!-- Hàng chứa: Số Ngày + Số Người Tối Đa -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="tourDays" class="form-label required-field">Số Ngày</label>
+                                <input type="number" class="form-control" id="tourDays" placeholder="VD: 3" min="1" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="maxPeople" class="form-label required-field">Số Người Tối Đa</label>
+                                <input type="number" class="form-control" id="maxPeople" placeholder="VD: 30" min="1" required>
+                            </div>
+                        </div>
+
+                        <!-- Hàng chứa: Ngày Khởi Hành -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="departureDate" class="form-label required-field">Ngày Khởi Hành</label>
+                                <input type="date" class="form-control" id="departureDate" required>
+                            </div>
+                        </div>
+
+                        <!-- Ảnh Tour -->
+                        <div class="image-upload-section">
+                            <label class="form-label required-field">Ảnh Tour</label>
+                            <div class="image-upload-zone" id="imageUploadZone">
+                                <div class="upload-icon">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                </div>
+                                <p class="upload-text">Kéo thả ảnh vào đây hoặc nhấn để chọn</p>
+                                <p class="upload-hint">Hỗ trợ: JPG, PNG, GIF (Tối đa 5MB)</p>
+                            </div>
+                            <input type="file" id="tourImageInput" accept="image/*">
+                            
+                            <!-- Image Preview -->
+                            <div class="image-preview-container" id="imagePreviewContainer">
+                                <img id="imagePreview" class="image-preview" src="" alt="Preview">
+                                <div class="image-info">
+                                    <div>
+                                        <div class="image-filename" id="imageFilename">File name</div>
+                                        <div class="image-size" id="imageSize">Size: 0 KB</div>
+                                    </div>
+                                    <button type="button" class="btn-remove-image" id="btnRemoveImage">
+                                        <i class="fas fa-trash me-1"></i>Xóa
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- URL Ảnh (Hidden) -->
+                        <input type="hidden" id="tourImage">
+
+                        <!-- Hàng chứa: Trạng Thái + Nổi Bật -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="tourStatus" class="form-label required-field">Trạng Thái</label>
+                                <select class="form-select" id="tourStatus" required>
+                                    <option value="Hoạt động" selected>Hoạt động</option>
+                                    <option value="Không hoạt động">Không hoạt động</option>
+                                    <option value="Hết vé">Hết vé</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="display: flex; align-items: flex-end;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox" class="form-check-input" id="isFeatured" style="width: 18px; height: 18px; cursor: pointer;">
+                                    <label for="isFeatured" class="form-check-label" style="margin-bottom: 0; cursor: pointer;">
+                                        <i class="fas fa-star" style="color: #ffc107;"></i> Tour Nổi Bật
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-cancel-tour" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-2"></i>Hủy
+                        </button>
+                        <button type="submit" class="btn btn-submit-tour">
+                            <i class="fas fa-save me-2"></i>Lưu Tour Mới
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Tour Modal -->
+    <div class="modal fade" id="editTourModal" tabindex="-1" aria-labelledby="editTourLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" style="background: linear-gradient(135deg, #052461 0%, #0d47a1 100%); color: white;">
+                    <h5 class="modal-title" id="editTourLabel">
+                        <i class="fas fa-edit me-2"></i>Chỉnh Sửa Tour
+                    </h5>
+                    <button type="button" class="btn-close btn-close-modal btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="editTourForm">
+                    <input type="hidden" id="editTourId">
+                    <div class="modal-body">
+                        <!-- Tên Tour -->
+                        <div class="form-group">
+                            <label for="editTourName" class="form-label required-field">Tên Tour</label>
+                            <input type="text" class="form-control" id="editTourName" placeholder="Nhập tên tour" required>
+                            <div class="form-text">VD: Du lịch Vịnh Hạ Long 3 ngày</div>
+                        </div>
+
+                        <!-- Mô Tả -->
+                        <div class="form-group">
+                            <label for="editTourDescription" class="form-label required-field">Mô Tả</label>
+                            <textarea class="form-control" id="editTourDescription" rows="3" placeholder="Nhập mô tả chi tiết về tour" required></textarea>
+                            <div class="form-text">Mô tả ngắn gọn về hành trình và các điểm tham quan</div>
+                        </div>
+
+                        <!-- Hàng chứa: Điểm Đến + Loại Tour -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editTourDestination" class="form-label required-field">Điểm Đến</label>
+                                <select class="form-select" id="editTourDestination" required>
+                                    <option value="">-- Đang tải --</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Hàng chứa: Giá -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editTourPrice" class="form-label required-field">Giá Tour (VNĐ)</label>
+                                <input type="number" class="form-control" id="editTourPrice" placeholder="VD: 2500000" step="0.01" required>
+                            </div>
+                        </div>
+
+                        <!-- Hàng chứa: Số Ngày + Số Người Tối Đa -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editTourDays" class="form-label required-field">Số Ngày</label>
+                                <input type="number" class="form-control" id="editTourDays" placeholder="VD: 3" min="1" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="editMaxPeople" class="form-label required-field">Số Người Tối Đa</label>
+                                <input type="number" class="form-control" id="editMaxPeople" placeholder="VD: 30" min="1" required>
+                            </div>
+                        </div>
+
+                        <!-- Hàng chứa: Ngày Khởi Hành -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editDepartureDate" class="form-label required-field">Ngày Khởi Hành</label>
+                                <input type="date" class="form-control" id="editDepartureDate" required>
+                            </div>
+                        </div>
+
+                        <!-- Ảnh Tour -->
+                        <div class="image-upload-section">
+                            <label class="form-label">Ảnh Tour (để trống nếu không thay đổi)</label>
+                            <div class="image-upload-zone" id="editImageUploadZone">
+                                <div class="upload-icon">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                </div>
+                                <p class="upload-text">Kéo thả ảnh vào đây hoặc nhấn để chọn</p>
+                                <p class="upload-hint">Hỗ trợ: JPG, PNG, GIF (Tối đa 5MB)</p>
+                            </div>
+                            <input type="file" id="editTourImageInput" accept="image/*">
+                            
+                            <!-- Image Preview for Current Image -->
+                            <div class="image-preview-container" id="editCurrentImageContainer" style="margin-top: 15px;">
+                                <p style="color: #666; margin-bottom: 10px;">Ảnh hiện tại:</p>
+                                <img id="editCurrentImage" class="image-preview" src="" alt="Current" style="max-width: 200px; max-height: 150px;">
+                            </div>
+
+                            <!-- Image Preview for New Image -->
+                            <div class="image-preview-container" id="editImagePreviewContainer" style="display: none;">
+                                <img id="editImagePreview" class="image-preview" src="" alt="Preview">
+                                <div class="image-info">
+                                    <div>
+                                        <div class="image-filename" id="editImageFilename">File name</div>
+                                        <div class="image-size" id="editImageSize">Size: 0 KB</div>
+                                    </div>
+                                    <button type="button" class="btn-remove-image" id="editBtnRemoveImage">
+                                        <i class="fas fa-trash me-1"></i>Xóa
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Trạng Thái -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editTourStatus" class="form-label required-field">Trạng Thái</label>
+                                <select class="form-select" id="editTourStatus" required>
+                                    <option value="Hoạt động">Hoạt động</option>
+                                    <option value="Không hoạt động">Không hoạt động</option>
+                                    <option value="Hết vé">Hết vé</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-cancel-tour" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-2"></i>Hủy
+                        </button>
+                        <button type="submit" class="btn btn-submit-tour">
+                            <i class="fas fa-save me-2"></i>Cập Nhật Tour
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Tour Detail Modal -->
+    <div class="modal fade" id="viewTourModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Chi Tiết Tour Du Lịch</h5>
+                    <button type="button" class="btn-close-modal" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body" style="max-height: 75vh; overflow-y: auto;">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Hình Ảnh</label>
+                                <img id="viewTourImage" src="" class="img-fluid rounded" style="max-height: 250px; width: 100%; object-fit: cover;">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Tên Tour</label>
+                                <p id="viewTourName" class="form-control-plaintext"></p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Loại Tour</label>
+                                <p id="viewTourType" class="form-control-plaintext"></p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Điểm Đến</label>
+                                <p id="viewTourDestination" class="form-control-plaintext"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Thời Gian</label>
+                                <p id="viewTourDuration" class="form-control-plaintext"></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Số Người Tối Đa</label>
+                                <p id="viewTourMaxPeople" class="form-control-plaintext"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Giá Tour</label>
+                                <p id="viewTourPrice" class="form-control-plaintext"></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Giá Khuyến Mãi</label>
+                                <p id="viewTourPromoPrice" class="form-control-plaintext"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Ngày Khởi Hành</label>
+                                <p id="viewTourDepartureDate" class="form-control-plaintext"></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Ngày Tạo</label>
+                                <p id="viewTourCreatedDate" class="form-control-plaintext"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Số Đánh Giá</label>
+                                <p id="viewTourRatingCount" class="form-control-plaintext"></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Trạng Thái</label>
+                                <p id="viewTourStatus" class="form-control-plaintext"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Mô Tả Chi Tiết</label>
+                        <div class="form-control-plaintext" id="viewTourDescription" style="max-height: 180px; overflow-y: auto; padding: 12px; background: #f8f9fa; border-radius: 6px; border-left: 3px solid #0d6efd; white-space: pre-wrap; line-height: 1.6;"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-cancel-tour" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Đóng
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,1908 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tin Tức Du Lịch | Tripto - Mẹo & Kinh Nghiệm Du Lịch Việt Nam</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/TRANGCHU_UI.css">
+    <style>
+        /* ============================================
+           ROOT & GLOBAL STYLES
+           ============================================ */
+        :root {
+            --primary: #0057FF;
+            --primary-400: #3379ff;
+            --primary-dark: #0046cc;
+            --primary-50: #ebeffc;
+            --primary-900: #031230;
+            --neutral-900: #121316;
+            --neutral-700: #283037;
+            --neutral-500: #454C58;
+            --neutral-400: #656F81;
+            --neutral-200: #B5BAC2;
+            --neutral-100: #F1F2F3;
+            --white: #FFFFFF;
+            --success: #06C270;
+            --warning: #FFCC00;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: var(--neutral-900);
+            background-color: var(--white);
+            line-height: 1.5;
+        }
+
+        /* ============================================
+           HEADER - COMPACT & TRUSTWORTHY
+           ============================================ */
+        .header {
+            background-color: var(--white);
+            border-bottom: 1px solid var(--neutral-200);
+            height: 80px;
+            display: flex;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 32px;
+            gap: 24px;
+        }
+
+        .logo img {
+            height: 40px;
+            display: block;
+        }
+
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .nav-menu a {
+            padding: 10px 20px;
+            color: var(--neutral-700);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .nav-menu a:hover {
+            color: var(--primary);
+            background-color: var(--primary-50);
+        }
+
+        .nav-menu a.active {
+            color: var(--primary);
+        }
+
+        .nav-menu a.active::after {
+            content: '';
+            position: absolute;
+            bottom: 6px;
+            left: 20px;
+            right: 20px;
+            height: 3px;
+            background-color: var(--primary);
+            border-radius: 2px;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .country {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--neutral-700);
+        }
+
+        .country img {
+            height: 20px;
+        }
+
+        .icon img {
+            height: 40px;
+            cursor: pointer;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-login {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-login:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 87, 255, 0.3);
+        }
+
+        /* ============================================
+           BREADCRUMB
+           ============================================ */
+        .breadcrumb-section {
+            background-color: var(--primary-50);
+            padding: 20px 0;
+            border-bottom: 1px solid var(--neutral-200);
+        }
+
+        .breadcrumb-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--neutral-700);
+        }
+
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumb-separator {
+            color: var(--neutral-400);
+        }
+
+        .breadcrumb span:last-child {
+            color: var(--neutral-900);
+            font-weight: 600;
+        }
+
+        /* ============================================
+           TIN TỨC CAMPAIGN BANNER - Đồng nhất UUDAI, riêng biệt cho Tin Tức
+           ============================================ */
+        .blog-campaign-section {
+            position: relative;
+            height: 50vh;
+            min-height: 420px;
+            max-height: 550px;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            background: var(--primary-900);
+        }
+
+        .blog-campaign-bg {
+            position: absolute;
+            inset: 0;
+            background-image: url('https://images.unsplash.com/photo-1539650116574-87966d6c9f4c?w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            filter: saturate(1.1) brightness(1.05) contrast(1.1);
+        }
+
+        .blog-campaign-bg::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(105deg, rgba(3, 18, 48, 0.88) 0%, rgba(3, 18, 48, 0.5) 50%, rgba(5, 36, 97, 0.4) 100%);
+        }
+
+        .blog-campaign-wrapper {
+            position: relative;
+            z-index: 5;
+            width: 100%;
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 48px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 48px;
+        }
+
+        .blog-campaign-content { flex: 0 0 58%; }
+
+        .blog-campaign-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 204, 0, 0.12);
+            border: 1px solid var(--warning);
+            color: var(--warning);
+            font-size: 10px;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+        }
+
+        .blog-campaign-badge::before {
+            content: '';
+            width: 6px; height: 6px;
+            background: var(--warning);
+            border-radius: 50%;
+            animation: blogBlink 1.2s infinite;
+        }
+
+        @keyframes blogBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+        .blog-campaign-headline {
+            font-family: 'Roboto', sans-serif;
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--white);
+            line-height: 1.3;
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
+        }
+
+        .blog-campaign-headline .highlight { color: var(--warning); }
+
+        .blog-campaign-subtitle {
+            font-size: 16px;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.85);
+            line-height: 1.3;
+            margin-bottom: 28px;
+        }
+
+        .blog-stats-inline { display: flex; align-items: center; gap: 24px; margin-bottom: 28px; flex-wrap: wrap; }
+
+        .blog-stat-item { display: flex; align-items: center; gap: 10px; }
+
+        .blog-stat-icon {
+            width: 44px; height: 44px;
+            background: rgba(0, 87, 255, 0.2);
+            border: 1px solid rgba(51, 121, 255, 0.5);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-400);
+            font-size: 18px;
+        }
+
+        .blog-stat-text { font-size: 14px; font-weight: 600; color: var(--white); line-height: 1.3; }
+        .blog-stat-text span { display: block; font-size: 11px; font-weight: 400; color: rgba(255, 255, 255, 0.7); }
+
+        .blog-campaign-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--primary);
+            color: var(--white);
+            font-size: 16px;
+            font-weight: 600;
+            padding: 14px 32px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 14px rgba(0, 87, 255, 0.35);
+            border: none;
+            cursor: pointer;
+        }
+
+        .blog-campaign-cta:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 87, 255, 0.4);
+        }
+
+        .blog-campaign-visual { flex: 0 0 38%; display: flex; justify-content: flex-end; }
+
+        .blog-benefit-card {
+            background: rgba(31, 34, 38, 0.92);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 32px;
+            width: 100%;
+            max-width: 380px;
+        }
+
+        .blog-benefit-card-title {
+            font-size: 14px;
+            color: var(--primary-400);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .blog-benefits-list { display: flex; flex-direction: column; gap: 14px; margin-bottom: 16px; }
+        .blog-benefit-item { display: flex; align-items: center; gap: 12px; text-align: left; }
+        .blog-benefit-icon {
+            width: 40px; height: 40px;
+            background: rgba(0, 87, 255, 0.15);
+            border: 1px solid rgba(51, 121, 255, 0.3);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-400);
+            flex-shrink: 0;
+        }
+        .blog-benefit-title { font-size: 14px; font-weight: 600; color: var(--white); }
+        .blog-benefit-desc { font-size: 12px; color: rgba(255, 255, 255, 0.65); }
+        .blog-benefit-card-footer { margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+        .blog-benefit-card-footer span { font-size: 14px; color: var(--warning); font-weight: 600; display: flex; align-items: center; gap: 8px; }
+
+        /* ============================================
+           TIN TỨC MAIN SECTION
+           ============================================ */
+        .blog-section {
+            padding: 80px 0;
+            background-color: var(--white);
+        }
+
+        .blog-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        .blog-layout {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 40px;
+        }
+
+        /* ============================================
+           TIN TỨC POSTS GRID
+           ============================================ */
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+        }
+
+        .blog-card {
+            background: var(--white);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.15);
+            border-color: var(--primary);
+        }
+
+        .blog-image {
+            height: 240px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .blog-image::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(0, 87, 255, 0.1) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .blog-card:hover .blog-image::before {
+            opacity: 1;
+        }
+
+        .blog-category {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            background: var(--primary);
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 20px;
+            text-transform: uppercase;
+        }
+
+        .blog-content {
+            padding: 24px;
+        }
+
+        .blog-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            font-size: 13px;
+            color: var(--neutral-500);
+        }
+
+        .blog-date {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .blog-author {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .blog-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--neutral-900);
+            margin: 0 0 12px 0;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            overflow: hidden;
+        }
+
+        .blog-excerpt {
+            font-size: 14px;
+            color: var(--neutral-600);
+            line-height: 1.6;
+            margin-bottom: 16px;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3;
+            line-clamp: 3;
+            overflow: hidden;
+        }
+
+        .blog-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 16px;
+            border-top: 1px solid var(--neutral-100);
+        }
+
+        .read-more {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: gap 0.2s ease;
+        }
+
+        .read-more:hover {
+            gap: 10px;
+        }
+
+        .blog-stats {
+            display: flex;
+            gap: 16px;
+            font-size: 13px;
+            color: var(--neutral-400);
+        }
+
+        /* ============================================
+           SIDEBAR STYLES
+           ============================================ */
+        .blog-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .sidebar-widget {
+            background: var(--white);
+            border: 1px solid var(--neutral-200);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .widget-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--neutral-900);
+            margin: 0 0 20px 0;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        /* Search Widget */
+        .search-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--neutral-200);
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: 'Roboto', sans-serif;
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-50);
+        }
+
+        /* Categories Widget */
+        .category-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .category-item {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--neutral-100);
+        }
+
+        .category-item:last-child {
+            border-bottom: none;
+        }
+
+        .category-link {
+            color: var(--neutral-700);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+
+        .category-link:hover {
+            color: var(--primary);
+            padding-left: 8px;
+        }
+
+        .category-count {
+            background: var(--primary-50);
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+
+        /* Tags Widget */
+        .tags-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag {
+            background: var(--neutral-100);
+            color: var(--neutral-700);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            border: 1px solid transparent;
+        }
+
+        .tag:hover {
+            background: var(--primary-50);
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* ============================================
+           PAGINATION
+           ============================================ */
+        .pagination-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 40px;
+        }
+
+        .pagination-btn {
+            padding: 10px 14px;
+            border: 1px solid var(--neutral-200);
+            background: var(--white);
+            color: var(--neutral-700);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .pagination-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--primary-50);
+        }
+
+        .pagination-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* ============================================
+           FOOTER
+           ============================================ */
+        .footer {
+            background: var(--neutral-900);
+            color: #d1d5db;
+            padding: 60px 0 30px;
+        }
+
+        .footer-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 48px;
+            margin-bottom: 48px;
+        }
+
+        .footer-brand {
+            max-width: 360px;
+        }
+
+        .footer-logo img {
+            height: 44px;
+            margin-bottom: 16px;
+        }
+
+        .footer-description {
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+            color: #9ca3af;
+        }
+
+        .footer-column h4 {
+            font-size: 16px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .footer-column ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-column li {
+            margin-bottom: 12px;
+        }
+
+        .footer-column a {
+            color: #9ca3af;
+            font-size: 14px;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-column a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 12px;
+        }
+
+        .social-icon {
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+
+        .social-icon:hover {
+            background: var(--primary);
+        }
+
+        /* ============================================
+           RESPONSIVE STYLES
+           ============================================ */
+        @media (max-width: 1024px) {
+            .blog-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .blog-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .blog-campaign-section { height: auto; min-height: 500px; padding: 40px 0; }
+            .blog-campaign-wrapper { flex-direction: column; padding: 0 32px; gap: 32px; }
+            .blog-campaign-content { flex: 1; text-align: center; width: 100%; }
+            .blog-campaign-visual { flex: 1; justify-content: center; width: 100%; }
+            .blog-campaign-headline { font-size: 40px; }
+            .blog-stats-inline { justify-content: center; }
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 0 16px;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+
+            .blog-campaign-section {
+                min-height: 420px;
+            }
+
+            .blog-campaign-headline {
+                font-size: 32px;
+            }
+
+            .blog-campaign-wrapper {
+                padding: 0 20px;
+            }
+
+            .blog-stats-inline {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .blog-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ============================================
+           MODAL - AUTH SYSTEM
+           ============================================ */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-container {
+            background: var(--white);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 420px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.9) translateY(20px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-overlay.active .modal-container {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 24px 0;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--neutral-900);
+            margin: 0;
+        }
+
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: var(--neutral-100);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: var(--neutral-200);
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .form-group-modal {
+            margin-bottom: 20px;
+        }
+
+        .form-group-modal label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--neutral-700);
+            margin-bottom: 8px;
+        }
+
+        .form-input-modal {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--neutral-200);
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: 'Roboto', sans-serif;
+            transition: all 0.2s ease;
+        }
+
+        .form-input-modal:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-50);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-submit:hover {
+            background: var(--primary-dark);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 24px 0;
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background: var(--neutral-200);
+        }
+
+        .divider-text {
+            padding: 0 16px;
+            font-size: 14px;
+            color: var(--neutral-400);
+        }
+
+        .social-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn-social-modal {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--neutral-200);
+            border-radius: 10px;
+            background: white;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-social-modal:hover {
+            border-color: var(--primary);
+            background: var(--primary-50);
+        }
+
+        .btn-social-modal i {
+            font-size: 20px;
+        }
+
+        .modal-footer {
+            text-align: center;
+            padding: 0 24px 24px;
+            font-size: 15px;
+            color: var(--neutral-600);
+        }
+
+        .modal-footer a {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .modal-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        .forgot-password a {
+            font-size: 14px;
+            color: var(--primary);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .forgot-password a:hover {
+            color: var(--primary-dark);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header/Navigation -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <img src="../image/Logo.png" alt="triptO Logo">
+            </div>
+            <nav class="nav-menu">
+                <a href="TRANGCHU.html">Trang Chủ</a>
+                <a href="UUDAI.html">Ưu Đãi</a>
+                <a href="TATCA_TOUR.html">Chuyến du lịch</a>
+                <a href="TATCA_COMBO.html">Gói du lịch</a>
+                <a href="BLOG.html" class="active">Tin Tức</a>
+            </nav>
+            <div class="nav-right">
+                <div class="country">
+                    <img src="../image/ngonngu.png" alt="Vietnam Flag">
+                    <span>VIETNAM</span>
+                </div>
+                <div class="icon">
+                    <a href="hotro.html" title="Hỗ trợ">
+                        <img src="../image/hotro.png" alt="Support">
+                    </a>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-login" id="loginBtn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        Đăng Nhập
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Breadcrumb -->
+    <section class="breadcrumb-section">
+        <div class="breadcrumb-container">
+            <div class="breadcrumb">
+                <a href="TRANGCHU.html">Trang Chủ</a>
+                <span class="breadcrumb-separator">›</span>
+                <span>Tin Tức</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tin Tức Campaign Banner - Đồng nhất UUDAI, riêng biệt cho Tin Tức -->
+    <section class="blog-campaign-section">
+        <div class="blog-campaign-bg"
+style="background:url('https://images.unsplash.com/photo-1528127269322-539801943592') center/cover no-repeat;">
+</div>
+        <div class="blog-campaign-wrapper">
+            <div class="blog-campaign-content">
+                <div class="blog-campaign-badge"><i class="fas fa-pen-fancy"></i> Mẹo & Kinh Nghiệm</div>
+                <h1 class="blog-campaign-headline">Tin Tức <span class="highlight">Du Lịch Việt Nam</span></h1>
+                <p class="blog-campaign-subtitle">Khám phá mẹo tiết kiệm chi phí, kinh nghiệm du lịch quý báu và những câu chuyện thú vị từ các địa điểm nổi tiếng của Việt Nam.</p>
+                <div class="blog-stats-inline">
+                    <div class="blog-stat-item">
+                        <div class="blog-stat-icon"><i class="fas fa-book-open"></i></div>
+                        <div class="blog-stat-text">100+ Bài viết<span>Mẹo, kinh nghiệm, địa điểm</span></div>
+                    </div>
+                    <div class="blog-stat-item">
+                        <div class="blog-stat-icon"><i class="fas fa-map-marked-alt"></i></div>
+                        <div class="blog-stat-text">Điểm đến đa dạng<span>Hạ Long, Hội An, Sapa, Đà Lạt...</span></div>
+                    </div>
+                </div>
+                <a href="#blog-posts" class="blog-campaign-cta"><i class="fas fa-arrow-down"></i> Xem bài viết</a>
+            </div>
+            <div class="blog-campaign-visual">
+                <div class="blog-benefit-card">
+                    <div class="blog-benefit-card-title">Nội dung hữu ích</div>
+                    <div class="blog-benefits-list">
+                        <div class="blog-benefit-item">
+                            <div class="blog-benefit-icon"><i class="fas fa-piggy-bank"></i></div>
+                            <div><span class="blog-benefit-title">Mẹo tiết kiệm chi phí</span><br><span class="blog-benefit-desc">Cách tối ưu ngân sách du lịch</span></div>
+                        </div>
+                        <div class="blog-benefit-item">
+                            <div class="blog-benefit-icon"><i class="fas fa-lightbulb"></i></div>
+                            <div><span class="blog-benefit-title">Kinh nghiệm thực tế</span><br><span class="blog-benefit-desc">Từ khách du lịch thực tế</span></div>
+                        </div>
+                    </div>
+                    <div class="blog-benefit-card-footer"><span><i class="fas fa-check-circle"></i> Cập nhật thường xuyên</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tin Tức Section -->
+    <section class="blog-section" id="blog-posts">
+        <div class="blog-container">
+            <div class="blog-layout">
+                <!-- Main Tin Tức Content -->
+                <div>
+                    <div class="blog-grid">
+                        <!-- Tin Tức Post 1 -->
+                        <div class="blog-card">
+                            <div class="blog-image" style="background-image: url('../image/HaLongBay.jpg');">
+                                <span class="blog-category">Du Lịch</span>
+                            </div>
+                            <div class="blog-content">
+                                <div class="blog-meta">
+                                    <div class="blog-date">
+                                        <i class="fas fa-calendar"></i>
+                                        25 Tháng 2, 2026
+                                    </div>
+                                    <div class="blog-author">
+                                        <i class="fas fa-user"></i>
+                                        Admin
+                                    </div>
+                                </div>
+                                <h3 class="blog-title">Hạ Long - Vịnh Kỳ Quan Không Nên Bỏ Lỡ</h3>
+                                <p class="blog-excerpt">Vịnh Hạ Long là một trong những vịnh đẹp nhất thế giới, được UNESCO công nhận là di sản thiên nhiên. Hãy khám phá những tảng đá vôi ngoạn mục, các hang động kỳ bí và trải nghiệm tuyệt vời trên biển. Chúng tôi sẽ hướng dẫn bạn những điểm du lịch nổi tiếng và ẩn dấu nhất...</p>
+                                <div class="blog-footer">
+                                    <a href="#" class="read-more">
+                                        Đọc tiếp
+                                        <i class="fas fa-arrow-right"></i>
+                                    </a>
+                                    <div class="blog-stats">
+                                        <span><i class="fas fa-eye"></i> 350</span>
+                                        <span><i class="fas fa-comment"></i> 12</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tin Tức Post 2 -->
+                        <div class="blog-card">
+                            <div class="blog-image" style="background-image: url('../image/HoiAn.jpg');">
+                                <span class="blog-category">Đặc Sắc</span>
+                            </div>
+                            <div class="blog-content">
+                                <div class="blog-meta">
+                                    <div class="blog-date">
+                                        <i class="fas fa-calendar"></i>
+                                        22 Tháng 2, 2026
+                                    </div>
+                                    <div class="blog-author">
+                                        <i class="fas fa-user"></i>
+                                        Hương Dung
+                                    </div>
+                                </div>
+                                <h3 class="blog-title">Hội An - Phố Cổ Tuyệt Đẹp Giữa Trái Đất</h3>
+                                <p class="blog-excerpt">Phố cổ Hội An sở hữu kiến trúc độc đáo với những con phố nhỏ lãng mạn, những cửa hàng truyền thống và ẩm thực tuyệt vời. Từ những chiếc lăng kính rực rỡ đến những quán cà phê ven sông, Hội An là một bức tranh sống động của lịch sử Việt Nam. Khám phá vẻ đẹp kỳ diệu...</p>
+                                <div class="blog-footer">
+                                    <a href="#" class="read-more">
+                                        Đọc tiếp
+                                        <i class="fas fa-arrow-right"></i>
+                                    </a>
+                                    <div class="blog-stats">
+                                        <span><i class="fas fa-eye"></i> 425</span>
+                                        <span><i class="fas fa-comment"></i> 18</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tin Tức Post 3 -->
+                        <div class="blog-card">
+                            <div class="blog-image" style="background-image: url('../image/SaPa.jpeg');">
+                                <span class="blog-category">Mẹo</span>
+                            </div>
+                            <div class="blog-content">
+                                <div class="blog-meta">
+                                    <div class="blog-date">
+                                        <i class="fas fa-calendar"></i>
+                                        20 Tháng 2, 2026
+                                    </div>
+                                    <div class="blog-author">
+                                        <i class="fas fa-user"></i>
+                                        Tuấn Minh
+                                    </div>
+                                </div>
+                                <h3 class="blog-title">10 Mẹo Du Lịch Sapa Tiết Kiệm Chi Phí</h3>
+                                <p class="blog-excerpt">Sapa là một điểm du lịch lý tưởng với khí hậu mát mẻ, ruộng bậc thang tuyệt đẹp và văn hóa dân tộc đa sắc. Bài viết này sẽ chia sẻ 10 mẹo hữu ích để bạn có thể tham quan Sapa một cách hợp lý về chi phí mà vẫn tận hưởng trọn vẹn trải nghiệm tuyệt vời...</p>
+                                <div class="blog-footer">
+                                    <a href="#" class="read-more">
+                                        Đọc tiếp
+                                        <i class="fas fa-arrow-right"></i>
+                                    </a>
+                                    <div class="blog-stats">
+                                        <span><i class="fas fa-eye"></i> 289</span>
+                                        <span><i class="fas fa-comment"></i> 8</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tin Tức Post 4 -->
+                        <div class="blog-card">
+                            <div class="blog-image" style="background-image: url('../image/PhuQuoc.jpg');">
+                                <span class="blog-category">Đảo Ngọc</span>
+                            </div>
+                            <div class="blog-content">
+                                <div class="blog-meta">
+                                    <div class="blog-date">
+                                        <i class="fas fa-calendar"></i>
+                                        18 Tháng 2, 2026
+                                    </div>
+                                    <div class="blog-author">
+                                        <i class="fas fa-user"></i>
+                                        Linh Chi
+                                    </div>
+                                </div>
+                                <h3 class="blog-title">Phú Quốc - Thiên Đường Biển Đẹp Nhất</h3>
+                                <p class="blog-excerpt">Phú Quốc nổi tiếng với những bãi biển trắng, nước biển xanh trong và các resort cao cấp. Từ những chuyến lặn biển khám phá san hô đến các nhà hàng hải sản tươi ngon, Phú Quốc mang lại trải nghiệm du lịch biển hoàn hảo. Đây là lựa chọn lý tưởng cho kỳ nghỉ thư giãn và tái tạo năng lượng...</p>
+                                <div class="blog-footer">
+                                    <a href="#" class="read-more">
+                                        Đọc tiếp
+                                        <i class="fas fa-arrow-right"></i>
+                                    </a>
+                                    <div class="blog-stats">
+                                        <span><i class="fas fa-eye"></i> 512</span>
+                                        <span><i class="fas fa-comment"></i> 25</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tin Tức Post 5 -->
+                        <div class="blog-card">
+                            <div class="blog-image" style="background-image: url('https://thesmartlocal.com/vietnam/wp-content/uploads/2022/08/my-khe-1-667x500.jpg');">
+                                <span class="blog-category">Du Lịch</span>
+                            </div>
+                            <div class="blog-content">
+                                <div class="blog-meta">
+                                    <div class="blog-date">
+                                        <i class="fas fa-calendar"></i>
+                                        15 Tháng 2, 2026
+                                    </div>
+                                    <div class="blog-author">
+                                        <i class="fas fa-user"></i>
+                                        Minh Anh
+                                    </div>
+                                </div>
+                                <h3 class="blog-title">Đà Nẵng - Thành Phố Biển Xinh Đẹp</h3>
+                                <p class="blog-excerpt">Đà Nẵng là một trong những thành phố du lịch hàng đầu Việt Nam với bãi biển tuyệt đẹp, cơ sở hạ tầng hiện đại và các điểm tham quan nổi tiếng như Cầu Vàng, Tháp Bà Ponagar. Thành phố này kết hợp hoàn hảo giữa đô thị hiện đại và thiên nhiên tươi đẹp, là điểm dừng chân lý tưởng cho du khách...</p>
+                                <div class="blog-footer">
+                                    <a href="#" class="read-more">
+                                        Đọc tiếp
+                                        <i class="fas fa-arrow-right"></i>
+                                    </a>
+                                    <div class="blog-stats">
+                                        <span><i class="fas fa-eye"></i> 398</span>
+                                        <span><i class="fas fa-comment"></i> 14</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tin Tức Post 6 -->
+                        <div class="blog-card">
+                            <div class="blog-image" style="background-image: url('../image/hue.jpg');">
+                                <span class="blog-category">Văn Hóa</span>
+                            </div>
+                            <div class="blog-content">
+                                <div class="blog-meta">
+                                    <div class="blog-date">
+                                        <i class="fas fa-calendar"></i>
+                                        12 Tháng 2, 2026
+                                    </div>
+                                    <div class="blog-author">
+                                        <i class="fas fa-user"></i>
+                                        Hương Giang
+                                    </div>
+                                </div>
+                                <h3 class="blog-title">Huế - Cố Đô Triều Nguyễn Lịch Sử</h3>
+                                <p class="blog-excerpt">Huế là cố đô của Việt Nam, nơi lưu giữ nhiều di tích lịch sử quý báu như Tử Cấm Thành, Lăng Tự Đức, sông Hương lãng mạn và các di sản văn hóa vô giá. Khám phá nền văn hóa phong phú, ẩm thực đặc sắc và kiến trúc cổ kính của triều đại Nguyễn. Huế là điểm dừng chân không nên bỏ lỡ cho những ai yêu lịch sử...</p>
+                                <div class="blog-footer">
+                                    <a href="#" class="read-more">
+                                        Đọc tiếp
+                                        <i class="fas fa-arrow-right"></i>
+                                    </a>
+                                    <div class="blog-stats">
+                                        <span><i class="fas fa-eye"></i> 467</span>
+                                        <span><i class="fas fa-comment"></i> 21</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tin Tức Post 7 -->
+                        <div class="blog-card">
+                            <div class="blog-image" style="background-image: url('../image/HaNoi.jpg');">
+                                <span class="blog-category">Du Lịch</span>
+                            </div>
+                            <div class="blog-content">
+                                <div class="blog-meta">
+                                    <div class="blog-date">
+                                        <i class="fas fa-calendar"></i>
+                                        8 Tháng 2, 2026
+                                    </div>
+                                    <div class="blog-author">
+                                        <i class="fas fa-user"></i>
+                                        Thanh Tùng
+                                    </div>
+                                </div>
+                                <h3 class="blog-title">Hà Nội - Thủ Đô Xinh Đẹp Nghìn Năm</h3>
+                                <p class="blog-excerpt">Hà Nội - thủ đô của Việt Nam, nơi kết hợp hoàn hảo giữa truyền thống cổ kính và sự phát triển hiện đại. Từ Hồ Gươm yên bình, phố cổ Hà Nội đầy sắc màu đến các di tích lịch sử như Văn Miếu - Quốc Tử Giám, Hà Nội mang lại trải nghiệm du lịch đa chiều. Khám phá ẩm thực đường phố nổi tiếng và văn hóa độc đáo...</p>
+                                <div class="blog-footer">
+                                    <a href="#" class="read-more">
+                                        Đọc tiếp
+                                        <i class="fas fa-arrow-right"></i>
+                                    </a>
+                                    <div class="blog-stats">
+                                        <span><i class="fas fa-eye"></i> 512</span>
+                                        <span><i class="fas fa-comment"></i> 28</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tin Tức Post 8 -->
+                        <div class="blog-card">
+                            <div class="blog-image" style="background-image: url('https://tse4.mm.bing.net/th/id/OIP.RtXbFwIcIG4xtcJ8kZQ49gHaEK?rs=1&pid=ImgDetMain&o=7&rm=3');">
+                                <span class="blog-category">Đảo</span>
+                            </div>
+                            <div class="blog-content">
+                                <div class="blog-meta">
+                                    <div class="blog-date">
+                                        <i class="fas fa-calendar"></i>
+                                        5 Tháng 2, 2026
+                                    </div>
+                                    <div class="blog-author">
+                                        <i class="fas fa-user"></i>
+                                        Huyền Trang
+                                    </div>
+                                </div>
+                                <h3 class="blog-title">Côn Đảo - Đảo Hoang Sơ Kỳ Bí</h3>
+                                <p class="blog-excerpt">Côn Đảo là điểm du lịch lý tưởng với khung cảnh thiên nhiên hoang sơ, biển xanh trong vắt và các bãi biển hoang vắng. Hòn đảo này sở hữu nền tảng lịch sử sâu sắc, các nhà hàng hải sản tươi ngon và cơ sở lưu trú cao cấp. Đây là thiên đường lý tưởng cho những ai tìm kiếm sự yên tĩnh và tái kết nối với thiên nhiên...</p>
+                                <div class="blog-footer">
+                                    <a href="#" class="read-more">
+                                        Đọc tiếp
+                                        <i class="fas fa-arrow-right"></i>
+                                    </a>
+                                    <div class="blog-stats">
+                                        <span><i class="fas fa-eye"></i> 345</span>
+                                        <span><i class="fas fa-comment"></i> 16</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="pagination-section">
+                        <button class="pagination-btn active">1</button>
+                        <button class="pagination-btn">2</button>
+                        <button class="pagination-btn">3</button>
+                        <button class="pagination-btn">4</button>
+                        <button class="pagination-btn">Tiếp theo →</button>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <aside class="blog-sidebar">
+                    <!-- Search Widget -->
+                    <div class="sidebar-widget">
+                        <h3 class="widget-title">Tìm Kiếm</h3>
+                        <input type="text" class="search-input" placeholder="Nhập từ khóa...">
+                    </div>
+
+                    <!-- Categories Widget -->
+                    <div class="sidebar-widget">
+                        <h3 class="widget-title">Chuyên Mục</h3>
+                        <ul class="category-list">
+                            <li class="category-item">
+                                <a href="#" class="category-link">
+                                    <span>Du Lịch</span>
+                                    <span class="category-count">24</span>
+                                </a>
+                            </li>
+                            <li class="category-item">
+                                <a href="#" class="category-link">
+                                    <span>Mẹo & Kinh Nghiệm</span>
+                                    <span class="category-count">18</span>
+                                </a>
+                            </li>
+                            <li class="category-item">
+                                <a href="#" class="category-link">
+                                    <span>Đặc Sắc</span>
+                                    <span class="category-count">12</span>
+                                </a>
+                            </li>
+                            <li class="category-item">
+                                <a href="#" class="category-link">
+                                    <span>Ẩm Thực</span>
+                                    <span class="category-count">15</span>
+                                </a>
+                            </li>
+                            <li class="category-item">
+                                <a href="#" class="category-link">
+                                    <span>Văn Hóa</span>
+                                    <span class="category-count">9</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Tags Widget -->
+                    <div class="sidebar-widget">
+                        <h3 class="widget-title">Thẻ Tags</h3>
+                        <div class="tags-list">
+                            <a href="#" class="tag">Hạ Long</a>
+                            <a href="#" class="tag">Sapa</a>
+                            <a href="#" class="tag">Phú Quốc</a>
+                            <a href="#" class="tag">Hội An</a>
+                            <a href="#" class="tag">Huế</a>
+                            <a href="#" class="tag">Mẹo</a>
+                            <a href="#" class="tag">Ẩm thực</a>
+                            <a href="#" class="tag">Văn hóa</a>
+                        </div>
+                    </div>
+
+                    <!-- Recent Posts Widget -->
+                    <div class="sidebar-widget">
+                        <h3 class="widget-title">Bài Viết Mới</h3>
+                        <ul class="category-list">
+                            <li class="category-item">
+                                <a href="#" class="category-link">Hạ Long - Vịnh Kỳ Quan</a>
+                            </li>
+                            <li class="category-item">
+                                <a href="#" class="category-link">Hội An - Phố Cổ Tuyệt Đẹp</a>
+                            </li>
+                            <li class="category-item">
+                                <a href="#" class="category-link">10 Mẹo Du Lịch Sapa</a>
+                            </li>
+                            <li class="category-item">
+                                <a href="#" class="category-link">Phú Quốc - Thiên Đường Biển</a>
+                            </li>
+                            <li class="category-item">
+                                <a href="#" class="category-link">Đà Nẵng - Thành Phố Biển</a>
+                            </li>
+                        </ul>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <img src="../image/Logo.png" alt="triptO Logo" class="footer-logo">
+                    <p class="footer-description">Tripto là nền tảng đặt tour du lịch hàng đầu tại Việt Nam. Chúng tôi cung cấp hơn 500+ tour với giá tốt nhất.</p>
+                </div>
+                <div class="footer-column">
+                    <h4>Công Ty</h4>
+                    <ul>
+                        <li><a href="#">Về Chúng Tôi</a></li>
+                        <li><a href="#">Đội Ngũ</a></li>
+                        <li><a href="#">Liên Hệ</a></li>
+                        <li><a href="#">Tuyển Dụng</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Hỗ Trợ</h4>
+                    <ul>
+                        <li><a href="#">Câu Hỏi Thường Gặp</a></li>
+                        <li><a href="#">Chính Sách Bảo Mật</a></li>
+                        <li><a href="#">Điều Khoản Sử Dụng</a></li>
+                        <li><a href="#">Liên Hệ Hỗ Trợ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Liên Hệ</h4>
+                    <ul>
+                        <li><a href="#">📞 +84 (0) 1234 567 890</a></li>
+                        <li><a href="#">✉️ support@tripto.vn</a></li>
+                        <li><a href="#">📍 Hà Nội, Việt Nam</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <span>&copy; 2026 Tripto. Bản quyền được bảo lưu.</span>
+                <div class="social-links">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Add interactivity here
+        document.addEventListener('DOMContentLoaded', function() {
+            // Search functionality
+            const searchInput = document.querySelector('.search-input');
+            if (searchInput) {
+                searchInput.addEventListener('keyup', function(e) {
+                    console.log('Searching for:', e.target.value);
+                });
+            }
+
+            // Pagination click handling
+            const paginationBtns = document.querySelectorAll('.pagination-btn');
+            paginationBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    paginationBtns.forEach(b => b.classList.remove('active'));
+                    if (this.textContent !== 'Tiếp theo →') {
+                        this.classList.add('active');
+                    }
+                });
+            });
+
+        });
+    </script>
+
+    <!-- Login Modal -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 class="modal-title">Đăng Nhập</h2>
+                <button class="modal-close" id="closeLoginModal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="loginForm">
+                    <div class="form-group-modal">
+                        <label for="loginEmail">Email / Số điện thoại</label>
+                        <input type="text" id="loginEmail" class="form-input-modal" placeholder="Nhập email hoặc số điện thoại" required>
+                    </div>
+                    <div class="form-group-modal">
+                        <label for="loginPassword">Mật khẩu</label>
+                        <input type="password" id="loginPassword" class="form-input-modal" placeholder="Nhập mật khẩu" required>
+                    </div>
+                    <div class="forgot-password">
+                        <a href="#" id="forgotPasswordLink">Quên mật khẩu?</a>
+                    </div>
+                    <button type="submit" class="btn-submit">Đăng Nhập</button>
+                </form>
+                
+                <div class="divider">
+                    <div class="divider-line"></div>
+                    <span class="divider-text">hoặc</span>
+                    <div class="divider-line"></div>
+                </div>
+                
+                <div class="social-buttons">
+                    <button class="btn-social-modal">
+                        <i style="color: #DB4437;">G</i>
+                        Tiếp tục với Google
+                    </button>
+                    <button class="btn-social-modal">
+                        <i style="color: #1877F2;">f</i>
+                        Tiếp tục với Facebook
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                Chưa có tài khoản? <a href="#" id="switchToSignup">Đăng ký ngay</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div class="modal-overlay" id="signupModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 class="modal-title">Đăng Ký</h2>
+                <button class="modal-close" id="closeSignupModal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="signupForm">
+                    <div class="form-group-modal">
+                        <label for="signupName">Họ và tên</label>
+                        <input type="text" id="signupName" class="form-input-modal" placeholder="Nhập họ và tên" required>
+                    </div>
+                    <div class="form-group-modal">
+                        <label for="signupEmail">Email</label>
+                        <input type="email" id="signupEmail" class="form-input-modal" placeholder="Nhập email" required>
+                    </div>
+                    <div class="form-group-modal">
+                        <label for="signupPhone">Số điện thoại</label>
+                        <input type="tel" id="signupPhone" class="form-input-modal" placeholder="Nhập số điện thoại" required>
+                    </div>
+                    <div class="form-group-modal">
+                        <label for="signupPassword">Mật khẩu</label>
+                        <input type="password" id="signupPassword" class="form-input-modal" placeholder="Nhập mật khẩu" required>
+                    </div>
+                    <button type="submit" class="btn-submit">Đăng Ký</button>
+                </form>
+                
+                <div class="divider">
+                    <div class="divider-line"></div>
+                    <span class="divider-text">hoặc</span>
+                    <div class="divider-line"></div>
+                </div>
+                
+                <div class="social-buttons">
+                    <button class="btn-social-modal">
+                        <i style="color: #DB4437;">G</i>
+                        Tiếp tục với Google
+                    </button>
+                    <button class="btn-social-modal">
+                        <i style="color: #1877F2;">f</i>
+                        Tiếp tục với Facebook
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                Đã có tài khoản? <a href="#" id="switchToLogin">Đăng nhập ngay</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div class="modal-overlay" id="forgotModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 class="modal-title">Quên Mật Khẩu</h2>
+                <button class="modal-close" id="closeForgotModal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 20px; color: var(--neutral-600);">Nhập email của bạn để khôi phục mật khẩu</p>
+                <form id="forgotForm">
+                    <div class="form-group-modal">
+                        <label for="forgotEmail">Email</label>
+                        <input type="email" id="forgotEmail" class="form-input-modal" placeholder="Nhập email đã đăng ký" required>
+                    </div>
+                    <button type="submit" class="btn-submit">Gửi Link Khôi Phục</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a href="#" id="backToLogin">Quay lại đăng nhập</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // AUTH KEY for localStorage
+        const AUTH_KEY = 'triptoLoggedIn';
+
+        // Get modal elements
+        const loginModal = document.getElementById('loginModal');
+        const signupModal = document.getElementById('signupModal');
+        const forgotModal = document.getElementById('forgotModal');
+        const loginBtn = document.getElementById('loginBtn');
+        const closeLoginModal = document.getElementById('closeLoginModal');
+        const closeSignupModal = document.getElementById('closeSignupModal');
+        const closeForgotModal = document.getElementById('closeForgotModal');
+        const switchToSignup = document.getElementById('switchToSignup');
+        const switchToLogin = document.getElementById('switchToLogin');
+        const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+        const backToLogin = document.getElementById('backToLogin');
+
+        // Check login status
+        function isLoggedIn() {
+            return localStorage.getItem(AUTH_KEY) === 'true';
+        }
+
+        function setLoggedIn() {
+            localStorage.setItem(AUTH_KEY, 'true');
+        }
+
+        // Open login modal
+        if (loginBtn) {
+            loginBtn.addEventListener('click', function() {
+                loginModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        }
+
+        // Close modals
+        if (closeLoginModal) {
+            closeLoginModal.addEventListener('click', () => {
+                loginModal.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        }
+
+        if (closeSignupModal) {
+            closeSignupModal.addEventListener('click', () => {
+                signupModal.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        }
+
+        if (closeForgotModal) {
+            closeForgotModal.addEventListener('click', () => {
+                forgotModal.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        }
+
+        // Switch between modals
+        if (switchToSignup) {
+            switchToSignup.addEventListener('click', (e) => {
+                e.preventDefault();
+                loginModal.classList.remove('active');
+                setTimeout(() => {
+                    signupModal.classList.add('active');
+                }, 300);
+            });
+        }
+
+        if (switchToLogin) {
+            switchToLogin.addEventListener('click', (e) => {
+                e.preventDefault();
+                signupModal.classList.remove('active');
+                setTimeout(() => {
+                    loginModal.classList.add('active');
+                }, 300);
+            });
+        }
+
+        // Forgot password
+        if (forgotPasswordLink) {
+            forgotPasswordLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                loginModal.classList.remove('active');
+                setTimeout(() => {
+                    forgotModal.classList.add('active');
+                }, 300);
+            });
+        }
+
+        if (backToLogin) {
+            backToLogin.addEventListener('click', (e) => {
+                e.preventDefault();
+                forgotModal.classList.remove('active');
+                setTimeout(() => {
+                    loginModal.classList.add('active');
+                }, 300);
+            });
+        }
+
+        // Close modal when clicking outside
+        [loginModal, signupModal, forgotModal].forEach(modal => {
+            if (modal) {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.classList.remove('active');
+                        document.body.style.overflow = '';
+                    }
+                });
+            }
+        });
+
+        // Handle login form submission
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) {
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+                
+                if(!email || !password) {
+                    alert('Vui lòng nhập email và mật khẩu');
+                    return;
+                }
+                
+                try {
+                    const response = await fetch('../user.php?endpoint=auth&action=login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({action: 'login', email: email, password: password})
+                    });
+                    
+                    const responseText = await response.text();
+                    const result = JSON.parse(responseText);
+                    
+                    if (result.success) {
+                        sessionStorage.setItem('triptoUser', JSON.stringify(result.user));
+                        sessionStorage.setItem('triptoLoggedIn', 'true');
+                        setLoggedIn();
+                        console.log('✅ Đăng nhập thành công! User:', result.user);
+                        alert('✅ ' + result.message + '\n\nChào mừng ' + result.user.ho_ten + '!');
+                        loginModal.classList.remove('active');
+                        document.body.style.overflow = '';
+                        window.location.reload();
+                    } else {
+                        alert(result.message || 'Đăng nhập thất bại. Vui lòng kiểm tra lại email và mật khẩu.');
+                    }
+                } catch (error) {
+                    console.error('Login error:', error);
+                    alert('Lỗi kết nối. Vui lòng thử lại.');
+                }
+            });
+        }
+
+        // Handle signup form submission
+        const signupForm = document.getElementById('signupForm');
+        if (signupForm) {
+            signupForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const name = document.getElementById('signupName').value;
+                const email = document.getElementById('signupEmail').value;
+                const phone = document.getElementById('signupPhone').value;
+                const password = document.getElementById('signupPassword').value;
+                
+                if(name && email && phone && password) {
+                    setLoggedIn();
+                    alert('Đăng ký thành công! Vui lòng kiểm tra email để xác nhận.');
+                    signupModal.classList.remove('active');
+                    document.body.style.overflow = '';
+                    window.location.href = 'trangcanhan.html';
+                }
+            });
+        }
+
+        // Handle forgot password form submission
+        const forgotForm = document.getElementById('forgotForm');
+        if (forgotForm) {
+            forgotForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = document.getElementById('forgotEmail').value;
+                
+                if(email) {
+                    alert('Link khôi phục mật khẩu đã được gửi đến email của bạn!');
+                    forgotModal.classList.remove('active');
+                    document.body.style.overflow = '';
+                    loginModal.classList.add('active');
+                }
+            });
+        }
+
+        // Support link gating
+        const supportLink = document.querySelector('a[href="hotro.html"][title="Hỗ trợ"]');
+        if (supportLink) {
+            supportLink.addEventListener('click', function (e) {
+                if (!isLoggedIn()) {
+                    e.preventDefault();
+                    alert('Vui lòng đăng nhập trước khi vào Hỗ trợ.');
+                    if (loginBtn) {
+                        loginBtn.click();
+                    }
+                }
+            });
+        }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoutLink = document.querySelector('.logout-link');
+            if (logoutLink) {
+                logoutLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
+                        triptoAuth.logout();
+                    }
+                });
+            }
+        });
+    </script>
+    <script src="./js/auth.js"></script>
+    <script src="../js/scroll-reveal.js"></script>
+</body>
+
+</html>
+
+

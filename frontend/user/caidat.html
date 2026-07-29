@@ -1,0 +1,434 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cài đặt - Tripto</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary: #0057FF; --primary-light: #E8EFFC; --primary-dark: #003dd4; --neutral-900: #121316; --neutral-700: #383E48; --neutral-500: #454546; --neutral-400: #737374; --neutral-200: #D7D7D7; --neutral-100: #F3F3F4; --white: #FFFFFF; --danger: #DC2626; --danger-light: #FEE2E2; --background: #f5f6f8; --success: #059669; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; color: var(--neutral-900); background-color: var(--background); line-height: 1.5; }
+        .header { background-color: var(--white); border-bottom: 1px solid var(--neutral-200); height: 80px; display: flex; align-items: center; position: fixed; top: 0; left: 0; right: 0; z-index: 200; }
+        .header-container { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 32px; gap: 24px; }
+        .logo img { height: 40px; display: block; }
+        .nav-right { display: flex; align-items: center; gap: 24px; }
+        .country { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--neutral-700); }
+        .nav-menu-top { display: flex; justify-content: center; gap: 8px; flex: 1; }
+        .nav-menu-top a { padding: 10px 20px; color: var(--neutral-700); text-decoration: none; font-weight: 600; font-size: 15px; border-radius: 8px; transition: all 0.2s ease; }
+        .nav-menu-top a:hover { color: var(--primary); background-color: var(--primary-light); }
+        .country img { height: 20px; }
+        .icon img { height: 40px; cursor: pointer; }
+        .btn-login { display: flex; align-items: center; gap: 8px; background-color: var(--primary); color: var(--white); padding: 10px 24px; border-radius: 8px; font-weight: 600; font-size: 14px; border: none; cursor: pointer; }
+        .dashboard { display: flex; min-height: calc(100vh - 80px); padding-top: 80px; }
+        .sidebar { width: 280px; background: var(--white); border-right: 1px solid var(--neutral-200); display: flex; flex-direction: column; position: sticky; top: 80px; height: calc(100vh - 80px); align-self: flex-start; z-index: 100; }
+        .sidebar-header { padding: 24px; text-align: center; border-bottom: 1px solid var(--neutral-100); }
+        .avatar { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary-light); margin-bottom: 12px; }
+        .user-name { font-size: 18px; font-weight: 700; color: var(--neutral-900); margin-bottom: 4px; }
+        .user-role { font-size: 13px; color: var(--neutral-500); }
+        .sidebar-nav { flex: 1; padding: 16px 12px; overflow-y: auto; }
+        .nav-menu { list-style: none; }
+        .nav-item { margin-bottom: 4px; }
+        .nav-link { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px; color: var(--neutral-700); text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.3s ease; }
+        .nav-link:hover { background: var(--neutral-100); color: var(--neutral-900); }
+        .nav-link.active { background: var(--primary-light); color: var(--primary); }
+        .nav-link.active i { color: var(--primary); }
+        .nav-link i { width: 20px; text-align: center; font-size: 16px; color: var(--neutral-500); }
+        .sidebar-footer { padding: 16px 12px; border-top: 1px solid var(--neutral-100); }
+        .logout-link { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px; color: #C2410C; text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.3s ease; cursor: pointer; }
+        .logout-link:hover { background: var(--danger-light); }
+        .logout-link i { width: 20px; text-align: center; font-size: 16px; }
+        .main-content { flex: 1; padding: 32px; min-height: calc(100vh - 80px); }
+        .content-wrapper { max-width: 900px; margin: 0 auto; }
+        .page-header { margin-bottom: 32px; }
+        .page-title { font-size: 32px; font-weight: 700; color: var(--neutral-900); margin-bottom: 8px; }
+        .page-description { font-size: 15px; color: var(--neutral-500); max-width: 600px; line-height: 1.6; }
+
+        /* Settings Sections */
+        .settings-sections { display: flex; flex-direction: column; gap: 24px; }
+        .settings-card { background: var(--white); border: 1px solid var(--neutral-200); border-radius: 12px; padding: 24px; }
+        .settings-title { font-size: 18px; font-weight: 700; color: var(--neutral-900); margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
+        .settings-title i { color: var(--primary); font-size: 20px; }
+        .setting-item { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--neutral-100); }
+        .setting-item:last-child { border-bottom: none; }
+        .setting-name { font-size: 15px; font-weight: 600; color: var(--neutral-900); margin-bottom: 4px; }
+        .setting-description { font-size: 13px; color: var(--neutral-500); }
+        .setting-control { display: flex; align-items: center; gap: 12px; }
+
+        /* Toggle Switch */
+        .toggle-switch { width: 48px; height: 28px; background: var(--neutral-200); border: none; border-radius: 14px; position: relative; cursor: pointer; transition: background 0.3s ease; }
+        .toggle-switch.active { background: var(--success); }
+        .toggle-switch::after { content: ''; position: absolute; width: 24px; height: 24px; background: var(--white); border-radius: 50%; top: 2px; left: 2px; transition: left 0.3s ease; }
+        .toggle-switch.active::after { left: 22px; }
+
+        /* Buttons */
+        .btn-primary { padding: 10px 20px; background: var(--primary); color: var(--white); border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-secondary { padding: 10px 20px; background: var(--neutral-100); color: var(--neutral-700); border: 1px solid var(--neutral-200); border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .btn-secondary:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+        .btn-danger { padding: 10px 20px; background: var(--danger); color: var(--white); border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .btn-danger:hover { background: #b91c1c; }
+
+        /* Select */
+        .select-control { padding: 10px 16px; border: 1px solid var(--neutral-200); border-radius: 8px; font-size: 13px; background: var(--white); color: var(--neutral-900); cursor: pointer; transition: border-color 0.3s ease; }
+        .select-control:hover { border-color: var(--primary); }
+
+        .divider { height: 1px; background: var(--neutral-100); margin: 24px 0; }
+
+        /* Footer Styles */
+        .footer { background: var(--neutral-900); color: #d1d5db; padding: 60px 0 30px; margin-top: auto; }
+        .footer-container { max-width: 1440px; margin: 0 auto; padding: 0 32px; }
+        .footer-content { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+        .footer-brand { max-width: 360px; }
+        .footer-logo { display: block; margin-bottom: 16px; }
+        .footer-logo img { height: 44px; }
+        .footer-description { font-size: 15px; line-height: 1.6; margin-bottom: 24px; color: #9ca3af; }
+        .footer-column h4 { font-size: 16px; font-weight: 700; color: white; margin-bottom: 20px; }
+        .footer-column ul { list-style: none; padding: 0; margin: 0; }
+        .footer-column li { margin-bottom: 12px; }
+        .footer-column a { color: #9ca3af; font-size: 14px; text-decoration: none; transition: color 0.2s; }
+        .footer-column a:hover { color: white; }
+        .footer-bottom { border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: #6b7280; }
+        .social-links { display: flex; gap: 12px; }
+        .social-icon { width: 36px; height: 36px; background: rgba(255, 255, 255, 0.1); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: all 0.2s; }
+        .social-icon:hover { background: var(--primary); }
+
+        @media (max-width: 768px) {
+            .footer-content { grid-template-columns: 1fr; }
+            .footer-bottom { flex-direction: column; gap: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <div class="logo"><a href="TRANGCHU.html"><img src="../image/Logo.png" alt="Tripto Logo"></a></div>
+            <nav class="nav-menu-top">
+                <a href="TRANGCHU.html">Trang Chủ</a>
+                <a href="UUDAI.html">Ưu Đãi</a>
+                <a href="TATCA_TOUR.html">Chuyến du lịch</a>             
+                <a href="TATCA_COMBO.html">Gói du lịch</a>
+                <a href="BLOG.html">Tin Tức</a>
+            </nav>
+            <div class="nav-right">
+                <div class="country"><img src="../image/ngonngu.png" alt="Vietnam Flag"><span>VIETNAM</span></div>
+                <div class="icon"><a href="hotro.html" title="Hỗ trợ"><img src="../image/hotro.png" alt="Support"></a></div>
+                <button class="btn-login" id="loginBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Đăng Nhập</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="../image/avt_pr.jpg" alt="Avatar" class="avatar">
+                <h3 class="user-name">Giao Nguyen</h3>
+                <p class="user-role">Bộ phận Chăm sóc Khách hàng</p>
+            </div>
+            <nav class="sidebar-nav">
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="trangcanhan.html" class="nav-link"><i class="fas fa-user"></i>Thông tin cá nhân</a></li>
+                    <li class="nav-item"><a href="thanhtoan.html" class="nav-link"><i class="fas fa-credit-card"></i>Tài khoản thanh toán</a></li>
+                    <li class="nav-item"><a href="chuyendi.html" class="nav-link"><i class="fas fa-plane"></i>Chuyến đi</a></li>
+                    <li class="nav-item"><a href="yeuthich.html" class="nav-link"><i class="fas fa-heart"></i>Yêu thích</a></li>
+                    <li class="nav-item"><a href="hotro.html" class="nav-link"><i class="fas fa-headset"></i>Hỗ trợ</a></li>
+                    <li class="nav-item"><a href="myReviews.html" class="nav-link"><i class="fas fa-star"></i>Đánh giá của tôi</a></li>
+                    <li class="nav-item"><a href="caidat.html" class="nav-link active"><i class="fas fa-cog"></i>Cài đặt</a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer"><a href="#" class="logout-link"><i class="fas fa-sign-out-alt"></i>Đăng xuất</a></div>
+        </aside>
+
+        <main class="main-content">
+            <div class="content-wrapper">
+                <div class="page-header">
+                    <h1 class="page-title">Cài đặt</h1>
+                    <p class="page-description">Quản lý các tùy chọn cài đặt tài khoản và các sở thích của bạn</p>
+                </div>
+
+                <div class="settings-sections">
+                    <!-- Notification Settings -->
+                    <div class="settings-card">
+                        <h3 class="settings-title"><i class="fas fa-bell"></i> Thông báo</h3>
+                        
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <div class="setting-name">Thông báo email về đặt phòng</div>
+                                <div class="setting-description">Nhận email khi có cập nhật về chuyến đi của bạn</div>
+                            </div>
+                            <button class="toggle-switch active" onclick="toggleSwitch(this)"></button>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <div class="setting-name">Thông báo về ưu đãi mới</div>
+                                <div class="setting-description">Nhận email về các tour mới và khuyến mãi đặc biệt</div>
+                            </div>
+                            <button class="toggle-switch active" onclick="toggleSwitch(this)"></button>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <div class="setting-name">Thông báo về yêu cầu hỗ trợ</div>
+                                <div class="setting-description">Nhận thông báo khi hỗ trợ khách hàng phản hồi</div>
+                            </div>
+                            <button class="toggle-switch active" onclick="toggleSwitch(this)"></button>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <div class="setting-name">Thông báo push trên ứng dụng</div>
+                                <div class="setting-description">Nhận thông báo trực tiếp trên ứng dụng Tripto</div>
+                            </div>
+                            <button class="toggle-switch" onclick="toggleSwitch(this)"></button>
+                        </div>
+                    </div>
+
+                    <!-- Privacy Settings -->
+                    <div class="settings-card">
+                        <h3 class="settings-title"><i class="fas fa-lock"></i> Bảo mật & Quyền riêng tư</h3>
+                        
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <div class="setting-name">Cho phép tìm kiếm hồ sơ công khai</div>
+                                <div class="setting-description">Cho phép những người khác tìm thấy hồ sơ của bạn</div>
+                            </div>
+                            <button class="toggle-switch active" onclick="toggleSwitch(this)"></button>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <div class="setting-name">Hiển thị đánh giá công khai</div>
+                                <div class="setting-description">Hiển thị những bài đánh giá của bạn cho mọi người xem</div>
+                            </div>
+                            <button class="toggle-switch active" onclick="toggleSwitch(this)"></button>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <div class="setting-name">Xuất hiện trong danh sách bè bạn</div>
+                                <div class="setting-description">Cho phép các bạn của bạn thấy bạn đang theo dõi ai</div>
+                            </div>
+                            <button class="toggle-switch" onclick="toggleSwitch(this)"></button>
+                        </div>
+                    </div>
+
+                    <!-- Display Settings -->
+                    <div class="settings-card">
+                        <h3 class="settings-title"><i class="fas fa-palette"></i> Hiển thị</h3>
+                        
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <div class="setting-name">Ngôn ngữ</div>
+                                <div class="setting-description">Chọn ngôn ngữ hiển thị</div>
+                            </div>
+                            <select class="select-control">
+                                <option>Tiếng Việt</option>
+                                <option>English</option>
+                                <option>中文</option>
+                                <option>日本語</option>
+                            </select>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <div class="setting-name">Múi giờ</div>
+                                <div class="setting-description">Chọn múi giờ của bạn</div>
+                            </div>
+                            <select class="select-control">
+                                <option>Giờ Đông Dương (GMT+7)</option>
+                                <option>GMT+8</option>
+                                <option>GMT+9</option>
+                            </select>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <div class="setting-name">Định dạng tiền tệ</div>
+                                <div class="setting-description">Chọn cách hiển thị giá tiền</div>
+                            </div>
+                            <select class="select-control">
+                                <option>Đồng Việt Nam (VNĐ)</option>
+                                <option>U.S. Dollar (USD)</option>
+                                <option>Euro (EUR)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Account Settings -->
+                    <div class="settings-card">
+                        <h3 class="settings-title"><i class="fas fa-user-shield"></i> Tài khoản</h3>
+                        
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <div class="setting-name">Đổi mật khẩu</div>
+                                <div class="setting-description">Cập nhật mật khẩu tài khoản của bạn</div>
+                            </div>
+                            <button class="btn-secondary"><i class="fas fa-key"></i> Đổi mật khẩu</button>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <div class="setting-name">Xác minh danh tính hai yếu tố</div>
+                                <div class="setting-description">Bảo vệ tài khoản của bạn với xác minh hai bước</div>
+                            </div>
+                            <button class="btn-secondary"><i class="fas fa-shield-alt"></i> Bật</button>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <div class="setting-name">Các thiết bị đã đăng nhập</div>
+                                <div class="setting-description">Xem và quản lý các thiết bị được phép truy cập</div>
+                            </div>
+                            <button class="btn-secondary"><i class="fas fa-mobile-alt"></i> Xem</button>
+                        </div>
+                    </div>
+
+                    <!-- Danger Zone -->
+                    <div class="settings-card">
+                        <h3 class="settings-title" style="color: var(--danger);"><i class="fas fa-exclamation-triangle"></i> Vùng nguy hiểm</h3>
+                        
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <div class="setting-name">Tải xuống dữ liệu của tôi</div>
+                                <div class="setting-description">Tải xuống bản sao của tất cả dữ liệu của bạn</div>
+                            </div>
+                            <button class="btn-secondary"><i class="fas fa-download"></i> Tải xuống</button>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <div class="setting-name">Xóa tài khoản</div>
+                                <div class="setting-description">Vĩnh viễn xóa tài khoản và tất cả dữ liệu của bạn</div>
+                            </div>
+                            <button class="btn-danger"><i class="fas fa-trash"></i> Xóa tài khoản</button>
+                        </div>
+                    </div>
+
+                    <!-- Save Button -->
+                    <div style="display: flex; gap: 12px; justify-content: flex-end; padding-top: 24px; border-top: 1px solid var(--neutral-200);">
+                        <button class="btn-secondary">Hủy</button>
+                        <button class="btn-primary">Lưu thay đổi</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <a href="TRANGCHU.html" class="footer-logo">
+                        <img src="../image/Logo.png" alt="triptO Logo">
+                    </a>
+                    <p class="footer-description">Tripto là nền tảng đặt tour du lịch hàng đầu tại Việt Nam. Chúng tôi cung cấp hơn 500+ tour với giá tốt nhất.</p>
+                </div>
+                <div class="footer-column">
+                    <h4>Công Ty</h4>
+                    <ul>
+                        <li><a href="#">Về Chúng Tôi</a></li>
+                        <li><a href="#">Đội Ngũ</a></li>
+                        <li><a href="#">Liên Hệ</a></li>
+                        <li><a href="#">Tuyển Dụng</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Hỗ Trợ</h4>
+                    <ul>
+                        <li><a href="#">Câu Hỏi Thường Gặp</a></li>
+                        <li><a href="#">Chính Sách Bảo Mật</a></li>
+                        <li><a href="#">Điều Khoản Sử Dụng</a></li>
+                        <li><a href="#">Liên Hệ Hỗ Trợ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Liên Hệ</h4>
+                    <ul>
+                        <li><a href="#">📞 +84 (0) 1234 567 890</a></li>
+                        <li><a href="#">✉️ support@tripto.vn</a></li>
+                        <li><a href="#">📍 Hà Nội, Việt Nam</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <span>&copy; 2026 Tripto. Bản quyền được bảo lưu.</span>
+                <div class="social-links">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleSwitch(element) {
+            element.classList.toggle('active');
+        }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = triptoAuth.getUser();
+            if (!user) {
+                alert('❌ Vui lòng đăng nhập để xem cài đặt');
+                window.location.href = 'TRANGCHU.html';
+                return;
+            }
+
+            // 🖼️ Cập nhật avatar từ cơ sở dữ liệu
+            const avatarUrl = user.anh_dai_dien || user.avatar || '../image/avt_pr.jpg';
+            const avatarElement = document.querySelector('.avatar');
+            if (avatarElement) {
+                avatarElement.src = avatarUrl;
+                console.log('✅ Updated avatar:', avatarUrl);
+            }
+
+            // 🔥 Lắng nghe sự kiện cập nhật avatar từ các trang khác
+            window.addEventListener('userAvatarUpdated', (e) => {
+                console.log('📢 Nhận sự kiện cập nhật avatar từ trangcanhan');
+                if (e.detail && e.detail.avatar_url) {
+                    const avatarElement = document.querySelector('.avatar');
+                    if (avatarElement) {
+                        avatarElement.src = e.detail.avatar_url;
+                        console.log('✅ Updated avatar to:', e.detail.avatar_url);
+                    }
+                }
+            });
+
+            const logoutLink = document.querySelector('.logout-link');
+            if (logoutLink) {
+                logoutLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
+                        triptoAuth.logout();
+                    }
+                });
+            }
+        });
+    </script>
+    <script src="./js/auth.js"></script>
+    <script>
+        // Khi page load xong, cập nhật UI từ auth.js
+        document.addEventListener('DOMContentLoaded', function() {
+            // Gắn click handler cho loginBtn để navigate đến myReviews
+            const loginBtn = document.getElementById('loginBtn');
+            if (loginBtn) {
+                const originalOnClick = loginBtn.onclick;
+                loginBtn.addEventListener('click', function(e) {
+                    if (triptoAuth.isLoggedIn()) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        window.location.href = 'myReviews.html';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

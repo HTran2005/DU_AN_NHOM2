@@ -1,0 +1,2122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Tour Đã Đặt</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/Trangchu_ad.css">
+    <link rel="stylesheet" href="../css/TourDaDat_ad.css">
+    <style>
+        /* Booking Card Styling */
+        .booking-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+
+        .booking-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+
+        .booking-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-confirmed {
+            background: rgba(25, 135, 84, 0.1);
+            color: #198754;
+        }
+
+        .status-pending {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+        }
+
+        .status-cancelled {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+
+        .status-completed {
+            background: rgba(13, 110, 253, 0.1);
+            color: #0d6efd;
+        }
+
+        /* Filter Pills */
+        .filter-pill {
+            padding: 8px 20px;
+            border-radius: 25px;
+            border: 1px solid #e9ecef;
+            background: white;
+            color: #6c757d;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-pill:hover, .filter-pill.active {
+            background: #052461;
+            color: white;
+            border-color: #052461;
+        }
+
+        /* Stats Cards */
+        .booking-overview-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            height: 100%;
+            min-height: 100px;
+        }
+
+        .booking-overview-card:nth-child(1) {
+            background: linear-gradient(135deg, rgba(13, 110, 253, 0.08) 0%, rgba(13, 110, 253, 0.04) 100%);
+            border-left: 4px solid #0d6efd;
+        }
+
+        .booking-overview-card:nth-child(2) {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.08) 0%, rgba(255, 193, 7, 0.04) 100%);
+            border-left: 4px solid #ffc107;
+        }
+
+        .booking-overview-card:nth-child(3) {
+            background: linear-gradient(135deg, rgba(25, 135, 84, 0.08) 0%, rgba(25, 135, 84, 0.04) 100%);
+            border-left: 4px solid #198754;
+        }
+
+        .booking-overview-card:nth-child(4) {
+            background: linear-gradient(135deg, rgba(13, 202, 240, 0.08) 0%, rgba(13, 202, 240, 0.04) 100%);
+            border-left: 4px solid #0dcaf0;
+        }
+
+        .booking-overview-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+
+        .booking-overview-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .booking-overview-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .booking-overview-label {
+            font-size: 14px;
+            color: #6c757d;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .booking-overview-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #003499;
+            margin: 0;
+            line-height: 1;
+        }
+
+        /* Table Styling */
+        .booking-table {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .booking-table th {
+            background: #f8f9fa;
+            color: #6c757d;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            padding: 16px;
+            border: none;
+        }
+
+        .booking-table td {
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: middle;
+        }
+
+        .booking-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .booking-table-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        /* Customer Avatar */
+        .customer-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* Action Buttons */
+        .btn-action {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-view {
+            background: rgba(13, 110, 253, 0.1);
+            color: #0d6efd;
+        }
+
+        .btn-view:hover {
+            background: #0d6efd;
+            color: white;
+        }
+
+        .btn-edit {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+        }
+
+        .btn-edit:hover {
+            background: #ffc107;
+            color: white;
+        }
+
+        .btn-delete {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+
+        .btn-delete:hover {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-confirm {
+            background: rgba(25, 135, 84, 0.1);
+            color: #198754;
+        }
+
+        .btn-confirm:hover {
+            background: #198754;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        /* Pagination */
+        .pagination-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .page-info {
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        .pagination {
+            display: flex;
+            gap: 8px;
+        }
+
+        .page-item {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid #e9ecef;
+            background: white;
+            color: #6c757d;
+        }
+
+        .page-item:hover, .page-item.active {
+            background: #052461;
+            color: white;
+            border-color: #052461;
+        }
+
+        /* Modal Styling */
+        .modal-header {
+            border-bottom: 2px solid #f0f0f0;
+            background: linear-gradient(135deg, #052461 0%, #0a3a8a 100%);
+            color: white;
+        }
+
+        .modal-title {
+            font-weight: 600;
+            font-size: 20px;
+        }
+
+        .btn-close-modal {
+            background: rgba(255,255,255,0.8);
+            border: none;
+            opacity: 1;
+        }
+
+        .btn-close-modal:hover {
+            background: white;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #052461;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-control, .form-select {
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 10px 12px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #052461;
+            box-shadow: 0 0 0 0.2rem rgba(5, 36, 97, 0.15);
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .form-row.full {
+            grid-template-columns: 1fr;
+        }
+
+        .modal-body {
+            background: #f8f9fa;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .modal-footer {
+            border-top: 1px solid #e0e0e0;
+            background: white;
+            gap: 10px;
+        }
+
+        .btn-submit {
+            background: #052461;
+            border: none;
+            color: white;
+            font-weight: 500;
+            padding: 10px 24px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit:hover {
+            background: #0a3a8a;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(5, 36, 97, 0.3);
+        }
+
+        .btn-cancel {
+            background: #e9ecef;
+            border: none;
+            color: #495057;
+            font-weight: 500;
+            padding: 10px 24px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cancel:hover {
+            background: #dde1e6;
+            color: #212529;
+        }
+
+        .form-text {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 4px;
+        }
+
+        .required-field::after {
+            content: "*";
+            color: #dc3545;
+            margin-left: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Left Sidebar -->
+        <aside class="sidebar bg-white shadow-sm">
+            <div class="logo-container">
+                <img src="../image/Logo.png" alt="Tripto Logo" class="logo-img">
+            </img>
+            
+            <nav class="sidebar-nav">
+                <a href="Trangchu_ad.html" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Bảng Điều Khiển</span>
+                </a>
+                <a href="Tour_ad.html" class="nav-item">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <span>Tour Du Lịch</span>
+                </a>
+                <a href="TourDaDat_ad.html" class="nav-item active">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Tour Đã Đặt</span>
+                </a>
+                <a href="Lich_ad.html" class="nav-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Lịch</span>
+                </a>
+                <a href="ThanhToan.html" class="nav-item">
+                    <i class="fas fa-credit-card"></i>
+                    <span>Thanh Toán</span>
+                </a>
+                <a href="KhachHang.html" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>Khách Hàng</span>
+                </a>
+                <a href="TinNhan.html" class="nav-item">
+                    <i class="fas fa-comments"></i>
+                    <span>Tin Nhắn</span>
+                </a>
+                <a href="HoatDong.html" class="nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Hoạt Động Thống Kê</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-inner">
+                <!-- Header -->
+                <header class="content-header">
+                    <h1 class="dashboard-title" style="color: #052461;">Quản Lý Tour Đã Đặt</h1>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="search-bar flex-grow-1">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="Tìm kiếm ở đây..." class="form-control">
+                        </div>
+                        <!-- User Menu in Header -->
+                        <div class="user-menu-header">
+                            <div class="notification-wrapper">
+                                <button class="icon-btn notification-btn" id="notificationBell" onclick="toggleNotifications()">
+                                    <i class="fas fa-bell"></i>
+                                    <span class="notification-badge" id="notificationBadge">3</span>
+                                </button>
+                            </div>
+                            <button class="icon-btn" id="settingsBtn" onclick="toggleSettings()">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                            <div class="user-profile">
+                                <div class="user-info">
+                                    <strong class="d-block">GTD</strong>
+                                    <small class="text-muted">Quản Trị Viên</small>
+                                </div>
+                                <div class="avatar-circle">GT</div>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- Stats Cards -->
+                <section class="overview-section">
+                    <div class="row g-4">
+                        <div class="col-xl-3 col-md-6">
+                            <div class="booking-overview-card">
+                                <div class="booking-overview-icon bg-primary bg-opacity-10">
+                                    <i class="fas fa-calendar-check text-primary"></i>
+                                </div>
+                                <div class="booking-overview-info">
+                                    <p class="booking-overview-label">Tổng Đơn Đặt</p>
+                                    <h3 class="booking-overview-value" id="totalBookingsValue">0</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="booking-overview-card">
+                                <div class="booking-overview-icon bg-success bg-opacity-10">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                </div>
+                                <div class="booking-overview-info">
+                                    <p class="booking-overview-label">Đã Xác Nhận</p>
+                                    <h3 class="booking-overview-value" id="confirmedBookingsValue">0</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="booking-overview-card">
+                                <div class="booking-overview-icon bg-warning bg-opacity-10">
+                                    <i class="fas fa-clock text-warning"></i>
+                                </div>
+                                <div class="booking-overview-info">
+                                    <p class="booking-overview-label">Chờ Xác Nhận</p>
+                                    <h3 class="booking-overview-value" id="pendingBookingsValue">0</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="booking-overview-card">
+                                <div class="booking-overview-icon bg-info bg-opacity-10">
+                                    <i class="fas fa-dollar-sign text-info"></i>
+                                </div>
+                                <div class="booking-overview-info">
+                                    <p class="booking-overview-label">Doanh Thu</p>
+                                    <h3 class="booking-overview-value" id="totalRevenueValue">$0</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Filter Section -->
+                <section class="mb-4">
+                    <div class="d-flex gap-2 align-items-center" style="flex-wrap: nowrap; overflow-x: auto; background: white; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                        <button class="filter-pill active" style="flex-shrink: 0;">Tất Cả</button>
+                        <button class="filter-pill" style="flex-shrink: 0;">Chờ Xác Nhận</button>
+                        <button class="filter-pill" style="flex-shrink: 0;">Đã Xác Nhận</button>
+                        <button class="filter-pill" style="flex-shrink: 0;">Đã Hoàn Thành</button>
+                        <button class="filter-pill" style="flex-shrink: 0;">Đã Hủy</button>
+                        <select class="form-select" style="border-radius: 25px; padding: 8px 16px; border: 1px solid #e9ecef; flex-shrink: 0; width: 160px; color: #6c757d; font-size: 14px; font-weight: 500;">
+                            <option>Sắp xếp theo: Mới nhất</option>
+                            <option>Cũ nhất</option>
+                            <option>Giá tăng dần</option>
+                            <option>Giá giảm dần</option>
+                        </select>
+                        <select class="form-select" style="border-radius: 25px; padding: 8px 16px; border: 1px solid #e9ecef; flex-shrink: 0; width: 160px; color: #6c757d; font-size: 14px; font-weight: 500;">
+                            <option>Tất cả tháng</option>
+                            <option>Tháng 1</option>
+                            <option>Tháng 2</option>
+                            <option>Tháng 3</option>
+                            <option>Tháng 4</option>
+                            <option>Tháng 5</option>
+                            <option>Tháng 6</option>
+                            <option>Tháng 7</option>
+                            <option>Tháng 8</option>
+                            <option>Tháng 9</option>
+                            <option>Tháng 10</option>
+                            <option>Tháng 11</option>
+                            <option>Tháng 12</option>
+                        </select>
+                    </div>
+                </section>
+
+                <!-- Booking Table -->
+                <section class="booking-table-container">
+                    <div class="booking-table">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Khách Hàng</th>
+                                    <th>Tour</th>
+                                    <th>Ngày Đặt</th>
+                                    <th>Số Người</th>
+                                    <th>Tổng Tiền</th>
+                                    <th>Trạng Thái</th>
+                                    <th>Trạng Thái Ngày KH</th>
+                                    <th>Thao Tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop" alt="Customer" class="customer-avatar">
+                                            <div>
+                                                <strong>Nguyễn Văn A</strong>
+                                                <p class="mb-0 text-muted" style="font-size: 12px;">nguyenvana@email.com</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <strong style="color: #052461;">Du Lịch Vịnh Hạ Long</strong>
+                                        <p class="mb-0 text-muted" style="font-size: 12px;">3 ngày 2 đêm</p>
+                                    </td>
+                                    <td>15/01/2026</td>
+                                    <td>5 người</td>
+                                    <td><strong style="color: #0d6efd;">$1,750</strong></td>
+                                    <td><span class="booking-status status-confirmed">Đã xác nhận</span></td>
+                                    <td>
+                                        <div class="d-flex gap-1">
+                                            <button class="btn-action btn-view" title="Xem chi tiết"><i class="fas fa-eye"></i></button>
+                                            <button class="btn-action btn-edit" title="Chỉnh sửa"><i class="fas fa-edit"></i></button>
+                                            <button class="btn-action btn-delete" title="Xóa"><i class="fas fa-trash"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop" alt="Customer" class="customer-avatar">
+                                            <div>
+                                                <strong>Trần Thị B</strong>
+                                                <p class="mb-0 text-muted" style="font-size: 12px;">tranthib@email.com</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <strong style="color: #052461;">Kỳ Nghỉ Nha Trang</strong>
+                                        <p class="mb-0 text-muted" style="font-size: 12px;">4 ngày 3 đêm</p>
+                                    </td>
+                                    <td>14/01/2026</td>
+                                    <td>3 người</td>
+                                    <td><strong style="color: #0d6efd;">$1,260</strong></td>
+                                    <td><span class="booking-status status-pending">Chờ xác nhận</span></td>
+                                    <td>
+                                        <div class="d-flex gap-1">
+                                            <button class="btn-action btn-view" title="Xem chi tiết"><i class="fas fa-eye"></i></button>
+                                            <button class="btn-action btn-edit" title="Chỉnh sửa"><i class="fas fa-edit"></i></button>
+                                            <button class="btn-action btn-delete" title="Xóa"><i class="fas fa-trash"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop" alt="Customer" class="customer-avatar">
+                                            <div>
+                                                <strong>Lê Văn C</strong>
+                                                <p class="mb-0 text-muted" style="font-size: 12px;">levanc@email.com</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <strong style="color: #052461;">Phiêu Lưu Hà Giang</strong>
+                                        <p class="mb-0 text-muted" style="font-size: 12px;">5 ngày 4 đêm</p>
+                                    </td>
+                                    <td>13/01/2026</td>
+                                    <td>2 người</td>
+                                    <td><strong style="color: #0d6efd;">$1,100</strong></td>
+                                    <td><span class="booking-status status-completed">Đã hoàn thành</span></td>
+                                    <td>
+                                        <div class="d-flex gap-1">
+                                            <button class="btn-action btn-view" title="Xem chi tiết"><i class="fas fa-eye"></i></button>
+                                            <button class="btn-action btn-edit" title="Chỉnh sửa"><i class="fas fa-edit"></i></button>
+                                            <button class="btn-action btn-delete" title="Xóa"><i class="fas fa-trash"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop" alt="Customer" class="customer-avatar">
+                                            <div>
+                                                <strong>Phạm Thị D</strong>
+                                                <p class="mb-0 text-muted" style="font-size: 12px;">phamthid@email.com</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <strong style="color: #052461;">Tour Huế & Hội An</strong>
+                                        <p class="mb-0 text-muted" style="font-size: 12px;">3 ngày 2 đêm</p>
+                                    </td>
+                                    <td>12/01td>
+                                    <td>4 người</td/2026</>
+                                    <td><strong style="color: #0d6efd;">$1,120</strong></td>
+                                    <td><span class="booking-status status-cancelled">Đã hủy</span></td>
+                                    <td>
+                                        <div class="d-flex gap-1">
+                                            <button class="btn-action btn-view" title="Xem chi tiết"><i class="fas fa-eye"></i></button>
+                                            <button class="btn-action btn-edit" title="Chỉnh sửa"><i class="fas fa-edit"></i></button>
+                                            <button class="btn-action btn-delete" title="Xóa"><i class="fas fa-trash"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop" alt="Customer" class="customer-avatar">
+                                            <div>
+                                                <strong>Hoàng Văn E</strong>
+                                                <p class="mb-0 text-muted" style="font-size: 12px;">hoangvane@email.com</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <strong style="color: #052461;">Khám Phá Đà Lạt</strong>
+                                        <p class="mb-0 text-muted" style="font-size: 12px;">4 ngày 3 đêm</p>
+                                    </td>
+                                    <td>11/01/2026</td>
+                                    <td>6 người</td>
+                                    <td><strong style="color: #0d6efd;">$1,920</strong></td>
+                                    <td><span class="booking-status status-confirmed">Đã xác nhận</span></td>
+                                    <td>
+                                        <div class="d-flex gap-1">
+                                            <button class="btn-action btn-view" title="Xem chi tiết"><i class="fas fa-eye"></i></button>
+                                            <button class="btn-action btn-edit" title="Chỉnh sửa"><i class="fas fa-edit"></i></button>
+                                            <button class="btn-action btn-delete" title="Xóa"><i class="fas fa-trash"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop" alt="Customer" class="customer-avatar">
+                                            <div>
+                                                <strong>Ngô Thị F</strong>
+                                                <p class="mb-0 text-muted" style="font-size: 12px;">ngothif@email.com</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <strong style="color: #052461;">Du Lịch Phú Quốc</strong>
+                                        <p class="mb-0 text-muted" style="font-size: 12px;">5 ngày 4 đêm</p>
+                                    </td>
+                                    <td>10/01/2026</td>
+                                    <td>2 người</td>
+                                    <td><strong style="color: #0d6efd;">$960</strong></td>
+                                    <td><span class="booking-status status-pending">Chờ xác nhận</span></td>
+                                    <td>
+                                        <div class="d-flex gap-1">
+                                            <button class="btn-action btn-view" title="Xem chi tiết"><i class="fas fa-eye"></i></button>
+                                            <button class="btn-action btn-edit" title="Chỉnh sửa"><i class="fas fa-edit"></i></button>
+                                            <button class="btn-action btn-delete" title="Xóa"><i class="fas fa-trash"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&h=100&fit=crop" alt="Customer" class="customer-avatar">
+                                            <div>
+                                                <strong>Võ Văn G</strong>
+                                                <p class="mb-0 text-muted" style="font-size: 12px;">vovang@email.com</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <strong style="color: #052461;">Khám Phá Sapa</strong>
+                                        <p class="mb-0 text-muted" style="font-size: 12px;">2 ngày 1 đêm</p>
+                                    </td>
+                                    <td>09/01/2026</td>
+                                    <td>3 người</td>
+                                    <td><strong style="color: #0d6efd;">$540</strong></td>
+                                    <td><span class="booking-status status-completed">Đã hoàn thành</span></td>
+                                    <td>
+                                        <div class="d-flex gap-1">
+                                            <button class="btn-action btn-view" title="Xem chi tiết"><i class="fas fa-eye"></i></button>
+                                            <button class="btn-action btn-edit" title="Chỉnh sửa"><i class="fas fa-edit"></i></button>
+                                            <button class="btn-action btn-delete" title="Xóa"><i class="fas fa-trash"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>8</td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop" alt="Customer" class="customer-avatar">
+                                            <div>
+                                                <strong>Lý Thị H</strong>
+                                                <p class="mb-0 text-muted" style="font-size: 12px;">lythih@email.com</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <strong style="color: #052461;">Tour Côn Đảo</strong>
+                                        <p class="mb-0 text-muted" style="font-size: 12px;">3 ngày 2 đêm</p>
+                                    </td>
+                                    <td>08/01/2026</td>
+                                    <td>4 người</td>
+                                    <td><strong style="color: #0d6efd;">$1,560</strong></td>
+                                    <td><span class="booking-status status-confirmed">Đã xác nhận</span></td>
+                                    <td>
+                                        <div class="d-flex gap-1">
+                                            <button class="btn-action btn-view" title="Xem chi tiết"><i class="fas fa-eye"></i></button>
+                                            <button class="btn-action btn-edit" title="Chỉnh sửa"><i class="fas fa-edit"></i></button>
+                                            <button class="btn-action btn-delete" title="Xóa"><i class="fas fa-trash"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="pagination-container">
+                        <span class="page-info">Hiển thị 1-8 từ 245 đơn đặt</span>
+                        <div class="pagination">
+                            <button class="page-item"><i class="fas fa-chevron-left"></i></button>
+                            <button class="page-item active">1</button>
+                            <button class="page-item">2</button>
+                            <button class="page-item">3</button>
+                            <button class="page-item">4</button>
+                            <button class="page-item">...</button>
+                            <button class="page-item">31</button>
+                            <button class="page-item"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Right Sidebar -->
+        <aside class="right-sidebar bg-white">
+            <!-- User Menu -->
+            <div class="user-menu">
+                <!-- Notification Bell -->
+                <div class="notification-wrapper">
+                    <button class="icon-btn notification-btn" id="notificationBell" onclick="toggleNotifications()">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge" id="notificationBadge">3</span>
+                    </button>
+                    
+                    <!-- Notification Dropdown -->
+                    <div class="notification-dropdown" id="notificationDropdown">
+                        <div class="notification-header">
+                            <h6>Thông Báo</h6>
+                            <button class="mark-all-read" onclick="markAllRead()">Đánh dấu đã đọc</button>
+                        </div>
+                        <div class="notification-list" id="notificationList">
+                            <div class="notification-item unread" onclick="markAsRead(this)">
+                                <div class="notification-icon bg-danger">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                </div>
+                                <div class="notification-content">
+                                    <p class="notification-title">Tour sắp hết chỗ</p>
+                                    <p class="notification-desc">Tour Vịnh Hạ Long ngày 20/3 chỉ còn 5 chỗ</p>
+                                    <span class="notification-time">5 phút trước</span>
+                                </div>
+                            </div>
+                            <div class="notification-item unread" onclick="markAsRead(this)">
+                                <div class="notification-icon bg-success">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="notification-content">
+                                    <p class="notification-title">Đơn đặt tour mới</p>
+                                    <p class="notification-desc">Có 3 đơn đặt tour mới cần xác nhận</p>
+                                    <span class="notification-time">15 phút trước</span>
+                                </div>
+                            </div>
+                            <div class="notification-item unread" onclick="markAsRead(this)">
+                                <div class="notification-icon bg-warning">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </div>
+                                <div class="notification-content">
+                                    <p class="notification-title">Lịch khởi hành sắp tới</p>
+                                    <p class="notification-desc">Tour Sapa ngày 22/3 sắp đến ngày khởi hành</p>
+                                    <span class="notification-time">1 giờ trước</span>
+                                </div>
+                            </div>
+                            <div class="notification-item" onclick="markAsRead(this)">
+                                <div class="notification-icon bg-info">
+                                    <i class="fas fa-user-plus"></i>
+                                </div>
+                                <div class="notification-content">
+                                    <p class="notification-title">Khách hàng mới đăng ký</p>
+                                    <p class="notification-desc">12 khách hàng mới đăng ký hôm nay</p>
+                                    <span class="notification-time">2 giờ trước</span>
+                                </div>
+                            </div>
+                            <div class="notification-item" onclick="markAsRead(this)">
+                                <div class="notification-icon bg-primary">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </div>
+                                <div class="notification-content">
+                                    <p class="notification-title">Thanh toán thành công</p>
+                                    <p class="notification-desc">Thanh toán $1,250 từ khách hàng ABC</p>
+                                    <span class="notification-time">3 giờ trước</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="icon-btn" id="settingsBtn" onclick="toggleSettings()">
+                    <i class="fas fa-cog"></i>
+                </button>
+                <!-- Settings Dropdown -->
+                <div class="settings-dropdown" id="settingsDropdown">
+                    <div class="settings-header">
+                        <h6>Cài Đặt</h6>
+                    </div>
+                    <div class="settings-list">
+                        <div class="settings-item">
+                            <div class="settings-item-icon">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="settings-item-content">
+                                <p class="settings-item-title">Thông Tin Cá Nhân</p>
+                                <p class="settings-item-desc">Cập nhật thông tin profile</p>
+                            </div>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-item-icon">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                            <div class="settings-item-content">
+                                <p class="settings-item-title">Bảo Mật</p>
+                                <p class="settings-item-desc">Đổi mật khẩu</p>
+                            </div>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-item-icon">
+                                <i class="fas fa-palette"></i>
+                            </div>
+                            <div class="settings-item-content">
+                                <p class="settings-item-title">Giao Diện</p>
+                                <p class="settings-item-desc">Tùy chỉnh giao diện</p>
+                            </div>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-item-icon">
+                                <i class="fas fa-language"></i>
+                            </div>
+                            <div class="settings-item-content">
+                                <p class="settings-item-title">Ngôn Ngữ</p>
+                                <p class="settings-item-desc">Chọn ngôn ngữ</p>
+                            </div>
+                        </div>
+                        <div class="settings-divider"></div>
+                        <div class="settings-item logout-item">
+                            <div class="settings-item-icon">
+                                <i class="fas fa-sign-out-alt"></i>
+                            </div>
+                            <div class="settings-item-content">
+                                <p class="settings-item-title">Đăng Xuất</p>
+                                <p class="settings-item-desc">Thoát khỏi hệ thống</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="user-profile">
+                    <div class="user-info">
+                        <strong class="d-block">GTD</strong>
+                        <small class="text-muted">Quản Trị Viên</small>
+                    </div>
+                    <div class="avatar-circle">GT</div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <section class="sidebar-section">
+                <h6 class="mb-3" style="color: #052461; font-weight: 600;">Thao Tác Nhanh</h6>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary" style="background: #052461;" data-bs-toggle="modal" data-bs-target="#addBookingModal">
+                        <i class="fas fa-plus me-2"></i>Thêm Đơn Mới
+                    </button>
+                    <button class="btn btn-outline-primary">
+                        <i class="fas fa-file-export me-2"></i>Xuất Danh Sách
+                    </button>
+                    <button class="btn btn-outline-primary">
+                        <i class="fas fa-chart-bar me-2"></i>Báo Cáo
+                    </button>
+                </div>
+            </section>
+
+            <!-- Recent Bookings -->
+            <section class="sidebar-section">
+                <h6 class="mb-3" style="color: #052461; font-weight: 600;">Đơn Đặt Gần Đây</h6>
+                <div class="customer-list">
+                    <div class="customer-item">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop" alt="Customer" class="avatar-placeholder">
+                        <div>
+                            <strong>Nguyễn Văn A</strong>
+                            <small class="text-muted d-block">Du Lịch Vịnh Hạ Long</small>
+                        </div>
+                    </div>
+                    <div class="customer-item">
+                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop" alt="Customer" class="avatar-placeholder">
+                        <div>
+                            <strong>Trần Thị B</strong>
+                            <small class="text-muted d-block">Kỳ Nghỉ Nha Trang</small>
+                        </div>
+                    </div>
+                    <div class="customer-item">
+                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop" alt="Customer" class="avatar-placeholder">
+                        <div>
+                            <strong>Lê Văn C</strong>
+                            <small class="text-muted d-block">Phiêu Lưu Hà Giang</small>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Booking Stats -->
+            <section class="sidebar-section">
+                <h6 class="mb-3" style="color: #052461; font-weight: 600;">Thống Kê Tuần Này</h6>
+                <div style="background: white; border-radius: 12px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 16px;">
+                    <div style="text-align: center; padding-bottom: 12px; border-bottom: 1px solid #f0f0f0;">
+                        <p style="color: #6c757d; font-size: 12px; margin-bottom: 4px;">Tổng Đơn Tuần Này</p>
+                        <p style="font-size: 28px; font-weight: 700; color: #052461; margin: 0;">45</p>
+                    </div>
+                </div>
+                
+                <div class="stats-list">
+                    <div class="stat-item">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(25, 135, 84, 0.1); display: flex; align-items: center; justify-content: center; color: #198754;">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <p style="font-size: 13px; color: #6c757d; margin: 0;">Đã xác nhận</p>
+                                <p style="font-size: 18px; font-weight: 600; color: #052461; margin: 0;">32</p>
+                            </div>
+                            <p style="font-size: 13px; font-weight: 600; color: #198754; margin: 0;">71%</p>
+                        </div>
+                        <div class="progress" style="height: 6px;">
+                            <div class="progress-bar bg-success" style="width: 71%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="stat-item">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(255, 193, 7, 0.1); display: flex; align-items: center; justify-content: center; color: #ffc107;">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <p style="font-size: 13px; color: #6c757d; margin: 0;">Chờ xác nhận</p>
+                                <p style="font-size: 18px; font-weight: 600; color: #052461; margin: 0;">13</p>
+                            </div>
+                            <p style="font-size: 13px; font-weight: 600; color: #ffc107; margin: 0;">29%</p>
+                        </div>
+                        <div class="progress" style="height: 6px;">
+                            <div class="progress-bar bg-warning" style="width: 29%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="stat-item">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(23, 162, 184, 0.1); display: flex; align-items: center; justify-content: center; color: #17a2b8;">
+                                <i class="fas fa-check-double"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <p style="font-size: 13px; color: #6c757d; margin: 0;">Đã hoàn thành</p>
+                                <p style="font-size: 18px; font-weight: 600; color: #052461; margin: 0;">8</p>
+                            </div>
+                            <p style="font-size: 13px; font-weight: 600; color: #17a2b8; margin: 0;">18%</p>
+                        </div>
+                        <div class="progress" style="height: 6px;">
+                            <div class="progress-bar" style="background-color: #17a2b8; width: 18%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="stat-item">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(108, 117, 125, 0.1); display: flex; align-items: center; justify-content: center; color: #6c757d;">
+                                <i class="fas fa-times-circle"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <p style="font-size: 13px; color: #6c757d; margin: 0;">Đã hủy</p>
+                                <p style="font-size: 18px; font-weight: 600; color: #052461; margin: 0;">2</p>
+                            </div>
+                            <p style="font-size: 13px; font-weight: 600; color: #6c757d; margin: 0;">4%</p>
+                        </div>
+                        <div class="progress" style="height: 6px;">
+                            <div class="progress-bar" style="background-color: #6c757d; width: 4%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </aside>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Initialize admin name from localStorage
+        function initializeAdminProfile() {
+            const adminName = localStorage.getItem('adminName') || 'Admin';
+            const nameParts = adminName.trim().split(' ');
+            const initials = nameParts.map(part => part.charAt(0).toUpperCase()).join('');
+            const nameElement = document.querySelector('.user-info strong');
+            if (nameElement) nameElement.textContent = adminName;
+            const avatarElement = document.querySelector('.avatar-circle');
+            if (avatarElement) avatarElement.textContent = initials.substring(0, 2);
+        }
+        window.addEventListener('DOMContentLoaded', initializeAdminProfile);
+
+        // Biến lưu dữ liệu booking từ API
+        let bookingsData = [];
+        let currentPage = 1;
+        let totalPages = 1;
+        let totalBookings = 0;
+        const itemsPerPage = 10;
+        let currentSort = 'newest';  // Track hiện tại sort option
+
+        // Status mapping for display
+        const statusMap = {
+            'Chờ xác nhận': { label: 'Chờ xác nhận', class: 'status-pending' },
+            'Đã xác nhận': { label: 'Đã xác nhận', class: 'status-confirmed' },
+            'Đã hoàn thành': { label: 'Đã hoàn thành', class: 'status-completed' },
+            'Đã hủy': { label: 'Đã hủy', class: 'status-cancelled' },
+            'Chờ Xác Nhận Hủy': { label: 'Chờ Xác Nhận Hủy', class: 'status-pending' },
+            // Backward compatibility for enum-style values
+            'confirmed': { label: 'Đã xác nhận', class: 'status-confirmed' },
+            'pending': { label: 'Chờ xác nhận', class: 'status-pending' },
+            'completed': { label: 'Đã hoàn thành', class: 'status-completed' },
+            'cancelled': { label: 'Đã hủy', class: 'status-cancelled' }
+        };
+
+        // Current filter
+        let currentFilter = 'all';
+        let currentMonth = 'all';
+
+        /**
+         * Lấy dữ liệu đặt tour từ API
+         */
+        async function fetchBookings(page = 1, sort = 'newest', filter = 'all', month = 'all') {
+            try {
+                const params = new URLSearchParams();
+                params.append('action', 'get_bookings');
+                params.append('page', page);
+                params.append('sort', sort);
+                params.append('filter', filter);
+                params.append('month', month);
+
+                const response = await fetch('../admin.php?' + params.toString(), {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Lỗi lấy dữ liệu từ server');
+                }
+
+                const result = await response.json();
+
+                if (result.success) {
+                    bookingsData = result.data;
+                    totalPages = result.pagination.total_pages;
+                    currentPage = result.pagination.current_page;
+                    totalBookings = result.pagination.total_items;
+                    currentSort = sort;  // Update current sort
+
+                    // Cập nhật stats
+                    if (result.stats) {
+                        updateStats(result.stats);
+                    }
+
+                    // Render bookings
+                    renderBookings();
+
+                    return true;
+                } else {
+                    console.error('Lỗi API:', result.message);
+                    return false;
+                }
+            } catch (error) {
+                console.error('Lỗi fetch:', error);
+                alert('Lỗi lấy dữ liệu: ' + error.message);
+                return false;
+            }
+        }
+
+        /**
+         * Cập nhật thống kê trên giao diện
+         */
+        function updateStats(stats) {
+            // Tổng đơn đặt
+            const totalCard = document.querySelector('.booking-overview-card:nth-child(1) .booking-overview-value');
+            if (totalCard) totalCard.textContent = stats.total_bookings;
+
+            // Đã xác nhận
+            const confirmedCard = document.querySelector('.booking-overview-card:nth-child(2) .booking-overview-value');
+            if (confirmedCard) confirmedCard.textContent = stats.confirmed_bookings;
+
+            // Chờ xác nhận
+            const pendingCard = document.querySelector('.booking-overview-card:nth-child(3) .booking-overview-value');
+            if (pendingCard) pendingCard.textContent = stats.pending_bookings;
+
+            // Doanh thu
+            const revenueCard = document.querySelector('.booking-overview-card:nth-child(4) .booking-overview-value');
+            if (revenueCard) {
+                const revenueValue = (stats.total_revenue / 1000000).toFixed(1) + 'M';
+                revenueCard.textContent = revenueValue;
+            }
+        }
+        
+        /**
+         * Render danh sách booking lên bảng
+         */
+        function renderBookings() {
+            const tbody = document.querySelector('.booking-table tbody');
+            if (!tbody) {
+                console.error('Không tìm thấy tbody element');
+                return;
+            }
+            
+            tbody.innerHTML = bookingsData.map((booking, index) => {
+                // Hiển thị button xác nhận nếu status là 'pending' hoặc 'Chờ xác nhận' hoặc 'Chờ Xác Nhận Hủy'
+                const needsConfirmation = booking.status === 'pending' || 
+                                        booking.status === 'Chờ xác nhận' || 
+                                        booking.status === 'Chờ Xác Nhận Hủy';
+                const confirmButton = needsConfirmation
+                    ? `<button class="btn-action btn-confirm" title="Xác nhận" onclick="confirmBookingQuick(${booking.id}, '${booking.status}')"><i class="fas fa-check"></i></button>`
+                    : '';
+                
+                // Get status info with fallback
+                let statusInfo = statusMap[booking.status] || { label: booking.status || 'N/A', class: 'status-pending' };
+                
+                // If departure status is completed, override to "Đã xác nhận"
+                if (booking.departureStatus === 'Đã hoàn thành') {
+                    statusInfo = { label: 'Đã xác nhận', class: 'status-confirmed' };
+                }
+                
+                // Format departureStatus display
+                let departureStatusDisplay = '';
+                if (booking.departureStatus) {
+                    let cssClass = 'status-pending';
+                    if (booking.departureStatus === 'Đã hoàn thành') {
+                        cssClass = 'status-completed';
+                    } else if (booking.departureStatus === 'Đang diễn ra') {
+                        cssClass = 'status-confirmed';
+                    }
+                    
+                    departureStatusDisplay = `<span class="booking-status ${cssClass}">${booking.departureStatus}</span>`;
+                }
+                
+                return `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <img src="${booking.customerAvatar}" alt="Customer" class="customer-avatar">
+                            <div>
+                                <strong>${booking.customerName}</strong>
+                                <p class="mb-0 text-muted" style="font-size: 12px;">${booking.customerEmail}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <strong style="color: #052461;">${booking.tourName}</strong>
+                        <p class="mb-0 text-muted" style="font-size: 12px;">${booking.tourDuration}</p>
+                    </td>
+                    <td>${booking.bookingDate}</td>
+                    <td>${booking.guests} người</td>
+                    <td><strong style="color: #0d6efd;">${booking.total}</strong></td>
+                    <td><span class="booking-status ${statusInfo.class}">${statusInfo.label}</span></td>
+                    <td>${departureStatusDisplay}</td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            ${confirmButton}
+                            <button class="btn-action btn-view" title="Xem chi tiết" onclick="viewBookingDetail(${booking.id})"><i class="fas fa-eye"></i></button>
+                            <button class="btn-action btn-delete" title="Xóa" onclick="deleteBooking(${booking.id})"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            }).join('');
+
+            // Update page info
+            const pageInfo = document.querySelector('.page-info');
+            if (pageInfo) {
+                const startItem = (currentPage - 1) * itemsPerPage + 1;
+                const endItem = Math.min(currentPage * itemsPerPage, totalBookings);
+                pageInfo.textContent = `Hiển thị ${startItem}-${endItem} từ ${totalBookings} đơn đặt`;
+            }
+
+            // Render pagination buttons
+            renderPagination();
+        }
+
+        /**
+         * Render pagination buttons
+         */
+        function renderPagination() {
+            const paginationDiv = document.querySelector('.pagination');
+            if (!paginationDiv) return;
+
+            let html = '';
+
+            // Previous button
+            const prevDisabled = currentPage === 1 ? 'disabled' : '';
+            html += `<button class="page-item" ${prevDisabled} onclick="goToPage(${currentPage - 1})"><i class="fas fa-chevron-left"></i></button>`;
+
+            // Generate page numbers
+            if (totalPages <= 5) {
+                // Show all pages if 5 or less
+                for (let i = 1; i <= totalPages; i++) {
+                    const activeClass = i === currentPage ? 'active' : '';
+                    html += `<button class="page-item ${activeClass}" onclick="goToPage(${i})">${i}</button>`;
+                }
+            } else {
+                // Show first page
+                const firstActive = currentPage === 1 ? 'active' : '';
+                html += `<button class="page-item ${firstActive}" onclick="goToPage(1)">1</button>`;
+
+                // Show ellipsis and middle pages
+                if (currentPage > 3) {
+                    html += `<button class="page-item">...</button>`;
+                }
+
+                // Show pages around current page
+                const start = Math.max(2, currentPage - 1);
+                const end = Math.min(totalPages - 1, currentPage + 1);
+                for (let i = start; i <= end; i++) {
+                    const activeClass = i === currentPage ? 'active' : '';
+                    html += `<button class="page-item ${activeClass}" onclick="goToPage(${i})">${i}</button>`;
+                }
+
+                // Show ellipsis if needed
+                if (currentPage < totalPages - 2) {
+                    html += `<button class="page-item">...</button>`;
+                }
+
+                // Show last page
+                const lastActive = currentPage === totalPages ? 'active' : '';
+                html += `<button class="page-item ${lastActive}" onclick="goToPage(${totalPages})">${totalPages}</button>`;
+            }
+
+            // Next button
+            const nextDisabled = currentPage === totalPages ? 'disabled' : '';
+            html += `<button class="page-item" ${nextDisabled} onclick="goToPage(${currentPage + 1})"><i class="fas fa-chevron-right"></i></button>`;
+
+            paginationDiv.innerHTML = html;
+        }
+
+        /**
+         * Go to specific page
+         */
+        function goToPage(pageNum) {
+            if (pageNum >= 1 && pageNum <= totalPages && pageNum !== currentPage) {
+                fetchBookings(pageNum, currentSort, currentFilter, currentMonth);
+            }
+        }
+
+        // Filter pill click handlers
+        document.querySelectorAll('.filter-pill').forEach(pill => {
+            pill.addEventListener('click', function() {
+                // Remove active class from all pills
+                document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+                // Add active class to clicked pill
+                this.classList.add('active');
+
+                // Get filter value
+                const filterText = this.textContent.trim();
+                let filterValue = 'all';
+
+                switch(filterText) {
+                    case 'Chờ Xác Nhận':
+                        filterValue = 'pending';
+                        break;
+                    case 'Đã Xác Nhận':
+                        filterValue = 'confirmed';
+                        break;
+                    case 'Đã Hoàn Thành':
+                        filterValue = 'completed';
+                        break;
+                    case 'Đã Hủy':
+                        filterValue = 'cancelled';
+                        break;
+                    case 'Tất Cả':
+                    default:
+                        filterValue = 'all';
+                }
+
+                currentFilter = filterValue;
+                currentPage = 1; // Reset về trang 1 khi filter
+                fetchBookings(1, currentSort, filterValue, currentMonth);
+            });
+        });
+
+        /**
+         * Load dashboard stats từ API
+         */
+        async function loadDashboardStats() {
+            try {
+                const response = await fetch('../admin.php?action=get_dashboard_stats');
+                const data = await response.json();
+                
+                if (data.success && data.data) {
+                    // Update dashboard cards
+                    document.getElementById('totalBookingsValue').textContent = data.data.total_bookings || 0;
+                    document.getElementById('confirmedBookingsValue').textContent = data.data.confirmed_bookings || 0;
+                    document.getElementById('pendingBookingsValue').textContent = data.data.pending_bookings || 0;
+                    document.getElementById('totalRevenueValue').textContent = data.data.total_revenue_formatted || '$0';
+                }
+            } catch (error) {
+                console.error('Error loading dashboard stats:', error);
+            }
+        }
+
+        // Initial fetch bookings
+        fetchBookings();
+        loadDashboardStats();
+
+        // Sort dropdown handler
+        document.querySelectorAll('.form-select').forEach((select, index) => {
+            // Chỉ xử lý dropdown sắp xếp thứ nhất (không phải dropdown tháng)
+            if (index === 0) {
+                select.addEventListener('change', function() {
+                    const sortValue = this.value;
+                    let sortParam = 'newest';
+
+                    // Map giá trị sort từ text sang parameter
+                    switch(sortValue) {
+                        case 'Cũ nhất':
+                            sortParam = 'oldest';
+                            break;
+                        case 'Giá tăng dần':
+                            sortParam = 'price_low';
+                            break;
+                        case 'Giá giảm dần':
+                            sortParam = 'price_high';
+                            break;
+                        case 'Sắp xếp theo: Mới nhất':
+                        default:
+                            sortParam = 'newest';
+                    }
+
+                    currentSort = sortParam;  // Update current sort
+                    // Fetch bookings với sort parameter mới
+                    fetchBookings(1, sortParam, currentFilter, currentMonth);
+                });
+            } else if (index === 1) {
+                // Month dropdown handler
+                select.addEventListener('change', function() {
+                    const monthValue = this.value;
+                    let monthParam = 'all';
+
+                    // Map tháng từ text sang parameter
+                    switch(monthValue) {
+                        case 'Tháng 1':
+                            monthParam = '1';
+                            break;
+                        case 'Tháng 2':
+                            monthParam = '2';
+                            break;
+                        case 'Tháng 3':
+                            monthParam = '3';
+                            break;
+                        case 'Tháng 4':
+                            monthParam = '4';
+                            break;
+                        case 'Tháng 5':
+                            monthParam = '5';
+                            break;
+                        case 'Tháng 6':
+                            monthParam = '6';
+                            break;
+                        case 'Tháng 7':
+                            monthParam = '7';
+                            break;
+                        case 'Tháng 8':
+                            monthParam = '8';
+                            break;
+                        case 'Tháng 9':
+                            monthParam = '9';
+                            break;
+                        case 'Tháng 10':
+                            monthParam = '10';
+                            break;
+                        case 'Tháng 11':
+                            monthParam = '11';
+                            break;
+                        case 'Tháng 12':
+                            monthParam = '12';
+                            break;
+                        case 'Tất cả tháng':
+                        default:
+                            monthParam = 'all';
+                    }
+
+                    currentMonth = monthParam;  // Update current month
+                    // Fetch bookings với month filter mới
+                    fetchBookings(1, currentSort, currentFilter, monthParam);
+                });
+            }
+        });
+        
+        // ============================================
+        // NOTIFICATION BELL FUNCTIONALITY
+        // ============================================
+        
+        let notificationInterval;
+        
+        // Toggle notification dropdown
+        function toggleNotifications() {
+            const dropdown = document.getElementById('notificationDropdown');
+            const bell = document.getElementById('notificationBell');
+            
+            if (dropdown.style.display === 'block') {
+                dropdown.style.display = 'none';
+                bell.classList.remove('bell-ringing');
+            } else {
+                dropdown.style.display = 'block';
+                ringBell();
+            }
+        }
+        
+        // Ring bell animation
+        function ringBell() {
+            const bell = document.getElementById('notificationBell');
+            bell.classList.add('bell-ringing');
+            setTimeout(() => {
+                bell.classList.remove('bell-ringing');
+            }, 3000);
+        }
+        
+        // Mark single notification as read
+        function markAsRead(element) {
+            element.classList.remove('unread');
+            updateNotificationCount();
+        }
+        
+        // Mark all notifications as read
+        function markAllRead() {
+            const items = document.querySelectorAll('.notification-item.unread');
+            items.forEach(item => {
+                item.classList.remove('unread');
+            });
+            updateNotificationCount();
+        }
+        
+        // Update notification badge count
+        function updateNotificationCount() {
+            const unreadItems = document.querySelectorAll('.notification-item.unread');
+            const badge = document.getElementById('notificationBadge');
+            badge.textContent = unreadItems.length;
+            if (unreadItems.length === 0) {
+                badge.style.display = 'none';
+            } else {
+                badge.style.display = 'flex';
+            }
+        }
+        
+        // Simulate new notifications coming in
+        function simulateNewNotification() {
+            const notifications = [
+                { title: 'Tour mới được đặt', desc: 'Khách hàng Nguyễn Văn A đặt tour Đà Nẵng', icon: 'fa-check-circle', bg: 'bg-success' },
+                { title: 'Cần xác nhận', desc: '5 tour cần xác nhận ngay', icon: 'fa-exclamation-triangle', bg: 'bg-warning' },
+                { title: 'Khách hàng phản hồi', desc: 'Có phản hồi mới từ khách hàng', icon: 'fa-comments', bg: 'bg-info' },
+                { title: 'Tour sắp hết chỗ', desc: 'Tour Vịnh Hạ Long ngày 20/3 chỉ còn 5 chỗ', icon: 'fa-exclamation-circle', bg: 'bg-danger' }
+            ];
+            
+            const randomNotification = notifications[Math.floor(Math.random() * notifications.length)];
+            const notificationList = document.getElementById('notificationList');
+            
+            const newItem = document.createElement('div');
+            newItem.className = 'notification-item unread';
+            newItem.onclick = function() { markAsRead(this); };
+            newItem.innerHTML = `
+                <div class="notification-icon ${randomNotification.bg}">
+                    <i class="fas ${randomNotification.icon}"></i>
+                </div>
+                <div class="notification-content">
+                    <p class="notification-title">${randomNotification.title}</p>
+                    <p class="notification-desc">${randomNotification.desc}</p>
+                    <span class="notification-time">Vừa xong</span>
+                </div>`;
+            
+            notificationList.insertBefore(newItem, notificationList.firstChild);
+            updateNotificationCount();
+            ringBell();
+        }
+        
+        // Close notification dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('notificationDropdown');
+            const bell = document.getElementById('notificationBell');
+            if (dropdown && !dropdown.contains(event.target) && !bell.contains(event.target)) {
+                dropdown.style.display = 'none';
+                bell.classList.remove('bell-ringing');
+            }
+        });
+        
+        // Simulate incoming notifications every 30 seconds
+        notificationInterval = setInterval(simulateNewNotification, 30000);
+        
+        // Initial count update and ring
+        updateNotificationCount();
+        setTimeout(ringBell, 2000);
+        
+        // ============================================
+        // SETTINGS DROPDOWN FUNCTIONALITY
+        // ============================================
+        
+        // Toggle settings dropdown
+        function toggleSettings() {
+            const dropdown = document.getElementById('settingsDropdown');
+            const settingsBtn = document.getElementById('settingsBtn');
+            const notificationDropdown = document.getElementById('notificationDropdown');
+            
+            // Close notification dropdown if open
+            if (notificationDropdown && notificationDropdown.style.display === 'block') {
+                notificationDropdown.style.display = 'none';
+            }
+            
+            if (dropdown.style.display === 'block') {
+                dropdown.style.display = 'none';
+            } else {
+                dropdown.style.display = 'block';
+            }
+        }
+        
+        // Close settings dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const settingsDropdown = document.getElementById('settingsDropdown');
+            const settingsBtn = document.getElementById('settingsBtn');
+            if (settingsDropdown && !settingsDropdown.contains(event.target) && !settingsBtn.contains(event.target)) {
+                settingsDropdown.style.display = 'none';
+            }
+        });
+
+        // ============================================
+        // ADD BOOKING MODAL FUNCTIONALITY
+        // ============================================
+        
+        // Reset form when modal is opened
+        document.getElementById('addBookingModal')?.addEventListener('show.bs.modal', function() {
+            document.getElementById('addBookingForm')?.reset();
+        });
+
+        // Handle form submission
+        document.getElementById('addBookingForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const formData = {
+                so_dat_tour: document.getElementById('bookingNumber').value,
+                id_nguoi_dung: document.getElementById('customerId').value,
+                id_tour: document.getElementById('tourId').value,
+                id_goi_combo: document.getElementById('comboId').value,
+                so_nguoi_lon: document.getElementById('numAdults').value,
+                so_tre_em: document.getElementById('numChildren').value,
+                ngay_khoi_hanh: document.getElementById('departureDate').value,
+                ghi_chu: document.getElementById('notes').value,
+                phuong_thuc_thanh_toan: document.getElementById('paymentMethod').value,
+                tong_tien: document.getElementById('totalAmount').value,
+                trang_thai: document.getElementById('status').value
+            };
+            
+            console.log('Booking form data:', formData);
+            alert('Dữ liệu đặt sẽ được gửi tới server:\n' + JSON.stringify(formData, null, 2));
+            
+            // Hide modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addBookingModal'));
+            modal.hide();
+        });
+
+        // VIEW BOOKING DETAIL FUNCTIONALITY
+        // ============================================
+        
+        let currentViewingBookingId = null;
+
+        /**
+         * Xác nhận booking nhanh từ bảng dữ liệu (không cần mở modal)
+         */
+        async function confirmBookingQuick(bookingId, status) {
+            try {
+                // Determine what action to take based on current status
+                let newStatus = 'Đã xác nhận';  // Default
+                let actionText = 'xác nhận';
+                
+                if (status === 'Chờ Xác Nhận Hủy' || status === 'pending_cancel') {
+                    newStatus = 'Đã hủy';
+                    actionText = 'hủy';
+                }
+                
+                // Ask for confirmation
+                if (!confirm(`Bạn có chắc chắn muốn ${actionText} đơn đặt tour này?`)) {
+                    return;
+                }
+                
+                // Send confirmation request to API
+                const formData = new FormData();
+                formData.append('id', bookingId);
+                formData.append('trang_thai', newStatus);
+                
+                const response = await fetch('../admin.php?action=confirm_booking', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(`✓ ${actionText === 'xác nhận' ? 'Xác nhận' : 'Hủy'} đơn đặt tour thành công!`);
+                    
+                    // Refresh bookings list
+                    await fetchBookings(currentPage, currentSort, currentFilter);
+                    
+                    // Refresh dashboard stats
+                    await loadDashboardStats();
+                } else {
+                    alert('Lỗi: ' + (data.message || 'Không thể xử lý đơn đặt'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Lỗi: ' + error.message);
+            }
+        }
+
+        async function viewBookingDetail(bookingId) {
+            try {
+                currentViewingBookingId = bookingId;
+                
+                // Fetch booking details from API
+                const response = await fetch(`../admin.php?action=get_bookings&id=${bookingId}`);
+                const data = await response.json();
+                
+                if (data.success && data.data.length > 0) {
+                    const booking = data.data[0];
+                    
+                    // Populate customer information
+                    document.getElementById('viewCustomerName').textContent = booking.customerName || '-';
+                    document.getElementById('viewCustomerEmail').textContent = booking.customerEmail || '-';
+                    document.getElementById('viewCustomerPhone').textContent = booking.customerPhone || '-';
+                    document.getElementById('viewCustomerAddress').textContent = booking.customerAddress || '-';
+                    
+                    // Populate tour information
+                    document.getElementById('viewTourName').textContent = booking.tourName || '-';
+                    document.getElementById('viewTourLocation').textContent = booking.tourLocation || '-';
+                    document.getElementById('viewTourDays').textContent = booking.days + ' ngày' || '-';
+                    document.getElementById('viewTourPrice').textContent = booking.tourPrice || '-';
+                    
+                    // Populate booking details
+                    document.getElementById('viewBookingNumber').textContent = booking.so_dat_tour || '-';
+                    document.getElementById('viewBookingDate').textContent = booking.bookingDate || '-';
+                    document.getElementById('viewDepartureDate').textContent = booking.departureDate || '-';
+                    document.getElementById('viewNumGuests').textContent = booking.guests + ' người' || '-';
+                    document.getElementById('viewPaymentMethod').textContent = booking.paymentMethod || '-';
+                    
+                    // Calculate pricing details
+                    const serviceFee = 100000;  // Phí dịch vụ: 100.000đ
+                    const travelInsurance = 50000;  // Bảo hiểm du lịch: 50.000đ
+                    const fixedDiscount = 200000;  // Chiết khấu: -200.000đ
+                    
+                    // Parse numeric values - lấy tất cả chữ số từ giá tour
+                    const priceStr = booking.tourPrice?.replace(/[^0-9]/g, '') || '0';
+                    const rawTourPrice = parseFloat(priceStr) || 0;
+                    const numGuests = parseInt(booking.guests) || 1;
+                    const priceByPeople = rawTourPrice * numGuests;
+                    
+                    // Display pricing breakdown
+                    document.getElementById('viewPriceTourByPeople').textContent = priceByPeople.toLocaleString('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND'
+                    });
+                    
+                    document.getElementById('viewServiceFee').textContent = serviceFee.toLocaleString('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND'
+                    });
+                    
+                    document.getElementById('viewTravelInsurance').textContent = travelInsurance.toLocaleString('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND'
+                    });
+                    
+                    // Display fixed discount
+                    document.getElementById('viewDiscount').textContent = '-' + fixedDiscount.toLocaleString('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND'
+                    });
+                    
+                    // Tổng tiền từ CSDL (booking.total)
+                    document.getElementById('viewTotalAmount').textContent = booking.total || '-';
+                    
+                    // Show modal
+                    const modal = new bootstrap.Modal(document.getElementById('viewBookingDetailModal'));
+                    modal.show();
+                } else {
+                    alert('Không thể tải thông tin đặt tour');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Lỗi khi tải thông tin đặt tour: ' + error.message);
+            }
+        }
+
+        /**
+         * Xóa đơn đặt tour
+         */
+        async function deleteBooking(bookingId) {
+            if (!confirm('Bạn có chắc chắn muốn xóa đơn đặt tour này?\n\nHành động này không thể hoàn tác!')) {
+                return;
+            }
+
+            try {
+                const formData = new FormData();
+                formData.append('id', bookingId);
+                
+                const response = await fetch('../admin.php?action=delete_booking', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                // Thông báo thành công (không cần kiểm tra success)
+                alert('✓ Xóa đơn đặt tour thành công!');
+                
+                // Refresh bookings list
+                await fetchBookings(currentPage, currentSort, currentFilter);
+                
+                // Refresh dashboard stats
+                if (typeof loadDashboardStats === 'function') {
+                    await loadDashboardStats();
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                // Vẫn refresh danh sách dù có lỗi
+                try {
+                    await fetchBookings(currentPage, currentSort, currentFilter);
+                } catch (e) {
+                    console.error('Refresh error:', e);
+                }
+            }
+        }
+    </script>
+
+    <!-- Modal Add Booking -->
+    <div class="modal fade" id="addBookingModal" tabindex="-1" aria-labelledby="addBookingModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addBookingModalLabel">
+                        <i class="fas fa-plus-circle me-2"></i>Thêm Đặt Tour Mới
+                    </h5>
+                    <button type="button" class="btn-close btn-close-modal" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="addBookingForm">
+                    <div class="modal-body">
+                        <!-- Số Đặt Tour -->
+                        <div class="form-group">
+                            <label for="bookingNumber" class="form-label required-field">Số Đặt Tour</label>
+                            <input type="text" class="form-control" id="bookingNumber" placeholder="VD: DT001234" required>
+                            <div class="form-text">Mã số đặt tour duy nhất</div>
+                        </div>
+
+                        <!-- Hàng chứa: Khách Hàng + Tour -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="customerId" class="form-label required-field">Khách Hàng</label>
+                                <select class="form-select" id="customerId" required>
+                                    <option value="">-- Chọn khách hàng --</option>
+                                    <option value="1">Nguyễn Văn A</option>
+                                    <option value="2">Trần Thị B</option>
+                                    <option value="3">Phạm Minh C</option>
+                                    <option value="4">Hoàng Công D</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="tourId" class="form-label required-field">Tour</label>
+                                <select class="form-select" id="tourId" required>
+                                    <option value="">-- Chọn tour --</option>
+                                    <option value="1">Du Lịch Vịnh Hạ Long</option>
+                                    <option value="2">Nha Trang Beach Tour</option>
+                                    <option value="3">Phiêu Lưu Sapa</option>
+                                    <option value="4">Đà Lạt Romantic Tour</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Hàng chứa: Gói Combo + Số Người Lớn -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="comboId" class="form-label">Gói Combo</label>
+                                <select class="form-select" id="comboId">
+                                    <option value="">-- Không có gói --</option>
+                                    <option value="1">Gói Tiêu Chuẩn</option>
+                                    <option value="2">Gói VIP</option>
+                                    <option value="3">Gói Group</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="numAdults" class="form-label required-field">Số Người Lớn</label>
+                                <input type="number" class="form-control" id="numAdults" placeholder="VD: 2" min="1" required>
+                            </div>
+                        </div>
+
+                        <!-- Hàng chứa: Số Trẻ Em + Ngày Khởi Hành -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="numChildren" class="form-label">Số Trẻ Em</label>
+                                <input type="number" class="form-control" id="numChildren" placeholder="VD: 1" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label for="departureDate" class="form-label required-field">Ngày Khởi Hành</label>
+                                <input type="date" class="form-control" id="departureDate" required>
+                            </div>
+                        </div>
+
+                        <!-- Ghi Chú -->
+                        <div class="form-group">
+                            <label for="notes" class="form-label">Ghi Chú</label>
+                            <textarea class="form-control" id="notes" rows="3" placeholder="Ghi chú thêm..."></textarea>
+                        </div>
+
+                        <!-- Hàng chứa: Phương Thức Thanh Toán + Tổng Tiền -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="paymentMethod" class="form-label required-field">Phương Thức Thanh Toán</label>
+                                <select class="form-select" id="paymentMethod" required>
+                                    <option value="">-- Chọn phương thức --</option>
+                                    <option value="Chuyển khoản">Chuyển khoản</option>
+                                    <option value="Visa/Mastercard">Visa/Mastercard</option>
+                                    <option value="Tiền mặt">Tiền mặt</option>
+                                    <option value="E-wallet">E-wallet</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="totalAmount" class="form-label required-field">Tổng Tiền (VNĐ)</label>
+                                <input type="number" class="form-control" id="totalAmount" placeholder="VD: 5000000" step="0.01" required>
+                            </div>
+                        </div>
+
+                        <!-- Trạng Thái -->
+                        <div class="form-group">
+                            <label for="status" class="form-label required-field">Trạng Thái</label>
+                            <select class="form-select" id="status" required>
+                                <option value="Chờ xác nhận" selected>Chờ xác nhận</option>
+                                <option value="Chuyển khoản">Chuyển khoản</option>
+                                <option value="Đã hủy">Đã hủy</option>
+                                <option value="Hoàn tất">Hoàn tất</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-2"></i>Hủy
+                        </button>
+                        <button type="submit" class="btn btn-submit">
+                            <i class="fas fa-save me-2"></i>Lưu Đặt Mới
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal View Booking Detail -->
+    <div class="modal fade" id="viewBookingDetailModal" tabindex="-1" aria-labelledby="viewBookingDetailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewBookingDetailModalLabel">
+                        <i class="fas fa-info-circle me-2"></i>Chi Tiết Đặt Tour
+                    </h5>
+                    <button type="button" class="btn-close btn-close-modal" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Thông Tin Khách Hàng -->
+                    <div class="mb-4">
+                        <h6 style="color: #052461; font-weight: 600; border-bottom: 2px solid #052461; padding-bottom: 10px; margin-bottom: 15px;">
+                            <i class="fas fa-user me-2"></i>Thông Tin Khách Hàng
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="text-muted" style="font-size: 12px;">Tên Khách Hàng</label>
+                                    <p id="viewCustomerName" style="font-weight: 600; color: #052461; margin: 0;">-</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="text-muted" style="font-size: 12px;">Email</label>
+                                    <p id="viewCustomerEmail" style="margin: 0;">-</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="text-muted" style="font-size: 12px;">Số Điện Thoại</label>
+                                    <p id="viewCustomerPhone" style="margin: 0;">-</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="text-muted" style="font-size: 12px;">Địa Chỉ</label>
+                                    <p id="viewCustomerAddress" style="margin: 0;">-</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Thông Tin Tour -->
+                    <div class="mb-4">
+                        <h6 style="color: #052461; font-weight: 600; border-bottom: 2px solid #052461; padding-bottom: 10px; margin-bottom: 15px;">
+                            <i class="fas fa-plane me-2"></i>Thông Tin Tour
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="text-muted" style="font-size: 12px;">Tên Tour</label>
+                                    <p id="viewTourName" style="font-weight: 600; color: #052461; margin: 0;">-</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="text-muted" style="font-size: 12px;">Địa Điểm</label>
+                                    <p id="viewTourLocation" style="margin: 0;">-</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="text-muted" style="font-size: 12px;">Số Ngày</label>
+                                    <p id="viewTourDays" style="margin: 0;">-</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="text-muted" style="font-size: 12px;">Giá Tour</label>
+                                    <p id="viewTourPrice" style="color: #0d6efd; font-weight: 600; margin: 0;">-</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chi Tiết Đặt Tour -->
+                    <div class="mb-4">
+                        <h6 style="color: #052461; font-weight: 600; border-bottom: 2px solid #052461; padding-bottom: 10px; margin-bottom: 15px;">
+                            <i class="fas fa-calendar me-2"></i>Chi Tiết Đặt Tour
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="text-muted" style="font-size: 12px;">Số Đặt Tour</label>
+                                    <p id="viewBookingNumber" style="margin: 0;">-</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="text-muted" style="font-size: 12px;">Ngày Đặt</label>
+                                    <p id="viewBookingDate" style="margin: 0;">-</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="text-muted" style="font-size: 12px;">Ngày Khởi Hành</label>
+                                    <p id="viewDepartureDate" style="margin: 0;">-</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="text-muted" style="font-size: 12px;">Số Khách</label>
+                                    <p id="viewNumGuests" style="margin: 0;">-</p>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label class="text-muted" style="font-size: 12px;">Phương Thức Thanh Toán</label>
+                                    <p id="viewPaymentMethod" style="margin: 0;">-</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chi Tiết Giá Tiền -->
+                    <div class="mb-4">
+                        <h6 style="color: #052461; font-weight: 600; border-bottom: 2px solid #052461; padding-bottom: 10px; margin-bottom: 15px;">
+                            <i class="fas fa-receipt me-2"></i>Chi Tiết Giá Tiền
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="mb-3" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #e0e0e0;">
+                                    <label class="text-muted" style="font-size: 12px; margin: 0;">Giá Tour × Số Người</label>
+                                    <p id="viewPriceTourByPeople" style="margin: 0; font-weight: 600; color: #052461;">-</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4"></div>
+                            <div class="col-md-8">
+                                <div class="mb-3" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #e0e0e0;">
+                                    <label class="text-muted" style="font-size: 12px; margin: 0;">Phí Dịch Vụ</label>
+                                    <p id="viewServiceFee" style="margin: 0; font-weight: 600; color: #052461;">-</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4"></div>
+                            <div class="col-md-8">
+                                <div class="mb-3" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #e0e0e0;">
+                                    <label class="text-muted" style="font-size: 12px; margin: 0;">Bảo Hiểm Du Lịch</label>
+                                    <p id="viewTravelInsurance" style="margin: 0; font-weight: 600; color: #052461;">-</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4"></div>
+                            <div class="col-md-8">
+                                <div class="mb-3" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 2px solid #052461;">
+                                    <label class="text-muted" style="font-size: 12px; margin: 0;">Ưu Đãi / Chiết Khấu</label>
+                                    <p id="viewDiscount" style="margin: 0; font-weight: 600; color: #dc3545;">-</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4"></div>
+                            <div class="col-md-8">
+                                <div class="mb-3" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0;">
+                                    <label class="text-muted" style="font-size: 14px; font-weight: 600; margin: 0;">Tổng Tiền</label>
+                                    <p id="viewTotalAmount" style="margin: 0; font-weight: 700; color: #0d6efd; font-size: 18px;">-</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4"></div>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Đóng
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+

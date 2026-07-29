@@ -1,0 +1,3204 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ưu Đãi Du Lịch - Tripto | Voucher Cao Cấp</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/TRANGCHU_UI.css">
+    <style>
+        :root {
+            /* UI Style Guideline - Main */
+            --primary: #0057FF;
+            --primary-400: #3379ff;
+            --primary-dark: #0046cc;
+            --primary-50: #ebeffc;
+            --primary-800: #052461;
+            --primary-900: #031230;
+            --neutral-50: #F1F2F3;
+            --neutral-100: #DDDFE3;
+            --neutral-200: #B5BAC2;
+            --neutral-400: #656F81;
+            --neutral-500: #454C58;
+            --neutral-700: #283037;
+            --neutral-800: #1F2226;
+            --neutral-900: #121316;
+            --white: #FFFFFF;
+            --success: #06C270;
+            --success-100: #CDF8E5;
+            --warning: #FFCC00;
+            --warning-100: #FAF201;
+            --error: #FF3838;
+            --info: #00AEAE;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Roboto', sans-serif; color: var(--neutral-900); background-color: var(--white); line-height: 1.5; }
+
+        /* Header */
+        .header { background-color: var(--white); border-bottom: 1px solid var(--neutral-200); height: 80px; display: flex; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); }
+        .header-container { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 32px; gap: 24px; }
+        .logo img { height: 40px; display: block; }
+        .nav-menu { display: flex; justify-content: center; gap: 8px; flex: 1; }
+        .nav-menu a { padding: 10px 20px; color: var(--neutral-700); text-decoration: none; font-weight: 600; font-size: 15px; border-radius: 8px; transition: all 0.2s ease; position: relative; }
+        .nav-menu a:hover { color: var(--primary); background-color: var(--primary-50); }
+        .nav-menu a.active { color: var(--primary); }
+        .nav-menu a.active::after { content: ''; position: absolute; bottom: 6px; left: 20px; right: 20px; height: 3px; background-color: var(--primary); border-radius: 2px; }
+        .nav-right { display: flex; align-items: center; gap: 24px; }
+        .country { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--neutral-700); }
+        .country img { height: 20px; }
+        .icon img { height: 40px; cursor: pointer; }
+        .header-actions { display: flex; align-items: center; gap: 12px; }
+        .btn-login { display: flex; align-items: center; gap: 8px; background-color: var(--primary); color: var(--white); padding: 10px 24px; border-radius: 8px; font-weight: 600; font-size: 14px; border: none; cursor: pointer; transition: all 0.2s ease; }
+        .btn-login:hover { background-color: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 87, 255, 0.3); }
+
+
+        /* Breadcrumb */
+        .breadcrumb-section {
+            background-color: var(--primary-50);
+            padding: 20px 0;
+            border-bottom: 1px solid var(--neutral-200);
+        }
+        .breadcrumb-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--neutral-700);
+        }
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        .breadcrumb-separator {
+            color: var(--neutral-400);
+        }
+        .breadcrumb span:last-child {
+            color: var(--neutral-900);
+            font-weight: 600;
+        }
+
+        /* ============================================
+           FLASH CAMPAIGN BANNER - UI Style Guideline
+           ============================================ */
+        .flash-campaign-section {
+            position: relative;
+            height: 50vh;
+            min-height: 420px;
+            max-height: 550px;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            background: var(--primary-900);
+        }
+
+        .flash-campaign-bg {
+            position: absolute;
+            inset: 0;
+            background-image: url('https://ik.imagekit.io/tvlk/blog/2022/02/dia-diem-du-lich-hoi-an-cover.jpg');
+            background-size: cover;
+            background-position: center;
+            filter: saturate(1.1) brightness(1.05) contrast(1.1);
+        }
+
+        .flash-campaign-bg::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(105deg, rgba(3, 18, 48, 0.88) 0%, rgba(3, 18, 48, 0.5) 50%, rgba(5, 36, 97, 0.4) 100%);
+        }
+
+        .flash-campaign-wrapper {
+            position: relative;
+            z-index: 5;
+            width: 100%;
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 48px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 48px;
+        }
+
+        .flash-content {
+            flex: 0 0 58%;
+        }
+
+        .flash-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 204, 0, 0.12);
+            border: 1px solid var(--warning);
+            color: var(--warning);
+            font-size: 10px;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            line-height: 1.3;
+        }
+
+        .flash-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--warning);
+            border-radius: 50%;
+            animation: blink 1.2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .flash-headline {
+            font-family: 'Roboto', sans-serif;
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--white);
+            line-height: 1.3;
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
+        }
+
+        .flash-headline .percent {
+            color: var(--warning);
+            font-size: 52px;
+            font-weight: 700;
+        }
+
+        .flash-subtitle {
+            font-size: 16px;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.85);
+            line-height: 1.3;
+            margin-bottom: 24px;
+        }
+
+        .flash-countdown-inline {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .countdown-label-inline {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            line-height: 1.3;
+        }
+
+        .countdown-label-inline i {
+            color: var(--primary-400);
+            font-size: 14px;
+        }
+
+        .countdown-inline {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .countdown-box {
+            background: rgba(0, 87, 255, 0.2);
+            border: 1px solid rgba(51, 121, 255, 0.5);
+            border-radius: 8px;
+            padding: 10px 14px;
+            text-align: center;
+            min-width: 52px;
+        }
+
+        .countdown-box-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--white);
+            line-height: 1.3;
+        }
+
+        .countdown-box-text {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            margin-top: 4px;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        .countdown-sep {
+            color: var(--neutral-200);
+            font-size: 20px;
+            font-weight: 400;
+        }
+
+        .flash-cta {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: var(--primary);
+            color: var(--white);
+            font-size: 16px;
+            font-weight: 600;
+            padding: 14px 32px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 14px rgba(0, 87, 255, 0.35);
+            border: none;
+            cursor: pointer;
+            line-height: 1.3;
+        }
+
+        .flash-cta:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 87, 255, 0.4);
+        }
+
+        .flash-cta i {
+            font-size: 16px;
+        }
+
+        .flash-visual {
+            flex: 0 0 38%;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .flash-card {
+            background: rgba(31, 34, 38, 0.92);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 32px;
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.24);
+        }
+
+        .flash-card-title {
+            font-size: 14px;
+            color: var(--primary-400);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        .flash-benefits {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .flash-benefit-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-align: left;
+        }
+
+        .flash-benefit-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 87, 255, 0.15);
+            border: 1px solid rgba(51, 121, 255, 0.3);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-400);
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .flash-benefit-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .flash-benefit-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--white);
+            line-height: 1.3;
+        }
+
+        .flash-benefit-desc {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.65);
+            font-weight: 400;
+            line-height: 1.3;
+        }
+
+        .flash-card-cta {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .flash-card-cta-text {
+            font-size: 14px;
+            color: var(--warning);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            line-height: 1.3;
+        }
+
+        .flash-card-cta-text::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--warning);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(0.9); }
+        }
+
+        /* ============================================
+           SECTION 1: DEAL HOT NHẤT
+           ============================================ */
+        .hot-deals-section {
+            padding: 60px 0;
+            background: #f8f9fa;
+        }
+        .section-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        .section-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .section-title {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--neutral-900);
+            margin-bottom: 8px;
+        }
+        .section-title-icon {
+            color: var(--primary);
+            margin-right: 8px;
+        }
+        .section-desc {
+            font-size: 15px;
+            color: var(--neutral-500);
+        }
+        
+        .hot-deals-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+        
+        .hot-deal-card {
+            background: white;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            position: relative;
+            border: 2px solid transparent;
+        }
+        .hot-deal-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            border-color: var(--primary);
+        }
+        
+        .hot-badge {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            background: linear-gradient(
+            135deg,
+            #F59E0B 0%,
+            #C2410C 100%);
+            color: white;
+            font-size: 12px;
+            font-weight: 800;
+            padding: 8px 16px;
+            border-radius: 6px;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 12px rgba(0, 87, 255, 0.4);
+        }
+        
+        .hot-wishlist {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: var(--neutral-400);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .hot-wishlist:hover {
+            color: #c2410c;
+            transform: scale(1.1);
+        }
+        
+        .hot-deal-image {
+            height: 160px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        .hot-deal-image::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(to top, rgba(43, 42, 42, 0.1), transparent);
+        }
+        
+        .hot-deal-info {
+            padding: 20px;
+        }
+        .hot-deal-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--neutral-900);
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+        .hot-deal-desc {
+            font-size: 13px;
+            color: var(--neutral-500);
+            margin-bottom: 12px;
+        }
+        
+        .hot-discount-value {
+            display: inline-block;
+            background: linear-gradient(135deg, #DBEAFE 0%, #93C5FD 100%);
+            color: #1E40AF;
+            font-size: 14px;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: 20px;
+            margin-bottom: 16px;
+        }
+        
+        .hot-price-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .hot-price {
+            display: flex;
+            flex-direction: column;
+        }
+        .hot-original-price {
+            font-size: 13px;
+            color: var(--neutral-400);
+            text-decoration: line-through;
+        }
+        .hot-sale-price {
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--primary);
+        }
+        .hot-sale-price span {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .hot-stock-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--neutral-500);
+            margin-bottom: 16px;
+        }
+        .hot-stock-info i {
+            color: var(--primary);
+        }
+        
+        .hot-cta {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+            text-align: center;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+        }
+        .hot-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 87, 255, 0.4);
+        }
+        
+        /* Sold out state */
+        .hot-deal-card.sold-out {
+            opacity: 0.7;
+        }
+        .hot-deal-card.sold-out .hot-cta {
+            background: var(--neutral-200);
+            color: var(--neutral-500);
+            cursor: not-allowed;
+        }
+        .sold-out-badge {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+            padding: 12px 24px;
+            border-radius: 8px;
+            z-index: 20;
+            display: none;
+        }
+        .hot-deal-card.sold-out .sold-out-badge {
+            display: block;
+        }
+
+        /* ============================================
+           SECTION 2: VOUCHER THEO MỆNH GIÁ
+           ============================================ */
+        .voucher-denomination-section {
+            padding: 60px 0;
+            background: var(--white);
+        }
+        
+        .voucher-denomination-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        
+        .filter-dropdown {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .filter-dropdown label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--neutral-700);
+        }
+        .filter-dropdown select {
+            padding: 10px 16px;
+            border: 2px solid var(--neutral-200);
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--neutral-900);
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .filter-dropdown select:hover,
+        .filter-dropdown select:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+        
+        .voucher-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+        
+        .voucher-card {
+            background: white;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+            border: 2px solid var(--neutral-100);
+            position: relative;
+        }
+        .voucher-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12);
+            border-color: var(--primary);
+        }
+        
+        .voucher-card.featured {
+            border-color: var(--primary);
+            transform: scale(1.02);
+        }
+        .voucher-card.featured:hover {
+            transform: scale(1.02) translateY(-6px);
+        }
+        
+        .voucher-featured-badge {
+            position: absolute;
+            top: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 6px 16px;
+            border-radius: 0 0 8px 8px;
+        }
+        
+        .voucher-header {
+            padding: 28px 20px;
+            text-align: center;
+            border-bottom: 1px dashed var(--neutral-200);
+            background: linear-gradient(180deg, var(--primary-50) 0%, white 100%);
+            position: relative;
+        }
+        
+        .voucher-denomination {
+            font-size: 36px;
+            font-weight: 900;
+            color: var(--primary);
+            line-height: 1;
+        }
+        .voucher-denomination span {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .voucher-body {
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .voucher-savings {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, #DBEAFE 0%, #93C5FD 100%);
+            color: #1E40AF;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 20px;
+            margin-bottom: 16px;
+        }
+        
+        .voucher-validity {
+            font-size: 12px;
+            color: var(--neutral-500);
+            margin-bottom: 16px;
+        }
+        
+        .voucher-cta {
+            display: inline-block;
+            padding: 10px 24px;
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            font-size: 13px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .voucher-cta:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        /* ============================================
+           SECTION 3: VOUCHER ĐẶC BIỆT
+           ============================================ */
+        .special-voucher-section {
+            padding: 60px 0;
+            background: linear-gradient(180deg, #F8FAFC 0%, #E2E8F0 100%);
+        }
+        
+        .special-voucher-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+        
+        .special-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            position: relative;
+            min-height: 320px;
+            display: flex;
+            flex-direction: column;
+        }
+        .special-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.15);
+        }
+        
+        .special-card-bg {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.08;
+        }
+        
+        .special-card-content {
+            position: relative;
+            z-index: 5;
+            padding: 32px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .special-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(0, 87, 255, 0.3);
+        }
+        
+        .special-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--neutral-900);
+            margin-bottom: 12px;
+        }
+        
+        .special-desc {
+            font-size: 14px;
+            color: var(--neutral-500);
+            line-height: 1.6;
+            margin-bottom: 20px;
+            flex: 1;
+        }
+        
+        .special-value {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #DBEAFE 0%, #93C5FD 100%);
+            color: #1E40AF;
+            font-size: 15px;
+            font-weight: 700;
+            padding: 10px 18px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .special-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            width: fit-content;
+        }
+        .special-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 87, 255, 0.4);
+        }
+        
+        /* ============================================
+           SECTION 4: VOUCHER MIỄN PHÍ
+           ============================================ */
+        .free-voucher-section {
+            padding: 60px 0;
+            background: white;
+        }
+        
+        .free-voucher-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        
+        .free-voucher-card {
+            background: linear-gradient(135deg, #E0E7FF 0%, #C7D2FE 100%);
+            border: 2px solid var(--primary);
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .free-voucher-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-dark);
+        }
+        
+        .free-voucher-icon {
+            width: 52px;
+            height: 52px;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: var(--primary);
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        
+        .free-voucher-content {
+            flex: 1;
+        }
+        
+        .free-voucher-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--neutral-900);
+            margin-bottom: 4px;
+        }
+        
+        .free-voucher-desc {
+            font-size: 12px;
+            color: var(--neutral-500);
+        }
+        
+        .free-voucher-cta {
+            padding: 8px 16px;
+            background: var(--primary);
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        .free-voucher-card:hover .free-voucher-cta {
+            background: var(--primary-dark);
+        }
+
+        /* ============================================
+           BREADCRUMB
+           ============================================ */
+        .breadcrumb-section {
+            background-color: var(--primary-50);
+            padding: 20px 0;
+            border-bottom: 1px solid var(--neutral-200);
+        }
+
+        .breadcrumb-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--neutral-700);
+        }
+
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumb-separator {
+            color: var(--neutral-400);
+        }
+
+        /* ============================================
+           FOOTER
+           ============================================ */
+        .footer { background: var(--neutral-900); color: #d1d5db; padding: 60px 0 30px; }
+        .footer-container { max-width: 1440px; margin: 0 auto; padding: 0 32px; }
+        .footer-content { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+        .footer-brand { max-width: 360px; }
+        .footer-logo img { height: 44px; margin-bottom: 16px; }
+        .footer-description { font-size: 15px; line-height: 1.6; margin-bottom: 24px; color: #9ca3af; }
+        .footer-column h4 { font-size: 16px; font-weight: 700; color: white; margin-bottom: 20px; }
+        .footer-column ul { list-style: none; padding: 0; margin: 0; }
+        .footer-column li { margin-bottom: 12px; }
+        .footer-column a { color: #9ca3af; font-size: 14px; text-decoration: none; transition: color 0.2s; }
+        .footer-column a:hover { color: white; }
+        .footer-bottom { border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: #6b7280; }
+        .social-links { display: flex; gap: 12px; }
+        .social-icon { width: 36px; height: 36px; background: rgba(255, 255, 255, 0.1); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: all 0.2s; }
+        .social-icon:hover { background: var(--primary); }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .flash-campaign-section {
+                height: auto;
+                min-height: 500px;
+                padding: 40px 0;
+            }
+            .flash-campaign-wrapper {
+                flex-direction: column;
+                padding: 0 32px;
+                gap: 32px;
+            }
+            .flash-content {
+                flex: 1;
+                text-align: center;
+                width: 100%;
+            }
+            .flash-visual {
+                flex: 1;
+                justify-content: center;
+                width: 100%;
+            }
+            .flash-headline {
+                font-size: 40px;
+            }
+            .flash-headline .percent {
+                font-size: 44px;
+            }
+            .flash-countdown-inline {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            .flash-cta {
+                padding: 14px 28px;
+                font-size: 14px;
+            }
+            .hot-deals-grid, .special-voucher-grid, .free-voucher-grid { grid-template-columns: repeat(2, 1fr); }
+            .voucher-grid { grid-template-columns: repeat(2, 1fr); }
+            .footer-content { grid-template-columns: 1fr 1fr; }
+        }
+        
+        @media (max-width: 768px) {
+            .flash-headline {
+                font-size: 32px;
+            }
+            .flash-headline .percent {
+                font-size: 36px;
+            }
+            .flash-campaign-wrapper {
+                padding: 0 20px;
+            }
+            .countdown-box {
+                padding: 6px 10px;
+                min-width: 44px;
+            }
+            .countdown-box-number {
+                font-size: 18px;
+            }
+            .hot-deals-grid, .special-voucher-grid, .free-voucher-grid, .voucher-grid { grid-template-columns: 1fr; }
+            .footer-content { grid-template-columns: 1fr; }
+            .section-title { font-size: 24px; }
+            .voucher-denomination-header { flex-direction: column; align-items: flex-start; }
+            .filter-dropdown { width: 100%; }
+            .filter-dropdown select { flex: 1; }
+        }
+
+        /* ============================================
+           MAIN CONTENT REDESIGN - PROMOTIONS
+           ============================================ */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .promo-main {
+            background: linear-gradient(180deg, #f5f8ff 0%, #ffffff 30%);
+            padding: 40px 0 80px;
+        }
+
+        .promo-container {
+            width: 100%;
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .promo-section {
+            margin-top: 36px;
+        }
+
+        .promo-section-head {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .promo-section-title {
+            font-size: 30px;
+            line-height: 1.25;
+            font-weight: 700;
+            color: var(--neutral-900);
+            margin: 0;
+            letter-spacing: -0.3px;
+        }
+
+        .promo-section-title .title-accent {
+            color: var(--primary);
+        }
+
+        .promo-section-subtitle {
+            margin: 6px 0 0;
+            font-size: 15px;
+            color: var(--neutral-500);
+        }
+
+        .promo-filter-wrap {
+            background: var(--white);
+            border: 1px solid #d8e4ff;
+            border-radius: 20px;
+            box-shadow: 0 12px 28px rgba(0, 87, 255, 0.08);
+            padding: 16px;
+            display: grid;
+            gap: 12px;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+        }
+
+        .promo-filter-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .promo-filter-item label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--neutral-400);
+            font-weight: 700;
+        }
+
+        .promo-select {
+            border: 1px solid var(--neutral-200);
+            border-radius: 12px;
+            background: #fbfcff;
+            color: var(--neutral-700);
+            font-size: 14px;
+            font-weight: 500;
+            padding: 12px 14px;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .promo-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 87, 255, 0.14);
+        }
+
+        .promo-search-btn {
+            border: 0;
+            border-radius: 14px;
+            background: linear-gradient(90deg, var(--primary), #1a6cff);
+            color: var(--white);
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            min-height: 48px;
+            margin-top: 22px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 8px 18px rgba(0, 87, 255, 0.32);
+        }
+
+        .promo-search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 22px rgba(0, 87, 255, 0.35);
+        }
+
+        .voucher-grid-modern {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .voucher-card-modern {
+            background: var(--white);
+            border: 1px solid #e4ecff;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(16, 63, 158, 0.08);
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+
+        .voucher-card-modern:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 14px 30px rgba(12, 57, 144, 0.14);
+            border-color: var(--primary);
+        }
+
+        .voucher-image-wrap {
+            position: relative;
+            height: 176px;
+            overflow: hidden;
+        }
+
+        .voucher-image-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.35s ease;
+        }
+
+        .voucher-card-modern:hover .voucher-image-wrap img {
+            transform: scale(1.08);
+        }
+
+        .voucher-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #ff4b4b;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 999px;
+            padding: 6px 10px;
+            box-shadow: 0 6px 14px rgba(255, 75, 75, 0.35);
+        }
+
+        .voucher-body-modern {
+            padding: 14px 14px 16px;
+        }
+
+        .voucher-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--neutral-900);
+            margin: 0 0 8px;
+            min-height: 44px;
+        }
+
+        .voucher-prices {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .price-old {
+            color: var(--neutral-400);
+            text-decoration: line-through;
+            font-size: 13px;
+        }
+
+        .price-new {
+            color: #e11d48;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .voucher-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: var(--neutral-500);
+            margin-bottom: 12px;
+        }
+
+        .voucher-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-voucher-light,
+        .btn-voucher-strong {
+            flex: 1;
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-voucher-light {
+            border: 1px solid var(--neutral-200);
+            background: #f8f9fd;
+            color: var(--neutral-700);
+        }
+
+        .btn-voucher-light:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: #eef4ff;
+        }
+
+        .btn-voucher-strong {
+            border: 0;
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-voucher-strong:hover {
+            background: var(--primary-dark);
+        }
+
+        .flash-sale-shell {
+            background: linear-gradient(120deg, #ff5a3d 0%, #ff7a00 100%);
+            border-radius: 22px;
+            padding: 20px;
+            color: #fff;
+            box-shadow: 0 16px 30px rgba(255, 122, 0, 0.28);
+        }
+
+        .flash-sale-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 14px;
+        }
+
+        .flash-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.18);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 999px;
+            padding: 8px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+
+        .flash-countdown-mini {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .flash-mini-box {
+            min-width: 42px;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.18);
+            border: 1px solid rgba(255, 255, 255, 0.24);
+            padding: 6px 8px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .flash-scroll {
+            display: grid;
+            grid-auto-flow: column;
+            grid-auto-columns: minmax(220px, 1fr);
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 2px;
+            scroll-snap-type: x mandatory;
+        }
+
+        .flash-scroll::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .flash-scroll::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.45);
+            border-radius: 999px;
+        }
+
+        .flash-tour-card {
+            scroll-snap-align: start;
+            background: rgba(255, 255, 255, 0.18);
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            backdrop-filter: blur(2px);
+            border-radius: 16px;
+            padding: 14px;
+            transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .flash-tour-card:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.24);
+            border-color: var(--primary);
+        }
+
+        .flash-tour-discount {
+            font-weight: 700;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+
+        .flash-tour-name {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .flash-tour-price {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .flash-tour-btn {
+            width: 100%;
+            border: 0;
+            border-radius: 10px;
+            background: #fff;
+            color: #e65100;
+            padding: 9px;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .need-deals-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .need-deal-card {
+            background: #fff;
+            border-radius: 18px;
+            border: 1px solid #dce8ff;
+            box-shadow: 0 10px 22px rgba(8, 53, 141, 0.08);
+            padding: 16px;
+            transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+        }
+
+        .need-deal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 16px 30px rgba(8, 53, 141, 0.14);
+            border-color: var(--primary);
+        }
+
+        .need-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .need-badge {
+            font-size: 11px;
+            font-weight: 700;
+            color: #fff;
+            background: linear-gradient(90deg, #0057ff, #00a2ff);
+            border-radius: 999px;
+            padding: 6px 10px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .need-savings {
+            color: #e11d48;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .need-title {
+            margin: 0 0 8px;
+            font-size: 19px;
+            font-weight: 700;
+            color: var(--neutral-900);
+        }
+
+        .need-desc {
+            margin: 0 0 12px;
+            font-size: 14px;
+            color: var(--neutral-500);
+            min-height: 42px;
+        }
+
+        .need-list {
+            margin: 0 0 14px;
+            padding-left: 18px;
+            color: var(--neutral-700);
+            font-size: 13px;
+            display: grid;
+            gap: 6px;
+        }
+
+        .need-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .need-price {
+            font-size: 20px;
+            font-weight: 700;
+            color: #e11d48;
+        }
+
+        .need-cta {
+            border: 0;
+            border-radius: 10px;
+            padding: 10px 14px;
+            background: var(--primary);
+            color: #fff;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .need-cta:hover {
+            background: var(--primary-dark);
+        }
+
+        .combo-list {
+            display: grid;
+            gap: 14px;
+        }
+
+        .combo-card-modern {
+            border-radius: 18px;
+            border: 1px solid #dce8ff;
+            background: #fff;
+            padding: 14px;
+            display: grid;
+            grid-template-columns: 180px 1fr auto;
+            gap: 14px;
+            align-items: center;
+            box-shadow: 0 10px 22px rgba(0, 87, 255, 0.08);
+            transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+        }
+
+        .combo-card-modern:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 30px rgba(0, 87, 255, 0.14);
+            border-color: var(--primary);
+        }
+
+        .combo-thumb {
+            border-radius: 14px;
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+
+        .combo-name {
+            margin: 0 0 6px;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--neutral-900);
+        }
+
+        .combo-meta {
+            margin: 0;
+            font-size: 14px;
+            color: var(--neutral-500);
+        }
+
+        .combo-price {
+            margin-top: 8px;
+            font-size: 22px;
+            font-weight: 700;
+            color: #e11d48;
+        }
+
+        .combo-cta {
+            border: 0;
+            border-radius: 12px;
+            background: var(--primary);
+            color: #fff;
+            font-weight: 700;
+            padding: 11px 16px;
+            cursor: pointer;
+            min-width: 116px;
+        }
+
+        .combo-cta:hover {
+            background: var(--primary-dark);
+        }
+
+        .reasons-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .reason-item {
+            background: #fff;
+            border: 1px solid #e4ecff;
+            border-radius: 16px;
+            padding: 18px 14px;
+            text-align: center;
+            box-shadow: 0 8px 18px rgba(8, 54, 145, 0.06);
+            transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+        }
+
+        .reason-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 14px 28px rgba(8, 54, 145, 0.12);
+            border-color: var(--primary);
+        }
+
+        .reason-icon {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(145deg, #eff4ff 0%, #dbe8ff 100%);
+            color: var(--primary);
+            font-size: 22px;
+        }
+
+        .reason-title {
+            margin: 0 0 6px;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--neutral-800);
+        }
+
+        .reason-desc {
+            margin: 0;
+            font-size: 13px;
+            color: var(--neutral-500);
+        }
+
+        @media (max-width: 1100px) {
+            .promo-filter-wrap {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+
+            .voucher-grid-modern {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+
+            .need-deals-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .reasons-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .promo-main {
+                padding: 28px 0 56px;
+            }
+
+            .promo-container {
+                padding: 0 16px;
+            }
+
+            .promo-section-title {
+                font-size: 24px;
+            }
+
+            .promo-filter-wrap {
+                grid-template-columns: 1fr;
+                border-radius: 16px;
+            }
+
+            .promo-search-btn {
+                margin-top: 0;
+            }
+
+            .voucher-grid-modern {
+                grid-template-columns: 1fr;
+            }
+
+            .combo-card-modern {
+                grid-template-columns: 1fr;
+            }
+
+            .combo-thumb {
+                height: 160px;
+            }
+
+            .combo-cta {
+                width: 100%;
+            }
+
+            .need-deals-grid,
+            .reasons-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .flash-sale-head {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        /* ============================================
+           MODAL - AUTH SYSTEM
+           ============================================ */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-container {
+            background: var(--white);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 420px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.9) translateY(20px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-overlay.active .modal-container {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 24px 0;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--neutral-900);
+            margin: 0;
+        }
+
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: var(--neutral-100);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: var(--neutral-200);
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .form-group-modal {
+            margin-bottom: 20px;
+        }
+
+        .form-group-modal label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--neutral-700);
+            margin-bottom: 8px;
+        }
+
+        .form-input-modal {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--neutral-200);
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: 'Roboto', sans-serif;
+            transition: all 0.2s ease;
+        }
+
+        .form-input-modal:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-50);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-submit:hover {
+            background: var(--primary-dark);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 24px 0;
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background: var(--neutral-200);
+        }
+
+        .divider-text {
+            padding: 0 16px;
+            font-size: 14px;
+            color: var(--neutral-400);
+        }
+
+        .social-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn-social-modal {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--neutral-200);
+            border-radius: 10px;
+            background: white;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-social-modal:hover {
+            border-color: var(--primary);
+            background: var(--primary-50);
+        }
+
+        .btn-social-modal i {
+            font-size: 20px;
+        }
+
+        .modal-footer {
+            text-align: center;
+            padding: 0 24px 24px;
+            font-size: 15px;
+            color: var(--neutral-600);
+        }
+
+        .modal-footer a {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .modal-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        .forgot-password a {
+            font-size: 14px;
+            color: var(--primary);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .forgot-password a:hover {
+            color: var(--primary-dark);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <img src="../image/Logo.png" alt="triptO Logo">
+            </div>
+            <nav class="nav-menu">
+                <a href="TRANGCHU.html">Trang Chủ</a>
+                <a href="UUDAI.html" class="active">Ưu Đãi</a>
+                <a href="TATCA_TOUR.html">Chuyến du lịch</a>
+                <a href="TATCA_COMBO.html">Gói du lịch</a>
+                <a href="BLOG.html">Tin Tức</a>
+            </nav>
+            <div class="nav-right">
+                <div class="country">
+                    <img src="../image/ngonngu.png" alt="Vietnam Flag">
+                    <span>VIETNAM</span>
+                </div>
+                <div class="icon">
+                    <a href="hotro.html" title="Hỗ trợ">
+                        <img src="../image/hotro.png" alt="Support">
+                    </a>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-login" id="loginBtn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        Đăng Nhập
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    
+    <!-- Breadcrumb -->
+    <section class="breadcrumb-section">
+        <div class="breadcrumb-container">
+            <div class="breadcrumb">
+                <a href="TRANGCHU.html">Trang Chủ</a>
+                <span class="breadcrumb-separator">›</span>
+                <span>Ưu đãi</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+         FLASH CAMPAIGN BANNER 
+         ============================================ -->
+    <section class="flash-campaign-section">
+        <div class="flash-campaign-bg"></div>
+        
+        <div class="flash-campaign-wrapper">
+            <div class="flash-content">
+                <div class="flash-badge">
+                    <i class="fas fa-bolt"></i> Flash Campaign Giới Hạn
+                </div>
+                
+                <h1 class="flash-headline">
+                    Giảm đến <span class="percent">50%</span> tour cao cấp Việt Nam
+                </h1>
+                
+                <p class="flash-subtitle">
+                    Đặt sớm, ưu đãi lớn — Chỉ còn một vài ngày để săn giá tốt nhất trong năm.
+                </p>
+                
+                <div class="flash-countdown-inline">
+                    <span class="countdown-label-inline"><i class="fas fa-hourglass-end"></i> Kết thúc sau:</span>
+                    <div class="countdown-inline">
+                        <div class="countdown-box">
+                            <span class="countdown-box-number" id="days">00</span>
+                            <span class="countdown-box-text">Ngày</span>
+                        </div>
+                        <span class="countdown-sep">:</span>
+                        <div class="countdown-box">
+                            <span class="countdown-box-number" id="hours">00</span>
+                            <span class="countdown-box-text">Giờ</span>
+                        </div>
+                        <span class="countdown-sep">:</span>
+                        <div class="countdown-box">
+                            <span class="countdown-box-number" id="minutes">00</span>
+                            <span class="countdown-box-text">Phút</span>
+                        </div>
+                        <span class="countdown-sep">:</span>
+                        <div class="countdown-box">
+                            <span class="countdown-box-number" id="seconds">00</span>
+                            <span class="countdown-box-text">Giây</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <a href="#hot-deals" class="flash-cta">
+                    <i class="fas fa-compass"></i>
+                    Khám phá ngay
+                </a>
+            </div>
+            
+            <div class="flash-visual">
+                <div class="flash-card">
+                    <div class="flash-card-title">Săn deal trước khi hết</div>
+                    
+                    <div class="flash-benefits">
+                        <div class="flash-benefit-item">
+                            <div class="flash-benefit-icon">
+                                <i class="fas fa-tag"></i>
+                            </div>
+                            <div class="flash-benefit-text">
+                                <span class="flash-benefit-title">Giá ưu đãi đặc biệt</span>
+                                <span class="flash-benefit-desc">Mức giá tốt nhất trong năm</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flash-benefit-item">
+                            <div class="flash-benefit-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="flash-benefit-text">
+                                <span class="flash-benefit-title">Chỉ diễn ra trong thời gian ngắn</span>
+                                <span class="flash-benefit-desc">Kết thúc ngay khi đủ suất</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flash-benefit-item">
+                            <div class="flash-benefit-icon">
+                                <i class="fas fa-ticket-alt"></i>
+                            </div>
+                            <div class="flash-benefit-text">
+                                <span class="flash-benefit-title">Số lượng cực kỳ giới hạn</span>
+                                <span class="flash-benefit-desc">Ưu tiên khách đặt sớm</span>
+                            </div>
+                        </div>
+
+                        <div class="flash-benefit-item">
+                            <div class="flash-benefit-icon">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <div class="flash-benefit-text">
+                                <span class="flash-benefit-title">Đặt ngay kẻo lỡ</span>
+                                <span class="flash-benefit-desc">Giá sẽ quay lại mức cũ sau khi kết thúc</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flash-card-cta">
+                        <span class="flash-card-cta-text"><i class="fas fa-fire"></i> Chỉ còn 12 suất</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <main class="promo-main">
+        <div class="promo-container">
+            <section class="promo-section">
+                <div class="promo-section-head">
+                    <div>
+                        <h2 class="promo-section-title">Tìm Ưu Đãi Chuyến Du Lịch Phù Hợp</h2>
+                        <p class="promo-section-subtitle">Lọc nhanh theo điểm đến, mức giảm và thời gian khuyến mãi</p>
+                    </div>
+                </div>
+                <div class="promo-filter-wrap">
+                    <div class="promo-filter-item">
+                        <label for="promoDestination">Điểm đến</label>
+                        <select class="promo-select" id="promoDestination">
+                            <option value="">Tất cả</option>
+                        </select>
+                    </div>
+                    <div class="promo-filter-item">
+                        <label for="promoDiscount">Mức giảm giá</label>
+                        <select class="promo-select" id="promoDiscount">
+                            <option value="">Tất cả</option>
+                            <option value="10-20">Giảm 10% - 20%</option>
+                            <option value="20-30">Giảm 20% - 30%</option>
+                            <option value="30-40">Giảm 30% - 40%</option>
+                            <option value="40+">Giảm trên 40%</option>
+                        </select>
+                    </div>
+                    <div class="promo-filter-item">
+                        <label for="promoDuration">Thời gian khuyến mãi</label>
+                        <select class="promo-select" id="promoDuration">
+                            <option value="">Tất cả</option>
+                            <option value="today">Hôm nay</option>
+                            <option value="week">Tuần này</option>
+                            <option value="month">Tháng này</option>
+                            <option value="nextmonth">Tháng sau</option>
+                        </select>
+                    </div>
+                    <button class="promo-search-btn" id="promoSearchBtn">Tìm ưu đãi</button>
+                </div>
+            </section>
+
+            <section class="promo-section" id="hot-deals">
+                <div class="promo-section-head">
+                    <div>
+                        <h2 class="promo-section-title">Voucher <span class="title-accent">Du Lịch</span> Nổi Bật</h2>
+                        <p class="promo-section-subtitle">Ưu đãi nổi bật được đặt nhiều trong 24 giờ qua</p>
+                    </div>
+                </div>
+
+                <div class="voucher-grid-modern" id="voucherContainer">
+                    <!-- Vouchers sẽ được load từ database tại đây -->
+                </div>
+                <div style="text-align: center; padding: 40px; color: var(--neutral-500);" id="loadingContainer">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 24px; margin-right: 12px;"></i>
+                    <span>Đang tải ưu đãi...</span>
+                </div>
+            </section>
+
+            <section class="promo-section" id="flash-sale-tour">
+                <div class="promo-section-head">
+                    <div>
+                        <h2 class="promo-section-title"><span class="title-accent">Flash Sale</span> Chuyến Du Lịch Giới Hạn</h2>
+                        <p class="promo-section-subtitle">Đặt ngay trong khung giờ vàng để giữ mức giá tốt nhất</p>
+                    </div>
+                </div>
+
+                <div class="flash-sale-shell">
+                    <div class="flash-sale-head">
+                        <span class="flash-label"><i class="fas fa-bolt"></i> Flash Sale</span>
+                        <div class="flash-countdown-mini">
+                            <div class="flash-mini-box" id="flashHours">00h</div>
+                            <div class="flash-mini-box" id="flashMinutes">00m</div>
+                            <div class="flash-mini-box" id="flashSeconds">00s</div>
+                        </div>
+                    </div>
+
+                    <div class="flash-scroll">
+                        <article class="flash-tour-card">
+                            <p class="flash-tour-discount">Giảm sâu 48%</p>
+                            <h3 class="flash-tour-name">Nha Trang 3N2Đ - VinWonders</h3>
+                            <div class="flash-tour-price">2.990.000đ</div>
+                            <button class="flash-tour-btn">Đặt tour ngay</button>
+                        </article>
+                        <article class="flash-tour-card">
+                            <p class="flash-tour-discount">Giảm sâu 42%</p>
+                            <h3 class="flash-tour-name">Sapa 2N1Đ - Fansipan</h3>
+                            <div class="flash-tour-price">2.190.000đ</div>
+                            <button class="flash-tour-btn">Đặt tour ngay</button>
+                        </article>
+                        <article class="flash-tour-card">
+                            <p class="flash-tour-discount">Giảm sâu 40%</p>
+                            <h3 class="flash-tour-name">Đà Nẵng 4N3Đ - Bà Nà</h3>
+                            <div class="flash-tour-price">3.490.000đ</div>
+                            <button class="flash-tour-btn">Đặt tour ngay</button>
+                        </article>
+                        <article class="flash-tour-card">
+                            <p class="flash-tour-discount">Giảm sâu 37%</p>
+                            <h3 class="flash-tour-name">Hà Giang 3N2Đ - Đồng Văn</h3>
+                            <div class="flash-tour-price">2.890.000đ</div>
+                            <button class="flash-tour-btn">Đặt tour ngay</button>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <section class="promo-section" id="deals-destination">
+                <div class="promo-section-head">
+                    <div>
+                        <h2 class="promo-section-title">Ưu Đãi Theo <span class="title-accent">Nhu Cầu</span> Du Lịch</h2>
+                        <p class="promo-section-subtitle">Chọn gói ưu đãi đúng mục tiêu chuyến đi để tối ưu chi phí và trải nghiệm</p>
+                    </div>
+                </div>
+
+                <div class="need-deals-grid">
+                    <article class="need-deal-card">
+                        <div class="need-top">
+                            <span class="need-badge">Gia đình</span>
+                            <span class="need-savings">Tiết kiệm 28%</span>
+                        </div>
+                        <h3 class="need-title">Gói Vui Chơi Gia Đình</h3>
+                        <p class="need-desc">Phù hợp gia đình có trẻ nhỏ, lịch trình nhẹ nhàng và dịch vụ trọn gói.</p>
+                        <ul class="need-list">
+                            <li>Miễn phí 1 trẻ em dưới 6 tuổi</li>
+                            <li>Ưu tiên phòng family room</li>
+                            <li>Đưa đón sân bay 2 chiều</li>
+                        </ul>
+                        <div class="need-bottom">
+                            <span class="need-price">từ 4.390.000đ</span>
+                            <button class="need-cta">Xem gói</button>
+                        </div>
+                    </article>
+
+                    <article class="need-deal-card">
+                        <div class="need-top">
+                            <span class="need-badge">Nghỉ dưỡng</span>
+                            <span class="need-savings">Tiết kiệm 32%</span>
+                        </div>
+                        <h3 class="need-title">Gói Resort Cuối Tuần</h3>
+                        <p class="need-desc">Dành cho khách muốn thư giãn nhanh với resort 4-5 sao và dịch vụ spa.</p>
+                        <ul class="need-list">
+                            <li>Tặng buffet tối ngày đầu</li>
+                            <li>Ưu đãi spa 30%</li>
+                            <li>Check-out trễ miễn phí</li>
+                        </ul>
+                        <div class="need-bottom">
+                            <span class="need-price">từ 3.990.000đ</span>
+                            <button class="need-cta">Xem gói</button>
+                        </div>
+                    </article>
+
+                    <article class="need-deal-card">
+                        <div class="need-top">
+                            <span class="need-badge">Trăng mật</span>
+                            <span class="need-savings">Tiết kiệm 35%</span>
+                        </div>
+                        <h3 class="need-title">Gói Lãng Mạn Cặp Đôi</h3>
+                        <p class="need-desc">Tập trung trải nghiệm riêng tư với bữa tối lãng mạn và phòng view đẹp.</p>
+                        <ul class="need-list">
+                            <li>Tặng set trang trí honeymoon</li>
+                            <li>Miễn phí nâng hạng phòng</li>
+                            <li>Gói du lịch riêng nửa ngày</li>
+                        </ul>
+                        <div class="need-bottom">
+                            <span class="need-price">từ 5.290.000đ</span>
+                            <button class="need-cta">Xem gói</button>
+                        </div>
+                    </article>
+
+                    <article class="need-deal-card">
+                        <div class="need-top">
+                            <span class="need-badge">Nhóm bạn</span>
+                            <span class="need-savings">Tiết kiệm 26%</span>
+                        </div>
+                        <h3 class="need-title">Chuyến Du Lịch Team Vui Hết Cỡ</h3>
+                        <p class="need-desc">Thiết kế cho nhóm 4-8 người với nhiều hoạt động khám phá và giải trí.</p>
+                        <ul class="need-list">
+                            <li>Gói chụp ảnh check-in</li>
+                            <li>Tặng 1 buổi BBQ ngoài trời</li>
+                            <li>Giảm thêm khi đi nhóm 6+</li>
+                        </ul>
+                        <div class="need-bottom">
+                            <span class="need-price">từ 3.450.000đ</span>
+                            <button class="need-cta">Xem gói</button>
+                        </div>
+                    </article>
+
+                    <article class="need-deal-card">
+                        <div class="need-top">
+                            <span class="need-badge">Doanh nghiệp</span>
+                            <span class="need-savings">Tiết kiệm 30%</span>
+                        </div>
+                        <h3 class="need-title">Gói Team Building Công Ty</h3>
+                        <p class="need-desc">Kết hợp nghỉ dưỡng và hoạt động đội nhóm, phù hợp outing và kickoff.</p>
+                        <ul class="need-list">
+                            <li>Setup sân khấu mini miễn phí</li>
+                            <li>Có MC hoạt náo theo yêu cầu</li>
+                            <li>Hóa đơn VAT đầy đủ</li>
+                        </ul>
+                        <div class="need-bottom">
+                            <span class="need-price">từ 6.990.000đ</span>
+                            <button class="need-cta">Xem gói</button>
+                        </div>
+                    </article>
+
+                    <article class="need-deal-card">
+                        <div class="need-top">
+                            <span class="need-badge">Tiết kiệm</span>
+                            <span class="need-savings">Tiết kiệm 40%</span>
+                        </div>
+                        <h3 class="need-title">Chuyến Du Lịch Giá Tốt Theo Ngân Sách</h3>
+                        <p class="need-desc">Dễ chọn cho khách ưu tiên chi phí, lịch trình vẫn đầy đủ điểm nổi bật.</p>
+                        <ul class="need-list">
+                            <li>Khởi hành hằng tuần cố định</li>
+                            <li>Thanh toán linh hoạt 2 đợt</li>
+                            <li>Tích điểm đổi voucher lần sau</li>
+                        </ul>
+                        <div class="need-bottom">
+                            <span class="need-price">từ 2.690.000đ</span>
+                            <button class="need-cta">Xem gói</button>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section class="promo-section" id="combo-deals">
+                <div class="promo-section-head">
+                    <div>
+                        <h2 class="promo-section-title">Gói Du Lịch & Chuyến Du Lịch <span class="title-accent">Tiết Kiệm</span></h2>
+                        <p class="promo-section-subtitle">Gói trọn tour + khách sạn + dịch vụ với giá tối ưu</p>
+                    </div>
+                </div>
+
+                <div class="combo-list">
+                    <article class="combo-card-modern">
+                        <img class="combo-thumb" src="https://tse4.mm.bing.net/th/id/OIP.CnSTwH-tGnkM1hFdDNoxpAHaE7?rs=1&pid=ImgDetMain&o=7&rm=3" alt="Gói du lịch gia đình">
+                        <div>
+                            <h3 class="combo-name">Gói Gia Đình Đà Nẵng 4N3Đ</h3>
+                            <p class="combo-meta">4 ngày 3 đêm • 2 người lớn + 1 trẻ em • Khách sạn 4 sao</p>
+                            <div class="combo-price">5.690.000đ</div>
+                        </div>
+                        <button class="combo-cta">Xem chi tiết</button>
+                    </article>
+
+                    <article class="combo-card-modern">
+                        <img class="combo-thumb" src="https://tse1.mm.bing.net/th/id/OIP.EFNKCIQNxBBjwDg2w56tdQHaE8?rs=1&pid=ImgDetMain&o=7&rm=3" alt="Gói du lịch trăng mật">
+                        <div>
+                            <h3 class="combo-name">Gói Trăng Mật Phú Quốc 3N2Đ</h3>
+                            <p class="combo-meta">3 ngày 2 đêm • Resort biển • Tặng dinner lãng mạn</p>
+                            <div class="combo-price">6.350.000đ</div>
+                        </div>
+                        <button class="combo-cta">Xem chi tiết</button>
+                    </article>
+
+                    <article class="combo-card-modern">
+                        <img class="combo-thumb" src="https://owa.bestprice.vn/images/combos/658_370/combo-da-lat-3n2d-swiss-belresort-tuyen-lam-ve-may-bay-5bab34bb58c08.jpg" alt="Gói du lịch nghỉ dưỡng">
+                        <div>
+                            <h3 class="combo-name">Gói Nghỉ Dưỡng Đà Lạt 3N2Đ</h3>
+                            <p class="combo-meta">3 ngày 2 đêm • Resort view đồi thông • Xe đưa đón</p>
+                            <div class="combo-price">4.280.000đ</div>
+                        </div>
+                        <button class="combo-cta">Xem chi tiết</button>
+                    </article>
+                </div>
+            </section>
+
+            <section class="promo-section" id="why-book-here">
+                <div class="promo-section-head">
+                    <div>
+                        <h2 class="promo-section-title">Lý Do Nên Săn <span class="title-accent">Ưu Đãi</span> Tại Tripto</h2>
+                        <p class="promo-section-subtitle">Trải nghiệm đặt tour an tâm, nhanh chóng, ưu đãi minh bạch</p>
+                    </div>
+                </div>
+
+                <div class="reasons-grid">
+                    <article class="reason-item">
+                        <div class="reason-icon"><i class="fas fa-piggy-bank"></i></div>
+                        <h3 class="reason-title">Tiết kiệm chi phí</h3>
+                        <p class="reason-desc">Nhiều mức giảm sâu theo mùa và theo khung giờ flash sale.</p>
+                    </article>
+                    <article class="reason-item">
+                        <div class="reason-icon"><i class="fas fa-ticket"></i></div>
+                        <h3 class="reason-title">Voucher độc quyền</h3>
+                        <p class="reason-desc">Deal riêng chỉ mở bán trên nền tảng Tripto cho thành viên.</p>
+                    </article>
+                    <article class="reason-item">
+                        <div class="reason-icon"><i class="fas fa-shield-alt"></i></div>
+                        <h3 class="reason-title">Thanh toán an toàn</h3>
+                        <p class="reason-desc">Bảo mật thanh toán nhiều lớp, hỗ trợ hoàn tiền theo chính sách.</p>
+                    </article>
+                    <article class="reason-item">
+                        <div class="reason-icon"><i class="fas fa-headset"></i></div>
+                        <h3 class="reason-title">Hỗ trợ 24/7</h3>
+                        <p class="reason-desc">Đội ngũ tư vấn luôn sẵn sàng trước, trong và sau chuyến đi.</p>
+                    </article>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- ============================================
+         FOOTER
+         ============================================ -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <img src="../image/Logo.png" alt="triptO Logo" class="footer-logo">
+                    <p class="footer-description">Tripto là nền tảng đặt tour du lịch hàng đầu tại Việt Nam. Chúng tôi cung cấp hơn 500+ tour với giá tốt nhất.</p>
+                </div>
+                <div class="footer-column">
+                    <h4>Công Ty</h4>
+                    <ul>
+                        <li><a href="#">Về Chúng Tôi</a></li>
+                        <li><a href="#">Đội Ngũ</a></li>
+                        <li><a href="#">Liên Hệ</a></li>
+                        <li><a href="#">Tuyển Dụng</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Hỗ Trợ</h4>
+                    <ul>
+                        <li><a href="#">Câu Hỏi Thường Gặp</a></li>
+                        <li><a href="#">Chính Sách Bảo Mật</a></li>
+                        <li><a href="#">Điều Khoản Sử Dụng</a></li>
+                        <li><a href="#">Liên Hệ Hỗ Trợ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Liên Hệ</h4>
+                    <ul>
+                        <li><a href="#">📞 +84 (0) 1234 567 890</a></li>
+                        <li><a href="#">✉️ support@tripto.vn</a></li>
+                        <li><a href="#">📍 Hà Nội, Việt Nam</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <span>&copy; 2026 Tripto. Bản quyền được bảo lưu.</span>
+                <div class="social-links">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function updateBannerCountdown() {
+            const endDate = new Date();
+            endDate.setDate(endDate.getDate() + 2);
+            endDate.setHours(23, 59, 59, 999);
+
+            const now = new Date();
+            const diff = endDate - now;
+            if (diff <= 0) {
+                return;
+            }
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diff / (1000 * 60)) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+
+            const daysEl = document.getElementById('days');
+            const hoursEl = document.getElementById('hours');
+            const minutesEl = document.getElementById('minutes');
+            const secondsEl = document.getElementById('seconds');
+
+            if (daysEl) daysEl.textContent = String(days).padStart(2, '0');
+            if (hoursEl) hoursEl.textContent = String(hours).padStart(2, '0');
+            if (minutesEl) minutesEl.textContent = String(minutes).padStart(2, '0');
+            if (secondsEl) secondsEl.textContent = String(seconds).padStart(2, '0');
+        }
+
+        function updateFlashMiniCountdown() {
+            const endDate = new Date();
+            endDate.setHours(endDate.getHours() + 8, 0, 0, 0);
+
+            const diff = endDate - new Date();
+            if (diff <= 0) return;
+
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diff / (1000 * 60)) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+
+            const flashHours = document.getElementById('flashHours');
+            const flashMinutes = document.getElementById('flashMinutes');
+            const flashSeconds = document.getElementById('flashSeconds');
+
+            if (flashHours) flashHours.textContent = String(hours).padStart(2, '0') + 'h';
+            if (flashMinutes) flashMinutes.textContent = String(minutes).padStart(2, '0') + 'm';
+            if (flashSeconds) flashSeconds.textContent = String(seconds).padStart(2, '0') + 's';
+        }
+
+        updateBannerCountdown();
+        updateFlashMiniCountdown();
+        setInterval(updateBannerCountdown, 1000);
+        setInterval(updateFlashMiniCountdown, 1000);
+
+        const promoSearchBtn = document.getElementById('promoSearchBtn');
+        if (promoSearchBtn) {
+            promoSearchBtn.addEventListener('click', function () {
+                const destination = document.getElementById('promoDestination').value;
+                const discount = document.getElementById('promoDiscount').value;
+                const tourType = document.getElementById('promoType').value;
+                const duration = document.getElementById('promoDuration').value;
+
+                alert('Đang tìm ưu đãi: ' + destination + ' | ' + discount + ' | ' + tourType + ' | ' + duration);
+            });
+        }
+    </script>
+
+    <!-- Login Modal -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 class="modal-title">Đăng Nhập</h2>
+                <button class="modal-close" id="closeLoginModal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="loginForm">
+                    <div class="form-group-modal">
+                        <label for="loginEmail">Email / Số điện thoại</label>
+                        <input type="text" id="loginEmail" class="form-input-modal" placeholder="Nhập email hoặc số điện thoại" required>
+                    </div>
+                    <div class="form-group-modal">
+                        <label for="loginPassword">Mật khẩu</label>
+                        <input type="password" id="loginPassword" class="form-input-modal" placeholder="Nhập mật khẩu" required>
+                    </div>
+                    <div class="forgot-password">
+                        <a href="#" id="forgotPasswordLink">Quên mật khẩu?</a>
+                    </div>
+                    <button type="submit" class="btn-submit">Đăng Nhập</button>
+                </form>
+                
+                <div class="divider">
+                    <div class="divider-line"></div>
+                    <span class="divider-text">hoặc</span>
+                    <div class="divider-line"></div>
+                </div>
+                
+                <div class="social-buttons">
+                    <button class="btn-social-modal">
+                        <i style="color: #DB4437;">G</i>
+                        Tiếp tục với Google
+                    </button>
+                    <button class="btn-social-modal">
+                        <i style="color: #1877F2;">f</i>
+                        Tiếp tục với Facebook
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                Chưa có tài khoản? <a href="#" id="switchToSignup">Đăng ký ngay</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div class="modal-overlay" id="signupModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 class="modal-title">Đăng Ký</h2>
+                <button class="modal-close" id="closeSignupModal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="signupForm">
+                    <div class="form-group-modal">
+                        <label for="signupName">Họ và tên</label>
+                        <input type="text" id="signupName" class="form-input-modal" placeholder="Nhập họ và tên" required>
+                    </div>
+                    <div class="form-group-modal">
+                        <label for="signupEmail">Email</label>
+                        <input type="email" id="signupEmail" class="form-input-modal" placeholder="Nhập email" required>
+                    </div>
+                    <div class="form-group-modal">
+                        <label for="signupPhone">Số điện thoại</label>
+                        <input type="tel" id="signupPhone" class="form-input-modal" placeholder="Nhập số điện thoại" required>
+                    </div>
+                    <div class="form-group-modal">
+                        <label for="signupPassword">Mật khẩu</label>
+                        <input type="password" id="signupPassword" class="form-input-modal" placeholder="Nhập mật khẩu" required>
+                    </div>
+                    <button type="submit" class="btn-submit">Đăng Ký</button>
+                </form>
+                
+                <div class="divider">
+                    <div class="divider-line"></div>
+                    <span class="divider-text">hoặc</span>
+                    <div class="divider-line"></div>
+                </div>
+                
+                <div class="social-buttons">
+                    <button class="btn-social-modal">
+                        <i style="color: #DB4437;">G</i>
+                        Tiếp tục với Google
+                    </button>
+                    <button class="btn-social-modal">
+                        <i style="color: #1877F2;">f</i>
+                        Tiếp tục với Facebook
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                Đã có tài khoản? <a href="#" id="switchToLogin">Đăng nhập ngay</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div class="modal-overlay" id="forgotModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 class="modal-title">Quên Mật Khẩu</h2>
+                <button class="modal-close" id="closeForgotModal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 20px; color: var(--neutral-600);">Nhập email của bạn để khôi phục mật khẩu</p>
+                <form id="forgotForm">
+                    <div class="form-group-modal">
+                        <label for="forgotEmail">Email</label>
+                        <input type="email" id="forgotEmail" class="form-input-modal" placeholder="Nhập email đã đăng ký" required>
+                    </div>
+                    <button type="submit" class="btn-submit">Gửi Link Khôi Phục</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a href="#" id="backToLogin">Quay lại đăng nhập</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // AUTH KEY for localStorage
+        const AUTH_KEY = 'triptoLoggedIn';
+
+        // Get modal elements
+        const loginModal = document.getElementById('loginModal');
+        const signupModal = document.getElementById('signupModal');
+        const forgotModal = document.getElementById('forgotModal');
+        const loginBtn = document.getElementById('loginBtn');
+        const closeLoginModal = document.getElementById('closeLoginModal');
+        const closeSignupModal = document.getElementById('closeSignupModal');
+        const closeForgotModal = document.getElementById('closeForgotModal');
+        const switchToSignup = document.getElementById('switchToSignup');
+        const switchToLogin = document.getElementById('switchToLogin');
+        const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+        const backToLogin = document.getElementById('backToLogin');
+
+        // Check login status
+        function isLoggedIn() {
+            return localStorage.getItem(AUTH_KEY) === 'true';
+        }
+
+        function setLoggedIn() {
+            localStorage.setItem(AUTH_KEY, 'true');
+        }
+
+        // Open login modal - check login status first
+        if (loginBtn) {
+            loginBtn.addEventListener('click', function(e) {
+                // Check if user is logged in
+                const isLoggedIn = sessionStorage.getItem('triptoLoggedIn') === 'true';
+                const userData = sessionStorage.getItem('triptoUser');
+                
+                if (isLoggedIn && userData) {
+                    // If logged in, redirect to myReviews
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window.location.href = 'myReviews.html';
+                } else {
+                    // If not logged in, open modal
+                    loginModal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }
+            });
+        }
+
+        // Close modals
+        if (closeLoginModal) {
+            closeLoginModal.addEventListener('click', () => {
+                loginModal.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        }
+
+        if (closeSignupModal) {
+            closeSignupModal.addEventListener('click', () => {
+                signupModal.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        }
+
+        if (closeForgotModal) {
+            closeForgotModal.addEventListener('click', () => {
+                forgotModal.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        }
+
+        // Switch between modals
+        if (switchToSignup) {
+            switchToSignup.addEventListener('click', (e) => {
+                e.preventDefault();
+                loginModal.classList.remove('active');
+                setTimeout(() => {
+                    signupModal.classList.add('active');
+                }, 300);
+            });
+        }
+
+        if (switchToLogin) {
+            switchToLogin.addEventListener('click', (e) => {
+                e.preventDefault();
+                signupModal.classList.remove('active');
+                setTimeout(() => {
+                    loginModal.classList.add('active');
+                }, 300);
+            });
+        }
+
+        // Forgot password
+        if (forgotPasswordLink) {
+            forgotPasswordLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                loginModal.classList.remove('active');
+                setTimeout(() => {
+                    forgotModal.classList.add('active');
+                }, 300);
+            });
+        }
+
+        if (backToLogin) {
+            backToLogin.addEventListener('click', (e) => {
+                e.preventDefault();
+                forgotModal.classList.remove('active');
+                setTimeout(() => {
+                    loginModal.classList.add('active');
+                }, 300);
+            });
+        }
+
+        // Close modal when clicking outside
+        [loginModal, signupModal, forgotModal].forEach(modal => {
+            if (modal) {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.classList.remove('active');
+                        document.body.style.overflow = '';
+                    }
+                });
+            }
+        });
+
+        // Handle login form submission
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) {
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('loginEmail').value.trim();
+                const password = document.getElementById('loginPassword').value;
+                
+                // Kiểm tra validation
+                if (!email || !password) {
+                    alert('❌ Vui lòng nhập email và mật khẩu');
+                    return;
+                }
+                
+                try {
+                    // Tạo object dữ liệu để gửi
+                    const loginData = {
+                        action: 'login',
+                        email: email,
+                        password: password
+                    };
+                    
+                    console.log('📤 Gửi yêu cầu đăng nhập đến user.php');
+                    
+                    // Xác định đường dẫn API - sử dụng user.php unified API
+                    const apiUrl = '../user.php?endpoint=auth&action=login';
+                    console.log('📍 API URL:', apiUrl);
+                    
+                    // Gửi POST request với JSON content-type
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(loginData)
+                    });
+                    
+                    // Lấy response text trước
+                    const responseText = await response.text();
+                    console.log('📥 Response từ server:', responseText);
+                    
+                    // Parse JSON an toàn
+                    let result;
+                    try {
+                        result = JSON.parse(responseText);
+                    } catch (parseError) {
+                        console.error('❌ Lỗi parse JSON:', parseError);
+                        alert('❌ Lỗi từ server:\n' + responseText.substring(0, 300));
+                        return;
+                    }
+                    
+                    if (result.success) {
+                        console.log('✅ Đăng nhập thành công! User:', result.user);
+                        alert('✅ ' + result.message + '\n\nChào mừng ' + result.user.ho_ten + '!');
+                        document.getElementById('loginForm').reset();
+                        loginModal.classList.remove('active');
+                        document.body.style.overflow = '';
+                        
+                        // Lưu user info vào sessionStorage
+                        sessionStorage.setItem('triptoUser', JSON.stringify(result.user));
+                        sessionStorage.setItem('triptoLoggedIn', 'true');
+                        
+                        // Reload page để update UI với user info
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 500);
+                        
+                    } else {
+                        console.error('❌ Đăng nhập thất bại:', result.message);
+                        alert('❌ ' + result.message);
+                    }
+                } catch (error) {
+                    console.error('❌ Fetch error:', error);
+                    alert('❌ Lỗi kết nối:\n\n' + error.message);
+                }
+            });
+        }
+
+        // Handle signup form submission
+        const signupForm = document.getElementById('signupForm');
+        if (signupForm) {
+            signupForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const name = document.getElementById('signupName').value;
+                const email = document.getElementById('signupEmail').value;
+                const phone = document.getElementById('signupPhone').value;
+                const password = document.getElementById('signupPassword').value;
+                
+                if(name && email && phone && password) {
+                    setLoggedIn();
+                    alert('Đăng ký thành công! Vui lòng kiểm tra email để xác nhận.');
+                    signupModal.classList.remove('active');
+                    document.body.style.overflow = '';
+                    window.location.href = 'trangcanhan.html';
+                }
+            });
+        }
+
+        // Handle forgot password form submission
+        const forgotForm = document.getElementById('forgotForm');
+        if (forgotForm) {
+            forgotForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = document.getElementById('forgotEmail').value;
+                
+                if(email) {
+                    alert('Link khôi phục mật khẩu đã được gửi đến email của bạn!');
+                    forgotModal.classList.remove('active');
+                    document.body.style.overflow = '';
+                    loginModal.classList.add('active');
+                }
+            });
+        }
+
+        // Support link gating
+        const supportLink = document.querySelector('a[href="hotro.html"][title="Hỗ trợ"]');
+        if (supportLink) {
+            supportLink.addEventListener('click', function (e) {
+                const isLoggedInUser = sessionStorage.getItem('triptoLoggedIn') === 'true';
+                if (!isLoggedInUser) {
+                    e.preventDefault();
+                    alert('Vui lòng đăng nhập trước khi vào Hỗ trợ.');
+                    if (loginBtn) {
+                        loginBtn.click();
+                    }
+                }
+            });
+        }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in and update UI
+            const triptoUserData = sessionStorage.getItem('triptoUser');
+            const isLoggedIn = sessionStorage.getItem('triptoLoggedIn') === 'true';
+            
+            if (isLoggedIn && triptoUserData) {
+                try {
+                    const user = JSON.parse(triptoUserData);
+                    const loginBtn = document.getElementById('loginBtn');
+                    if (loginBtn) {
+                        loginBtn.innerHTML = '👤 ' + user.ho_ten;
+                        loginBtn.style.cursor = 'pointer';
+                        loginBtn.onclick = function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            window.location.href = 'myReviews.html';
+                        };
+                    }
+                } catch (error) {
+                    console.error('Lỗi parse user data:', error);
+                }
+            }
+            
+            const logoutLink = document.querySelector('.logout-link');
+            if (logoutLink) {
+                logoutLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
+                        // Clear sessionStorage
+                        sessionStorage.removeItem('triptoUser');
+                        sessionStorage.removeItem('triptoLoggedIn');
+                        // Redirect to homepage
+                        window.location.href = 'TRANGCHU.html';
+                    }
+                });
+            }
+        });
+    </script>
+
+    <!-- Load khuyến mãi từ database -->
+    <script>
+        /**
+         * Hàm để load danh sách điểm đến vào dropdown
+         */
+        async function loadDestinations() {
+            try {
+                const response = await fetch('../user.php?endpoint=get_filter_destinations');
+                const result = await response.json();
+                
+                if (result.success && result.data.length > 0) {
+                    const destinationSelect = document.getElementById('promoDestination');
+                    result.data.forEach(dest => {
+                        const option = document.createElement('option');
+                        option.value = dest.id;
+                        option.textContent = dest.destination_name;
+                        destinationSelect.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Lỗi khi load điểm đến:', error);
+            }
+        }
+
+        // Store all vouchers globally
+        let allVouchers = [];
+
+        /**
+         * Hàm để render vouchers với dữ liệu được truyền vào
+         */
+        function renderVouchers(vouchersToRender) {
+            const container = document.getElementById('voucherContainer');
+            
+            if (vouchersToRender.length === 0) {
+                container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--neutral-500); padding: 40px;">Không có ưu đãi phù hợp với tiêu chí tìm kiếm của bạn</p>';
+                return;
+            }
+            
+            const placeholderImages = [
+                'https://images.unsplash.com/photo-1540541338287-41700207dee6?w=400&h=176&fit=crop',
+                'https://images.unsplash.com/photo-1472396961693-142e6e269027?w=400&h=176&fit=crop',
+                'https://images.unsplash.com/photo-1528127269322-539801943592?w=400&h=176&fit=crop',
+                'https://images.unsplash.com/photo-1565018054866-968e24467175?w=400&h=176&fit=crop',
+                'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=176&fit=crop',
+                'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=400&h=176&fit=crop'
+            ];
+            
+            const vouchersHTML = vouchersToRender.map((item, index) => {
+                let discountPercent = 0;
+                let discountText = '';
+                let tourName = '';
+                let originalPrice = 0;
+                let salePrice = 0;
+                let tourImage = '';
+                
+                if (item.tour_id && item.tour_name) {
+                    tourName = item.tour_name;
+                    salePrice = parseFloat(item.tour_price) || 0;
+                    originalPrice = salePrice > 0 ? salePrice * 1.2 : 0;
+                    tourImage = item.tour_image || placeholderImages[index % placeholderImages.length];
+                } else if (item.combo_id && item.combo_name) {
+                    tourName = item.combo_name;
+                    salePrice = parseFloat(item.combo_price) || 0;
+                    originalPrice = parseFloat(item.combo_original_price) || (salePrice > 0 ? salePrice * 1.2 : 0);
+                    tourImage = item.combo_image || placeholderImages[index % placeholderImages.length];
+                }
+                
+                if (item.loai_giam === 'Phần trăm') {
+                    const discountRate = parseFloat(item.gia_tri_giam) / 100;
+                    discountPercent = Math.round(item.gia_tri_giam);
+                    discountText = `-${discountPercent}%`;
+                    salePrice = originalPrice * (1 - discountRate);
+                } else if (item.loai_giam === 'Có định') {
+                    const discount = parseFloat(item.gia_tri_giam) || 0;
+                    salePrice = originalPrice - discount;
+                    if (originalPrice > 0) {
+                        discountPercent = Math.round((discount / originalPrice) * 100);
+                    }
+                    discountText = `-${Math.round(discount).toLocaleString('vi-VN')}đ`;
+                } else {
+                    if (originalPrice > 0) {
+                        discountPercent = Math.round(((originalPrice - salePrice) / originalPrice) * 100);
+                        discountText = `-${discountPercent}%`;
+                    }
+                }
+                
+                let expiryText = 'N/A';
+                if (item.co_hieu_luc_den) {
+                    const expiryDate = new Date(item.co_hieu_luc_den);
+                    const month = String(expiryDate.getMonth() + 1).padStart(2, '0');
+                    const date = String(expiryDate.getDate()).padStart(2, '0');
+                    expiryText = `${date}/${month}`;
+                }
+                
+                return `
+                    <article class="voucher-card-modern">
+                        <div class="voucher-image-wrap">
+                            <img src="${tourImage}" alt="${tourName}" onerror="this.src='https://via.placeholder.com/400x176?text=Du+Lich'">
+                            <span class="voucher-badge">${discountText || '-10%'}</span>
+                        </div>
+                        <div class="voucher-body-modern">
+                            <h3 class="voucher-name">${tourName}</h3>
+                            <div class="voucher-prices">
+                                <span class="price-old">${Math.round(originalPrice).toLocaleString('vi-VN')}đ</span>
+                                <span class="price-new">${Math.round(salePrice).toLocaleString('vi-VN')}đ</span>
+                            </div>
+                            <div class="voucher-meta">
+                                <span>Hết hạn: ${expiryText}</span>
+                                <span>Còn ${item.so_lan_toi_da - item.so_lan_da_su_dung} voucher</span>
+                            </div>
+                            <div class="voucher-actions">
+                                <button class="btn-voucher-light" onclick="copyVoucherCode('${item.code}')">Áp dụng ngay</button>
+                                <button class="btn-voucher-strong" onclick="bookTour(${item.id})">Đặt tour ngay</button>
+                            </div>
+                        </div>
+                    </article>
+                `;
+            }).join('');
+            
+            container.innerHTML = vouchersHTML;
+        }
+
+        /**
+         * Hàm to check if promotion is within time period
+         */
+        function isPromoValid(startDate, endDate, timePeriod) {
+            const now = new Date();
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            
+            // Check if promo is still valid
+            if (end < now) return false;
+            
+            if (timePeriod === '') return true; // Tất cả
+            
+            if (timePeriod === 'today') {
+                const today = new Date();
+                today.setHours(23, 59, 59, 999);
+                return end >= now && end <= today;
+            } else if (timePeriod === 'week') {
+                const weekLater = new Date();
+                weekLater.setDate(weekLater.getDate() + 7);
+                return end >= now && end <= weekLater;
+            } else if (timePeriod === 'month') {
+                const monthLater = new Date();
+                monthLater.setMonth(monthLater.getMonth() + 1);
+                return end >= now && end <= monthLater;
+            } else if (timePeriod === 'nextmonth') {
+                const twoMonthsLater = new Date();
+                twoMonthsLater.setMonth(twoMonthsLater.getMonth() + 2);
+                return end >= now && end <= twoMonthsLater;
+            }
+            return true;
+        }
+
+        /**
+         * Hàm để filter vouchers dựa vào criteria
+         */
+        function filterAndRenderVouchers() {
+            const dest = document.getElementById('promoDestination').value;
+            const discount = document.getElementById('promoDiscount').value;
+            const timePeriod = document.getElementById('promoDuration').value;
+            
+            let filtered = allVouchers.filter(item => {
+                // Filter by destination
+                if (dest !== '') {
+                    if (item.tour_id && item.tour_id > 0) {
+                        // For tours, check if it matches the destination
+                        const itemDestId = item.tour_dest_id;
+                        if (itemDestId != dest) return false;
+                    } else {
+                        // Combos don't have destination, skip them
+                        return false;
+                    }
+                }
+                
+                // Filter by discount range
+                if (discount !== '') {
+                    const discountValue = parseFloat(item.gia_tri_giam) || 0;
+                    const isPercentage = item.loai_giam === 'Phần trăm';
+                    
+                    let inRange = false;
+                    if (discount === '10-20' && isPercentage && discountValue >= 10 && discountValue < 20) inRange = true;
+                    else if (discount === '20-30' && isPercentage && discountValue >= 20 && discountValue < 30) inRange = true;
+                    else if (discount === '30-40' && isPercentage && discountValue >= 30 && discountValue < 40) inRange = true;
+                    else if (discount === '40+' && isPercentage && discountValue >= 40) inRange = true;
+                    
+                    if (!inRange) return false;
+                }
+                
+                // Filter by time period
+                if (!isPromoValid(item.co_hieu_luc_tu, item.co_hieu_luc_den, timePeriod)) {
+                    return false;
+                }
+                
+                return true;
+            });
+            
+            // Shuffle results
+            function shuffleArray(array) {
+                const arr = [...array];
+                for (let i = arr.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                }
+                return arr;
+            }
+            
+            const shuffled = shuffleArray(filtered).slice(0, 3);
+            renderVouchers(shuffled);
+        }
+
+        /**
+         * Hàm để load và render vouchers từ API
+         */
+        async function loadVouchers() {
+            const container = document.getElementById('voucherContainer');
+            const loadingContainer = document.getElementById('loadingContainer');
+            
+            try {
+                const response = await fetch('../user.php?endpoint=get_khuyen_mai');
+                const result = await response.json();
+                
+                console.log('API Response:', result);
+                
+                if (!result.success) {
+                    container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--error); padding: 40px;">Lỗi: ' + (result.message || 'Không thể tải dữ liệu') + '</p>';
+                    loadingContainer.style.display = 'none';
+                    return;
+                }
+                
+                if (!result.data || result.data.length === 0) {
+                    container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--neutral-500); padding: 40px;">Hiện không có ưu đãi nào</p>';
+                    loadingContainer.style.display = 'none';
+                    return;
+                }
+                
+                // Filter valid vouchers (has tour OR combo)
+                allVouchers = result.data.filter(item => {
+                    const hasTour = item.tour_id && item.tour_name && item.tour_price;
+                    const hasCombo = item.combo_id && item.combo_name && item.combo_price;
+                    return hasTour || hasCombo;
+                });
+                
+                console.log('Valid vouchers:', allVouchers.length);
+                
+                if (allVouchers.length === 0) {
+                    container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--neutral-500); padding: 40px;">Hiện không có ưu đãi nào khả dụng</p>';
+                    loadingContainer.style.display = 'none';
+                    return;
+                }
+                
+                // Shuffle function
+                function shuffleArray(array) {
+                    const arr = [...array];
+                    for (let i = arr.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [arr[i], arr[j]] = [arr[j], arr[i]];
+                    }
+                    return arr;
+                }
+                
+                // Display 4 random vouchers
+                const shuffled = shuffleArray(allVouchers).slice(0, 4);
+                renderVouchers(shuffled);
+                loadingContainer.style.display = 'none';
+                
+            } catch (error) {
+                console.error('Lỗi khi load vouchers:', error);
+                container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--error); padding: 40px;">Lỗi khi tải ưu đãi. Vui lòng thử lại sau.</p>';
+                loadingContainer.style.display = 'none';
+            }
+        }
+        
+        /**
+         * Sao chép mã voucher vào clipboard
+         */
+        function copyVoucherCode(code) {
+            navigator.clipboard.writeText(code).then(() => {
+                alert('Đã sao chép mã: ' + code);
+            }).catch(() => {
+                prompt('Sao chép mã voucher:', code);
+            });
+        }
+        
+        /**
+         * Xử lý đặt tour
+         */
+        function bookTour(voucherId) {
+            alert('Chuyển hướng đến trang đặt tour cho voucher ID: ' + voucherId);
+            // Có thể thay bằng: window.location.href = 'chitiettour.html?voucherId=' + voucherId;
+        }
+        
+        // Initialize page
+        function initPage() {
+            loadDestinations();
+            loadVouchers();
+            
+            // Add search button listener
+            const searchBtn = document.getElementById('promoSearchBtn');
+            if (searchBtn) {
+                searchBtn.addEventListener('click', filterAndRenderVouchers);
+            }
+        }
+        
+        // Load khi trang tải xong
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initPage);
+        } else {
+            initPage();
+        }
+    </script>
+    <script src="./js/auth.js"></script>
+    <script src="../js/scroll-reveal.js"></script>
+</body>
+</html>

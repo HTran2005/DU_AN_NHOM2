@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Thanh Toán - Tripto</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/Trangchu_ad.css">
+    <style>
+        /* Payment Card Styling */
+        .payment-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+
+        .payment-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+
+        /* Stats Cards */
+        .payment-stats-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .payment-stats-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        /* Filter Pills */
+        .filter-pill {
+            padding: 8px 20px;
+            border-radius: 25px;
+            border: 1px solid #e9ecef;
+            background: white;
+            color: #6c757d;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-pill:hover, .filter-pill.active {
+            background: #052461;
+            color: white;
+            border-color: #052461;
+        }
+
+        /* Search Box */
+        .search-box {
+            background: white;
+            border-radius: 12px;
+            padding: 12px 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .search-box input {
+            border: none;
+            outline: none;
+            width: 100%;
+            font-size: 14px;
+        }
+
+        .search-box i {
+            color: #6c757d;
+            margin-right: 10px;
+        }
+
+        /* Table Styling */
+        .payment-table {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .payment-table th {
+            background: #f8f9fa;
+            color: #6c757d;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            padding: 16px;
+            border: none;
+        }
+
+        .payment-table td {
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: middle;
+        }
+
+        .payment-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .payment-table-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        /* Payment Status Badges */
+        .payment-status {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-success {
+            background: rgba(25, 135, 84, 0.1);
+            color: #198754;
+        }
+
+        .status-pending {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+        }
+
+        .status-failed {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+
+        .status-refunded {
+            background: rgba(108, 117, 125, 0.1);
+            color: #6c757d;
+        }
+
+        /* Action Buttons */
+        .btn-action {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-view {
+            background: rgba(13, 110, 253, 0.1);
+            color: #0d6efd;
+        }
+
+        .btn-view:hover {
+            background: #0d6efd;
+            color: white;
+        }
+
+        .btn-refund {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+        }
+
+        .btn-refund:hover {
+            background: #ffc107;
+            color: white;
+        }
+
+        .btn-print {
+            background: rgba(108, 117, 125, 0.1);
+            color: #6c757d;
+        }
+
+        .btn-print:hover {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-confirm {
+            background: rgba(25, 135, 84, 0.1);
+            color: #198754;
+        }
+
+        .btn-confirm:hover {
+            background: #198754;
+            color: white;
+        }
+
+        .btn-delete {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+
+        .btn-delete:hover {
+            background: #dc3545;
+            color: white;
+        }
+
+        /* Pagination */
+        .pagination-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .page-info {
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        .pagination {
+            display: flex;
+            gap: 8px;
+        }
+
+        .page-item {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid #e9ecef;
+            background: white;
+            color: #6c757d;
+        }
+
+        .page-item:hover, .page-item.active {
+            background: #052461;
+            color: white;
+            border-color: #052461;
+        }
+
+        /* Gradient title */
+        .section-title {
+            background: linear-gradient(135deg, #052461 0%, #0d6efd 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Payment overview cards */
+        .payment-overview-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            height: 100%;
+            min-height: 110px;
+        }
+
+        .payment-overview-card:nth-child(1) {
+            background: linear-gradient(135deg, rgba(13, 110, 253, 0.08) 0%, rgba(13, 110, 253, 0.04) 100%);
+            border-left: 4px solid #0d6efd;
+        }
+
+        .payment-overview-card:nth-child(2) {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.08) 0%, rgba(255, 193, 7, 0.04) 100%);
+            border-left: 4px solid #ffc107;
+        }
+
+        .payment-overview-card:nth-child(3) {
+            background: linear-gradient(135deg, rgba(25, 135, 84, 0.08) 0%, rgba(25, 135, 84, 0.04) 100%);
+            border-left: 4px solid #198754;
+        }
+
+        .payment-overview-card:nth-child(4) {
+            background: linear-gradient(135deg, rgba(13, 202, 240, 0.08) 0%, rgba(13, 202, 240, 0.04) 100%);
+            border-left: 4px solid #0dcaf0;
+        }
+
+        .payment-overview-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+
+        .payment-overview-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .payment-overview-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .payment-overview-label {
+            font-size: 14px;
+            color: #6c757d;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .payment-overview-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: #003499;
+            margin: 0;
+            line-height: 1.3;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+
+        /* Method icons */
+        .method-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .method-credit {
+            background: rgba(13, 110, 253, 0.1);
+            color: #0d6efd;
+        }
+
+        .method-bank {
+            background: rgba(25, 135, 84, 0.1);
+            color: #198754;
+        }
+
+        .method-momo {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+
+        .method-cash {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+        }
+
+        /* Date filter */
+        .date-filter {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .date-filter input {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            font-size: 14px;
+        }
+
+        .date-filter input:focus {
+            border-color: #052461;
+            outline: none;
+        }
+
+        /* Custom checkbox */
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-wrapper input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Left Sidebar -->
+        <aside class="sidebar bg-white shadow-sm">
+            <div class="logo-container">
+                <img src="../image/Logo.png" alt="Tripto Logo" class="logo-img">
+            </img>
+            
+            <nav class="sidebar-nav">
+                <a href="Trangchu_ad.html" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Bảng Điều Khiển</span>
+                </a>
+                <a href="Tour_ad.html" class="nav-item">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <span>Tour Du Lịch</span>
+                </a>
+                <a href="TourDaDat_ad.html" class="nav-item">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Tour Đã Đặt</span>
+                </a>
+                <a href="Lich_ad.html" class="nav-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Lịch</span>
+                </a>
+                <a href="ThanhToan.html" class="nav-item active">
+                    <i class="fas fa-credit-card"></i>
+                    <span>Thanh Toán</span>
+                </a>
+                <a href="KhachHang.html" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>Khách Hàng</span>
+                </a>
+                <a href="TinNhan.html" class="nav-item">
+                    <i class="fas fa-comments"></i>
+                    <span>Tin Nhắn</span>
+                </a>
+                <a href="HoatDong.html" class="nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Hoạt Động Thống Kê</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-inner">
+                <!-- Header -->
+                <header class="content-header">
+                    <h1 class="dashboard-title" style="color: #052461;">Quản Lý Thanh Toán</h1>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="search-bar flex-grow-1">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="Tìm kiếm thanh toán..." class="form-control">
+                        </div>
+                        <!-- User Menu in Header -->
+                        <div class="user-menu-header">
+                            <div class="notification-wrapper">
+                                <button class="icon-btn notification-btn" id="notificationBell" onclick="toggleNotifications()">
+                                    <i class="fas fa-bell"></i>
+                                    <span class="notification-badge" id="notificationBadge">3</span>
+                                </button>
+                            </div>
+                            <button class="icon-btn" id="settingsBtn" onclick="toggleSettings()">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                            <div class="user-profile">
+                                <div class="user-info">
+                                    <strong class="d-block">GTD</strong>
+                                    <small class="text-muted">Quản Trị Viên</small>
+                                </div>
+                                <div class="avatar-circle">GT</div>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- Stats Cards -->
+                <section class="overview-section">
+                    <div class="row g-4">
+                        <div class="col-xl-3 col-md-6">
+                            <div class="payment-overview-card">
+                                <div class="payment-overview-icon bg-primary bg-opacity-10">
+                                    <i class="fas fa-wallet text-primary"></i>
+                                </div>
+                                <div class="payment-overview-info">
+                                    <p class="payment-overview-label">Tổng Thu</p>
+                                    <h3 class="payment-overview-value">--</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="payment-overview-card">
+                                <div class="payment-overview-icon bg-success bg-opacity-10">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                </div>
+                                <div class="payment-overview-info">
+                                    <p class="payment-overview-label">Thành Công</p>
+                                    <h3 class="payment-overview-value">--</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="payment-overview-card">
+                                <div class="payment-overview-icon bg-warning bg-opacity-10">
+                                    <i class="fas fa-clock text-warning"></i>
+                                </div>
+                                <div class="payment-overview-info">
+                                    <p class="payment-overview-label">Chờ Xử Lý</p>
+                                    <h3 class="payment-overview-value">--</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="payment-overview-card">
+                                <div class="payment-overview-icon bg-danger bg-opacity-10">
+                                    <i class="fas fa-times-circle text-danger"></i>
+                                </div>
+                                <div class="payment-overview-info">
+                                    <p class="payment-overview-label">Thất Bại/Hoàn Tiền</p>
+                                    <h3 class="payment-overview-value">--</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Filter Section -->
+                <section class="mb-4">
+                    <div class="d-flex gap-2 align-items-center" style="flex-wrap: nowrap; overflow-x: auto; background: white; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                        <button class="filter-pill active" style="flex-shrink: 0;">Tất Cả</button>
+                        <button class="filter-pill" style="flex-shrink: 0;">Thành Công</button>
+                        <button class="filter-pill" style="flex-shrink: 0;">Chờ Xử Lý</button>
+                        <button class="filter-pill" style="flex-shrink: 0;">Bồi Thường</button>
+                        <select class="form-select" id="monthFilter" style="border-radius: 25px; padding: 8px 16px; border: 1px solid #e9ecef; flex-shrink: 0; width: 160px; color: #6c757d; font-size: 14px; font-weight: 500;">
+                            <option value="all">Tất cả tháng</option>
+                            <option value="1">Tháng 1</option>
+                            <option value="2">Tháng 2</option>
+                            <option value="3">Tháng 3</option>
+                            <option value="4">Tháng 4</option>
+                            <option value="5">Tháng 5</option>
+                            <option value="6">Tháng 6</option>
+                            <option value="7">Tháng 7</option>
+                            <option value="8">Tháng 8</option>
+                            <option value="9">Tháng 9</option>
+                            <option value="10">Tháng 10</option>
+                            <option value="11">Tháng 11</option>
+                            <option value="12">Tháng 12</option>
+                        </select>
+                        <select class="form-select" id="paymentMethodFilter" style="border-radius: 25px; padding: 8px 16px; border: 1px solid #e9ecef; flex-shrink: 0; width: 160px; color: #6c757d; font-size: 14px; font-weight: 500;">
+                            <option value="all">Tất cả phương thức</option>
+                            <option value="Thẻ tín dụng">Thẻ tín dụng</option>
+                            <option value="Chuyển khoản">Chuyển khoản</option>
+                            <option value="MoMo">MoMo</option>
+                            <option value="Tiền mặt">Tiền mặt</option>
+                            <option value="Thanh toán tại văn phòng">Thanh toán tại văn phòng</option>
+                        </select>
+                    </div>
+                </section>
+
+                <!-- Payment Table -->
+                <section class="payment-table-container">
+                    <div class="payment-table">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Mã Thanh Toán</th>
+                                    <th>Khách Hàng</th>
+                                    <th>Tour</th>
+                                    <th>Phương Thức</th>
+                                    <th>Số Tiền</th>
+                                    <th>Ngày Thanh Toán</th>
+                                    <th>Trạng Thái</th>
+                                    <th>Thao Tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Payment rows will be loaded here by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="pagination-container">
+                        <span class="page-info">Đang tải dữ liệu...</span>
+                        <div class="pagination">
+                            <!-- Pagination buttons will be loaded here by JavaScript -->
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Payment Detail Modal -->
+        <div class="modal fade" id="viewPaymentModal" tabindex="-1" aria-labelledby="viewPaymentModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header" style="border-bottom: 1px solid #e9ecef; background: linear-gradient(135deg, rgba(5, 36, 97, 0.05) 0%, rgba(5, 36, 97, 0.02) 100%);">
+                        <h5 class="modal-title" id="viewPaymentModalLabel" style="color: #052461; font-weight: 700;">
+                            <i class="fas fa-receipt me-2"></i>Chi Tiết Hóa Đơn Thanh Toán
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" style="padding: 24px;">
+                        <!-- Transaction Header -->
+                        <div style="background: linear-gradient(135deg, rgba(5, 36, 97, 0.08) 0%, rgba(5, 36, 97, 0.04) 100%); border-radius: 12px; padding: 16px; margin-bottom: 24px; border-left: 4px solid #052461;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+                                <div>
+                                    <label style="font-size: 11px; text-transform: uppercase; color: #6c757d; font-weight: 600; letter-spacing: 0.5px;">Mã Giao Dịch</label>
+                                    <p id="paymentTransactionId" style="font-size: 18px; color: #052461; font-weight: 700; margin: 4px 0 0 0;">-</p>
+                                </div>
+                                <div>
+                                    <label style="font-size: 11px; text-transform: uppercase; color: #6c757d; font-weight: 600; letter-spacing: 0.5px;">Ngày Thanh Toán</label>
+                                    <p id="paymentDate" style="font-size: 16px; color: #052461; font-weight: 600; margin: 4px 0 0 0;">-</p>
+                                </div>
+                                <div>
+                                    <label style="font-size: 11px; text-transform: uppercase; color: #6c757d; font-weight: 600; letter-spacing: 0.5px;">Trạng Thái</label>
+                                    <p id="paymentStatus" style="font-size: 14px; margin: 4px 0 0 0; display: inline-block;">-</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Two Column Layout -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+                            <!-- Customer Section -->
+                            <div>
+                                <h6 style="color: #052461; font-weight: 700; margin-bottom: 16px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    <i class="fas fa-user me-2"></i>Thông Tin Khách Hàng
+                                </h6>
+                                <div style="background: #f8f9fa; border-radius: 8px; padding: 16px;">
+                                    <div style="margin-bottom: 12px;">
+                                        <label style="font-size: 11px; text-transform: uppercase; color: #6c757d; font-weight: 600;">Tên Khách Hàng</label>
+                                        <p id="paymentCustomerName" style="font-size: 15px; color: #052461; font-weight: 600; margin: 4px 0 0 0;">-</p>
+                                    </div>
+                                    <div style="margin-bottom: 12px;">
+                                        <label style="font-size: 11px; text-transform: uppercase; color: #6c757d; font-weight: 600;">Email</label>
+                                        <p id="paymentCustomerEmail" style="font-size: 14px; color: #6c757d; margin: 4px 0 0 0;">-</p>
+                                    </div>
+                                    <div style="margin-bottom: 12px;">
+                                        <label style="font-size: 11px; text-transform: uppercase; color: #6c757d; font-weight: 600;">Mã Khách Hàng</label>
+                                        <p id="paymentCustomerId" style="font-size: 14px; color: #052461; margin: 4px 0 0 0;">-</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tour Section -->
+                            <div>
+                                <h6 style="color: #052461; font-weight: 700; margin-bottom: 16px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    <i class="fas fa-map me-2"></i>Thông Tin Tour
+                                </h6>
+                                <div style="background: #f8f9fa; border-radius: 8px; padding: 16px;">
+                                    <div style="margin-bottom: 12px;">
+                                        <label style="font-size: 11px; text-transform: uppercase; color: #6c757d; font-weight: 600;">Tên Tour</label>
+                                        <p id="paymentTourName" style="font-size: 15px; color: #052461; font-weight: 600; margin: 4px 0 0 0;">-</p>
+                                    </div>
+                                    <div style="margin-bottom: 12px;">
+                                        <label style="font-size: 11px; text-transform: uppercase; color: #6c757d; font-weight: 600;">Khoảng Thời Gian</label>
+                                        <p id="paymentTourDuration" style="font-size: 14px; color: #6c757d; margin: 4px 0 0 0;">-</p>
+                                    </div>
+                                    <div style="margin-bottom: 12px;">
+                                        <label style="font-size: 11px; text-transform: uppercase; color: #6c757d; font-weight: 600;">Mã Tour</label>
+                                        <p id="paymentTourId" style="font-size: 14px; color: #052461; margin: 4px 0 0 0;">-</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Booking Details -->
+                        <div style="margin-bottom: 24px;">
+                            <h6 style="color: #052461; font-weight: 700; margin-bottom: 16px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
+                                <i class="fas fa-clipboard-list me-2"></i>Chi Tiết Đơn Đặt
+                            </h6>
+                            <div style="background: #f8f9fa; border-radius: 8px; padding: 16px;">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; margin-bottom: 12px;">
+                                    <div>
+                                        <label style="font-size: 11px; text-transform: uppercase; color: #6c757d; font-weight: 600; display: block; margin-bottom: 4px;">Số Người Lớn</label>
+                                        <p id="paymentAdults" style="font-size: 20px; color: #0d6efd; font-weight: 700; margin: 0;">0</p>
+                                    </div>
+                                    <div>
+                                        <label style="font-size: 11px; text-transform: uppercase; color: #6c757d; font-weight: 600; display: block; margin-bottom: 4px;">Số Trẻ Em</label>
+                                        <p id="paymentChildren" style="font-size: 20px; color: #dc3545; font-weight: 700; margin: 0;">0</p>
+                                    </div>
+                                    <div>
+                                        <label style="font-size: 11px; text-transform: uppercase; color: #6c757d; font-weight: 600; display: block; margin-bottom: 4px;">Tổng Người</label>
+                                        <p id="paymentTotalGuests" style="font-size: 20px; color: #198754; font-weight: 700; margin: 0;">0</p>
+                                    </div>
+                                    <div>
+                                        <label style="font-size: 11px; text-transform: uppercase; color: #6c757d; font-weight: 600; display: block; margin-bottom: 4px;">Phương Thức TT</label>
+                                        <p id="paymentMethod" style="font-size: 15px; color: #052461; font-weight: 600; margin: 0;">-</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Amount Summary -->
+                        <div style="background: linear-gradient(135deg, #052461 0%, #0d3b7d 100%); border-radius: 12px; padding: 20px; text-align: center; color: white;">
+                            <label style="font-size: 12px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.9; display: block; margin-bottom: 8px;">Tổng Số Tiền</label>
+                            <p id="paymentAmount" style="font-size: 32px; font-weight: 700; margin: 0;">-</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Sidebar -->
+        <aside class="right-sidebar bg-white">
+            <!-- User Menu -->
+            <div class="user-menu">
+                <!-- Notification Bell with Animation -->
+                <div class="notification-wrapper">
+                    <button class="icon-btn notification-btn" id="notificationBell" onclick="toggleNotifications()">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge" id="notificationBadge">3</span>
+                    </button>
+                    
+                    <!-- Notification Dropdown -->
+                    <div class="notification-dropdown" id="notificationDropdown">
+                        <div class="notification-header">
+                            <h6>Thông Báo</h6>
+                            <button class="mark-all-read" onclick="markAllRead()">Đánh dấu đã đọc</button>
+                        </div>
+                        <div class="notification-list" id="notificationList">
+                            <div class="notification-item unread" onclick="markAsRead(this)">
+                                <div class="notification-icon bg-danger">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                </div>
+                                <div class="notification-content">
+                                    <p class="notification-title">Thanh toán thất bại</p>
+                                    <p class="notification-desc">Thanh toán TT-004 của khách hàng Phạm Thị D thất bại</p>
+                                    <span class="notification-time">5 phút trước</span>
+                                </div>
+                            </div>
+                            <div class="notification-item unread" onclick="markAsRead(this)">
+                                <div class="notification-icon bg-success">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="notification-content">
+                                    <p class="notification-title">Thanh toán thành công</p>
+                                    <p class="notification-desc">5 khoản thanh toán mới được xác nhận</p>
+                                    <span class="notification-time">15 phút trước</span>
+                                </div>
+                            </div>
+                            <div class="notification-item unread" onclick="markAsRead(this)">
+                                <div class="notification-icon bg-warning">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="notification-content">
+                                    <p class="notification-title">Chờ xử lý</p>
+                                    <p class="notification-desc">Có 3 khoản thanh toán đang chờ xác nhận</p>
+                                    <span class="notification-time">1 giờ trước</span>
+                                </div>
+                            </div>
+                            <div class="notification-item" onclick="markAsRead(this)">
+                                <div class="notification-icon bg-info">
+                                    <i class="fas fa-file-invoice-dollar"></i>
+                                </div>
+                                <div class="notification-content">
+                                    <p class="notification-title">Yêu cầu hoàn tiền</p>
+                                    <p class="notification-desc">Khách hàng yêu cầu hoàn tiền cho tour TT-005</p>
+                                    <span class="notification-time">2 giờ trước</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="icon-btn" id="settingsBtn" onclick="toggleSettings()">
+                    <i class="fas fa-cog"></i>
+                </button>
+                <!-- Settings Dropdown -->
+                <div class="settings-dropdown" id="settingsDropdown">
+                    <div class="settings-header">
+                        <h6>Cài Đặt</h6>
+                    </div>
+                    <div class="settings-list">
+                        <div class="settings-item">
+                            <div class="settings-item-icon">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="settings-item-content">
+                                <p class="settings-item-title">Thông Tin Cá Nhân</p>
+                                <p class="settings-item-desc">Cập nhật thông tin profile</p>
+                            </div>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-item-icon">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                            <div class="settings-item-content">
+                                <p class="settings-item-title">Bảo Mật</p>
+                                <p class="settings-item-desc">Đổi mật khẩu</p>
+                            </div>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-item-icon">
+                                <i class="fas fa-palette"></i>
+                            </div>
+                            <div class="settings-item-content">
+                                <p class="settings-item-title">Giao Diện</p>
+                                <p class="settings-item-desc">Tùy chỉnh giao diện</p>
+                            </div>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-item-icon">
+                                <i class="fas fa-language"></i>
+                            </div>
+                            <div class="settings-item-content">
+                                <p class="settings-item-title">Ngôn Ngữ</p>
+                                <p class="settings-item-desc">Chọn ngôn ngữ</p>
+                            </div>
+                        </div>
+                        <div class="settings-divider"></div>
+                        <div class="settings-item logout-item">
+                            <div class="settings-item-icon">
+                                <i class="fas fa-sign-out-alt"></i>
+                            </div>
+                            <div class="settings-item-content">
+                                <p class="settings-item-title">Đăng Xuất</p>
+                                <p class="settings-item-desc">Thoát khỏi hệ thống</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="user-profile">
+                    <div class="user-info">
+                        <strong class="d-block">GTD</strong>
+                        <small class="text-muted">Quản Trị Viên</small>
+                    </div>
+                    <div class="avatar-circle">GT</div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <section class="sidebar-section">
+                <h6 class="mb-3" style="color: #052461; font-weight: 600;">Thao Tác Nhanh</h6>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary" style="background: #052461;">
+                        <i class="fas fa-file-invoice me-2"></i>Tạo Hóa Đơn
+                    </button>
+                    <button class="btn btn-outline-primary">
+                        <i class="fas fa-file-export me-2"></i>Xuất Báo Cáo
+                    </button>
+                    <button class="btn btn-outline-primary">
+                        <i class="fas fa-redo me-2"></i>Kiểm Tra Giao Dịch
+                    </button>
+                </div>
+            </section>
+
+            <!-- Payment Methods Stats -->
+            <section class="sidebar-section">
+                <h6 class="mb-3" style="color: #052461; font-weight: 600;">Phương Thức Thanh Toán</h6>
+                <div class="customer-list">
+                    <div class="customer-item">
+                        <div class="method-icon method-credit">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <strong>Thẻ Tín Dụng</strong>
+                            <small class="text-muted d-block">45 giao dịch - $12,500</small>
+                        </div>
+                    </div>
+                    <div class="customer-item">
+                        <div class="method-icon method-bank">
+                            <i class="fas fa-university"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <strong>Chuyển Khoản</strong>
+                            <small class="text-muted d-block">38 giao dịch - $15,200</small>
+                        </div>
+                    </div>
+                    <div class="customer-item">
+                        <div class="method-icon method-momo">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <strong>MoMo</strong>
+                            <small class="text-muted d-block">52 giao dịch - $9,800</small>
+                        </div>
+                    </div>
+                    <div class="customer-item">
+                        <div class="method-icon method-cash">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <strong>Tiền Mặt</strong>
+                            <small class="text-muted d-block">33 giao dịch - $7,780</small>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recent Transactions -->
+            <section class="sidebar-section">
+                <h6 class="mb-3" style="color: #052461; font-weight: 600;">Giao Dịch Gần Đây</h6>
+                <div class="customer-list">
+                    <div class="customer-item">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop" alt="Customer" class="avatar-placeholder">
+                        <div>
+                            <strong>Nguyễn Văn A</strong>
+                            <small class="text-muted d-block">$350 - Thành công</small>
+                        </div>
+                    </div>
+                    <div class="customer-item">
+                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=50&h=50&fit=crop" alt="Customer" class="avatar-placeholder">
+                        <div>
+                            <strong>Trần Thị B</strong>
+                            <small class="text-muted d-block">$420 - Chờ xử lý</small>
+                        </div>
+                    </div>
+                    <div class="customer-item">
+                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=50&h=50&fit=crop" alt="Customer" class="avatar-placeholder">
+                        <div>
+                            <strong>Lê Văn C</strong>
+                            <small class="text-muted d-block">$550 - Thành công</small>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </aside>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Initialize admin name from localStorage
+        function initializeAdminProfile() {
+            const adminName = localStorage.getItem('adminName') || 'Admin';
+            const nameParts = adminName.trim().split(' ');
+            const initials = nameParts.map(part => part.charAt(0).toUpperCase()).join('');
+            const nameElement = document.querySelector('.user-info strong');
+            if (nameElement) nameElement.textContent = adminName;
+            const avatarElement = document.querySelector('.avatar-circle');
+            if (avatarElement) avatarElement.textContent = initials.substring(0, 2);
+        }
+        window.addEventListener('DOMContentLoaded', initializeAdminProfile);
+
+        // Global variables
+        let paymentsData = [];
+        let currentPage = 1;
+        let itemsPerPage = 10;
+        let totalPayments = 0;
+        let totalPages = 0;
+        let currentFilter = 'all';
+        let currentPaymentMethod = 'all';
+        let currentMonth = 'all';
+
+        // Payment status mapping
+        const statusMap = {
+            'success': { label: 'Đã thanh toán', class: 'status-success' },
+            'pending': { label: 'Chờ xử lý', class: 'status-pending' },
+            'failed': { label: 'Bồi thường', class: 'status-failed' }
+        };
+
+        // Payment method mapping
+        const methodMap = {
+            'credit': { icon: 'fa-credit-card', class: 'method-credit' },
+            'bank': { icon: 'fa-university', class: 'method-bank' },
+            'momo': { icon: 'fa-mobile-alt', class: 'method-momo' },
+            'cash': { icon: 'fa-money-bill-wave', class: 'method-cash' }
+        };
+
+        // Fetch payment methods from database
+        async function loadPaymentMethods() {
+            try {
+                const response = await fetch(`../admin.php?action=get_payment_methods`);
+                const data = await response.json();
+                
+                if (data.success && data.data.length > 0) {
+                    const select = document.getElementById('paymentMethodFilter');
+                    if (select) {
+                        // Clear existing options except the first one
+                        while (select.options.length > 1) {
+                            select.remove(1);
+                        }
+                        
+                        // Add options from database
+                        data.data.forEach(method => {
+                            const option = document.createElement('option');
+                            option.value = method;
+                            option.textContent = method;
+                            select.appendChild(option);
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading payment methods:', error);
+            }
+        }
+
+        // Fetch payments from database
+        async function fetchPayments(page = 1, filter = 'all', paymentMethod = 'all', month = 'all') {
+            try {
+                const response = await fetch(`../admin.php?action=get_payments&page=${page}&filter=${filter}&payment_method=${paymentMethod}&month=${month}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    paymentsData = data.data;
+                    currentPage = data.pagination.current_page;
+                    totalPages = data.pagination.total_pages;
+                    totalPayments = data.pagination.total_items;
+                    
+                    renderPayments();
+                    renderPagination();
+                    updateStats(data.stats);
+                } else {
+                    console.error('API Error:', data.message);
+                    alert('Lỗi tải dữ liệu thanh toán: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error fetching payments:', error);
+                alert('Lỗi kết nối tới server: ' + error.message);
+            }
+        }
+
+        // Render payments in table
+        function renderPayments() {
+            const tbody = document.querySelector('.payment-table tbody');
+            tbody.innerHTML = '';
+            
+            if (paymentsData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-4">Không có dữ liệu thanh toán</td></tr>';
+                return;
+            }
+            
+            paymentsData.forEach(payment => {
+                const statusInfo = statusMap[payment.status] || { label: payment.status_text, class: 'status-pending' };
+                const actionButton = payment.status === 'pending' 
+                    ? '<button class="btn-action btn-confirm" title="Xác nhận thanh toán" onclick="confirmPayment(' + payment.id + ')"><i class="fas fa-check"></i></button>'
+                    : '';
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong style="color: #052461;">${payment.transactionId}</strong></td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <img src="${payment.customerAvatar}" alt="Customer" class="payment-table-img" onerror="this.src='https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop'">
+                            <div>
+                                <strong>${payment.customerName}</strong>
+                                <p class="mb-0 text-muted" style="font-size: 12px;">${payment.customerEmail}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <strong style="color: #052461;">${payment.tourName}</strong>
+                        <p class="mb-0 text-muted" style="font-size: 12px;">${payment.tourDuration}</p>
+                    </td>
+                    <td><strong style="color: #6c757d;">${payment.paymentMethodName}</strong></td>
+                    <td><strong style="color: #0d6efd;">${payment.amount_formatted}</strong></td>
+                    <td>${payment.paymentDate}</td>
+                    <td><span class="payment-status ${statusInfo.class}">${statusInfo.label}</span></td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            <button class="btn-action btn-view" title="Xem chi tiết" onclick="viewPayment(${payment.id})"><i class="fas fa-eye"></i></button>
+                            ${actionButton}
+                            <button class="btn-action btn-delete" title="Xóa" onclick="deletePayment(${payment.id})"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Render pagination buttons
+        function renderPagination() {
+            const pagination = document.querySelector('.pagination');
+            const pageInfo = document.querySelector('.page-info');
+            
+            pagination.innerHTML = '';
+            
+            // Previous button
+            const prevBtn = document.createElement('button');
+            prevBtn.className = 'page-item';
+            prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+            prevBtn.onclick = () => {
+                if (currentPage > 1) goToPage(currentPage - 1);
+            };
+            pagination.appendChild(prevBtn);
+            
+            // Page numbers with ellipsis
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(totalPages, currentPage + 2);
+            
+            if (startPage > 1) {
+                const firstBtn = document.createElement('button');
+                firstBtn.className = 'page-item';
+                firstBtn.textContent = '1';
+                firstBtn.onclick = () => goToPage(1);
+                pagination.appendChild(firstBtn);
+                
+                if (startPage > 2) {
+                    const ellipsisBtn = document.createElement('button');
+                    ellipsisBtn.className = 'page-item';
+                    ellipsisBtn.textContent = '...';
+                    ellipsisBtn.style.cursor = 'default';
+                    pagination.appendChild(ellipsisBtn);
+                }
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                const btn = document.createElement('button');
+                btn.className = `page-item ${i === currentPage ? 'active' : ''}`;
+                btn.textContent = i;
+                btn.onclick = () => goToPage(i);
+                pagination.appendChild(btn);
+            }
+            
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    const ellipsisBtn = document.createElement('button');
+                    ellipsisBtn.className = 'page-item';
+                    ellipsisBtn.textContent = '...';
+                    ellipsisBtn.style.cursor = 'default';
+                    pagination.appendChild(ellipsisBtn);
+                }
+                
+                const lastBtn = document.createElement('button');
+                lastBtn.className = 'page-item';
+                lastBtn.textContent = totalPages;
+                lastBtn.onclick = () => goToPage(totalPages);
+                pagination.appendChild(lastBtn);
+            }
+            
+            // Next button
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'page-item';
+            nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+            nextBtn.onclick = () => {
+                if (currentPage < totalPages) goToPage(currentPage + 1);
+            };
+            pagination.appendChild(nextBtn);
+            
+            // Update page info
+            const startItem = (currentPage - 1) * itemsPerPage + 1;
+            const endItem = Math.min(currentPage * itemsPerPage, totalPayments);
+            pageInfo.textContent = `Hiển thị ${startItem}-${endItem} từ ${totalPayments} giao dịch`;
+        }
+
+        // Go to specific page
+        // Go to specific page
+        // Go to specific page
+        function goToPage(pageNum) {
+            if (pageNum >= 1 && pageNum <= totalPages) {
+                fetchPayments(pageNum, currentFilter, currentPaymentMethod, currentMonth);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // Update stats cards
+        function updateStats(stats) {
+            const cards = document.querySelectorAll('.payment-overview-value');
+            if (cards.length >= 4) {
+                // Tách số tiền và "VND" để hiển thị đẹp hơn
+                const totalAmount = stats.total_amount_formatted.replace(' VND', '');
+                cards[0].innerHTML = `${totalAmount}<br><span style="font-size: 14px; color: #6c757d;">VND</span>`;
+                cards[1].textContent = stats.success_count;
+                cards[2].textContent = stats.pending_count;
+                cards[3].textContent = stats.failed_count;
+            }
+        }
+
+        // Payment actions
+        function viewPayment(paymentId) {
+            const payment = paymentsData.find(p => p.id === paymentId);
+            
+            if (!payment) {
+                alert('Không tìm thấy thông tin thanh toán');
+                return;
+            }
+            
+            // Populate transaction header
+            document.getElementById('paymentTransactionId').textContent = payment.transactionId || '-';
+            document.getElementById('paymentDate').textContent = payment.paymentDate || '-';
+            
+            // Populate customer section
+            document.getElementById('paymentCustomerName').textContent = payment.customerName || '-';
+            document.getElementById('paymentCustomerEmail').textContent = payment.customerEmail || '-';
+            document.getElementById('paymentCustomerId').textContent = 'ID: ' + (payment.id || '-');
+            
+            // Populate tour section
+            document.getElementById('paymentTourName').textContent = payment.tourName || '-';
+            document.getElementById('paymentTourDuration').textContent = payment.tourDuration || '-';
+            document.getElementById('paymentTourId').textContent = 'ID: ' + (payment.id || '-');
+            
+            // Populate booking details
+            document.getElementById('paymentAdults').textContent = payment.so_nguoi_lon || '0';
+            document.getElementById('paymentChildren').textContent = payment.so_tre_em || '0';
+            document.getElementById('paymentTotalGuests').textContent = payment.total_guests || '0';
+            document.getElementById('paymentMethod').textContent = payment.paymentMethodName || '-';
+            
+            // Update status
+            const statusInfo = statusMap[payment.status] || { label: payment.status_text || 'Không xác định', class: 'status-pending' };
+            document.getElementById('paymentStatus').textContent = statusInfo.label;
+            document.getElementById('paymentStatus').className = 'payment-status ' + statusInfo.class;
+            
+            // Update amount
+            document.getElementById('paymentAmount').textContent = payment.amount_formatted || '-';
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('viewPaymentModal'));
+            modal.show();
+        }
+
+        function confirmPayment(paymentId) {
+            if (confirm('Bạn có chắc chắn muốn xác nhận thanh toán này thành công?')) {
+                // Call API to confirm payment
+                fetch('../admin.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'confirm_payment',
+                        payment_id: paymentId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Xác nhận thanh toán thành công!');
+                        fetchPayments(currentPage, currentFilter);
+                    } else {
+                        alert('Lỗi: ' + (data.message || 'Không xác nhận được thanh toán'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Lỗi khi xác nhận thanh toán');
+                });
+            }
+        }
+
+        function deletePayment(paymentId) {
+            if (confirm('Bạn có chắc chắn muốn xóa thanh toán này?')) {
+                // Call API to delete payment
+                fetch('../admin.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'delete_payment',
+                        payment_id: paymentId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Xóa thanh toán thành công!');
+                        fetchPayments(currentPage, currentFilter);
+                    } else {
+                        alert('Lỗi: ' + (data.message || 'Không xóa được thanh toán'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Lỗi khi xóa thanh toán');
+                });
+            }
+        }
+
+        // Filter pills click handlers
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.filter-pill').forEach(pill => {
+                pill.addEventListener('click', function() {
+                    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+                    this.classList.add('active');
+
+                    const filterText = this.textContent.trim();
+                    let filterValue = 'all';
+
+                    switch(filterText) {
+                        case 'Thành Công':
+                            filterValue = 'success';
+                            break;
+                        case 'Chờ Xử Lý':
+                            filterValue = 'pending';
+                            break;
+                        case 'Bồi Thường':
+                            filterValue = 'failed';
+                            break;
+                        case 'Tất Cả':
+                        default:
+                            filterValue = 'all';
+                    }
+
+                    currentFilter = filterValue;
+                    fetchPayments(1, filterValue, currentPaymentMethod, currentMonth);
+                });
+            });
+
+            // Month filter change handler
+            const monthSelect = document.getElementById('monthFilter');
+            if (monthSelect) {
+                monthSelect.addEventListener('change', function() {
+                    currentMonth = this.value;
+                    fetchPayments(1, currentFilter, currentPaymentMethod, currentMonth);
+                });
+            }
+
+            // Payment method filter change handler
+            const paymentMethodSelect = document.getElementById('paymentMethodFilter');
+            if (paymentMethodSelect) {
+                paymentMethodSelect.addEventListener('change', function() {
+                    currentPaymentMethod = this.value;
+                    fetchPayments(1, currentFilter, currentPaymentMethod, currentMonth);
+                });
+            }
+
+            // Load payment methods from database
+            loadPaymentMethods();
+
+            // Load payments on page load
+            fetchPayments(1, 'all', 'all', 'all');
+
+            // Search functionality
+            const searchInput = document.querySelector('.search-bar input');
+            if (searchInput) {
+                searchInput.addEventListener('input', function(e) {
+                    const searchTerm = e.target.value.toLowerCase();
+                    const tbody = document.querySelector('.payment-table tbody');
+                    
+                    if (searchTerm === '') {
+                        renderPayments();
+                        return;
+                    }
+                    
+                    const filteredPayments = paymentsData.filter(payment =>
+                        payment.customerName.toLowerCase().includes(searchTerm) ||
+                        payment.transactionId.toLowerCase().includes(searchTerm) ||
+                        payment.tourName.toLowerCase().includes(searchTerm) ||
+                        payment.customerEmail.toLowerCase().includes(searchTerm)
+                    );
+                    
+                    tbody.innerHTML = '';
+                    if (filteredPayments.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-4">Không tìm thấy giao dịch nào</td></tr>';
+                        return;
+                    }
+                    
+                    filteredPayments.forEach(payment => {
+                        const statusInfo = statusMap[payment.status];
+                        const actionButton = payment.status === 'pending'
+                            ? '<button class="btn-action btn-confirm" title="Xác nhận thanh toán" onclick="confirmPayment(' + payment.id + ')"><i class="fas fa-check"></i></button>'
+                            : '';
+                        
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td><strong style="color: #052461;">${payment.transactionId}</strong></td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <img src="${payment.customerAvatar}" alt="Customer" class="payment-table-img" onerror="this.src='https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop'">
+                                    <div>
+                                        <strong>${payment.customerName}</strong>
+                                        <p class="mb-0 text-muted" style="font-size: 12px;">${payment.customerEmail}</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #052461;">${payment.tourName}</strong>
+                                <p class="mb-0 text-muted" style="font-size: 12px;">${payment.tourDuration}</p>
+                            </td>
+                            <td><strong style="color: #6c757d;">${payment.paymentMethodName}</strong></td>
+                            <td><strong style="color: #0d6efd;">${payment.amount_formatted}</strong></td>
+                            <td>${payment.paymentDate}</td>
+                            <td><span class="payment-status ${statusInfo.class}">${statusInfo.label}</span></td>
+                            <td>
+                                <div class="d-flex gap-1">
+                                    <button class="btn-action btn-view" title="Xem chi tiết" onclick="viewPayment(${payment.id})"><i class="fas fa-eye"></i></button>
+                                    ${actionButton}
+                                    <button class="btn-action btn-delete" title="Xóa" onclick="deletePayment(${payment.id})"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                });
+            }
+
+            // ============================================
+            // SETTINGS DROPDOWN FUNCTIONALITY
+            // ============================================
+            
+            function toggleSettings() {
+                const dropdown = document.getElementById('settingsDropdown');
+                const settingsBtn = document.getElementById('settingsBtn');
+                const notificationDropdown = document.getElementById('notificationDropdown');
+                
+                if (notificationDropdown && notificationDropdown.style.display === 'block') {
+                    notificationDropdown.style.display = 'none';
+                }
+                
+                if (dropdown.style.display === 'block') {
+                    dropdown.style.display = 'none';
+                } else {
+                    dropdown.style.display = 'block';
+                }
+            }
+            
+            document.addEventListener('click', function(event) {
+                const settingsDropdown = document.getElementById('settingsDropdown');
+                const settingsBtn = document.getElementById('settingsBtn');
+                if (settingsDropdown && !settingsDropdown.contains(event.target) && !settingsBtn.contains(event.target)) {
+                    settingsDropdown.style.display = 'none';
+                }
+            });
+
+            // ============================================
+            // NOTIFICATION BELL FUNCTIONALITY
+            // ============================================
+            
+            function toggleNotifications() {
+                const dropdown = document.getElementById('notificationDropdown');
+                const bell = document.getElementById('notificationBell');
+                
+                if (dropdown.style.display === 'block') {
+                    dropdown.style.display = 'none';
+                    bell.classList.remove('bell-ringing');
+                } else {
+                    dropdown.style.display = 'block';
+                    ringBell();
+                }
+            }
+            
+            function ringBell() {
+                const bell = document.getElementById('notificationBell');
+                bell.classList.add('bell-ringing');
+                setTimeout(() => {
+                    bell.classList.remove('bell-ringing');
+                }, 3000);
+            }
+            
+            function markAsRead(element) {
+                element.classList.remove('unread');
+                updateNotificationCount();
+            }
+            
+            function markAllRead() {
+                const items = document.querySelectorAll('.notification-item.unread');
+                items.forEach(item => {
+                    item.classList.remove('unread');
+                });
+                updateNotificationCount();
+            }
+            
+            function updateNotificationCount() {
+                const unreadItems = document.querySelectorAll('.notification-item.unread');
+                const badge = document.getElementById('notificationBadge');
+                badge.textContent = unreadItems.length;
+                if (unreadItems.length === 0) {
+                    badge.style.display = 'none';
+                }
+            }
+            
+            document.addEventListener('click', function(event) {
+                const dropdown = document.getElementById('notificationDropdown');
+                const bell = document.getElementById('notificationBell');
+                if (dropdown && !dropdown.contains(event.target) && !bell.contains(event.target)) {
+                    dropdown.style.display = 'none';
+                    bell.classList.remove('bell-ringing');
+                }
+            });
+
+            // Attach event listeners
+            const settingsBtn = document.getElementById('settingsBtn');
+            if (settingsBtn) {
+                settingsBtn.onclick = toggleSettings;
+            }
+            
+            window.toggleNotifications = toggleNotifications;
+            window.markAsRead = markAsRead;
+            window.markAllRead = markAllRead;
+        });
+    </script>
+</body>
+</html>

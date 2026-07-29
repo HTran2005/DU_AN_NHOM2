@@ -1,0 +1,32 @@
+{
+  "type": "Microsoft.Insights/metricAlerts",
+  "apiVersion": "2018-03-01",
+  "name": "HighCPUAlert",
+  "location": "global",
+  "properties": {
+    "description": "Alert when CPU > 80%",
+    "severity": 3,
+    "enabled": true,
+    "scopes": [
+      "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/virtualMachines/{vmName}"
+    ],
+    "evaluationFrequency": "PT5M",
+    "windowSize": "PT5M",
+    "criteria": {
+      "allOf": [
+        {
+          "metricName": "Percentage CPU",
+          "metricNamespace": "Microsoft.Compute/virtualMachines",
+          "operator": "GreaterThan",
+          "threshold": 80,
+          "timeAggregation": "Average"
+        }
+      ]
+    },
+    "actions": [
+      {
+        "actionGroupId": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/microsoft.insights/actionGroups/{actionGroupName}"
+      }
+    ]
+  }
+}

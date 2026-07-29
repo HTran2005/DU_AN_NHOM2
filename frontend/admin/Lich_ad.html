@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Lịch</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/Trangchu_ad.css">
+    <link rel="stylesheet" href="../css/Lich_ad.css">
+    <style>
+        /* Calendar Styling */
+        .calendar-wrapper {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .calendar-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #052461;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 8px;
+        }
+
+        .calendar-nav-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            background: white;
+            color: #6c757d;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .calendar-nav-btn:hover {
+            background: #052461;
+            color: white;
+            border-color: #052461;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+
+        .calendar-day-header {
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: #6c757d;
+            padding: 8px;
+            text-transform: uppercase;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            min-height: 80px;
+        }
+
+        .calendar-day:hover {
+            background: #f8f9fa;
+        }
+
+        .calendar-day.other-month {
+            opacity: 0.4;
+        }
+
+        .calendar-day.today {
+            background: rgba(5, 36, 97, 0.1);
+            border: 2px solid #052461;
+        }
+
+        .calendar-day.selected {
+            background: #052461;
+            color: white;
+        }
+
+        .calendar-day.has-booking {
+            position: relative;
+        }
+
+        .calendar-day.has-booking::after {
+            content: '';
+            position: absolute;
+            bottom: 8px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #0d6efd;
+        }
+
+        .calendar-day.has-booking.warning::after {
+            background: #ffc107;
+        }
+
+        .calendar-day.has-booking.danger::after {
+            background: #dc3545;
+        }
+
+        .day-number {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .day-bookings {
+            font-size: 10px;
+            color: #6c757d;
+            margin-top: 4px;
+            text-align: center;
+        }
+
+        .calendar-day.selected .day-bookings {
+            color: rgba(255,255,255,0.8);
+        }
+
+        /* Stats Cards */
+        .calendar-overview-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            height: 100%;
+            min-height: 100px;
+        }
+
+        .calendar-overview-card:nth-child(1) {
+            background: linear-gradient(135deg, rgba(13, 110, 253, 0.08) 0%, rgba(13, 110, 253, 0.04) 100%);
+            border-left: 4px solid #0d6efd;
+        }
+
+        .calendar-overview-card:nth-child(2) {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.08) 0%, rgba(255, 193, 7, 0.04) 100%);
+            border-left: 4px solid #ffc107;
+        }
+
+        .calendar-overview-card:nth-child(3) {
+            background: linear-gradient(135deg, rgba(25, 135, 84, 0.08) 0%, rgba(25, 135, 84, 0.04) 100%);
+            border-left: 4px solid #198754;
+        }
+
+        .calendar-overview-card:nth-child(4) {
+            background: linear-gradient(135deg, rgba(13, 202, 240, 0.08) 0%, rgba(13, 202, 240, 0.04) 100%);
+            border-left: 4px solid #0dcaf0;
+        }
+
+        .calendar-overview-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+
+        .calendar-overview-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .calendar-overview-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .calendar-overview-label {
+            font-size: 14px;
+            color: #6c757d;
+            margin-bottom: 4px;
+        }
+
+        .calendar-overview-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #003499;
+            margin: 0;
+            line-height: 1;
+        }
+
+        /* Booking List */
+        .booking-list-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .booking-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .booking-item:hover {
+            background: #f8f9fa;
+        }
+
+        .booking-item + .booking-item {
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .booking-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .booking-info {
+            flex: 1;
+        }
+
+        .booking-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #052461;
+            margin-bottom: 2px;
+        }
+
+        .booking-tour {
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        .booking-time {
+            font-size: 12px;
+            color: #6c757d;
+            text-align: right;
+        }
+
+        .booking-status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+
+        .status-confirmed { background: #198754; }
+        .status-pending { background: #ffc107; }
+        .status-completed { background: #0d6efd; }
+
+        /* Filter Pills */
+        .filter-pill {
+            padding: 8px 20px;
+            border-radius: 25px;
+            border: 1px solid #e9ecef;
+            background: white;
+            color: #6c757d;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-pill:hover, .filter-pill.active {
+            background: #052461;
+            color: white;
+            border-color: #052461;
+        }
+
+        .right-sidebar {
+            width: var(--right-sidebar-width);
+            height: 100vh;
+            position: fixed;
+            right: 0;
+            top: 0;
+            overflow-y: auto;
+            padding: 2rem 1.5rem;
+            border-left: 0.0625rem solid var(--border-color);
+            display: block;
+            background-color: var(--bg-light);
+        }
+
+        /* Sidebar Section */
+        .sidebar-section {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .sidebar-section:last-child {
+            border-bottom: none;
+        }
+
+        .sidebar-section h6 {
+            margin-bottom: 1rem;
+            color: #052461;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        /* Customer/Item List */
+        .customer-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .customer-item {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            padding: 12px;
+            border-radius: 8px;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .customer-item:hover {
+            background: #e9ecef;
+        }
+
+        .customer-item strong {
+            display: block;
+            font-size: 14px;
+            color: #052461;
+            margin-bottom: 2px;
+        }
+
+        .customer-item small {
+            font-size: 12px;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Left Sidebar -->
+        <aside class="sidebar bg-white shadow-sm">
+            <div class="logo-container">
+                <img src="../image/Logo.png" alt="Tripto Logo" class="logo-img">
+            </img>
+            
+            <nav class="sidebar-nav">
+                <a href="Trangchu_ad.html" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Bảng Điều Khiển</span>
+                </a>
+                <a href="Tour_ad.html" class="nav-item">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <span>Tour Du Lịch</span>
+                </a>
+                <a href="TourDaDat_ad.html" class="nav-item">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Tour Đã Đặt</span>
+                </a>
+                <a href="Lich_ad.html" class="nav-item active">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Lịch</span>
+                </a>
+                <a href="ThanhToan.html" class="nav-item">
+                    <i class="fas fa-credit-card"></i>
+                    <span>Thanh Toán</span>
+                </a>
+                <a href="KhachHang.html" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>Khách Hàng</span>
+                </a>
+                <a href="TinNhan.html" class="nav-item">
+                    <i class="fas fa-comments"></i>
+                    <span>Tin Nhắn</span>
+                </a>
+                <a href="HoatDongThongKe.html" class="nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Hoạt Động Thống Kê</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-inner">
+                <!-- Header -->
+                <header class="content-header">
+                    <h1 class="dashboard-title" style="color: #052461;">Quản Lý Lịch</h1>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="search-bar flex-grow-1">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="Tìm kiếm ở đây..." class="form-control">
+                        </div>
+                        <!-- User Menu in Header -->
+                        <div class="user-menu-header">
+                            <div class="notification-wrapper">
+                                <button class="icon-btn notification-btn" id="notificationBell" onclick="toggleNotifications()">
+                                    <i class="fas fa-bell"></i>
+                                    <span class="notification-badge" id="notificationBadge">3</span>
+                                </button>
+                            </div>
+                            <button class="icon-btn" id="settingsBtn" onclick="toggleSettings()">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                            <div class="user-profile">
+                                <div class="user-info">
+                                    <strong class="d-block">GTD</strong>
+                                    <small class="text-muted">Quản Trị Viên</small>
+                                </div>
+                                <div class="avatar-circle">GT</div>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- Stats Cards -->
+                <section class="overview-section">
+                    <div class="row g-4">
+                        <div class="col-xl-3 col-md-6">
+                            <div class="calendar-overview-card">
+                                <div class="calendar-overview-icon bg-primary bg-opacity-10">
+                                    <i class="fas fa-calendar-check text-primary"></i>
+                                </div>
+                                <div class="calendar-overview-info">
+                                    <p class="calendar-overview-label">Tour Trong Tháng</p>
+                                    <h3 class="calendar-overview-value">45</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="calendar-overview-card">
+                                <div class="calendar-overview-icon bg-success bg-opacity-10">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                </div>
+                                <div class="calendar-overview-info">
+                                    <p class="calendar-overview-label">Đã Hoàn Thành</p>
+                                    <h3 class="calendar-overview-value">32</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="calendar-overview-card">
+                                <div class="calendar-overview-icon bg-warning bg-opacity-10">
+                                    <i class="fas fa-clock text-warning"></i>
+                                </div>
+                                <div class="calendar-overview-info">
+                                    <p class="calendar-overview-label">Sắp Tới</p>
+                                    <h3 class="calendar-overview-value">13</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="calendar-overview-card">
+                                <div class="calendar-overview-icon bg-info bg-opacity-10">
+                                    <i class="fas fa-users text-info"></i>
+                                </div>
+                                <div class="calendar-overview-info">
+                                    <p class="calendar-overview-label">Tổng Du Khách</p>
+                                    <h3 class="calendar-overview-value">156</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Filter Section -->
+                <section class="mb-4">
+                    <div class="d-flex gap-2 align-items-center" style="flex-wrap: nowrap; overflow-x: auto; background: white; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                        <button class="filter-pill active" style="flex-shrink: 0;">Tất Cả</button>
+                        <button class="filter-pill" style="flex-shrink: 0;">Tour Du Lịch</button>
+                        <button class="filter-pill" style="flex-shrink: 0;">Sự Kiện</button>
+                        <button class="filter-pill" style="flex-shrink: 0;">Khách Sạn</button>
+                    </div>
+                </section>
+
+                <!-- Calendar and Booking List -->
+                <section class="mb-4">
+                    <div class="row g-4">
+                        <!-- Calendar -->
+                        <div class="col-lg-8">
+                            <div class="calendar-wrapper">
+                                <div class="calendar-header">
+                                    <h2 class="calendar-title" id="calendarTitle">Tháng 1, 2026</h2>
+                                    <div class="calendar-nav">
+                                        <button class="calendar-nav-btn" id="prevMonth"><i class="fas fa-chevron-left"></i></button>
+                                        <button class="calendar-nav-btn" id="nextMonth"><i class="fas fa-chevron-right"></i></button>
+                                    </div>
+                                </div>
+                                <div class="calendar-grid">
+                                    <div class="calendar-day-header">CN</div>
+                                    <div class="calendar-day-header">T2</div>
+                                    <div class="calendar-day-header">T3</div>
+                                    <div class="calendar-day-header">T4</div>
+                                    <div class="calendar-day-header">T5</div>
+                                    <div class="calendar-day-header">T6</div>
+                                    <div class="calendar-day-header">T7</div>
+                                </div>
+                                <div class="calendar-grid" id="calendarDays">
+                                    <!-- Calendar days will be generated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Booking List -->
+                        <div class="col-lg-4">
+                            <div class="booking-list-card">
+                                <h5 class="mb-3" style="color: #052461; font-weight: 600;">Lịch Trình Ngày <span id="selectedDate">15/01/2026</span></h5>
+                                <div id="dailyBookings">
+                                    <div class="booking-item">
+                                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop" alt="Customer" class="booking-avatar">
+                                        <div class="booking-info">
+                                            <div class="booking-name">Nguyễn Văn A</div>
+                                            <div class="booking-tour">Du Lịch Vịnh Hạ Long</div>
+                                        </div>
+                                        <div class="booking-time">
+                                            <span class="booking-status-dot status-confirmed"></span>08:00
+                                        </div>
+                                    </div>
+                                    <div class="booking-item">
+                                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop" alt="Customer" class="booking-avatar">
+                                        <div class="booking-info">
+                                            <div class="booking-name">Trần Thị B</div>
+                                            <div class="booking-tour">Kỳ Nghỉ Nha Trang</div>
+                                        </div>
+                                        <div class="booking-time">
+                                            <span class="booking-status-dot status-pending"></span>09:30
+                                        </div>
+                                    </div>
+                                    <div class="booking-item">
+                                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop" alt="Customer" class="booking-avatar">
+                                        <div class="booking-info">
+                                            <div class="booking-name">Lê Văn C</div>
+                                            <div class="booking-tour">Phiêu Lưu Hà Giang</div>
+                                        </div>
+                                        <div class="booking-time">
+                                            <span class="booking-status-dot status-completed"></span>10:00
+                                        </div>
+                                    </div>
+                                    <div class="booking-item">
+                                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop" alt="Customer" class="booking-avatar">
+                                        <div class="booking-info">
+                                            <div class="booking-name">Phạm Thị D</div>
+                                            <div class="booking-tour">Tour Huế & Hội An</div>
+                                        </div>
+                                        <div class="booking-time">
+                                            <span class="booking-status-dot status-confirmed"></span>14:00
+                                        </div>
+                                    </div>
+                                    <div class="booking-item">
+                                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop" alt="Customer" class="booking-avatar">
+                                        <div class="booking-info">
+                                            <div class="booking-name">Hoàng Văn E</div>
+                                            <div class="booking-tour">Khám Phá Đà Lạt</div>
+                                        </div>
+                                        <div class="booking-time">
+                                            <span class="booking-status-dot status-pending"></span>15:30
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Right Sidebar -->
+        <aside class="right-sidebar bg-white">
+            <!-- User Menu - Horizontal aligned -->
+            <div class="user-menu">
+                <!-- Notification Bell with Animation -->
+                <div class="notification-wrapper">
+                    <button class="icon-btn notification-btn" id="notificationBell" onclick="toggleNotifications()">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge" id="notificationBadge">3</span>
+                    </button>
+                    
+                    <!-- Notification Dropdown -->
+                    <div class="notification-dropdown" id="notificationDropdown">
+                        <div class="notification-header">
+                            <h6>Thông Báo</h6>
+                            <button class="mark-all-read" onclick="markAllRead()">Đánh dấu đã đọc</button>
+                        </div>
+                        <div class="notification-list" id="notificationList">
+                            <div class="notification-item unread" onclick="markAsRead(this)">
+                                <div class="notification-icon bg-danger">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                </div>
+                                <div class="notification-content">
+                                    <p class="notification-title">Tour sắp hết chỗ</p>
+                                    <p class="notification-desc">Tour Vịnh Hạ Long ngày 20/3 chỉ còn 5 chỗ</p>
+                                    <span class="notification-time">5 phút trước</span>
+                                </div>
+                            </div>
+                            <div class="notification-item unread" onclick="markAsRead(this)">
+                                <div class="notification-icon bg-success">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="notification-content">
+                                    <p class="notification-title">Đơn đặt tour mới</p>
+                                    <p class="notification-desc">Có 3 đơn đặt tour mới cần xác nhận</p>
+                                    <span class="notification-time">15 phút trước</span>
+                                </div>
+                            </div>
+                            <div class="notification-item unread" onclick="markAsRead(this)">
+                                <div class="notification-icon bg-warning">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </div>
+                                <div class="notification-content">
+                                    <p class="notification-title">Lịch khởi hành sắp tới</p>
+                                    <p class="notification-desc">Tour Sapa ngày 22/3 sắp đến ngày khởi hành</p>
+                                    <span class="notification-time">1 giờ trước</span>
+                                </div>
+                            </div>
+                            <div class="notification-item" onclick="markAsRead(this)">
+                                <div class="notification-icon bg-info">
+                                    <i class="fas fa-user-plus"></i>
+                                </div>
+                                <div class="notification-content">
+                                    <p class="notification-title">Khách hàng mới đăng ký</p>
+                                    <p class="notification-desc">12 khách hàng mới đăng ký hôm nay</p>
+                                    <span class="notification-time">2 giờ trước</span>
+                                </div>
+                            </div>
+                            <div class="notification-item" onclick="markAsRead(this)">
+                                <div class="notification-icon bg-primary">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </div>
+                                <div class="notification-content">
+                                    <p class="notification-title">Thanh toán thành công</p>
+                                    <p class="notification-desc">Thanh toán $1,250 từ khách hàng ABC</p>
+                                    <span class="notification-time">3 giờ trước</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="settings-dropdown" id="settingsDropdown">
+  <div class="settings-header">
+    <h6>Cài Đặt</h6>
+  </div>
+  <div class="settings-list">
+    <div class="settings-item">
+      <div class="settings-item-icon"><i class="fas fa-user"></i></div>
+      <div class="settings-item-content">
+        <p class="settings-item-title">Thông Tin Cá Nhân</p>
+        <p class="settings-item-desc">Cập nhật thông tin profile</p>
+      </div>
+    </div>
+    <div class="settings-item">
+      <div class="settings-item-icon"><i class="fas fa-lock"></i></div>
+      <div class="settings-item-content">
+        <p class="settings-item-title">Bảo Mật</p>
+        <p class="settings-item-desc">Đổi mật khẩu</p>
+      </div>
+    </div>
+    <div class="settings-item">
+      <div class="settings-item-icon"><i class="fas fa-palette"></i></div>
+      <div class="settings-item-content">
+        <p class="settings-item-title">Giao Diện</p>
+        <p class="settings-item-desc">Tùy chỉnh giao diện</p>
+      </div>
+    </div>
+    <div class="settings-item">
+      <div class="settings-item-icon"><i class="fas fa-language"></i></div>
+      <div class="settings-item-content">
+        <p class="settings-item-title">Ngôn Ngữ</p>
+        <p class="settings-item-desc">Chọn ngôn ngữ</p>
+      </div>
+    </div>
+    <div class="settings-divider"></div>
+    <div class="settings-item logout-item">
+      <div class="settings-item-icon"><i class="fas fa-sign-out-alt"></i></div>
+      <div class="settings-item-content">
+        <p class="settings-item-title">Đăng Xuất</p>
+        <p class="settings-item-desc">Thoát khỏi hệ thống</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+                <button class="icon-btn" id="settingsBtn" onclick="toggleSettings()">
+                    <i class="fas fa-cog"></i>
+                </button>
+                <div class="user-profile">
+                    <div class="user-info">
+                        <strong class="d-block">GTD</strong>
+                        <small class="text-muted">Quản Trị Viên</small>
+                    </div>
+                    <div class="avatar-circle">GT</div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <section class="sidebar-section">
+                <h6 class="mb-3"  style="color: #052461; font-weight: 600;">Thao Tác Nhanh</h6>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary" style="background: #052461;">
+                        <i class="fas fa-plus me-2"></i>Thêm Lịch Mới
+                    </button>
+                    <button class="btn btn-outline-primary">
+                        <i class="fas fa-file-export me-2"></i>Xuất Lịch
+                    </button>
+                    <button class="btn btn-outline-primary">
+                        <i class="fas fa-print me-2"></i>In Lịch
+                    </button>
+                </div>
+            </section>
+
+            <!-- Upcoming Events -->
+            <section class="sidebar-section">
+                <h6 class="mb-3"  style="color: #052461; font-weight: 600;">Sự Kiện Sắp Tới</h6>
+                <div class="customer-list">
+                    <div class="customer-item">
+                        <img src="https://images.unsplash.com/photo-1528127269322-539801943592?w=100&h=100&fit=crop" alt="Event" class="avatar-placeholder">
+                        <div>
+                            <strong>Khởi Hành Hạ Long</strong>
+                            <small class="text-muted d-block">Ngày mai - 8:00</small>
+                        </div>
+                    </div>
+                    <div class="customer-item">
+                        <img src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=100&h=100&fit=crop" alt="Event" class="avatar-placeholder">
+                        <div>
+                            <strong>Tour Nha Trang</strong>
+                            <small class="text-muted d-block">18/01 - 7:00</small>
+                        </div>
+                    </div>
+                    <div class="customer-item">
+                        <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=100&h=100&fit=crop" alt="Event" class="avatar-placeholder">
+                        <div>
+                            <strong>Đà Lạt 2 Ngày</strong>
+                            <small class="text-muted d-block">20/01 - 6:00</small>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            
+        </aside>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Initialize admin name from localStorage
+        function initializeAdminProfile() {
+            const adminName = localStorage.getItem('adminName') || 'Admin';
+            const nameParts = adminName.trim().split(' ');
+            const initials = nameParts.map(part => part.charAt(0).toUpperCase()).join('');
+            const nameElement = document.querySelector('.user-info strong');
+            if (nameElement) nameElement.textContent = adminName;
+            const avatarElement = document.querySelector('.avatar-circle');
+            if (avatarElement) avatarElement.textContent = initials.substring(0, 2);
+        }
+        window.addEventListener('DOMContentLoaded', initializeAdminProfile);
+
+        // Calendar data
+        let currentMonth = 0; // January
+        let currentYear = 2026;
+        let selectedDate = new Date(2026, 0, 15);
+
+        const monthNames = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 
+                          'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'];
+
+        // Booking data for each day
+        const bookingsData = {
+            '2026-01-8': 3,
+            '2026-01-12': 5,
+            '2026-01-15': 5,
+            '2026-01-18': 4,
+            '2026-01-20': 6,
+            '2026-01-25': 2,
+            '2026-02-5': 3,
+            '2026-02-10': 4,
+            '2026-02-14': 7,
+            '2026-02-20': 3,
+        };
+
+        function generateCalendar(month, year) {
+            const calendarDays = document.getElementById('calendarDays');
+            const calendarTitle = document.getElementById('calendarTitle');
+            
+            calendarTitle.textContent = `${monthNames[month]}, ${year}`;
+            
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const daysInPrevMonth = new Date(year, month, 0).getDate();
+            
+            let html = '';
+            
+            // Previous month days
+            for (let i = firstDay - 1; i >= 0; i--) {
+                const day = daysInPrevMonth - i;
+                html += `<div class="calendar-day other-month"><span class="day-number">${day}</span></div>`;
+            }
+            
+            // Current month days
+            const today = new Date();
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const bookingCount = bookingsData[dateKey] || 0;
+                const isToday = today.getDate() === day && today.getMonth() === month && today.getFullYear() === year;
+                const isSelected = selectedDate.getDate() === day && selectedDate.getMonth() === month && selectedDate.getFullYear() === year;
+                
+                let classes = 'calendar-day';
+                if (isToday) classes += ' today';
+                if (isSelected) classes += ' selected';
+                if (bookingCount > 0) {
+                    classes += ' has-booking';
+                    if (bookingCount >= 5) classes += ' danger';
+                    else if (bookingCount >= 3) classes += ' warning';
+                }
+                
+                html += `
+                    <div class="${classes}" data-date="${dateKey}" data-day="${day}">
+                        <span class="day-number">${day}</span>
+                        ${bookingCount > 0 ? `<span class="day-bookings">${bookingCount} đặt</span>` : ''}
+                    </div>
+                `;
+            }
+            
+            // Next month days
+            const totalCells = firstDay + daysInMonth;
+            const remainingCells = totalCells > 35 ? 42 - totalCells : 35 - totalCells;
+            for (let day = 1; day <= remainingCells; day++) {
+                html += `<div class="calendar-day other-month"><span class="day-number">${day}</span></div>`;
+            }
+            
+            calendarDays.innerHTML = html;
+            
+            // Add click handlers
+            document.querySelectorAll('.calendar-day:not(.other-month)').forEach(dayEl => {
+                dayEl.addEventListener('click', function() {
+                    const day = parseInt(this.dataset.day);
+                    selectedDate = new Date(year, month, day);
+                    
+                    // Update selected state
+                    document.querySelectorAll('.calendar-day').forEach(d => d.classList.remove('selected'));
+                    this.classList.add('selected');
+                    
+                    // Update selected date display
+                    document.getElementById('selectedDate').textContent = 
+                        `${String(day).padStart(2, '0')}/${String(month + 1).padStart(2, '0')}/${year}`;
+                    
+                    // Generate sample bookings for the selected day
+                    generateDailyBookings(day, month, year);
+                });
+            });
+        }
+
+        function generateDailyBookings(day, month, year) {
+            const dailyBookings = document.getElementById('dailyBookings');
+            const sampleBookings = [
+                { name: 'Nguyễn Văn A', tour: 'Du Lịch Vịnh Hạ Long', time: '08:00', status: 'confirmed' },
+                { name: 'Trần Thị B', tour: 'Kỳ Nghỉ Nha Trang', time: '09:30', status: 'pending' },
+                { name: 'Lê Văn C', tour: 'Phiêu Lưu Hà Giang', time: '10:00', status: 'completed' },
+                { name: 'Phạm Thị D', tour: 'Tour Huế & Hội An', time: '14:00', status: 'confirmed' },
+                { name: 'Hoàng Văn E', tour: 'Khám Phá Đà Lạt', time: '15:30', status: 'pending' },
+            ];
+            
+            // Randomize number of bookings
+            const numBookings = Math.floor(Math.random() * 4) + 2;
+            const selectedBookings = sampleBookings.slice(0, numBookings);
+            
+            dailyBookings.innerHTML = selectedBookings.map(booking => `
+                <div class="booking-item">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop" alt="Customer" class="booking-avatar">
+                    <div class="booking-info">
+                        <div class="booking-name">${booking.name}</div>
+                        <div class="booking-tour">${booking.tour}</div>
+                    </div>
+                    <div class="booking-time">
+                        <span class="booking-status-dot status-${booking.status}"></span>${booking.time}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Previous month button
+        document.getElementById('prevMonth').addEventListener('click', function() {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            generateCalendar(currentMonth, currentYear);
+        });
+
+        // Next month button
+        document.getElementById('nextMonth').addEventListener('click', function() {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            generateCalendar(currentMonth, currentYear);
+        });
+
+        // Filter pills click handler
+        document.querySelectorAll('.filter-pill').forEach(pill => {
+            pill.addEventListener('click', function() {
+                document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Initial calendar generation
+        generateCalendar(currentMonth, currentYear);
+        
+        // ============================================
+        // NOTIFICATION BELL FUNCTIONALITY
+        // ============================================
+        
+        let notificationInterval;
+        
+        // Toggle notification dropdown
+        function toggleNotifications() {
+            const dropdown = document.querySelector('.notification-dropdown');
+            const bell = document.querySelector('.icon-btn:has(i.fas.fa-bell)');
+            
+            if (dropdown.style.display === 'block') {
+                dropdown.style.display = 'none';
+                bell.classList.remove('bell-ringing');
+            } else {
+                dropdown.style.display = 'block';
+                ringBell();
+            }
+        }
+        
+        // Ring bell animation
+        function ringBell() {
+            const bell = document.querySelector('.icon-btn:has(i.fas.fa-bell)');
+            bell.classList.add('bell-ringing');
+            setTimeout(() => {
+                bell.classList.remove('bell-ringing');
+            }, 3000);
+        }
+        
+        // Mark single notification as read
+        function markAsRead(element) {
+            element.classList.remove('unread');
+            updateNotificationCount();
+        }
+        
+        // Mark all notifications as read
+        function markAllRead() {
+            const items = document.querySelectorAll('.notification-item.unread');
+            items.forEach(item => {
+                item.classList.remove('unread');
+            });
+            updateNotificationCount();
+        }
+        
+        // Update notification badge count
+        function updateNotificationCount() {
+            const unreadItems = document.querySelectorAll('.notification-item.unread');
+            const badge = document.querySelector('.notification-badge');
+            badge.textContent = unreadItems.length || '';
+            if (unreadItems.length === 0) {
+                badge.style.display = 'none';
+            } else {
+                badge.style.display = 'flex';
+            }
+        }
+        
+        // Simulate new notifications
+        function simulateNewNotification() {
+            const notifications = [
+                { title: 'Lịch mới được tạo', desc: 'Tour Vịnh Hạ Long ngày 20/3', icon: 'fa-calendar-plus', bg: 'bg-success' },
+                { title: 'Cần xác nhận lịch', desc: '5 lịch cần xác nhận', icon: 'fa-exclamation-triangle', bg: 'bg-warning' },
+                { title: 'Thay đổi giờ khởi hành', desc: 'Tour Sapa đổi giờ từ 7h sang 6h30', icon: 'fa-clock', bg: 'bg-info' }
+            ];
+            
+            // Create notification dropdown if not exists
+            let dropdown = document.querySelector('.notification-dropdown');
+            if (!dropdown) {
+                const bellBtn = document.querySelector('.icon-btn:has(i.fas.fa-bell)');
+                dropdown = document.createElement('div');
+                dropdown.className = 'notification-dropdown';
+                dropdown.style.cssText = `
+                    position: fixed;
+                    top: 80px;
+                    right: 24px;
+                    width: 350px;
+                    max-height: 450px;
+                    background: white;
+                    border-radius: 12px;
+                    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+                    z-index: 9999;
+                    display: none;
+                    overflow: hidden;
+                `;
+                dropdown.innerHTML = `
+                    <div class="notification-header" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #e9ecef; background: linear-gradient(135deg, #052461 0%, #1a3a7a 100%); color: white;">
+                        <h6>Thông Báo</h6>
+                        <button class="mark-all-read" onclick="markAllRead()" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 5px 12px; border-radius: 15px; font-size: 12px; cursor: pointer;">Đánh dấu đã đọc</button>
+                    </div>
+                    <div class="notification-list" id="notificationList" style="max-height: 350px; overflow-y: auto;"></div>
+                `;
+                bellBtn.parentNode.appendChild(dropdown);
+            }
+            
+            const notificationList = document.getElementById('notificationList') || dropdown.querySelector('.notification-list');
+            const randomNotification = notifications[Math.floor(Math.random() * notifications.length)];
+            
+            const newItem = document.createElement('div');
+            newItem.className = 'notification-item unread';
+            newItem.onclick = function() { markAsRead(this); };
+            newItem.innerHTML = `
+                <div class="notification-icon ${randomNotification.bg}" style="width: 40px; height: 40px; min-width: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px;">
+                    <i class="fas ${randomNotification.icon}"></i>
+                </div>
+                <div class="notification-content" style="flex: 1; min-width: 0;">
+                    <p class="notification-title" style="font-size: 14px; font-weight: 600; color: #212529; margin: 0 0 4px 0;">${randomNotification.title}</p>
+                    <p class="notification-desc" style="font-size: 12px; color: #6c757d; margin: 0 0 6px 0;">${randomNotification.desc}</p>
+                    <span class="notification-time" style="font-size: 11px; color: #adb5bd;">Vừa xong</span>
+                </div>`;
+            
+            notificationList.insertBefore(newItem, notificationList.firstChild);
+            updateNotificationCount();
+            ringBell();
+        }
+        
+        // Close notification dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.querySelector('.notification-dropdown');
+            const bell = document.querySelector('.icon-btn:has(i.fas.fa-bell)');
+            if (dropdown && !dropdown.contains(event.target) && !bell.contains(event.target)) {
+                dropdown.style.display = 'none';
+                bell.classList.remove('bell-ringing');
+            }
+        });
+        
+        // Add bell click handler
+        document.querySelector('.icon-btn:has(i.fas.fa-bell)').onclick = toggleNotifications;
+        
+        // Simulate incoming notifications every 30 seconds
+        notificationInterval = setInterval(simulateNewNotification, 30000);
+        
+        // Initial count update and ring
+        setTimeout(() => {
+            updateNotificationCount();
+            ringBell();
+        }, 2000);
+        
+        // ============================================
+        // SETTINGS FUNCTIONALITY
+        // ============================================
+        
+        function toggleSettings() {
+            // Create settings dropdown if not exists
+            let settingsDropdown = document.querySelector('.settings-dropdown');
+            if (!settingsDropdown) {
+                const settingsBtn = document.querySelector('.icon-btn:has(i.fas.fa-cog)');
+                settingsDropdown = document.createElement('div');
+                settingsDropdown.className = 'settings-dropdown';
+                settingsDropdown.id = 'settingsDropdown';
+                settingsDropdown.style.cssText = `
+                    position: fixed;
+                    top: 80px;
+                    right: 24px;
+                    width: 350px;
+                    background: white;
+                    border-radius: 12px;
+                    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+                    z-index: 9999;
+                    display: none;
+                    overflow: hidden;
+                `;
+                settingsDropdown.innerHTML = `
+                    <div class="settings-header" style="padding: 15px 20px; border-bottom: 1px solid #e9ecef; background: linear-gradient(135deg, #052461 0%, #1a3a7a 100%); color: white;">
+                        <h6>Cài Đặt</h6>
+                    </div>
+                    <div class="settings-list" style="padding: 10px 0;">
+                        <div class="settings-item" style="display: flex; align-items: center; gap: 12px; padding: 12px 20px; cursor: pointer;">
+                            <div class="settings-item-icon" style="width: 36px; height: 36px; min-width: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; background: rgba(13, 110, 253, 0.1); color: #0d6efd;">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="settings-item-content" style="flex: 1;">
+                                <p class="settings-item-title" style="font-size: 14px; font-weight: 600; color: #212529; margin: 0 0 2px 0;">Thông Tin Cá Nhân</p>
+                                <p class="settings-item-desc" style="font-size: 12px; color: #6c757d; margin: 0;">Cập nhật thông tin profile</p>
+                            </div>
+                        </div>
+                        <!-- Add other settings items here as needed -->
+                        <div class="settings-divider" style="height: 1px; background: #e9ecef; margin: 8px 0;"></div>
+                        <div class="settings-item logout-item" style="display: flex; align-items: center; gap: 12px; padding: 12px 20px; cursor: pointer;">
+                            <div class="settings-item-icon" style="width: 36px; height: 36px; min-width: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: rgba(220, 53, 69, 0.1); color: #dc3545;">
+                                <i class="fas fa-sign-out-alt"></i>
+                            </div>
+                            <div class="settings-item-content" style="flex: 1;">
+                                <p class="settings-item-title" style="font-size: 14px; font-weight: 600; color: #212529; margin: 0 0 2px 0;">Đăng Xuất</p>
+                                <p class="settings-item-desc" style="font-size: 12px; color: #6c757d; margin: 0;">Thoát khỏi hệ thống</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                settingsBtn.parentNode.appendChild(settingsDropdown);
+            }
+            
+            const notificationDropdown = document.querySelector('.notification-dropdown');
+            
+            // Close notification if open
+            if (notificationDropdown && notificationDropdown.style.display === 'block') {
+                notificationDropdown.style.display = 'none';
+            }
+            
+            if (settingsDropdown.style.display === 'block') {
+                settingsDropdown.style.display = 'none';
+            } else {
+                settingsDropdown.style.display = 'block';
+            }
+        }
+        
+        // Close settings on outside click
+        document.addEventListener('click', function(event) {
+            const settingsDropdown = document.querySelector('.settings-dropdown');
+            const settingsBtn = document.querySelector('.icon-btn:has(i.fas.fa-cog)');
+            if (settingsDropdown && !settingsDropdown.contains(event.target) && !settingsBtn.contains(event.target)) {
+                settingsDropdown.style.display = 'none';
+            }
+        });
+        
+        // Add settings button click handler
+        document.querySelector('.icon-btn:has(i.fas.fa-cog)').onclick = toggleSettings;
+    </script>
+</body>
+</html>
+

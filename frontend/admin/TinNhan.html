@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Tin Nhắn</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/Trangchu_ad.css">
+    <style>
+        /* Message Stats Cards */
+        .message-stats-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            height: 100%;
+            min-height: 100px;
+        }
+
+        .message-stats-card:nth-child(1) {
+            background: linear-gradient(135deg, rgba(13, 110, 253, 0.08) 0%, rgba(13, 110, 253, 0.04) 100%);
+            border-left: 4px solid #0d6efd;
+        }
+
+        .message-stats-card:nth-child(2) {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.08) 0%, rgba(255, 193, 7, 0.04) 100%);
+            border-left: 4px solid #ffc107;
+        }
+
+        .message-stats-card:nth-child(3) {
+            background: linear-gradient(135deg, rgba(25, 135, 84, 0.08) 0%, rgba(25, 135, 84, 0.04) 100%);
+            border-left: 4px solid #198754;
+        }
+
+        .message-stats-card:nth-child(4) {
+            background: linear-gradient(135deg, rgba(13, 202, 240, 0.08) 0%, rgba(13, 202, 240, 0.04) 100%);
+            border-left: 4px solid #0dcaf0;
+        }
+
+        .message-stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+
+        .message-stats-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .message-stats-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .message-stats-label {
+            font-size: 14px;
+            color: #6c757d;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .message-stats-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #003499;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        /* Message Table */
+        .message-table {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .message-table th {
+            background: #f8f9fa;
+            color: #6c757d;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            border-bottom: 1px solid #e9ecef;
+            padding: 16px;
+        }
+
+        .message-table td {
+            border-bottom: 1px solid #f0f0f0;
+            padding: 16px;
+            vertical-align: middle;
+        }
+
+        .message-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .avatar-1 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .avatar-2 {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .avatar-3 {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .avatar-4 {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .avatar-5 {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        /* Contact Info */
+        .contact-info-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .contact-info-text strong {
+            color: #052461;
+            font-size: 14px;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .contact-info-text small {
+            color: #6c757d;
+            font-size: 12px;
+        }
+
+        /* Message Preview */
+        .message-preview {
+            color: #6c757d;
+            font-size: 13px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 250px;
+        }
+
+        .message-preview.unread {
+            color: #212529;
+            font-weight: 500;
+        }
+
+        /* Message Status Badge */
+        .message-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-unread {
+            background: rgba(13, 110, 253, 0.1);
+            color: #0d6efd;
+        }
+
+        .status-read {
+            background: rgba(108, 117, 125, 0.1);
+            color: #6c757d;
+        }
+
+        .status-replied {
+            background: rgba(25, 135, 84, 0.1);
+            color: #198754;
+        }
+
+        .status-pending {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+        }
+
+        /* Action Buttons */
+        .btn-action {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            margin: 0 2px;
+        }
+
+        .btn-view {
+            background: rgba(13, 110, 253, 0.1);
+            color: #0d6efd;
+        }
+
+        .btn-view:hover {
+            background: #0d6efd;
+            color: white;
+        }
+
+        .btn-reply {
+            background: rgba(25, 135, 84, 0.1);
+            color: #198754;
+        }
+
+        .btn-reply:hover {
+            background: #198754;
+            color: white;
+        }
+
+        .btn-delete {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+
+        .btn-delete:hover {
+            background: #dc3545;
+            color: white;
+        }
+
+        /* Filter Pills */
+        .filter-pill {
+            padding: 8px 20px;
+            border-radius: 25px;
+            border: 1px solid #e9ecef;
+            background: white;
+            color: #6c757d;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-pill:hover, .filter-pill.active {
+            background: #052461;
+            color: white;
+            border-color: #052461;
+        }
+
+        /* Pagination */
+        .pagination-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .page-info {
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        .pagination {
+            display: flex;
+            gap: 8px;
+        }
+
+        .page-item {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid #e9ecef;
+            background: white;
+            color: #6c757d;
+        }
+
+        .page-item:hover {
+            background: #052461;
+            color: white;
+            border-color: #052461;
+        }
+
+        .page-item.active {
+            background: #052461;
+            color: white;
+            border-color: #052461;
+        }
+
+        /* Right Sidebar Notification Styles */
+        .bg-info {
+            background: rgba(13, 202, 240, 0.1) !important;
+            color: #0dcaf0 !important;
+        }
+
+        .bg-danger {
+            background: rgba(220, 53, 69, 0.1) !important;
+            color: #dc3545 !important;
+        }
+
+        .bg-warning {
+            background: rgba(255, 193, 7, 0.1) !important;
+            color: #ffc107 !important;
+        }
+
+        .bg-success {
+            background: rgba(25, 135, 84, 0.1) !important;
+            color: #198754 !important;
+        }
+
+        @keyframes bellRing {
+            0% { transform: rotate(0deg); }
+            10% { transform: rotate(15deg); }
+            20% { transform: rotate(-15deg); }
+            30% { transform: rotate(10deg); }
+            40% { transform: rotate(-10deg); }
+            50% { transform: rotate(5deg); }
+            60% { transform: rotate(-5deg); }
+            70% { transform: rotate(0deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        .bell-ringing i {
+            animation: bellRing 0.5s ease-in-out infinite;
+            color: #0d6efd !important;
+        }
+
+        .icon-btn {
+            width: 3.75rem;
+            height: 3.75rem;
+            border: none;
+            background-color: var(--bg-light);
+            border-radius: 0.75rem;
+            cursor: pointer;
+            position: relative;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+
+        .icon-btn:hover {
+            background-color: var(--border-color);
+        }
+
+        .icon-btn i {
+            font-size: 1.25rem;
+            color: #495057;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            width: 18px;
+            height: 18px;
+            background-color: #dc3545;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: white;
+            font-weight: 600;
+        }
+
+        .notification-dropdown {
+            position: fixed;
+            top: 80px;
+            right: 24px;
+            width: 350px;
+            max-height: 450px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            z-index: 9999;
+            display: none;
+            overflow: hidden;
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e9ecef;
+            background: linear-gradient(135deg, #052461 0%, #1a3a7a 100%);
+            color: white;
+        }
+
+        .notification-header h6 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .mark-all-read {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .mark-all-read:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .notification-list {
+            max-height: 350px;
+            overflow-y: auto;
+        }
+
+        .notification-item {
+            display: flex;
+            gap: 12px;
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .notification-item:hover {
+            background: #f8f9fa;
+        }
+
+        .notification-item.unread {
+            background: #e7f1ff;
+        }
+
+        .notification-item.unread::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 6px;
+            background: #0d6efd;
+            border-radius: 50%;
+        }
+
+        .notification-icon {
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            margin: 0 0 4px 0;
+            font-size: 13px;
+            color: #212529;
+        }
+
+        .notification-desc {
+            font-size: 12px;
+            color: #6c757d;
+            margin: 0 0 4px 0;
+            line-height: 1.3;
+        }
+
+        .notification-time {
+            font-size: 11px;
+            color: #999;
+        }
+
+        .notification-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .notification-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .notification-list::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 3px;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .right-sidebar {
+            width: var(--right-sidebar-width);
+            height: 100vh;
+            position: fixed;
+            right: 0;
+            top: 0;
+            overflow-y: auto;
+            padding: 2rem 1.5rem;
+            border-left: 0.0625rem solid var(--border-color);
+            display: block;
+            background-color: var(--bg-light);
+        }
+
+        /* Content Title */
+        .content-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #052461;
+            margin: 0;
+        }
+
+        .content-subtitle {
+            font-size: 14px;
+            color: #6c757d;
+            margin: 4px 0 0 0;
+        }
+
+        /* Header Actions */
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-primary-outline {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 1px solid #0d6efd;
+            background: white;
+            color: #0d6efd;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary-outline:hover {
+            background: #0d6efd;
+            color: white;
+        }
+
+        /* Chat Modal */
+        .chat-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .chat-modal.active {
+            display: flex;
+        }
+
+        .chat-container {
+            width: 450px;
+            height: 90%;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            box-shadow: -5px 0 20px rgba(0, 0, 0, 0.15);
+            border-radius: 16px;
+            margin-right: 20px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e9ecef;
+            background: white;
+        }
+
+        .chat-header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .chat-header-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            position: relative;
+        }
+
+        .chat-header-avatar::after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #31a24c;
+            border: 2px solid white;
+            border-radius: 50%;
+            bottom: 0;
+            right: 0;
+        }
+
+        .chat-header-info h4 {
+            margin: 0;
+            font-size: 15px;
+            font-weight: 600;
+            color: #052461;
+        }
+
+        .chat-header-info small {
+            display: block;
+            color: #6c757d;
+            font-size: 12px;
+        }
+
+        .chat-header-icons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .chat-header-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #f0f0f0;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-size: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .chat-header-btn:hover {
+            background: #e9ecef;
+            color: #052461;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: #f8f9fa;
+        }
+
+        .chat-message-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .chat-message-group.received {
+            justify-content: flex-start;
+            align-items: flex-end;
+        }
+
+        .chat-message-group.sent {
+            justify-content: flex-end;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+        }
+
+        .chat-message-content {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .chat-message-line {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+        }
+
+        .chat-message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        .chat-message-bubble {
+            max-width: 65%;
+            padding: 10px 14px;
+            border-radius: 16px;
+            font-size: 14px;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+
+        .chat-message-group.received .chat-message-bubble {
+            background: white;
+            color: #212529;
+            border: 1px solid #e9ecef;
+        }
+
+        .chat-message-group.sent .chat-message-bubble {
+            background: #003499;
+            color: white;
+        }
+
+        .chat-message-time {
+            font-size: 11px;
+            color: #999;
+        }
+
+        .chat-message-group.received .chat-message-time {
+            text-align: left;
+            margin-left: 0;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .chat-message-group.sent .chat-message-time {
+            text-align: right;
+            padding-right: 2px;
+        }
+
+        .chat-input-area {
+            padding: 16px 20px;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+            background: white;
+        }
+
+        .chat-input-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #f0f0f0;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-size: 16px;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .chat-input-icon:hover {
+            background: #e9ecef;
+            color: #052461;
+        }
+
+        .chat-input {
+            flex: 1;
+            border: 1px solid #e9ecef;
+            border-radius: 20px;
+            padding: 10px 16px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            max-height: 80px;
+            resize: none;
+        }
+
+        .chat-input:focus {
+            border-color: #003499;
+            box-shadow: 0 0 0 3px rgba(0, 52, 153, 0.1);
+        }
+
+        .chat-send-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #003499;
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .chat-send-btn:hover {
+            background: #052461;
+        }
+
+        /* Sidebar Section */
+        .sidebar-section {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .sidebar-section:last-child {
+            border-bottom: none;
+        }
+
+        .sidebar-section h6 {
+            margin-bottom: 1rem;
+            color: #052461;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        /* Customer/Item List */
+        .customer-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .customer-item {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            padding: 12px;
+            border-radius: 8px;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .customer-item:hover {
+            background: #e9ecef;
+        }
+
+        .customer-item strong {
+            display: block;
+            font-size: 14px;
+            color: #052461;
+            margin-bottom: 2px;
+        }
+
+        .customer-item small {
+            font-size: 12px;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <!-- Left Sidebar -->
+    <aside class="sidebar bg-white shadow-sm">
+        <div class="logo-container">
+            <img src="../image/Logo.png" alt="Tripto Logo" class="logo-img">
+        </img>
+        
+        <nav class="sidebar-nav">
+            <a href="Trangchu_ad.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Bảng Điều Khiển</span>
+            </a>
+            <a href="Tour_ad.html" class="nav-item">
+                <i class="fas fa-map-marked-alt"></i>
+                <span>Tour Du Lịch</span>
+            </a>
+            <a href="TourDaDat_ad.html" class="nav-item">
+                <i class="fas fa-calendar-check"></i>
+                <span>Tour Đã Đặt</span>
+            </a>
+            <a href="Lich_ad.html" class="nav-item">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Lịch</span>
+            </a>
+            <a href="ThanhToan.html" class="nav-item">
+                <i class="fas fa-credit-card"></i>
+                <span>Thanh Toán</span>
+            </a>
+            <a href="KhachHang.html" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Khách Hàng</span>
+            </a>
+            <a href="TinNhan.html" class="nav-item active">
+                <i class="fas fa-comments"></i>
+                <span>Tin Nhắn</span>
+            </a>
+            <a href="HoatDong.html" class="nav-item">
+                <i class="fas fa-chart-line"></i>
+                <span>Hoạt Động Thống Kê</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="content-inner">
+            <!-- Page Header -->
+            <div class="content-header">
+                <h1 class="dashboard-title" style="color: #052461;">Quản Lý Tin Nhắn</h1>
+                <div class="d-flex align-items-center gap-3">
+                    <button class="btn-primary-outline">
+                        <i class="fas fa-sync-alt"></i>
+                        Làm Mới
+                    </button>
+                    <!-- User Menu in Header -->
+                    <div class="user-menu-header">
+                        <div class="notification-wrapper">
+                            <button class="icon-btn notification-btn" id="notificationBell" onclick="toggleNotifications()">
+                                <i class="fas fa-bell"></i>
+                                <span class="notification-badge" id="notificationBadge">3</span>
+                            </button>
+                        </div>
+                        <button class="icon-btn" id="settingsBtn" onclick="toggleSettings()">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                        <div class="user-profile">
+                            <div class="user-info">
+                                <strong class="d-block">GTD</strong>
+                                <small class="text-muted">Quản Trị Viên</small>
+                            </div>
+                            <div class="avatar-circle">GT</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <section class="overview-section">
+                <div class="row g-4">
+                    <div class="col-xl-3 col-md-6">
+                        <div class="message-stats-card">
+                            <div class="message-stats-icon bg-primary bg-opacity-10">
+                                <i class="fas fa-envelope text-primary"></i>
+                            </div>
+                            <div class="message-stats-info">
+                                <p class="message-stats-label">Tổng tin nhắn</p>
+                                <h3 class="message-stats-value">1,247</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="message-stats-card">
+                            <div class="message-stats-icon bg-warning bg-opacity-10">
+                                <i class="fas fa-hourglass-half text-warning"></i>
+                            </div>
+                            <div class="message-stats-info">
+                                <p class="message-stats-label">Chưa đọc</p>
+                                <h3 class="message-stats-value">35</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="message-stats-card">
+                            <div class="message-stats-icon bg-success bg-opacity-10">
+                                <i class="fas fa-check-circle text-success"></i>
+                            </div>
+                            <div class="message-stats-info">
+                                <p class="message-stats-label">Đã trả lời</p>
+                                <h3 class="message-stats-value">1,167</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="message-stats-card">
+                            <div class="message-stats-icon bg-danger bg-opacity-10">
+                                <i class="fas fa-clock text-danger"></i>
+                            </div>
+                            <div class="message-stats-info">
+                                <p class="message-stats-label">Chờ trả lời</p>
+                                <h3 class="message-stats-value">45</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Filter Section -->
+            <section class="mb-4">
+                <div class="d-flex gap-2 align-items-center" style="flex-wrap: nowrap; overflow-x: auto; background: white; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                    <button class="filter-pill active" style="flex-shrink: 0;">Tất cả</button>
+                    <button class="filter-pill" style="flex-shrink: 0;">Chưa đọc</button>
+                    <button class="filter-pill" style="flex-shrink: 0;">Đã trả lời</button>
+                    <button class="filter-pill" style="flex-shrink: 0;">Chờ trả lời</button>
+                    <input type="date" class="form-control" style="border-radius: 25px; padding: 8px 12px; border: 1px solid #e9ecef; flex-shrink: 0; width: 160px; color: #6c757d; font-size: 14px; font-weight: 500;">
+                </div>
+            </section>
+
+            <!-- Message Table -->
+            <section class="message-table-container">
+                <div class="message-table">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>KHÁCH HÀNG</th>
+                                <th>NỘI DUNG</th>
+                                <th>NGÀY GỬI</th>
+                                <th>TRẠNG THÁI</th>
+                                <th>THAO TÁC</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Row 1 -->
+                            <tr onclick="openChat('NK', 'Nguyễn Khoa', '0987654321', 'avatar-1')">
+                                <td>
+                                    <div class="contact-info-cell">
+                                        <div class="message-avatar avatar-1">NK</div>
+                                        <div class="contact-info-text">
+                                            <strong>Nguyễn Khoa</strong>
+                                            <small>0987654321</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="message-preview unread">Hỏi về tour du lịch Đà Nẵng...</div>
+                                </td>
+                                <td>30/03/2026</td>
+                                <td>
+                                    <span class="message-status status-unread">Chưa đọc</span>
+                                </td>
+                                <td>
+                                    <button class="btn-action btn-view" title="Xem">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn-action btn-reply" title="Trả lời">
+                                        <i class="fas fa-reply"></i>
+                                    </button>
+                                    <button class="btn-action btn-delete" title="Xóa">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+
+                            <!-- Row 2 -->
+                            <tr onclick="openChat('TC', 'Trần Cường', '0912345678', 'avatar-2')">
+                                <td>
+                                    <div class="contact-info-cell">
+                                        <div class="message-avatar avatar-2">TC</div>
+                                        <div class="contact-info-text">
+                                            <strong>Trần Cường</strong>
+                                            <small>0912345678</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="message-preview">Cảm ơn, mình sẽ liên hệ lại sau...</div>
+                                </td>
+                                <td>29/03/2026</td>
+                                <td>
+                                    <span class="message-status status-replied">Đã trả lời</span>
+                                </td>
+                                <td>
+                                    <button class="btn-action btn-view" title="Xem">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn-action btn-reply" title="Trả lời">
+                                        <i class="fas fa-reply"></i>
+                                    </button>
+                                    <button class="btn-action btn-delete" title="Xóa">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+
+                            <!-- Row 3 -->
+                            <tr onclick="openChat('LH', 'Lê Hương', '0908765432', 'avatar-3')">
+                                <td>
+                                    <div class="contact-info-cell">
+                                        <div class="message-avatar avatar-3">LH</div>
+                                        <div class="contact-info-text">
+                                            <strong>Lê Hương</strong>
+                                            <small>0908765432</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="message-preview">Tour khỏe mạnh tuyệt vời! Cảm ơn...</div>
+                                </td>
+                                <td>28/03/2026</td>
+                                <td>
+                                    <span class="message-status status-replied">Đã trả lời</span>
+                                </td>
+                                <td>
+                                    <button class="btn-action btn-view" title="Xem">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn-action btn-reply" title="Trả lời">
+                                        <i class="fas fa-reply"></i>
+                                    </button>
+                                    <button class="btn-action btn-delete" title="Xóa">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+
+                            <!-- Row 4 -->
+                            <tr onclick="openChat('PV', 'Phạm Văn', '0945123456', 'avatar-4')">
+                                <td>
+                                    <div class="contact-info-cell">
+                                        <div class="message-avatar avatar-4">PV</div>
+                                        <div class="contact-info-text">
+                                            <strong>Phạm Văn</strong>
+                                            <small>0945123456</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="message-preview unread">Giá vé có thể giảm được không?</div>
+                                </td>
+                                <td>27/03/2026</td>
+                                <td>
+                                    <span class="message-status status-pending">Chờ trả lời</span>
+                                </td>
+                                <td>
+                                    <button class="btn-action btn-view" title="Xem">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn-action btn-reply" title="Trả lời">
+                                        <i class="fas fa-reply"></i>
+                                    </button>
+                                    <button class="btn-action btn-delete" title="Xóa">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+
+                            <!-- Row 5 -->
+                            <tr onclick="openChat('ĐL', 'Đặng Linh', '0923456789', 'avatar-5')">
+                                <td>
+                                    <div class="contact-info-cell">
+                                        <div class="message-avatar avatar-5">ĐL</div>
+                                        <div class="contact-info-text">
+                                            <strong>Đặng Linh</strong>
+                                            <small>0923456789</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="message-preview unread">Tôi muốn đặt tour cho nhóm 20 người...</div>
+                                </td>
+                                <td>26/03/2026</td>
+                                <td>
+                                    <span class="message-status status-unread">Chưa đọc</span>
+                                </td>
+                                <td>
+                                    <button class="btn-action btn-view" title="Xem">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn-action btn-reply" title="Trả lời">
+                                        <i class="fas fa-reply"></i>
+                                    </button>
+                                    <button class="btn-action btn-delete" title="Xóa">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+
+                            <!-- Row 6 -->
+                            <tr onclick="openChat('MB', 'Minh Bình', '0934567890', 'avatar-1')">
+                                <td>
+                                    <div class="contact-info-cell">
+                                        <div class="message-avatar avatar-1">MB</div>
+                                        <div class="contact-info-text">
+                                            <strong>Minh Bình</strong>
+                                            <small>0934567890</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="message-preview">Có thể hủy đơn hàng không?</div>
+                                </td>
+                                <td>25/03/2026</td>
+                                <td>
+                                    <span class="message-status status-read">Đã đọc</span>
+                                </td>
+                                <td>
+                                    <button class="btn-action btn-view" title="Xem">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn-action btn-reply" title="Trả lời">
+                                        <i class="fas fa-reply"></i>
+                                    </button>
+                                    <button class="btn-action btn-delete" title="Xóa">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Pagination -->
+            <div class="pagination-container">
+                <div class="page-info">Hiển thị 1 đến 6 trong 45 tin nhắn</div>
+                <div class="pagination">
+                    <div class="page-item"><i class="fas fa-chevron-left"></i></div>
+                    <div class="page-item active">1</div>
+                    <div class="page-item">2</div>
+                    <div class="page-item">3</div>
+                    <div class="page-item">...</div>
+                    <div class="page-item">8</div>
+                    <div class="page-item"><i class="fas fa-chevron-right"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Sidebar -->
+    <aside class="right-sidebar bg-white">
+        <!-- User Menu - Horizontal aligned -->
+        <div class="user-menu">
+            <!-- Notification Bell with Animation -->
+            <div class="notification-wrapper">
+                <button class="icon-btn notification-btn" id="notificationBell" onclick="toggleNotifications()">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge" id="notificationBadge">3</span>
+                </button>
+                
+                <!-- Notification Dropdown -->
+                <div class="notification-dropdown" id="notificationDropdown">
+                    <div class="notification-header">
+                        <h6>Thông Báo</h6>
+                        <button class="mark-all-read" onclick="markAllRead()">Đánh dấu đã đọc</button>
+                    </div>
+                    <div class="notification-list" id="notificationList">
+                        <div class="notification-item unread" onclick="markAsRead(this)">
+                            <div class="notification-icon bg-danger">
+                                <i class="fas fa-exclamation-circle"></i>
+                            </div>
+                            <div class="notification-content">
+                                <p class="notification-title">Tin nhắn chưa trả lời</p>
+                                <p class="notification-desc">Khách hàng Nguyễn Khoa đang chờ trả lời</p>
+                                <span class="notification-time">5 phút trước</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="icon-btn" id="settingsBtn" onclick="toggleSettings()">
+                <i class="fas fa-cog"></i>
+            </button>
+            <div class="user-profile">
+                <div class="user-info">
+                    <strong class="d-block">GTD</strong>
+                    <small class="text-muted">Quản Trị Viên</small>
+                </div>
+                <div class="avatar-circle">GT</div>
+            </div>
+        </div>
+
+        <!-- Thao Tác Nhanh -->
+        <section class="sidebar-section">
+            <h6 class="mb-3" style="color: #052461; font-weight: 600;">Thao Tác Nhanh</h6>
+            <div class="d-grid gap-2">
+                <button class="btn btn-primary" style="background: #052461;">
+                    <i class="fas fa-envelope me-2"></i>Soạn Tin Mới
+                </button>
+                <button class="btn btn-outline-primary">
+                    <i class="fas fa-download me-2"></i>Xuất Hội Thoại
+                </button>
+                <button class="btn btn-outline-primary">
+                    <i class="fas fa-trash-alt me-2"></i>Xóa Spam
+                </button>
+            </div>
+        </section>
+
+        <!-- Khách Hàng Quan Trọng -->
+        <section class="sidebar-section">
+            <h6 class="mb-3" style="color: #052461; font-weight: 600;">Khách Hàng Quan Trọng</h6>
+            <div class="customer-list">
+                <div class="customer-item">
+                    <div style="width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); display: flex; align-items: center; justify-content: center; color: #333; font-weight: 700; font-size: 14px;">♛</div>
+                    <div>
+                        <strong>VIP Premium</strong>
+                        <small class="text-muted d-block">28 khách hàng</small>
+                    </div>
+                </div>
+                <div class="customer-item">
+                    <div style="width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 12px;">★★</div>
+                    <div>
+                        <strong>Khách Thường Xuyên</strong>
+                        <small class="text-muted d-block">156 khách hàng</small>
+                    </div>
+                </div>
+                <div class="customer-item">
+                    <div style="width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, #6c757d 0%, #495057 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 12px;"><i class="fas fa-user"></i></div>
+                    <div>
+                        <strong>Khách Tiềm Năng</strong>
+                        <small class="text-muted d-block">342 khách hàng</small>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Liên Hệ Thường Xuyên -->
+        <section class="sidebar-section">
+            <h6 class="mb-3" style="color: #052461; font-weight: 600;">Liên Hệ Thường Xuyên</h6>
+            <div class="customer-list">
+                <div class="customer-item">
+                    <div style="width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 14px;">NK</div>
+                    <div>
+                        <strong>Nguyễn Khoa</strong>
+                        <small class="text-muted d-block">12 tin nhắn</small>
+                    </div>
+                </div>
+                <div class="customer-item">
+                    <div style="width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 14px;">TC</div>
+                    <div>
+                        <strong>Trần Cường</strong>
+                        <small class="text-muted d-block">8 tin nhắn</small>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </aside>
+
+    <!-- Chat Modal -->
+    <div id="chatModal" class="chat-modal" onclick="if(event.target === this) closeChat()">
+        <div class="chat-container">
+            <div class="chat-header">
+                <div class="chat-header-left">
+                    <div id="chatAvatar" class="chat-header-avatar avatar-1">NK</div>
+                    <div class="chat-header-info">
+                        <h4 id="chatName">Nguyễn Khoa</h4>
+                        <small id="chatPhone">Đang hoạt động</small>
+                    </div>
+                </div>
+                <div class="chat-header-icons">
+                    <button class="chat-header-btn" title="Gọi điện">
+                        <i class="fas fa-phone"></i>
+                    </button>
+                    <button class="chat-header-btn" title="Gọi video">
+                        <i class="fas fa-video"></i>
+                    </button>
+                    <button class="chat-header-btn" title="Thông tin">
+                        <i class="fas fa-info-circle"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <!-- Messages will be dynamically added here -->
+            </div>
+
+            <div class="chat-input-area">
+                <button class="chat-input-icon" title="Đính kèm tệp">
+                    <i class="fas fa-paperclip"></i>
+                </button>
+                <input type="text" id="chatInput" class="chat-input" placeholder="Nhập tin nhắn..." />
+                <button class="chat-send-btn" onclick="sendMessage()" title="Gửi">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Initialize admin name from localStorage
+        function initializeAdminProfile() {
+            const adminName = localStorage.getItem('adminName') || 'Admin';
+            const nameParts = adminName.trim().split(' ');
+            const initials = nameParts.map(part => part.charAt(0).toUpperCase()).join('');
+            const nameElement = document.querySelector('.user-info strong');
+            if (nameElement) nameElement.textContent = adminName;
+            const avatarElement = document.querySelector('.avatar-circle');
+            if (avatarElement) avatarElement.textContent = initials.substring(0, 2);
+        }
+        window.addEventListener('DOMContentLoaded', initializeAdminProfile);
+
+        // Sample chat messages data
+        const chatData = {
+            'NK': [
+                { type: 'received', text: 'Xin chào! Tôi muốn hỏi về tour du lịch Đà Nẵng', time: '10:30' },
+                { type: 'sent', text: 'Chào bạn, vui lòng chọn ngày khởi hành', time: '10:31' },
+                { type: 'received', text: 'Tôi muốn đi từ ngày 15/4 đến 20/4', time: '10:32' }
+            ],
+            'TC': [
+                { type: 'received', text: 'Cảm ơn bạn, mình sẽ liên hệ lại sau', time: '09:15' },
+                { type: 'sent', text: 'Được, đợi tin của bạn', time: '09:16' }
+            ],
+            'LH': [
+                { type: 'received', text: 'Tour khỏe mạnh tuyệt vời! Cảm ơn rất nhiều', time: '08:45' },
+                { type: 'sent', text: 'Cảm ơn bạn đã tin tưởng chúng tôi', time: '08:46' }
+            ],
+            'PV': [
+                { type: 'received', text: 'Giá vé có thể giảm được không?', time: '14:20' }
+            ],
+            'ĐL': [
+                { type: 'received', text: 'Tôi muốn đặt tour cho nhóm 20 người', time: '11:50' },
+                { type: 'sent', text: 'Quá tuyệt vời! Bạn có thể cung cấp thêm chi tiết?', time: '11:51' }
+            ],
+            'MB': [
+                { type: 'received', text: 'Có thể hủy đơn hàng không?', time: '16:00' }
+            ]
+        };
+
+        function openChat(initials, name, phone, avatarClass) {
+            const modal = document.getElementById('chatModal');
+            const chatName = document.getElementById('chatName');
+            const chatPhone = document.getElementById('chatPhone');
+            const chatAvatar = document.getElementById('chatAvatar');
+            const chatMessages = document.getElementById('chatMessages');
+
+            // Update header
+            chatName.textContent = name;
+            chatPhone.textContent = 'Đang hoạt động';
+            chatAvatar.textContent = initials;
+            chatAvatar.className = 'chat-header-avatar ' + avatarClass;
+
+            // Load messages
+            chatMessages.innerHTML = '';
+            const messages = chatData[initials] || [];
+            messages.forEach(msg => {
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'chat-message-group ' + msg.type;
+                
+                if (msg.type === 'received') {
+                    groupDiv.innerHTML = `
+                        <div class="chat-message-avatar ${avatarClass}">${initials}</div>
+                        <div class="chat-message-content">
+                            <div class="chat-message-line">
+                                <div class="chat-message-bubble">${msg.text}</div>
+                                <div class="chat-message-time">${msg.time}</div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    groupDiv.innerHTML = `
+                        <div class="chat-message-bubble">${msg.text}</div>
+                        <div class="chat-message-time">${msg.time}</div>
+                    `;
+                }
+                
+                chatMessages.appendChild(groupDiv);
+            });
+
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Show modal
+            modal.classList.add('active');
+            document.getElementById('chatInput').focus();
+        }
+
+        function closeChat() {
+            const modal = document.getElementById('chatModal');
+            modal.classList.remove('active');
+            document.getElementById('chatInput').value = '';
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            
+            if (!text) return;
+
+            const chatMessages = document.getElementById('chatMessages');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'chat-message sent';
+            
+            const now = new Date();
+            const time = now.getHours().toString().padStart(2, '0') + ':' + 
+                        now.getMinutes().toString().padStart(2, '0');
+            
+            msgDiv.innerHTML = `
+                <div class="chat-message-content">${text}</div>
+                <div class="chat-message-time">${time}</div>
+            `;
+            
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            input.value = '';
+        }
+
+        // Allow sending message with Enter key
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && document.getElementById('chatInput') === document.activeElement) {
+                sendMessage();
+            }
+        });
+
+        // Existing code below...
+        // Filter buttons
+        document.querySelectorAll('.filter-pill').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-pill').forEach(el => el.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // ============================================
+        // NOTIFICATION DROPDOWN FUNCTIONALITY
+        // ============================================
+        
+        function toggleNotifications() {
+            const dropdown = document.getElementById('notificationDropdown');
+            const bell = document.getElementById('notificationBell');
+            
+            if (dropdown.style.display === 'block') {
+                dropdown.style.display = 'none';
+                bell.classList.remove('bell-ringing');
+            } else {
+                dropdown.style.display = 'block';
+                ringBell();
+            }
+        }
+        
+        function ringBell() {
+            const bell = document.getElementById('notificationBell');
+            bell.classList.add('bell-ringing');
+            setTimeout(() => {
+                bell.classList.remove('bell-ringing');
+            }, 3000);
+        }
+        
+        function markAsRead(element) {
+            element.classList.remove('unread');
+            updateNotificationCount();
+        }
+        
+        function markAllRead() {
+            const items = document.querySelectorAll('.notification-item.unread');
+            items.forEach(item => {
+                item.classList.remove('unread');
+            });
+            updateNotificationCount();
+        }
+        
+        function updateNotificationCount() {
+            const unreadItems = document.querySelectorAll('.notification-item.unread');
+            const badge = document.getElementById('notificationBadge');
+            badge.textContent = unreadItems.length;
+            if (unreadItems.length === 0) {
+                badge.style.display = 'none';
+            }
+        }
+        
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('notificationDropdown');
+            const bell = document.getElementById('notificationBell');
+            if (!dropdown.contains(event.target) && !bell.contains(event.target)) {
+                dropdown.style.display = 'none';
+                bell.classList.remove('bell-ringing');
+            }
+        });
+
+        // ============================================
+        // SETTINGS DROPDOWN FUNCTIONALITY
+        // ============================================
+        
+        function toggleSettings() {
+            const dropdown = document.getElementById('settingsDropdown');
+            const settingsBtn = document.getElementById('settingsBtn');
+            const notificationDropdown = document.getElementById('notificationDropdown');
+            
+            if (notificationDropdown && notificationDropdown.style.display === 'block') {
+                notificationDropdown.style.display = 'none';
+            }
+            
+            if (dropdown.style.display === 'block') {
+                dropdown.style.display = 'none';
+            } else {
+                dropdown.style.display = 'block';
+            }
+        }
+        
+        document.addEventListener('click', function(event) {
+            const settingsDropdown = document.getElementById('settingsDropdown');
+            const settingsBtn = document.getElementById('settingsBtn');
+            if (settingsDropdown && !settingsDropdown.contains(event.target) && !settingsBtn.contains(event.target)) {
+                settingsDropdown.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

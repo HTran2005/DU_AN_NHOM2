@@ -1,0 +1,1501 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tất Cả Đánh Giá Khách Hàng | Tripto</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/TRANGCHU_UI.css">
+    <style>
+        /* ============================================
+           REDESIGN STYLES - CONVERSION FOCUSED
+           ============================================ */
+        
+        :root {
+            --primary: #0057FF;
+            --primary-400: #3379ff;
+            --primary-dark: #0046cc;
+            --primary-50: #ebeffc;
+            --primary-900: #031230;
+            --neutral-900: #121316;
+            --neutral-700: #283037;
+            --neutral-500: #454C58;
+            --neutral-400: #656F81;
+            --neutral-200: #B5BAC2;
+            --neutral-100: #F1F2F3;
+            --white: #FFFFFF;
+            --success: #06C270;
+            --warning: #FFCC00;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: var(--neutral-900);
+            background-color: var(--white);
+            line-height: 1.5;
+        }
+
+        /* ============================================
+           HEADER - COMPACT & TRUSTWORTHY
+           ============================================ */
+        .header {
+            background-color: var(--white);
+            border-bottom: 1px solid var(--neutral-200);
+            height: 80px;
+            display: flex;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 32px;
+            gap: 24px;
+        }
+
+        .logo img {
+            height: 40px;
+            display: block;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .country {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--neutral-700);
+        }
+
+        .country img {
+            height: 20px;
+        }
+
+        .icon img {
+            height: 40px;
+            cursor: pointer;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 87, 255, 0.3);
+        }
+
+        /* Login Button Style */
+        .btn-login {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-login:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 87, 255, 0.3);
+        }
+
+        .btn-login svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* ============================================
+           REVIEW CAMPAIGN BANNER - Đồng nhất UUDAI, riêng biệt cho Đánh giá
+           ============================================ */
+        .review-campaign-section {
+            position: relative;
+            height: 50vh;
+            min-height: 420px;
+            max-height: 550px;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            background: var(--primary-900);
+        }
+
+        .review-campaign-bg {
+            position: absolute;
+            inset: 0;
+            background-image: url('https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            filter: saturate(1.1) brightness(1.05) contrast(1.1);
+        }
+
+        .review-campaign-bg::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(105deg, rgba(3, 18, 48, 0.88) 0%, rgba(3, 18, 48, 0.5) 50%, rgba(5, 36, 97, 0.4) 100%);
+        }
+
+        .review-campaign-wrapper {
+            position: relative;
+            z-index: 5;
+            width: 100%;
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 48px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 48px;
+        }
+
+        .review-campaign-content { flex: 0 0 58%; }
+
+        .review-campaign-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 204, 0, 0.12);
+            border: 1px solid var(--warning);
+            color: var(--warning);
+            font-size: 10px;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+        }
+
+        .review-campaign-badge::before {
+            content: '';
+            width: 6px; height: 6px;
+            background: var(--warning);
+            border-radius: 50%;
+            animation: reviewBlink 1.2s infinite;
+        }
+
+        @keyframes reviewBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+        .review-campaign-headline {
+            font-family: 'Roboto', sans-serif;
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--white);
+            line-height: 1.3;
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
+        }
+
+        .review-campaign-headline .highlight { color: var(--warning); }
+
+        .review-campaign-subtitle {
+            font-size: 16px;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.85);
+            line-height: 1.3;
+            margin-bottom: 28px;
+        }
+
+        .review-stats-inline { display: flex; align-items: center; gap: 24px; margin-bottom: 28px; flex-wrap: wrap; }
+
+        .review-stat-item { display: flex; align-items: center; gap: 10px; }
+
+        .review-stat-icon {
+            width: 44px; height: 44px;
+            background: rgba(0, 87, 255, 0.2);
+            border: 1px solid rgba(51, 121, 255, 0.5);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-400);
+            font-size: 18px;
+        }
+
+        .review-stat-text { font-size: 14px; font-weight: 600; color: var(--white); line-height: 1.3; }
+        .review-stat-text span { display: block; font-size: 11px; font-weight: 400; color: rgba(255, 255, 255, 0.7); }
+
+        .review-campaign-cta {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: var(--primary);
+            color: var(--white);
+            font-size: 16px;
+            font-weight: 600;
+            padding: 14px 32px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 14px rgba(0, 87, 255, 0.35);
+            border: none;
+            cursor: pointer;
+        }
+
+        .review-campaign-cta:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 87, 255, 0.4);
+        }
+
+        .review-campaign-visual { flex: 0 0 38%; display: flex; justify-content: flex-end; }
+
+        .review-benefit-card {
+            background: rgba(31, 34, 38, 0.92);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 32px;
+            width: 100%;
+            max-width: 380px;
+        }
+
+        .review-benefit-card-title {
+            font-size: 14px;
+            color: var(--primary-400);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .review-benefits-list { display: flex; flex-direction: column; gap: 14px; margin-bottom: 16px; }
+        .review-benefit-item { display: flex; align-items: center; gap: 12px; text-align: left; }
+        .review-benefit-icon {
+            width: 40px; height: 40px;
+            background: rgba(0, 87, 255, 0.15);
+            border: 1px solid rgba(51, 121, 255, 0.3);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-400);
+            flex-shrink: 0;
+        }
+        .review-benefit-title { font-size: 14px; font-weight: 600; color: var(--white); }
+        .review-benefit-desc { font-size: 12px; color: rgba(255, 255, 255, 0.65); }
+        .review-benefit-card-footer { margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+        .review-benefit-card-footer span { font-size: 14px; color: var(--warning); font-weight: 600; display: flex; align-items: center; gap: 8px; }
+
+        /* ============================================
+           FILTER SECTION
+           ============================================ */
+        .filter-section {
+            padding: 40px 0;
+            background: linear-gradient(180deg, #f5f8ff 0%, #ffffff 100%);
+        }
+
+        .filter-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        .promo-section-head {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .promo-section-title {
+            font-size: 30px;
+            line-height: 1.25;
+            font-weight: 700;
+            color: var(--neutral-900);
+            margin: 0;
+            letter-spacing: -0.3px;
+        }
+
+        .promo-section-subtitle {
+            margin: 6px 0 0;
+            font-size: 15px;
+            color: var(--neutral-500);
+        }
+
+        .promo-filter-wrap {
+            background: var(--white);
+            border: 1px solid #d8e4ff;
+            border-radius: 20px;
+            box-shadow: 0 12px 28px rgba(0, 87, 255, 0.08);
+            padding: 16px;
+            display: grid;
+            gap: 12px;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+
+        .promo-filter-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .promo-filter-item label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--neutral-400);
+            font-weight: 700;
+        }
+
+        .promo-select {
+            border: 1px solid var(--neutral-200);
+            border-radius: 12px;
+            background: #fbfcff;
+            color: var(--neutral-700);
+            font-size: 14px;
+            font-weight: 500;
+            padding: 12px 14px;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .promo-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 87, 255, 0.14);
+        }
+
+        .promo-search-btn {
+            border: 0;
+            border-radius: 14px;
+            background: linear-gradient(90deg, var(--primary), #1a6cff);
+            color: var(--white);
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            min-height: 48px;
+            margin-top: 22px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 8px 18px rgba(0, 87, 255, 0.32);
+        }
+
+        .promo-search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 22px rgba(0, 87, 255, 0.35);
+        }
+
+        @media (max-width: 1100px) {
+            .promo-filter-wrap {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .promo-filter-wrap {
+                grid-template-columns: 1fr;
+                border-radius: 16px;
+            }
+
+            .promo-search-btn {
+                margin-top: 0;
+            }
+        }
+
+        /* ============================================
+           REVIEWS SECTION
+           ============================================ */
+        .reviews-section {
+            padding: 60px 0;
+            background-color: #f8f9fa;
+            min-height: 60vh;
+        }
+
+        .section-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--neutral-900);
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .section-title span {
+            color: var(--primary);
+        }
+
+        .review-count {
+            font-size: 16px;
+            color: var(--neutral-500);
+            margin-top: 8px;
+        }
+
+        .review-count strong {
+            color: var(--primary);
+        }
+
+        /* Grid for reviews */
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .review-card {
+            background: var(--white);
+            border: 1px solid var(--neutral-200);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .review-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary);
+        }
+
+        .review-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .review-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary-50);
+        }
+
+        .review-author {
+            flex: 1;
+        }
+
+        .review-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--neutral-900);
+            margin: 0 0 4px 0;
+        }
+
+        .review-location {
+            font-size: 13px;
+            color: var(--neutral-500);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .review-location svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .review-tour-info {
+            background: var(--neutral-100);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+        }
+
+        .review-tour-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .review-tour-date {
+            font-size: 12px;
+            color: var(--neutral-500);
+        }
+
+        .review-rating {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-bottom: 12px;
+        }
+
+        .review-stars {
+            color: #FFD700;
+            font-size: 16px;
+        }
+
+        .review-score {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--neutral-900);
+        }
+
+        .review-text {
+            font-size: 14px;
+            color: var(--neutral-700);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .review-images {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .review-image-thumb {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .review-image-thumb:hover {
+            transform: scale(1.1);
+        }
+
+        .review-meta {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .review-tag {
+            font-size: 12px;
+            color: var(--primary);
+            background: var(--primary-50);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .review-date {
+            font-size: 12px;
+            color: var(--neutral-400);
+            margin-top: 12px;
+        }
+
+        /* ============================================
+           PAGINATION
+           ============================================ */
+        .pagination-section {
+            padding: 40px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .pagination {
+            display: flex;
+            gap: 8px;
+        }
+
+        .page-item {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--neutral-200);
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--neutral-700);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .page-item:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .page-item.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        /* ============================================
+           STATISTICS SECTION
+           ============================================ */
+        .stats-section {
+            padding: 60px 0;
+            background: var(--white);
+            border-bottom: 1px solid var(--neutral-200);
+        }
+
+        .stats-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 32px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 24px;
+            background: var(--neutral-100);
+            border-radius: 16px;
+        }
+
+        .stat-number {
+            font-size: 42px;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--neutral-700);
+        }
+
+        /* ============================================
+           FOOTER - SIMPLIFIED
+           ============================================ */
+        .footer {
+            background: var(--neutral-900);
+            color: #d1d5db;
+            padding: 60px 0 30px;
+        }
+
+        .footer-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 48px;
+            margin-bottom: 48px;
+        }
+
+        .footer-brand {
+            max-width: 360px;
+        }
+
+        .footer-logo {
+            display: block;
+            margin-bottom: 16px;
+        }
+
+        .footer-logo img {
+            height: 44px;
+        }
+
+        .footer-description {
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+            color: #9ca3af;
+        }
+
+        .footer-hotline {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .hotline-label {
+            font-size: 13px;
+            color: #9ca3af;
+            margin-bottom: 4px;
+        }
+
+        .hotline-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-column h4 {
+            font-size: 16px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .footer-column ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-column li {
+            margin-bottom: 12px;
+        }
+
+        .footer-column a {
+            color: #9ca3af;
+            font-size: 14px;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-column a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 12px;
+        }
+
+        .social-icon {
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+
+        .social-icon:hover {
+            background: var(--primary);
+        }
+
+        /* ============================================
+           NAVIGATION MENU STYLES
+           ============================================ */
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .nav-menu a {
+            padding: 10px 20px;
+            color: var(--neutral-700);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .nav-menu a:hover {
+            color: var(--primary);
+            background-color: var(--primary-50);
+        }
+
+        .nav-menu a.active {
+            color: var(--primary);
+        }
+
+        .nav-menu a.active::after {
+            content: '';
+            position: absolute;
+            bottom: 6px;
+            left: 20px;
+            right: 20px;
+            height: 3px;
+            background-color: var(--primary);
+            border-radius: 2px;
+        }
+
+
+        /* ============================================
+           BREADCRUMB
+           ============================================ */
+        .breadcrumb-section {
+            background-color: var(--primary-50);
+            padding: 20px 0;
+            border-bottom: 1px solid var(--neutral-200);
+        }
+
+        .breadcrumb-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--neutral-700);
+        }
+
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumb-separator {
+            color: var(--neutral-400);
+        }
+
+        .breadcrumb span:last-child {
+            color: var(--neutral-900);
+            font-weight: 600;
+        }
+
+        
+        /* ============================================
+           RESPONSIVE STYLES
+           ============================================ */
+        @media (max-width: 1200px) {
+            .reviews-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 992px) {
+            .review-campaign-section { height: auto; min-height: 500px; padding: 40px 0; }
+            .review-campaign-wrapper { flex-direction: column; padding: 0 32px; gap: 32px; }
+            .review-campaign-content { flex: 1; text-align: center; width: 100%; }
+            .review-campaign-visual { flex: 1; justify-content: center; width: 100%; }
+            .review-campaign-headline { font-size: 40px; }
+            .review-stats-inline { justify-content: center; }
+        }
+
+        @media (max-width: 768px) {
+            .review-campaign-headline { font-size: 32px; }
+            .review-campaign-wrapper { padding: 0 20px; }
+            .review-stats-inline { flex-direction: column; align-items: center; }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+            
+            .reviews-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header/Navigation -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="TRANGCHU.html">
+                    <img src="../image/Logo.png" alt="triptO Logo">
+                </a>
+            </div>
+            <nav class="nav-menu">
+                <a href="TRANGCHU.html">Trang Chủ</a>
+                <a href="UUDAI.html">Ưu Đãi</a>
+                <a href="TATCA_TOUR.html">Chuyến du lịch</a>
+                
+                <a href="TATCA_COMBO.html">Gói du lịch</a>
+                <a href="BLOG.html">Tin Tức</a>
+            </nav>
+            <div class="nav-right">
+                <div class="country">
+                    <img src="../image/ngonngu.png" alt="Vietnam Flag">
+                    <span>VIETNAM</span>
+                </div>
+                <div class="icon">
+                    <a href="hotro.html" title="Hỗ trợ">
+                        <img src="../image/hotro.png" alt="Support">
+                    </a>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-login" id="loginBtn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        Đăng Nhập
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Breadcrumb -->
+    <section class="breadcrumb-section">
+        <div class="breadcrumb-container">
+            <div class="breadcrumb">
+                <a href="TRANGCHU.html">Trang Chủ</a>
+                <span class="breadcrumb-separator">›</span>
+                <span>Đánh Giá</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Review Campaign Banner - Đồng nhất UUDAI, riêng biệt cho Đánh giá -->
+    <section class="review-campaign-section">
+        <div class="review-campaign-bg"></div>
+        <div class="review-campaign-wrapper">
+            <div class="review-campaign-content">
+                <div class="review-campaign-badge"><i class="fas fa-star"></i> Đánh Giá Chân Thực</div>
+                <h1 class="review-campaign-headline">Tất Cả <span class="highlight">Đánh Giá Khách Hàng</span></h1>
+                <p class="review-campaign-subtitle">Hơn 2,500+ đánh giá chân thực từ khách hàng trên toàn quốc đã trực tiếp trải nghiệm các tour du lịch trong nước với mức độ hài lòng cao.</p>
+                <div class="review-stats-inline">
+                    <div class="review-stat-item">
+                        <div class="review-stat-icon"><i class="fas fa-comments"></i></div>
+                        <div class="review-stat-text">2,500+ Đánh giá<span>Chân thực từ khách hàng</span></div>
+                    </div>
+                    <div class="review-stat-item">
+                        <div class="review-stat-icon"><i class="fas fa-star"></i></div>
+                        <div class="review-stat-text">4.8/5 Điểm trung bình<span>98% hài lòng</span></div>
+                    </div>
+                </div>
+                <a href="#all-reviews" class="review-campaign-cta"><i class="fas fa-search"></i> Xem tất cả đánh giá</a>
+            </div>
+            <div class="review-campaign-visual">
+                <div class="review-benefit-card">
+                    <div class="review-benefit-card-title">Vì sao tin đánh giá</div>
+                    <div class="review-benefits-list">
+                        <div class="review-benefit-item">
+                            <div class="review-benefit-icon"><i class="fas fa-check-circle"></i></div>
+                            <div><span class="review-benefit-title">Đánh giá xác minh</span><br><span class="review-benefit-desc">Từ khách đã trải nghiệm tour</span></div>
+                        </div>
+                        <div class="review-benefit-item">
+                            <div class="review-benefit-icon"><i class="fas fa-shield-alt"></i></div>
+                            <div><span class="review-benefit-title">Không chỉnh sửa</span><br><span class="review-benefit-desc">Nội dung nguyên bản từ khách</span></div>
+                        </div>
+                    </div>
+                    <div class="review-benefit-card-footer"><span><i class="fas fa-thumbs-up"></i> Đánh giá hữu ích cho lựa chọn tour</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Filter Section -->
+    <section class="filter-section">
+        <div class="filter-container">
+            <div class="promo-section-head">
+                <div>
+                    <h2 class="promo-section-title">Tìm Đánh Giá Phù Hợp</h2>
+                    <p class="promo-section-subtitle">Lọc nhanh theo đánh giá, điểm đến và loại tour</p>
+                </div>
+            </div>
+            <div class="promo-filter-wrap">
+                <div class="promo-filter-item">
+                    <label for="filterRating">Đánh giá</label>
+                    <select class="promo-select" id="filterRating">
+                        <option>Tất cả</option>
+                        <option>5 sao</option>
+                        <option>4 sao</option>
+                        <option>3 sao</option>
+                        <option>2 sao</option>
+                        <option>1 sao</option>
+                    </select>
+                </div>
+                <div class="promo-filter-item">
+                    <label for="filterDestination">Điểm đến</label>
+                    <select class="promo-select" id="filterDestination">
+                        <option>Tất cả</option>
+                        <option>Hà Nội</option>
+                        <option>Đà Nẵng</option>
+                        <option>TP. Hồ Chí Minh</option>
+                        <option>Hạ Long</option>
+                        <option>Sapa</option>
+                        <option>Phú Quốc</option>
+                        <option>Nha Trang</option>
+                        <option>Hội An</option>
+                        <option>Huế</option>
+                    </select>
+                </div>
+                <button class="promo-search-btn">Lọc</button>
+            </div>
+        </div>
+    </section>
+
+    
+
+    <!-- Reviews Section -->
+    <section class="reviews-section" id="all-reviews">
+        <div class="section-container">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">Tất Cả <span>Đánh Giá</span></h2>
+                    <p class="review-count">Hiển thị <strong>24</strong> đánh giá mới nhất</p>
+                </div>
+            </div>
+
+            <div class="reviews-grid" id="reviewsGrid">
+                <!-- Được tải động từ API - Dynamic reviews loaded here -->
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination-section">
+                <div class="pagination">
+                    <div class="page-item">
+                        <i class="fas fa-chevron-left"></i>
+                    </div>
+                    <div class="page-item active">1</div>
+                    <div class="page-item">2</div>
+                    <div class="page-item">3</div>
+                    <div class="page-item">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <a href="TRANGCHU.html" class="footer-logo">
+                        <img src="../image/Logo.png" alt="triptO Logo">
+                    </a>
+                    <p class="footer-description">
+                        Tripto là nền tảng đặt tour du lịch hàng đầu tại Việt Nam. Chúng tôi cung cấp hơn 500+ tour với giá tốt nhất.
+                    </p>
+                </div>
+                <div class="footer-column">
+                    <h4>Công Ty</h4>
+                    <ul>
+                        <li><a href="#">Về Chúng Tôi</a></li>
+                        <li><a href="#">Đội Ngũ</a></li>
+                        <li><a href="#">Liên Hệ</a></li>
+                        <li><a href="#">Tuyển Dụng</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Hỗ Trợ</h4>
+                    <ul>
+                        <li><a href="#">Câu Hỏi Thường Gặp</a></li>
+                        <li><a href="#">Chính Sách Bảo Mật</a></li>
+                        <li><a href="#">Điều Khoản Sử Dụng</a></li>
+                        <li><a href="#">Liên Hệ Hỗ Trợ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Liên Hệ</h4>
+                    <ul>
+                        <li><a href="#">📞 +84 (0) 1234 567 890</a></li>
+                        <li><a href="#">✉️ support@tripto.vn</a></li>
+                        <li><a href="#">📍 Hà Nội, Việt Nam</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>&copy; 2026 Tripto. Bản quyền được bảo lưu.</span>
+                <div class="social-links">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- JavaScript for Login Modal -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginBtn = document.getElementById('loginBtn');
+            const loginModal = document.getElementById('loginModal');
+            const closeModal = document.getElementById('closeModal');
+
+            // Open modal
+            if (loginBtn) {
+                loginBtn.addEventListener('click', function() {
+                    loginModal.classList.add('active');
+                });
+            }
+
+            // Close modal
+            if (closeModal) {
+                closeModal.addEventListener('click', function() {
+                    loginModal.classList.remove('active');
+                });
+            }
+
+            // Close when clicking outside
+            if (loginModal) {
+                loginModal.addEventListener('click', function(e) {
+                    if (e.target === loginModal) {
+                        loginModal.classList.remove('active');
+                    }
+                });
+            }
+
+            // Close with Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && loginModal.classList.contains('active')) {
+                    loginModal.classList.remove('active');
+                }
+            });
+        });
+    </script>
+    
+    <!-- Load All Reviews from Database with Pagination -->
+    <script>
+        let currentPage = 1;
+        let allReviews = [];  // Store all reviews for client-side filtering
+        let totalReviews = 0;
+        
+        async function loadAllReviews(page = 1) {
+            try {
+                currentPage = page;
+                const response = await fetch(`../user.php?endpoint=get_all_reviews&page=${page}`);
+                const result = await response.json();
+                
+                if (!result.success) {
+                    console.error('API Error:', result.message);
+                    return;
+                }
+                
+                // Store reviews data for filtering
+                allReviews = result.data;
+                totalReviews = result.totalReviews;
+                
+                // Render the reviews
+                renderReviews(result.data, result.totalReviews, result.currentPage, result.totalPages);
+                
+            } catch (error) {
+                console.error('Failed to load reviews:', error);
+            }
+        }
+        
+        function renderReviews(reviews, total, page, totalPages) {
+            const grid = document.getElementById('reviewsGrid');
+            const reviewCount = document.querySelector('.review-count strong');
+            
+            // Update review count text
+            if (reviewCount) {
+                const startNum = (page - 1) * 9 + 1;
+                const endNum = Math.min(page * 9, total);
+                reviewCount.parentElement.innerHTML = `Hiển thị <strong>${startNum}-${endNum}</strong> trên <strong>${total}</strong> đánh giá`;
+            }
+            
+            // Clear container
+            grid.innerHTML = '';
+            
+            // Render each review
+            reviews.forEach(review => {
+                const reviewCard = document.createElement('div');
+                reviewCard.className = 'review-card';
+                reviewCard.style.cursor = 'pointer';
+                
+                // Format date
+                const dateObj = new Date(review.ngay_tao);
+                const monthYear = dateObj.toLocaleDateString('vi-VN', { month: 'long', year: 'numeric' });
+                
+                reviewCard.innerHTML = `
+                    <div class="review-header">
+                        <img src="${review.anh_dai_dien}" alt="Avatar" class="review-avatar" onerror="this.src='/img/default-avatar.jpg'">
+                        <div class="review-author">
+                            <h4 class="review-name">${review.ho_ten}</h4>
+                            <p class="review-location">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+                                    <circle cx="12" cy="10" r="3"/>
+                                </svg>
+                                ${review.location}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="review-tour-info">
+                        <p class="review-tour-name">${review.tour_name}</p>
+                        <p class="review-tour-date">${monthYear}</p>
+                    </div>
+                    <div class="review-rating">
+                        <span class="review-stars">${review.stars}</span>
+                        <span class="review-score">${review.diem_so_format}</span>
+                    </div>
+                    <p class="review-text">"${review.noi_dung}"</p>
+                    <div class="review-meta">
+                        ${review.tags.map(tag => `<span class="review-tag">${tag}</span>`).join('')}
+                    </div>
+                    <p class="review-date">Đăng ngày: ${dateObj.getDate()}/${String(dateObj.getMonth() + 1).padStart(2, '0')}/${dateObj.getFullYear()}</p>
+                `;
+                
+                reviewCard.addEventListener('click', function() {
+                    console.log('Clicked review:', review.id, review.tour_name);
+                });
+                
+                grid.appendChild(reviewCard);
+            });
+            
+            // Update pagination
+            updatePagination(page, totalPages);
+        }
+        
+        function updatePagination(currentPage, totalPages) {
+            const pagination = document.querySelector('.pagination');
+            if (!pagination) return;
+            
+            pagination.innerHTML = '';
+            
+            // Previous button
+            const prevBtn = document.createElement('div');
+            prevBtn.className = 'page-item';
+            if (currentPage <= 1) {
+                prevBtn.style.opacity = '0.5';
+                prevBtn.style.cursor = 'not-allowed';
+            } else {
+                prevBtn.style.cursor = 'pointer';
+                prevBtn.addEventListener('click', () => loadAllReviews(currentPage - 1));
+            }
+            prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+            pagination.appendChild(prevBtn);
+            
+            // Page numbers (show max 5 pages or all if less than 5)
+            const maxPagesToShow = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+            let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+            
+            if (endPage - startPage + 1 < maxPagesToShow) {
+                startPage = Math.max(1, endPage - maxPagesToShow + 1);
+            }
+            
+            if (startPage > 1) {
+                const page1 = document.createElement('div');
+                page1.className = 'page-item';
+                page1.textContent = '1';
+                page1.addEventListener('click', () => loadAllReviews(1));
+                pagination.appendChild(page1);
+                
+                if (startPage > 2) {
+                    const dots = document.createElement('div');
+                    dots.className = 'page-item';
+                    dots.textContent = '...';
+                    dots.style.cursor = 'default';
+                    pagination.appendChild(dots);
+                }
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                const pageBtn = document.createElement('div');
+                pageBtn.className = 'page-item';
+                pageBtn.textContent = i;
+                pageBtn.style.cursor = 'pointer';
+                
+                if (i === currentPage) {
+                    pageBtn.classList.add('active');
+                }
+                
+                pageBtn.addEventListener('click', () => loadAllReviews(i));
+                pagination.appendChild(pageBtn);
+            }
+            
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    const dots = document.createElement('div');
+                    dots.className = 'page-item';
+                    dots.textContent = '...';
+                    dots.style.cursor = 'default';
+                    pagination.appendChild(dots);
+                }
+                
+                const lastPage = document.createElement('div');
+                lastPage.className = 'page-item';
+                lastPage.textContent = totalPages;
+                lastPage.addEventListener('click', () => loadAllReviews(totalPages));
+                pagination.appendChild(lastPage);
+            }
+            
+            // Next button
+            const nextBtn = document.createElement('div');
+            nextBtn.className = 'page-item';
+            if (currentPage >= totalPages) {
+                nextBtn.style.opacity = '0.5';
+                nextBtn.style.cursor = 'not-allowed';
+            } else {
+                nextBtn.style.cursor = 'pointer';
+                nextBtn.addEventListener('click', () => loadAllReviews(currentPage + 1));
+            }
+            nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+            pagination.appendChild(nextBtn);
+        }
+        
+        // Load destinations and populate filter dropdown
+        async function loadDestinations() {
+            try {
+                const response = await fetch('../user.php?endpoint=get_filter_data&type=tours');
+                const result = await response.json();
+                
+                if (!result.success) {
+                    console.error('Lỗi load điểm đến:', result.message);
+                    return;
+                }
+                
+                const filterDestination = document.getElementById('filterDestination');
+                const locations = result.data.locations || [];
+                
+                // Keep "Tất cả" option and add locations from database
+                while (filterDestination.options.length > 1) {
+                    filterDestination.remove(1);
+                }
+                
+                locations.forEach(location => {
+                    const option = document.createElement('option');
+                    option.value = location.name;
+                    option.textContent = location.name;
+                    filterDestination.appendChild(option);
+                });
+                
+                console.log('✓ Loaded', locations.length, 'locations from database');
+            } catch (error) {
+                console.error('Error loading destinations:', error);
+            }
+        }
+        
+        // Filter reviews based on selected criteria
+        function applyFilters() {
+            const filterRating = document.getElementById('filterRating').value;
+            const filterDestination = document.getElementById('filterDestination').value;
+            
+            console.log(`🔍 Filtering by - Rating: ${filterRating}, Destination: ${filterDestination}`);
+            
+            // Filter reviews from allReviews
+            let filtered = allReviews.filter(review => {
+                let match = true;
+                
+                // Filter by rating
+                if (filterRating !== 'Tất cả') {
+                    const stars = parseInt(filterRating);
+                    if (review.so_sao !== stars) {
+                        match = false;
+                    }
+                }
+                
+                // Filter by destination
+                if (filterDestination !== 'Tất cả') {
+                    if (!review.location || !review.location.includes(filterDestination)) {
+                        match = false;
+                    }
+                }
+                
+                return match;
+            });
+            
+            console.log(`✓ Found ${filtered.length} reviews matching filters`);
+            
+            // Render filtered results (without pagination for simplicity)
+            renderReviews(filtered, filtered.length, 1, 1);
+        }
+        
+        // Load reviews and destinations when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAllReviews(1);
+            loadDestinations();
+            
+            // Add filter button event listener
+            const filterBtn = document.querySelector('.promo-search-btn');
+            if (filterBtn) {
+                filterBtn.addEventListener('click', applyFilters);
+            }
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoutLink = document.querySelector('.logout-link');
+            if (logoutLink) {
+                logoutLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
+                        triptoAuth.logout();
+                    }
+                });
+            }
+        });
+    </script>
+    <script src="./js/auth.js"></script>
+    <script src="../js/scroll-reveal.js"></script>
+</body>
+</html>

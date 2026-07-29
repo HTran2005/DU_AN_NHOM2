@@ -1,0 +1,814 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yêu thích - Tripto</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary: #0057FF; --primary-light: #E8EFFC; --primary-dark: #003dd4; --neutral-900: #121316; --neutral-700: #383E48; --neutral-500: #454546; --neutral-400: #737374; --neutral-200: #D7D7D7; --neutral-100: #F3F3F4; --white: #FFFFFF; --danger: #DC2626; --danger-light: #FEE2E2; --background: #f5f6f8; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; color: var(--neutral-900); background-color: var(--background); line-height: 1.5; }
+        .header { background-color: var(--white); border-bottom: 1px solid var(--neutral-200); height: 80px; display: flex; align-items: center; position: fixed; top: 0; left: 0; right: 0; z-index: 200; }
+        .header-container { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 32px; gap: 24px; }
+        .logo img { height: 40px; display: block; }
+        .nav-right { display: flex; align-items: center; gap: 24px; }
+        .country { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--neutral-700); }
+        .nav-menu-top { display: flex; justify-content: center; gap: 8px; flex: 1; }
+        .nav-menu-top a { padding: 10px 20px; color: var(--neutral-700); text-decoration: none; font-weight: 600; font-size: 15px; border-radius: 8px; transition: all 0.2s ease; }
+        .nav-menu-top a:hover { color: var(--primary); background-color: var(--primary-light); }
+        .country img { height: 20px; }
+        .icon img { height: 40px; cursor: pointer; }
+        .btn-login { display: flex; align-items: center; gap: 8px; background-color: var(--primary); color: var(--white); padding: 10px 24px; border-radius: 8px; font-weight: 600; font-size: 14px; border: none; cursor: pointer; }
+        .dashboard { display: flex; min-height: calc(100vh - 80px); padding-top: 80px; }
+        .sidebar { width: 280px; background: var(--white); border-right: 1px solid var(--neutral-200); display: flex; flex-direction: column; position: sticky; top: 80px; height: calc(100vh - 80px); align-self: flex-start; z-index: 100; }
+        .sidebar-header { padding: 24px; text-align: center; border-bottom: 1px solid var(--neutral-100); }
+        .avatar { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary-light); margin-bottom: 12px; }
+        .user-name { font-size: 18px; font-weight: 700; color: var(--neutral-900); margin-bottom: 4px; }
+        .user-role { font-size: 13px; color: var(--neutral-500); }
+        .sidebar-nav { flex: 1; padding: 16px 12px; overflow-y: auto; }
+        .nav-menu { list-style: none; }
+        .nav-item { margin-bottom: 4px; }
+        .nav-link { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px; color: var(--neutral-700); text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.3s ease; }
+        .nav-link:hover { background: var(--neutral-100); color: var(--neutral-900); }
+        .nav-link.active { background: var(--primary-light); color: var(--primary); }
+        .nav-link.active i { color: var(--primary); }
+        .nav-link i { width: 20px; text-align: center; font-size: 16px; color: var(--neutral-500); }
+        .sidebar-footer { padding: 16px 12px; border-top: 1px solid var(--neutral-100); }
+        .logout-link { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px; color: #C2410C; text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.3s ease; cursor: pointer; }
+        .logout-link:hover { background: var(--danger-light); }
+        .logout-link i { width: 20px; text-align: center; font-size: 16px; }
+        .main-content { flex: 1; padding: 32px; min-height: calc(100vh - 80px); }
+        .content-wrapper { max-width: 1000px; margin: 0 auto; }
+        .page-header { margin-bottom: 32px; }
+        .page-title { font-size: 32px; font-weight: 700; color: var(--neutral-900); margin-bottom: 8px; }
+        .page-description { font-size: 15px; color: var(--neutral-500); max-width: 600px; line-height: 1.6; }
+
+        /* List Management Section */
+        .list-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; flex-wrap: wrap; gap: 16px; }
+        .list-header h2 { font-size: 24px; font-weight: 600; color: var(--neutral-900); }
+        .btn-create-list { padding: 12px 24px; background: var(--primary); color: var(--white); border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 8px; }
+        .btn-create-list:hover { background: var(--primary-dark); }
+
+        /* Favorites Grid */
+        .favorites-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; margin-top: 24px; }
+        .list-card { background: var(--white); border-radius: 12px; overflow: hidden; border: 1px solid var(--neutral-200); transition: all 0.3s ease; cursor: pointer; display: flex; flex-direction: column; }
+        .list-card:hover { border-color: var(--primary); box-shadow: 0 8px 24px rgba(0,87,255,0.15); transform: translateY(-4px); }
+        .list-card-header { width: 100%; height: 140px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative; display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; padding: 2px; }
+        .list-card-header.empty { display: flex; align-items: center; justify-content: center; }
+        .list-card-header.empty i { font-size: 48px; color: rgba(255,255,255,0.3); }
+        .list-thumbnail { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+        .list-card-actions { position: absolute; top: 8px; right: 8px; display: flex; gap: 8px; opacity: 0; transition: opacity 0.3s ease; }
+        .list-card:hover .list-card-actions { opacity: 1; }
+        .action-icon-btn { width: 32px; height: 32px; background: rgba(255,255,255,0.9); border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
+        .action-icon-btn:hover { background: var(--white); transform: scale(1.1); }
+        .action-icon-btn i { font-size: 14px; color: var(--neutral-600); }
+        .list-card-content { padding: 16px; flex: 1; display: flex; flex-direction: column; }
+        .list-card-title { font-size: 16px; font-weight: 600; color: var(--neutral-900); margin-bottom: 8px; line-height: 1.3; }
+        .list-card-info { display: flex; align-items: center; gap: 12px; margin-top: auto; }
+        .list-count { font-size: 13px; color: var(--neutral-500); display: flex; align-items: center; gap: 4px; }
+        .list-count i { color: var(--neutral-400); }
+        .list-date { font-size: 12px; color: var(--neutral-400); }
+
+        .tour-card { background: var(--white); border-radius: 12px; overflow: hidden; border: 1px solid var(--neutral-200); transition: all 0.3s ease; }
+        .tour-card:hover { border-color: var(--primary); box-shadow: 0 8px 24px rgba(0,87,255,0.15); transform: translateY(-4px); }
+        .tour-image { width: 100%; height: 200px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative; display: flex; align-items: center; justify-content: center; }
+        .tour-image img { width: 100%; height: 100%; object-fit: cover; }
+        .tour-image-placeholder { font-size: 64px; color: rgba(255,255,255,0.3); }
+        .tour-content { padding: 20px; }
+        .tour-title { font-size: 18px; font-weight: 600; color: var(--neutral-900); margin-bottom: 12px; line-height: 1.4; }
+        .tour-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 13px; }
+        .tour-duration { color: var(--neutral-500); display: flex; align-items: center; gap: 4px; }
+        .tour-duration i { color: var(--neutral-400); }
+        .tour-rating { color: #F59E0B; display: flex; align-items: center; gap: 4px; font-weight: 600; }
+        .tour-rating i { color: #F59E0B; }
+        .tour-description { font-size: 13px; color: var(--neutral-500); margin-bottom: 16px; line-height: 1.5; }
+        .tour-price { font-size: 24px; font-weight: 700; color: var(--primary); margin-bottom: 16px; }
+        .tour-price-label { font-size: 12px; color: var(--neutral-500); font-weight: 400; }
+        .tour-actions { display: flex; gap: 12px; }
+        .btn-primary { flex: 1; padding: 12px 16px; background: var(--primary); color: var(--white); border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-secondary { padding: 12px 16px; background: var(--neutral-100); color: var(--neutral-700); border: 1px solid var(--neutral-200); border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .btn-secondary:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+
+        /* Modal for Create List */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal-content { background: var(--white); border-radius: 16px; padding: 32px; max-width: 480px; width: 90%; box-shadow: 0 10px 30px rgba(0,0,0,0.15); transform: scale(0.9); transition: transform 0.3s ease; }
+        .modal-overlay.active .modal-content { transform: scale(1); }
+        .modal-title { font-size: 20px; font-weight: 700; color: var(--neutral-900); margin-bottom: 24px; }
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; font-size: 14px; font-weight: 600; color: var(--neutral-700); margin-bottom: 8px; }
+        .form-input { width: 100%; padding: 12px 16px; border: 1px solid var(--neutral-200); border-radius: 8px; font-size: 14px; font-family: 'Inter', sans-serif; transition: border-color 0.3s ease; }
+        .form-input:focus { outline: none; border-color: var(--primary); }
+        .modal-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 32px; }
+        .btn-cancel { padding: 12px 24px; border: 1px solid var(--neutral-200); background: var(--white); color: var(--neutral-700); border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+        .btn-submit { padding: 12px 24px; background: var(--primary); color: var(--white); border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+        .btn-submit:hover { background: var(--primary-dark); }
+
+        /* Tours in List View */
+        .list-view-header { display: flex; align-items: center; gap: 16px; margin-bottom: 32px; }
+        .btn-back { padding: 10px 16px; background: var(--neutral-100); color: var(--neutral-700); border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.3s ease; }
+        .btn-back:hover { background: var(--primary-light); color: var(--primary); }
+        .list-view-header h2 { font-size: 28px; font-weight: 700; color: var(--neutral-900); }
+        .tours-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 24px; }
+        
+        .tour-card { background: var(--white); border-radius: 12px; overflow: hidden; border: 1px solid var(--neutral-200); transition: all 0.3s ease; }
+        .tour-card:hover { border-color: var(--primary); box-shadow: 0 8px 24px rgba(0,87,255,0.15); transform: translateY(-4px); }
+        .tour-image { width: 100%; height: 200px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative; display: flex; align-items: center; justify-content: center; }
+        .tour-image img { width: 100%; height: 100%; object-fit: cover; }
+        .tour-image-placeholder { font-size: 64px; color: rgba(255,255,255,0.3); }
+        .remove-tour-btn { position: absolute; top: 12px; right: 12px; width: 40px; height: 40px; background: rgba(255,255,255,0.95); border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; }
+        .remove-tour-btn i { font-size: 20px; color: #DC2626; }
+        .remove-tour-btn:hover { background: var(--white); transform: scale(1.1); }
+        .tour-content { padding: 20px; }
+        .tour-title { font-size: 18px; font-weight: 600; color: var(--neutral-900); margin-bottom: 12px; line-height: 1.4; }
+        .tour-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 13px; }
+        .tour-duration { color: var(--neutral-500); display: flex; align-items: center; gap: 4px; }
+        .tour-duration i { color: var(--neutral-400); }
+        .tour-rating { color: #F59E0B; display: flex; align-items: center; gap: 4px; font-weight: 600; }
+        .tour-rating i { color: #F59E0B; }
+        .tour-description { font-size: 13px; color: var(--neutral-500); margin-bottom: 16px; line-height: 1.5; }
+        .tour-price { font-size: 24px; font-weight: 700; color: var(--primary); margin-bottom: 16px; }
+        .tour-price-label { font-size: 12px; color: var(--neutral-500); font-weight: 400; }
+        .tour-actions { display: flex; gap: 12px; }
+        .btn-primary { flex: 1; padding: 12px 16px; background: var(--primary); color: var(--white); border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-secondary { padding: 12px 16px; background: var(--neutral-100); color: var(--neutral-700); border: 1px solid var(--neutral-200); border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .btn-secondary:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+
+        .empty-tours { text-align: center; padding: 60px 32px; }
+        .empty-tours i { font-size: 64px; color: var(--neutral-200); margin-bottom: 20px; }
+        .empty-tours h3 { font-size: 20px; font-weight: 600; color: var(--neutral-900); margin-bottom: 12px; }
+        .empty-tours p { font-size: 15px; color: var(--neutral-500); margin-bottom: 32px; }
+
+        /* Footer Styles */
+        .footer { background: var(--neutral-900); color: #d1d5db; padding: 60px 0 30px; margin-top: auto; }
+        .footer-container { max-width: 1440px; margin: 0 auto; padding: 0 32px; }
+        .footer-content { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+        .footer-brand { max-width: 360px; }
+        .footer-logo { display: block; margin-bottom: 16px; }
+        .footer-logo img { height: 44px; }
+        .footer-description { font-size: 15px; line-height: 1.6; margin-bottom: 24px; color: #9ca3af; }
+        .footer-column h4 { font-size: 16px; font-weight: 700; color: white; margin-bottom: 20px; }
+        .footer-column ul { list-style: none; padding: 0; margin: 0; }
+        .footer-column li { margin-bottom: 12px; }
+        .footer-column a { color: #9ca3af; font-size: 14px; text-decoration: none; transition: color 0.2s; }
+        .footer-column a:hover { color: white; }
+        .footer-bottom { border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: #6b7280; }
+        .social-links { display: flex; gap: 12px; }
+        .social-icon { width: 36px; height: 36px; background: rgba(255, 255, 255, 0.1); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: all 0.2s; }
+        .social-icon:hover { background: var(--primary); }
+
+        @media (max-width: 768px) {
+            .favorites-grid { grid-template-columns: 1fr; }
+            .footer-content { grid-template-columns: 1fr; }
+            .footer-bottom { flex-direction: column; gap: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <div class="logo"><a href="TRANGCHU.html"><img src="../image/Logo.png" alt="Tripto Logo"></a></div>
+            <nav class="nav-menu-top">
+                <a href="TRANGCHU.html">Trang Chủ</a>
+                <a href="UUDAI.html">Ưu Đãi</a>
+                <a href="TATCA_TOUR.html">Chuyến du lịch</a>             
+                <a href="TATCA_COMBO.html">Gói du lịch</a>
+                <a href="BLOG.html">Tin Tức</a>
+            </nav>
+            <div class="nav-right">
+                <div class="country"><img src="../image/ngonngu.png" alt="Vietnam Flag"><span>VIETNAM</span></div>
+                <div class="icon"><a href="hotro.html" title="Hỗ trợ"><img src="../image/hotro.png" alt="Support"></a></div>
+                <button class="btn-login" id="loginBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Đăng Nhập</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="../image/avt_pr.jpg" alt="Avatar" class="avatar">
+                <h3 class="user-name">Giao Nguyen</h3>
+                <p class="user-role">Bộ phận Chăm sóc Khách hàng</p>
+            </div>
+            <nav class="sidebar-nav">
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="trangcanhan.html" class="nav-link"><i class="fas fa-user"></i>Thông tin cá nhân</a></li>
+                    <li class="nav-item"><a href="thanhtoan.html" class="nav-link"><i class="fas fa-credit-card"></i>Tài khoản thanh toán</a></li>
+                    <li class="nav-item"><a href="chuyendi.html" class="nav-link"><i class="fas fa-plane"></i>Chuyến đi</a></li>
+                    <li class="nav-item"><a href="yeuthich.html" class="nav-link active"><i class="fas fa-heart"></i>Yêu thích</a></li>
+                    <li class="nav-item"><a href="hotro.html" class="nav-link"><i class="fas fa-headset"></i>Hỗ trợ</a></li>
+                    <li class="nav-item"><a href="myReviews.html" class="nav-link"><i class="fas fa-star"></i>Đánh giá của tôi</a></li>
+                    <li class="nav-item"><a href="caidat.html" class="nav-link"><i class="fas fa-cog"></i>Cài đặt</a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer"><a href="#" class="logout-link"><i class="fas fa-sign-out-alt"></i>Đăng xuất</a></div>
+        </aside>
+
+        <main class="main-content">
+            <div class="content-wrapper">
+                <div class="page-header">
+                    <h1 class="page-title">Yêu thích</h1>
+                    <p class="page-description">Tạo danh sách yêu thích và lưu những tour du lịch mà bạn yêu thích</p>
+                </div>
+
+                <div class="list-header">
+                    <h2>Danh sách yêu thích của tôi</h2>
+                    <button class="btn-create-list" onclick="openCreateListModal()"><i class="fas fa-plus"></i> Tạo danh sách</button>
+                </div>
+
+                <div id="listGridView" class="favorites-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; margin-top: 24px;">
+                    <!-- Favorite List Card 1 -->
+                    <div class="list-card" style="background: var(--white); border-radius: 12px; overflow: hidden; border: 1px solid var(--neutral-200); transition: all 0.3s ease; cursor: pointer;">
+                        <div class="list-card-header" onclick="viewListByName('Du lịch miền Bắc')" style="width: 100%; height: 140px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative; display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; padding: 2px;">
+                            <div class="list-thumbnail" style="background: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=200&h=140&fit=crop') center/cover;"></div>
+                            <div class="list-thumbnail" style="background: url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=200&h=140&fit=crop') center/cover;"></div>
+                            <div class="list-thumbnail" style="background: url('https://images.unsplash.com/photo-1520909786506-ca555dc51ce7?w=200&h=140&fit=crop') center/cover;"></div>
+                            <div class="list-thumbnail" style="background: url('https://images.unsplash.com/photo-1511522298506-8a04b6915744?w=200&h=140&fit=crop') center/cover;"></div>
+                        </div>
+                        <div class="list-card-actions" style="position: absolute; top: 8px; right: 8px; display: flex; gap: 8px; opacity: 0; transition: opacity 0.3s ease;">
+                            <button class="action-icon-btn" onclick="editList(event)" title="Chỉnh sửa" style="width: 32px; height: 32px; background: rgba(255,255,255,0.9); border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center;"><i class="fas fa-edit" style="font-size: 14px; color: var(--neutral-600);"></i></button>
+                            <button class="action-icon-btn" onclick="deleteList(event)" title="Xóa danh sách" style="width: 32px; height: 32px; background: rgba(255,255,255,0.9); border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center;"><i class="fas fa-trash" style="font-size: 14px; color: var(--neutral-600);"></i></button>
+                        </div>
+                        <div class="list-card-content" onclick="viewListByName('Du lịch miền Bắc')" style="padding: 16px; display: flex; flex-direction: column;">
+                            <h3 class="list-card-title" style="font-size: 16px; font-weight: 600; color: var(--neutral-900); margin-bottom: 8px;">Du lịch miền Bắc</h3>
+                            <div class="list-card-info" style="display: flex; align-items: center; gap: 12px; margin-top: auto;">
+                                <span class="list-count" style="font-size: 13px; color: var(--neutral-500);"><i class="fas fa-map-pin"></i> 4 tour</span>
+                                <span class="list-date" style="font-size: 12px; color: var(--neutral-400);">2 tuần trước</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Favorite List Card 2 -->
+                    <div class="list-card" style="background: var(--white); border-radius: 12px; overflow: hidden; border: 1px solid var(--neutral-200); transition: all 0.3s ease; cursor: pointer;">
+                        <div class="list-card-header" onclick="viewListByName('Biển &amp; Bãi tắm')" style="width: 100%; height: 140px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative; display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; padding: 2px;">
+                            <div class="list-thumbnail" style="background: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=200&h=140&fit=crop') center/cover;"></div>
+                            <div class="list-thumbnail" style="background: url('https://images.unsplash.com/photo-1473590331182-91bbc459a28e?w=200&h=140&fit=crop') center/cover;"></div>
+                            <div class="list-thumbnail" style="background: url('https://images.unsplash.com/photo-1494522510464-043ecf86dd77?w=200&h=140&fit=crop') center/cover;"></div>
+                            <div class="list-thumbnail" style="background: url('https://images.unsplash.com/photo-1439853949127-fa647821eba0?w=200&h=140&fit=crop') center/cover;"></div>
+                        </div>
+                        <div class="list-card-actions" style="position: absolute; top: 8px; right: 8px; display: flex; gap: 8px; opacity: 0; transition: opacity 0.3s ease;">
+                            <button class="action-icon-btn" onclick="editList(event)" title="Chỉnh sửa" style="width: 32px; height: 32px; background: rgba(255,255,255,0.9); border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center;"><i class="fas fa-edit" style="font-size: 14px; color: var(--neutral-600);"></i></button>
+                            <button class="action-icon-btn" onclick="deleteList(event)" title="Xóa danh sách" style="width: 32px; height: 32px; background: rgba(255,255,255,0.9); border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center;"><i class="fas fa-trash" style="font-size: 14px; color: var(--neutral-600);"></i></button>
+                        </div>
+                        <div class="list-card-content" onclick="viewListByName('Biển &amp; Bãi tắm')" style="padding: 16px; display: flex; flex-direction: column;">
+                            <h3 class="list-card-title" style="font-size: 16px; font-weight: 600; color: var(--neutral-900); margin-bottom: 8px;">Biển &amp; Bãi tắm</h3>
+                            <div class="list-card-info" style="display: flex; align-items: center; gap: 12px; margin-top: auto;">
+                                <span class="list-count" style="font-size: 13px; color: var(--neutral-500);"><i class="fas fa-map-pin"></i> 6 tour</span>
+                                <span class="list-date" style="font-size: 12px; color: var(--neutral-400);">1 tuần trước</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Favorite List Card 3 -->
+                    <div class="list-card" style="background: var(--white); border-radius: 12px; overflow: hidden; border: 1px solid var(--neutral-200); transition: all 0.3s ease; cursor: pointer;">
+                        <div class="list-card-header" onclick="viewListByName('Khám phá văn hóa')" style="width: 100%; height: 140px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative; display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; padding: 2px;">
+                            <div class="list-thumbnail" style="background: url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=200&h=140&fit=crop') center/cover;"></div>
+                            <div class="list-thumbnail" style="background: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=200&h=140&fit=crop') center/cover;"></div>
+                            <div class="list-thumbnail" style="background: url('https://images.unsplash.com/photo-1564507592333-c60657eea523?w=200&h=140&fit=crop') center/cover;"></div>
+                            <div class="list-thumbnail" style="background: url('https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=200&h=140&fit=crop') center/cover;"></div>
+                        </div>
+                        <div class="list-card-actions" style="position: absolute; top: 8px; right: 8px; display: flex; gap: 8px; opacity: 0; transition: opacity 0.3s ease;">
+                            <button class="action-icon-btn" onclick="editList(event)" title="Chỉnh sửa" style="width: 32px; height: 32px; background: rgba(255,255,255,0.9); border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center;"><i class="fas fa-edit" style="font-size: 14px; color: var(--neutral-600);"></i></button>
+                            <button class="action-icon-btn" onclick="deleteList(event)" title="Xóa danh sách" style="width: 32px; height: 32px; background: rgba(255,255,255,0.9); border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center;"><i class="fas fa-trash" style="font-size: 14px; color: var(--neutral-600);"></i></button>
+                        </div>
+                        <div class="list-card-content" onclick="viewListByName('Khám phá văn hóa')" style="padding: 16px; display: flex; flex-direction: column;">
+                            <h3 class="list-card-title" style="font-size: 16px; font-weight: 600; color: var(--neutral-900); margin-bottom: 8px;">Khám phá văn hóa</h3>
+                            <div class="list-card-info" style="display: flex; align-items: center; gap: 12px; margin-top: auto;">
+                                <span class="list-count" style="font-size: 13px; color: var(--neutral-500);"><i class="fas fa-map-pin"></i> 3 tour</span>
+                                <span class="list-date" style="font-size: 12px; color: var(--neutral-400);">3 ngày trước</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Favorite List Card 4 - Empty -->
+                    <div class="list-card" style="background: var(--white); border-radius: 12px; overflow: hidden; border: 1px solid var(--neutral-200); transition: all 0.3s ease; cursor: pointer;">
+                        <div class="list-card-header empty" onclick="viewListByName('Mơ ước của tôi')" style="width: 100%; height: 140px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-heart" style="font-size: 48px; color: rgba(255,255,255,0.3);"></i>
+                        </div>
+                        <div class="list-card-actions" style="position: absolute; top: 8px; right: 8px; display: flex; gap: 8px; opacity: 0; transition: opacity 0.3s ease;">
+                            <button class="action-icon-btn" onclick="editList(event)" title="Chỉnh sửa" style="width: 32px; height: 32px; background: rgba(255,255,255,0.9); border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center;"><i class="fas fa-edit" style="font-size: 14px; color: var(--neutral-600);"></i></button>
+                            <button class="action-icon-btn" onclick="deleteList(event)" title="Xóa danh sách" style="width: 32px; height: 32px; background: rgba(255,255,255,0.9); border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center;"><i class="fas fa-trash" style="font-size: 14px; color: var(--neutral-600);"></i></button>
+                        </div>
+                        <div class="list-card-content" onclick="viewListByName('Mơ ước của tôi')" style="padding: 16px; display: flex; flex-direction: column;">
+                            <h3 class="list-card-title" style="font-size: 16px; font-weight: 600; color: var(--neutral-900); margin-bottom: 8px;">Mơ ước của tôi</h3>
+                            <div class="list-card-info" style="display: flex; align-items: center; gap: 12px; margin-top: auto;">
+                                <span class="list-count" style="font-size: 13px; color: var(--neutral-500);"><i class="fas fa-map-pin"></i> 0 tour</span>
+                                <span class="list-date" style="font-size: 12px; color: var(--neutral-400);">Hôm nay</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tours in List View -->
+                <div id="toursViewContainer" style="display: none;">
+                    <div class="list-view-header">
+                        <button class="btn-back" onclick="backToLists()"><i class="fas fa-arrow-left"></i> Quay lại</button>
+                        <h2 id="currentListTitle">Danh sách</h2>
+                    </div>
+                    <div class="tours-grid" id="toursGrid"></div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Modal Create List -->
+        <div class="modal-overlay" id="createListModal">
+            <div class="modal-content">
+                <h2 class="modal-title">Tạo danh sách yêu thích</h2>
+                <form onsubmit="createNewList(event)">
+                    <div class="form-group">
+                        <label class="form-label">Tên danh sách</label>
+                        <input type="text" class="form-input" id="listName" placeholder="Ví dụ: Du lịch hè 2026" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Mô tả (tùy chọn)</label>
+                        <input type="text" class="form-input" id="listDescription" placeholder="Ví dụ: Những tour tôi muốn đi cùng gia đình">
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn-cancel" onclick="closeCreateListModal()">Hủy</button>
+                        <button type="submit" class="btn-submit">Tạo danh sách</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <a href="TRANGCHU.html" class="footer-logo">
+                        <img src="../image/Logo.png" alt="triptO Logo">
+                    </a>
+                    <p class="footer-description">Tripto là nền tảng đặt tour du lịch hàng đầu tại Việt Nam. Chúng tôi cung cấp hơn 500+ tour với giá tốt nhất.</p>
+                </div>
+                <div class="footer-column">
+                    <h4>Công Ty</h4>
+                    <ul>
+                        <li><a href="#">Về Chúng Tôi</a></li>
+                        <li><a href="#">Đội Ngũ</a></li>
+                        <li><a href="#">Liên Hệ</a></li>
+                        <li><a href="#">Tuyển Dụng</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Hỗ Trợ</h4>
+                    <ul>
+                        <li><a href="#">Câu Hỏi Thường Gặp</a></li>
+                        <li><a href="#">Chính Sách Bảo Mật</a></li>
+                        <li><a href="#">Điều Khoản Sử Dụng</a></li>
+                        <li><a href="#">Liên Hệ Hỗ Trợ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Liên Hệ</h4>
+                    <ul>
+                        <li><a href="#">📞 +84 (0) 1234 567 890</a></li>
+                        <li><a href="#">✉️ support@tripto.vn</a></li>
+                        <li><a href="#">📍 Hà Nội, Việt Nam</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <span>&copy; 2026 Tripto. Bản quyền được bảo lưu.</span>
+                <div class="social-links">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Store list data structure
+        let listData = {};
+        let currentUser = null;
+
+        // Fetch favorite groups from database
+        async function loadFavoriteGroups() {
+            try {
+                const user = triptoAuth.getUser();
+                if (!user) {
+                    console.error('User not logged in');
+                    return;
+                }
+                currentUser = user;
+
+                // Initialize tables
+                console.log('🔧 Initializing favorite tables...');
+                const initResponse = await fetch(`../user.php?endpoint=init_favorite_tables`);
+                const initData = await initResponse.json();
+                console.log('📋 Init Result:', initData);
+
+                // Get favorite groups
+                console.log(`🔍 Loading favorite groups for user ${user.id}...`);
+                const groupsResponse = await fetch(`../user.php?endpoint=get_favorite_groups&id_nguoi_dung=${user.id}`);
+                const groupsData = await groupsResponse.json();
+                
+                if (!groupsResponse.ok) {
+                    console.error('❌ Error loading groups:', groupsData);
+                    return;
+                }
+
+                console.log('📦 Groups Data:', groupsData);
+
+                // Initialize listData
+                listData = {};
+                if (groupsData.success && groupsData.groups && groupsData.groups.length > 0) {
+                    for (const group of groupsData.groups) {
+                        listData[group.ten] = {
+                            groupId: group.id,
+                            tours: [],
+                            createdAt: group.ngay_tao || new Date().toLocaleDateString('vi-VN'),
+                            tourCount: group.so_tour || 0
+                        };
+                    }
+                    
+                    // Load tours for each group
+                    for (const group of groupsData.groups) {
+                        const tours = await loadToursInGroup(user.id, group.id);
+                        listData[group.ten].tours = tours;
+                    }
+                }
+
+                console.log('✅ All groups and tours loaded:', listData);
+                
+                // Render the list cards
+                renderListCards();
+            } catch (error) {
+                console.error('❌ Error loading favorite groups:', error);
+            }
+        }
+
+        // Fetch tours in a specific group
+        // Fetch tours in a specific group with full details
+        async function loadToursInGroup(userId, groupId) {
+            try {
+                // Use get_user_favorites which joins tour/combo data directly
+                const response = await fetch(`../user.php?endpoint=get_user_favorites&id_nguoi_dung=${userId}&id_nhom=${groupId}`);
+                const data = await response.json();
+                
+                if (data.success && data.favorites && data.favorites.length > 0) {
+                    const tours = data.favorites.map(fav => {
+                        if (fav.type === 'tour') {
+                            return {
+                                id: fav.id_tour,
+                                title: fav.ten || 'Chuyến du lịch',
+                                duration: 'N/A',
+                                rating: fav.rating || 4.5,
+                                description: fav.description || 'Chuyến tour',
+                                price: fav.gia ? fav.gia.toLocaleString('vi-VN') : '0',
+                                image: fav.url_anh
+                            };
+                        } else {
+                            return {
+                                id: fav.id_combo,
+                                title: fav.ten || 'Gói combo',
+                                duration: 'N/A',
+                                rating: fav.rating || 4.5,
+                                description: fav.description || 'Gói combo',
+                                price: fav.gia ? fav.gia.toLocaleString('vi-VN') : '0',
+                                image: fav.url_anh
+                            };
+                        }
+                    });
+                    console.log(`✅ Loaded ${tours.length} tours for group ${groupId}`);
+                    return tours;
+                }
+                console.log(`ℹ️ No tours in group ${groupId}`);
+                return [];
+            } catch (error) {
+                console.error(`❌ Error loading tours for group ${groupId}:`, error);
+                return [];
+            }
+        }
+
+        // Render list cards dynamically
+        function renderListCards() {
+            const listGridView = document.getElementById('listGridView');
+            listGridView.innerHTML = '';
+
+            if (Object.keys(listData).length === 0) {
+                listGridView.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 60px 32px;">
+                        <div style="font-size: 64px; color: #D7D7D7; margin-bottom: 20px;"><i class="fas fa-heart"></i></div>
+                        <h3 style="font-size: 20px; font-weight: 600; color: #121316; margin-bottom: 12px;">Bạn chưa có danh sách yêu thích</h3>
+                        <p style="font-size: 15px; color: #454546; margin-bottom: 32px;">Hãy tạo danh sách đầu tiên hoặc thêm tour vào yêu thích!</p>
+                        <button class="btn-create-list" onclick="openCreateListModal()"><i class="fas fa-plus"></i> Tạo danh sách mới</button>
+                    </div>
+                `;
+                return;
+            }
+
+            for (const [listTitle, listInfo] of Object.entries(listData)) {
+                const listCard = document.createElement('div');
+                listCard.className = 'list-card';
+                
+                // Get first 4 tour images
+                const toursToShow = listInfo.tours.slice(0, 4);
+                let headerHTML = '';
+                
+                if (toursToShow.length > 0) {
+                    headerHTML = '<div class="list-card-header" style="width: 100%; height: 140px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative; display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; padding: 2px;">';
+                    
+                    // Add thumbnail images
+                    for (let i = 0; i < 4; i++) {
+                        if (i < toursToShow.length && toursToShow[i].image) {
+                            headerHTML += `<div class="list-thumbnail" style="background: url('${toursToShow[i].image}') center/cover;"></div>`;
+                        } else {
+                            headerHTML += `<div class="list-thumbnail" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center;"><i class="fas fa-image" style="font-size: 32px; color: rgba(255,255,255,0.3);"></i></div>`;
+                        }
+                    }
+                    headerHTML += '</div>';
+                } else {
+                    headerHTML = `<div class="list-card-header empty" style="width: 100%; height: 140px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative; display: flex; align-items: center; justify-content: center;"><i class="fas fa-heart" style="font-size: 48px; color: rgba(255,255,255,0.3);"></i></div>`;
+                }
+
+                listCard.innerHTML = `
+                    ${headerHTML}
+                    <div class="list-card-actions" style="position: absolute; top: 8px; right: 8px; display: flex; gap: 8px; opacity: 0; transition: opacity 0.3s ease;">
+                        <button class="action-icon-btn" onclick="editList(event)" title="Chỉnh sửa" style="width: 32px; height: 32px; background: rgba(255,255,255,0.9); border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center;"><i class="fas fa-edit" style="font-size: 14px; color: var(--neutral-600);"></i></button>
+                        <button class="action-icon-btn" onclick="deleteList(event, '${listTitle}')" title="Xóa danh sách" style="width: 32px; height: 32px; background: rgba(255,255,255,0.9); border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center;"><i class="fas fa-trash" style="font-size: 14px; color: var(--neutral-600);"></i></button>
+                    </div>
+                    <div class="list-card-content" onclick="viewListByName('${listTitle}')" style="padding: 16px; display: flex; flex-direction: column;">
+                        <h3 class="list-card-title" style="font-size: 16px; font-weight: 600; color: var(--neutral-900); margin-bottom: 8px;">${listTitle}</h3>
+                        <div class="list-card-info" style="display: flex; align-items: center; gap: 12px; margin-top: auto;">
+                            <span class="list-count" style="font-size: 13px; color: var(--neutral-500);"><i class="fas fa-map-pin"></i> ${listInfo.tours.length} tour</span>
+                            <span class="list-date" style="font-size: 12px; color: var(--neutral-400);">${listInfo.createdAt}</span>
+                        </div>
+                    </div>
+                `;
+                listGridView.appendChild(listCard);
+            }
+        }
+
+        // Open Create List Modal
+        function openCreateListModal() {
+            const modal = document.getElementById('createListModal');
+            modal.classList.add('active');
+        }
+
+        // Close Create List Modal
+        function closeCreateListModal() {
+            const modal = document.getElementById('createListModal');
+            modal.classList.remove('active');
+            document.getElementById('listName').value = '';
+            document.getElementById('listDescription').value = '';
+        }
+
+        // Create New List
+        async function createNewList(e) {
+            e.preventDefault();
+            const listName = document.getElementById('listName').value;
+            const listDescription = document.getElementById('listDescription').value;
+            
+            if (!listName.trim() || !currentUser) return;
+
+            try {
+                const response = await fetch('../user.php?endpoint=create_favorite_group', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        id_nguoi_dung: currentUser.id,
+                        ten: listName,
+                        mota: listDescription
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    alert(`✓ Danh sách "${listName}" đã được tạo!`);
+                    closeCreateListModal();
+                    // Reload the groups
+                    await loadFavoriteGroups();
+                } else {
+                    alert('❌ Lỗi tạo danh sách: ' + data.message);
+                }
+            } catch (error) {
+                console.error('❌ Error creating list:', error);
+                alert('❌ Lỗi tạo danh sách');
+            }
+        }
+
+        // View List - Show tours in list
+        async function viewListByName(listTitle) {
+            const listInfo = listData[listTitle];
+            const tours = listInfo ? listInfo.tours : [];
+            
+            // Show tours view, hide list view
+            document.getElementById('listGridView').style.display = 'none';
+            document.getElementById('toursViewContainer').style.display = 'block';
+            document.getElementById('currentListTitle').textContent = listTitle;
+            
+            // Render tours
+            const toursGrid = document.getElementById('toursGrid');
+            toursGrid.innerHTML = '';
+            
+            if (tours.length === 0) {
+                toursGrid.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 60px 32px;">
+                        <div style="font-size: 64px; color: #D7D7D7; margin-bottom: 20px;"><i class="fas fa-heart"></i></div>
+                        <h3 style="font-size: 20px; font-weight: 600; color: #121316; margin-bottom: 12px;">Danh sách trống</h3>
+                        <p style="font-size: 15px; color: #454546;">Bạn chưa thêm tour nào vào danh sách này. Hãy thêm những tour yêu thích!</p>
+                    </div>
+                `;
+            } else {
+                tours.forEach(tour => {
+                    const tourCard = document.createElement('div');
+                    tourCard.className = 'tour-card';
+                    tourCard.innerHTML = `
+                        <div class="tour-image">
+                            ${tour.image ? `<img src="${tour.image}" alt="${tour.title}">` : '<div class="tour-image-placeholder"><i class="fas fa-image"></i></div>'}
+                            <button class="remove-tour-btn" onclick="removeTourFromList(event, '${listTitle}', ${tour.id})" title="Xóa khỏi danh sách">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                        <div class="tour-content">
+                            <h3 class="tour-title">${tour.title}</h3>
+                            <div class="tour-meta">
+                                <span class="tour-duration"><i class="fas fa-clock"></i> ${tour.duration}</span>
+                                <span class="tour-rating"><i class="fas fa-star"></i> ${tour.rating}</span>
+                            </div>
+                            <p class="tour-description">${tour.description}</p>
+                            <div class="tour-price">${tour.price} <span class="tour-price-label">đ/người</span></div>
+                            <div class="tour-actions">
+                                <button class="btn-primary"><i class="fas fa-eye"></i> Xem chi tiết</button>
+                                <button class="btn-secondary"><i class="fas fa-share"></i></button>
+                            </div>
+                        </div>
+                    `;
+                    toursGrid.appendChild(tourCard);
+                });
+            }
+            window.scrollTo(0, 0);
+        }
+
+        // Back to Lists
+        function backToLists() {
+            document.getElementById('toursViewContainer').style.display = 'none';
+            document.getElementById('listGridView').style.display = 'grid';
+        }
+
+        // Remove tour from list
+        async function removeTourFromList(e, listTitle, tourId) {
+            e.stopPropagation();
+            if (confirm('Bạn có chắc muốn xóa tour này khỏi danh sách?')) {
+                try {
+                    const listInfo = listData[listTitle];
+                    const response = await fetch(`../user.php?endpoint=remove_tour_from_group`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            id_nguoi_dung: currentUser.id,
+                            id_nhom: listInfo.groupId,
+                            id_tour: tourId
+                        })
+                    });
+
+                    const data = await response.json();
+                    if (data.success) {
+                        alert('✓ Chuyến du lịch đã được xóa khỏi danh sách');
+                        // Remove from local data
+                        const index = listInfo.tours.findIndex(t => t.id === tourId);
+                        if (index > -1) {
+                            listInfo.tours.splice(index, 1);
+                        }
+                        // Re-render
+                        viewListByName(listTitle);
+                    } else {
+                        alert('❌ Lỗi xóa tour: ' + data.message);
+                    }
+                } catch (error) {
+                    console.error('❌ Error removing tour:', error);
+                    alert('❌ Lỗi xóa tour');
+                }
+            }
+        }
+
+        // Edit List
+        function editList(e) {
+            e.stopPropagation();
+            const listTitle = e.target.closest('.list-card').querySelector('.list-card-title').textContent;
+            const newName = prompt(`Chỉnh sửa tên danh sách:`, listTitle);
+            if (newName && newName.trim()) {
+                alert(`✓ Đã cập nhật tên danh sách thành "${newName}"`);
+            }
+        }
+
+        // Delete List
+        async function deleteList(e, listTitle) {
+            e.stopPropagation();
+            const card = e.target.closest('.list-card');
+            if (confirm(`Bạn có chắc muốn xóa danh sách "${listTitle}"?`)) {
+                try {
+                    const listInfo = listData[listTitle];
+                    const response = await fetch(`../user.php?endpoint=delete_favorite_group`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            id_nhom: listInfo.groupId,
+                            id_nguoi_dung: currentUser.id
+                        })
+                    });
+
+                    const data = await response.json();
+                    if (data.success) {
+                        card.style.opacity = '0.5';
+                        setTimeout(() => {
+                            card.remove();
+                            delete listData[listTitle];
+                            if (Object.keys(listData).length === 0) {
+                                renderListCards(); // Show empty state
+                            }
+                            alert(`✓ Danh sách "${listTitle}" đã được xóa`);
+                        }, 300);
+                    } else {
+                        alert('❌ Lỗi xóa danh sách: ' + data.message);
+                    }
+                } catch (error) {
+                    console.error('❌ Error deleting list:', error);
+                    alert('❌ Lỗi xóa danh sách');
+                }
+            }
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('createListModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeCreateListModal();
+            }
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = triptoAuth.getUser();
+            if (!user) {
+                alert('❌ Vui lòng đăng nhập để xem danh sách yêu thích');
+                window.location.href = 'TRANGCHU.html';
+                return;
+            }
+
+            // 🖼️ Cập nhật avatar từ cơ sở dữ liệu
+            const avatarUrl = user.anh_dai_dien || user.avatar || '../image/avt_pr.jpg';
+            const avatarElement = document.querySelector('.avatar');
+            if (avatarElement) {
+                avatarElement.src = avatarUrl;
+                console.log('✅ Updated avatar:', avatarUrl);
+            }
+
+            // 🔥 Lắng nghe sự kiện cập nhật avatar từ các trang khác
+            window.addEventListener('userAvatarUpdated', (e) => {
+                console.log('📢 Nhận sự kiện cập nhật avatar từ trangcanhan');
+                if (e.detail && e.detail.avatar_url) {
+                    const avatarElement = document.querySelector('.avatar');
+                    if (avatarElement) {
+                        avatarElement.src = e.detail.avatar_url;
+                        console.log('✅ Updated avatar to:', e.detail.avatar_url);
+                    }
+                }
+            });
+
+            const logoutLink = document.querySelector('.logout-link');
+            if (logoutLink) {
+                logoutLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
+                        triptoAuth.logout();
+                    }
+                });
+            }
+
+            // 📥 Load favorite groups from database
+            loadFavoriteGroups();
+        });
+    </script>
+    <script src="./js/auth.js"></script>
+    <script>
+        // Khi page load xong, cập nhật UI từ auth.js
+        document.addEventListener('DOMContentLoaded', function() {
+            // Gắn click handler cho loginBtn để navigate đến myReviews
+            const loginBtn = document.getElementById('loginBtn');
+            if (loginBtn) {
+                const originalOnClick = loginBtn.onclick;
+                loginBtn.addEventListener('click', function(e) {
+                    if (triptoAuth.isLoggedIn()) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        window.location.href = 'myReviews.html';
+                    }
+                });
+            }
+        });
+    </script>
+
+    </script>
+</body>
+</html>
