@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th4 27, 2026 lúc 03:01 PM
+-- Thời gian đã tạo: Th7 30, 2026 lúc 10:58 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
--- Phiên bản PHP: 8.0.30
+-- Phiên bản PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -1660,8 +1660,7 @@ ALTER TABLE `lich_trinh_chi_tiet`
 --
 ALTER TABLE `lich_trinh_tour`
   ADD CONSTRAINT `fk_lichtrinh_combo` FOREIGN KEY (`id_goi_combo`) REFERENCES `goi_combo` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_lichtrinh_tour` FOREIGN KEY (`id_tour`) REFERENCES `tour` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `lich_trinh_tour_ibfk_1` FOREIGN KEY (`id_tour`) REFERENCES `tour` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_lichtrinh_tour` FOREIGN KEY (`id_tour`) REFERENCES `tour` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Các ràng buộc cho bảng `nhom_yeuthich`
