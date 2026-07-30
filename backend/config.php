@@ -31,7 +31,9 @@ monitorBeginRequest();
 
 // Kết nối đến Database
 try {
-    $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    $conn = mysqli_init();
+    mysqli_ssl_set($conn, NULL, NULL, NULL, NULL, NULL);
+    $conn->real_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME, 3306, NULL, MYSQLI_CLIENT_SSL);
     
     // Xử lý lỗi kết nối
     if ($conn->connect_error) {

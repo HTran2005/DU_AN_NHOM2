@@ -2235,7 +2235,7 @@
         async function loadLocationsByRegion(regionCode) {
             try {
                 const regionName = regionMap[regionCode];
-                const apiUrl = `../../backend/user.php?endpoint=get_locations&vung_mien=${encodeURIComponent(regionName)}`;
+                const apiUrl = `../../user.php?endpoint=get_locations&vung_mien=${encodeURIComponent(regionName)}`;
                 console.log('Fetching from:', apiUrl);
                 
                 const response = await fetch(apiUrl);
@@ -2535,7 +2535,7 @@
                 console.log('📤 Gửi yêu cầu đăng nhập đến user.php');
                 
                 // Xác định đường dẫn API - sử dụng user.php unified API
-                const apiUrl = '../../backend/user.php?endpoint=auth&action=login';
+                const apiUrl = '../../user.php?endpoint=auth&action=login';
                 console.log('📍 API URL:', apiUrl);
                 
                 // Gửi POST request với JSON content-type
@@ -2631,7 +2631,7 @@
                 console.log('📤 Gửi yêu cầu đăng ký đến user.php');
                 
                 // Xác định đường dẫn API - sử dụng user.php unified API
-                const apiUrl = '../../backend/user.php?endpoint=auth&action=register';
+                const apiUrl = '../../user.php?endpoint=auth&action=register';
                 console.log('📍 API URL:', apiUrl);
                 
                 // Gửi POST request với JSON content-type
@@ -2845,7 +2845,7 @@
          */
         async function loadFeaturedTours() {
             try {
-                const response = await fetch('../../backend/user.php?endpoint=get_tours&limit=4&offset=0');
+                const response = await fetch('../../user.php?endpoint=get_tours&limit=4&offset=0');
                 const result = await response.json();
 
                 if (!result.success) {
@@ -2909,7 +2909,7 @@
         async function loadFeaturedCombos() {
             try {
                 console.log('📥 Đang load combos từ user.php...');
-                const response = await fetch('../../backend/user.php?endpoint=get_combos');
+                const response = await fetch('../../user.php?endpoint=get_combos');
                 const result = await response.json();
 
                 if (!result.success) {
@@ -3068,7 +3068,7 @@
         function loadReviews() {
             console.log('🔍 loadReviews called');
             // Lấy 3 đánh giá từ API
-            fetch('../../backend/user.php?endpoint=get_reviews&limit=3')
+            fetch('../../user.php?endpoint=get_reviews&limit=3')
                 .then(response => {
                     console.log('Response status:', response.status);
                     return response.json();
@@ -3159,7 +3159,7 @@
 
         function loadLocations() {
             // Lấy danh sách địa điểm từ API user.php
-            fetch('../../backend/user.php?endpoint=get_locations')
+            fetch('../../user.php?endpoint=get_locations')
                 .then(response => response.json())
                 .then(data => {
                     if (data.success && data.data) {
@@ -3213,13 +3213,13 @@
                 }
                 
                 // Check if already favorited
-                const response = await fetch(`../../backend/user.php?endpoint=check_favorite&id_tour=${tourId}&id_nguoi_dung=${userId}`);
+                const response = await fetch(`../../user.php?endpoint=check_favorite&id_tour=${tourId}&id_nguoi_dung=${userId}`);
                 const checkResult = await response.json();
                 
                 if (checkResult.isFavorited) {
                     // Remove favorite
                     console.log(`❤️ Remove favorite for tour ${tourId}`);
-                    const deleteResponse = await fetch(`../../backend/user.php?endpoint=toggle_favorite&id_tour=${tourId}&id_nguoi_dung=${userId}`, {
+                    const deleteResponse = await fetch(`../../user.php?endpoint=toggle_favorite&id_tour=${tourId}&id_nguoi_dung=${userId}`, {
                         method: 'POST'
                     });
                     const deleteResult = await deleteResponse.json();
@@ -3339,12 +3339,12 @@
             try {
                 // First, initialize tables
                 console.log('🔧 Initializing favorite tables...');
-                const initResponse = await fetch(`../../backend/user.php?endpoint=init_favorite_tables`);
+                const initResponse = await fetch(`../../user.php?endpoint=init_favorite_tables`);
                 const initData = await initResponse.json();
                 console.log('📋 Init Result:', initData);
                 
                 // Now load groups
-                const response = await fetch(`../../backend/user.php?endpoint=get_favorite_groups&id_nguoi_dung=${userId}`);
+                const response = await fetch(`../../user.php?endpoint=get_favorite_groups&id_nguoi_dung=${userId}`);
                 
                 console.log('🔍 Groups API Response Status:', response.status);
                 
@@ -3459,7 +3459,7 @@
                 }
 
                 try {
-                    const response = await fetch('../../backend/user.php?endpoint=create_favorite_with_group', {
+                    const response = await fetch('../../user.php?endpoint=create_favorite_with_group', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -3542,7 +3542,7 @@
                 }
 
                 try {
-                    const groupResponse = await fetch('../../backend/user.php?endpoint=create_favorite_group', {
+                    const groupResponse = await fetch('../../user.php?endpoint=create_favorite_group', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ id_nguoi_dung: userId, ten: name })
@@ -3554,7 +3554,7 @@
                     }
 
                     // Create favorite WITH new group
-                    const favResponse = await fetch(`../../backend/user.php?endpoint=create_favorite_with_group`, {
+                    const favResponse = await fetch(`../../user.php?endpoint=create_favorite_with_group`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -3605,7 +3605,7 @@
                     const tourId = button.getAttribute('data-tour-id');
                     if (!tourId) return;
                     
-                    const apiUrl = `../../backend/user.php?endpoint=check_favorite&id_tour=${tourId}&id_nguoi_dung=${userId}`;
+                    const apiUrl = `../../user.php?endpoint=check_favorite&id_tour=${tourId}&id_nguoi_dung=${userId}`;
                     
                     fetch(apiUrl)
                         .then(response => response.json())

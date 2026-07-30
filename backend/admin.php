@@ -5,7 +5,7 @@
  */
 
 // Kết nối database
-require_once '../config.php';
+require_once __DIR__ . '/config.php';
 
 // Set header cho JSON response
 header('Content-Type: application/json; charset=utf-8');

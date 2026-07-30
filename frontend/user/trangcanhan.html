@@ -799,7 +799,7 @@
                 console.log('📤 Gửi dữ liệu (FormData)');
 
                 // Gửi request tới API - FormData tự động đặt Content-Type: multipart/form-data
-                const response = await fetch('../../backend/user.php?endpoint=auth&action=update_profile_with_avatar', {
+                const response = await fetch('../../user.php?endpoint=auth&action=update_profile_with_avatar', {
                     method: 'POST',
                     body: formData
                 });
@@ -1025,7 +1025,7 @@
                     uploadBtn.disabled = true;
                     uploadBtn.textContent = 'Đang cập nhật...';
 
-                    const response = await fetch('../../backend/user.php?endpoint=update_profile', {
+                    const response = await fetch('../../user.php?endpoint=update_profile', {
                         method: 'POST',
                         body: formData
                     });

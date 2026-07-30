@@ -1233,7 +1233,7 @@
          * Lấy dữ liệu thống kê tour từ API
          */
         function loadTourStats() {
-            const apiUrl = '../../backend/admin.php?action=get_dashboard_stats';
+            const apiUrl = '../../admin.php?action=get_dashboard_stats';
             
             fetch(apiUrl)
                 .then(response => {
@@ -1270,7 +1270,7 @@
                 isSearching = false;  // Exit search mode when loading tours
                 searchResults = [];   // Clear search results
                 
-                let apiUrl = '../../backend/admin.php?action=get_tours&sort=' + encodeURIComponent(sort) + '&page=' + page;
+                let apiUrl = '../../admin.php?action=get_tours&sort=' + encodeURIComponent(sort) + '&page=' + page;
                 
                 if (filter !== 'all') {
                     apiUrl += '&filter=' + encodeURIComponent(filter);
@@ -1358,7 +1358,7 @@
             
             try {
                 // Call API to search in database
-                const response = await fetch(`../../backend/admin.php?action=search_tours&keyword=${encodeURIComponent(keyword)}`);
+                const response = await fetch(`../../admin.php?action=search_tours&keyword=${encodeURIComponent(keyword)}`);
                 const data = await response.json();
                 
                 if (data.success) {
@@ -1530,7 +1530,7 @@
 
         function editTour(id) {
             // Fetch tour details from server
-            fetch(`../../backend/admin.php?action=get_tour_detail&id=${id}`)
+            fetch(`../../admin.php?action=get_tour_detail&id=${id}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
@@ -1576,7 +1576,7 @@
 
         function viewTour(id) {
             // Fetch tour details from server
-            fetch(`../../backend/admin.php?action=get_tour_detail&id=${id}`)
+            fetch(`../../admin.php?action=get_tour_detail&id=${id}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
@@ -1644,7 +1644,7 @@
         function deleteTour(id) {
             if (confirm('Bạn có chắc chắn muốn xóa tour này không?')) {
                 // Gọi API xóa tour
-                fetch('../../backend/admin.php?action=delete_tour&id=' + id)
+                fetch('../../admin.php?action=delete_tour&id=' + id)
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
@@ -1896,7 +1896,7 @@
         // Load destinations from API
         async function loadDestinations() {
             try {
-                const response = await fetch('../../backend/admin.php?action=get_destinations');
+                const response = await fetch('../../admin.php?action=get_destinations');
                 const data = await response.json();
 
                 if (data.success) {
@@ -1940,7 +1940,7 @@
         // Load tour types from API
         async function loadTourTypes() {
             try {
-                const response = await fetch('../../backend/admin.php?action=get_tour_types');
+                const response = await fetch('../../admin.php?action=get_tour_types');
                 const data = await response.json();
 
                 if (data.success) {
@@ -2238,7 +2238,7 @@
                 });
                 
                 // Gửi request tới server
-                fetch('../../backend/admin.php?action=add_tour', {
+                fetch('../../admin.php?action=add_tour', {
                     method: 'POST',
                     body: formData
                 })
@@ -2290,7 +2290,7 @@
                 }
                 
                 // Gửi request tới server
-                fetch('../../backend/admin.php?action=update_tour', {
+                fetch('../../admin.php?action=update_tour', {
                     method: 'POST',
                     body: formData
                 })

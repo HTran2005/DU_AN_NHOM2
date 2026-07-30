@@ -36,7 +36,7 @@ header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
 // Import config
-require_once '../config.php';
+require_once __DIR__ . '/config.php';
 
 // =====================================================
 // AUTO-INITIALIZE DATABASE TABLES

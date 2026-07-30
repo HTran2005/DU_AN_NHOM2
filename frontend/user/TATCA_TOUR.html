@@ -1996,7 +1996,7 @@
                 }
                 
                 try {
-                    const response = await fetch('../../backend/user.php?endpoint=auth&action=login', {
+                    const response = await fetch('../../user.php?endpoint=auth&action=login', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -2121,7 +2121,7 @@
          */
         async function loadFilterData() {
             try {
-                const response = await fetch(`../../backend/user.php?endpoint=get_filter_data&type=tours`);
+                const response = await fetch(`../../user.php?endpoint=get_filter_data&type=tours`);
                 const data = await response.json();
                 
                 if (!data.success) {
@@ -2179,7 +2179,7 @@
                     params.append('price_max', maxPrice);
                 }
                 
-                const response = await fetch('../../backend/user.php?endpoint=filter_tours&' + params.toString());
+                const response = await fetch('../../user.php?endpoint=filter_tours&' + params.toString());
                 const data = await response.json();
                 
                 if (data.success && data.data.length > 0) {
@@ -2356,7 +2356,7 @@
         async function loadInitialTours() {
             try {
                 console.log('📥 Đang tải tất cả tour...');
-                const response = await fetch('../../backend/user.php?endpoint=get_tours&limit=999&offset=0');
+                const response = await fetch('../../user.php?endpoint=get_tours&limit=999&offset=0');
                 const data = await response.json();
                 
                 console.log('📊 Dữ liệu nhận được:', data);
@@ -2440,13 +2440,13 @@
                 }
                 
                 // Check if already favorited
-                const response = await fetch(`../../backend/user.php?endpoint=check_favorite&id_tour=${tourId}&id_nguoi_dung=${userId}`);
+                const response = await fetch(`../../user.php?endpoint=check_favorite&id_tour=${tourId}&id_nguoi_dung=${userId}`);
                 const checkResult = await response.json();
                 
                 if (checkResult.isFavorited) {
                     // Remove favorite
                     console.log(`❤️ Remove favorite for tour ${tourId}`);
-                    const deleteResponse = await fetch(`../../backend/user.php?endpoint=toggle_favorite&id_tour=${tourId}&id_nguoi_dung=${userId}`, {
+                    const deleteResponse = await fetch(`../../user.php?endpoint=toggle_favorite&id_tour=${tourId}&id_nguoi_dung=${userId}`, {
                         method: 'POST'
                     });
                     const deleteResult = await deleteResponse.json();
@@ -2565,11 +2565,11 @@
             // Load groups
             try {
                 console.log('🔧 Initializing favorite tables...');
-                const initResponse = await fetch(`../../backend/user.php?endpoint=init_favorite_tables`);
+                const initResponse = await fetch(`../../user.php?endpoint=init_favorite_tables`);
                 const initData = await initResponse.json();
                 console.log('📋 Init Result:', initData);
                 
-                const response = await fetch(`../../backend/user.php?endpoint=get_favorite_groups&id_nguoi_dung=${userId}`);
+                const response = await fetch(`../../user.php?endpoint=get_favorite_groups&id_nguoi_dung=${userId}`);
                 
                 console.log('🔍 Groups API Response Status:', response.status);
                 
@@ -2681,7 +2681,7 @@
                 }
 
                 try {
-                    const response = await fetch('../../backend/user.php?endpoint=create_favorite_with_group', {
+                    const response = await fetch('../../user.php?endpoint=create_favorite_with_group', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -2765,7 +2765,7 @@
                 }
 
                 try {
-                    const groupResponse = await fetch('../../backend/user.php?endpoint=create_favorite_group', {
+                    const groupResponse = await fetch('../../user.php?endpoint=create_favorite_group', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ id_nguoi_dung: userId, ten: name })
@@ -2777,7 +2777,7 @@
                     }
 
                     // Create favorite WITH new group
-                    const favResponse = await fetch(`../../backend/user.php?endpoint=create_favorite_with_group`, {
+                    const favResponse = await fetch(`../../user.php?endpoint=create_favorite_with_group`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -2828,7 +2828,7 @@
                     const tourId = button.getAttribute('data-tour-id');
                     if (!tourId) return;
                     
-                    const apiUrl = `../../backend/user.php?endpoint=check_favorite&id_tour=${tourId}&id_nguoi_dung=${userId}`;
+                    const apiUrl = `../../user.php?endpoint=check_favorite&id_tour=${tourId}&id_nguoi_dung=${userId}`;
                     
                     fetch(apiUrl)
                         .then(response => response.json())
