@@ -1,0 +1,27 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "value": "southeastasia"
+    },
+    "workspaceName": {
+      "value": "law-tripto"
+    },
+    "appInsightsName": {
+      "value": "appi-tripto"
+    },
+    "vaultName": {
+      "value": "rsv-tripto"
+    },
+    "actionGroupName": {
+      "value": "ag-tripto-critical"
+    },
+    "adminEmail": {
+      "value": "admin-tripto@yourdomain.com"
+    },
+    "retentionInDays": {
+      "value": 30
+    }
+  }
+}

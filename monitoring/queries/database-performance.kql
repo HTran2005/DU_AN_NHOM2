@@ -1,0 +1,37 @@
+// ============================================================
+// KQL: Database performance tracking (MySQL queries)
+// ============================================================
+
+// --- 1. Tổng quan dependencies (MySQL queries từ PHP) ---
+dependencies
+| where timestamp > ago(24h)
+| where type == "SQL"
+| summarize
+    AvgDuration = avg(duration),
+    MaxDuration = max(duration),
+    TotalCalls = count()
+  by target
+| order by AvgDuration desc
+
+// --- 2. Slow queries (> 1 giây) ---
+dependencies
+| where timestamp > ago(24h)
+| where type == "SQL"
+| where duration > 1000
+| project timestamp, target, duration, data
+| order by duration desc
+
+// --- 3. Lỗi kết nối database ---
+dependencies
+| where timestamp > ago(24h)
+| where type == "SQL"
+| where success == false
+| project timestamp, target, duration, resultCode
+| order by timestamp desc
+
+// --- 4. Số lượng kết nối theo giờ ---
+dependencies
+| where timestamp > ago(7d)
+| where type == "SQL"
+| summarize ConnectionCount = count() by bin(timestamp, 1h)
+| render timechart

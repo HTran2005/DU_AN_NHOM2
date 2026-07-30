@@ -1,0 +1,8 @@
+{
+  "name": "tripto/monitoring",
+  "description": "TripTo Backend - Azure Application Insights Integration",
+  "type": "project",
+  "require": {
+    "php": ">=8.0"
+  }
+}

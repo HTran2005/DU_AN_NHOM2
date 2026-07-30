@@ -424,6 +424,11 @@ function authLogin() {
     $_SESSION['logged_in'] = true;
     $_SESSION['login_time'] = time();
     
+    monitorTrackEvent('user_login', [
+        'email' => $user['email'],
+        'user_id' => $user['id']
+    ]);
+
     http_response_code(200);
     echo json_encode([
         'success' => true,
@@ -526,6 +531,11 @@ function authRegister() {
     $new_user_id = $insertStmt->insert_id;
     $insertStmt->close();
     
+    monitorTrackEvent('user_register', [
+        'email' => $email,
+        'user_id' => $new_user_id
+    ]);
+
     http_response_code(201);
     echo json_encode([
         'success' => true,
@@ -3400,6 +3410,18 @@ function handleCreateBooking() {
     $booking_id = $insertStmt->insert_id;
     $insertStmt->close();
     
+    monitorTrackEvent('booking_created', [
+        'booking_id' => $booking_id,
+        'tour_id' => $id_tour ?? $id_goi_combo,
+        'user_id' => $id_nguoi_dung,
+        'total' => $tong_tien,
+        'payment_method' => $phuong_thuc_thanh_toan
+    ], [
+        'total_amount' => $tong_tien,
+        'adults' => $so_nguoi_lon,
+        'children' => $so_tre_em
+    ]);
+
     // Return success response
     http_response_code(201);
     echo json_encode([

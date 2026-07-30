@@ -1,0 +1,44 @@
+// ============================================================
+// KQL: Top requests chậm nhất (cần App Insights gắn vào PHP)
+// ============================================================
+// Chạy trong: Log Analytics -> Logs
+// ============================================================
+
+// --- 1. TOP 20 request chậm nhất ---
+requests
+| where timestamp > ago(24h)
+| project timestamp, name, duration, success, resultCode, url
+| order by duration desc
+| take 20
+
+// --- 2. Requests thất bại (HTTP 5xx) ---
+requests
+| where timestamp > ago(24h)
+| where resultCode startswith "5"
+| summarize Count = count() by resultCode, name
+| order by Count desc
+
+// --- 3. Hiệu suất theo endpoint ---
+requests
+| where timestamp > ago(24h)
+| summarize
+    AvgDuration = avg(duration),
+    MaxDuration = max(duration),
+    P95Duration = percentile(duration, 95),
+    P99Duration = percentile(duration, 99),
+    TotalRequests = count(),
+    FailedRequests = countif(success == false)
+  by name
+| order by AvgDuration desc
+
+// --- 4. Số lượng request theo giờ ---
+requests
+| where timestamp > ago(7d)
+| summarize RequestCount = count() by bin(timestamp, 1h)
+| render timechart
+
+// --- 5. Lỗi exception từ PHP backend ---
+exceptions
+| where timestamp > ago(24h)
+| project timestamp, type, method, problemId, outerMessage
+| order by timestamp desc

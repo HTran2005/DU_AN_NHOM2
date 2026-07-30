@@ -1,0 +1,34 @@
+// ============================================================
+// KQL: Security audit queries
+// ============================================================
+
+// --- 1. Failed login attempts ---
+requests
+| where timestamp > ago(7d)
+| where name contains "login" or name contains "auth"
+| where success == false
+| summarize FailedAttempts = count() by bin(timestamp, 1h), client_IP
+| where FailedAttempts > 5
+| order by FailedAttempts desc
+
+// --- 2. SQL Injection attempts (pattern detection) ---
+// Dùng raw request URL từ App Insights
+requests
+| where timestamp > ago(7d)
+| where url contains "'" or url contains "1=1" or url contains " UNION " or url contains " SELECT "
+| project timestamp, url, client_IP
+| order by timestamp desc
+
+// --- 3. Admin actions audit trail ---
+requests
+| where timestamp > ago(30d)
+| where name contains "admin" or url contains "admin.php"
+| project timestamp, name, url, success, resultCode, client_IP
+| order by timestamp desc
+
+// --- 4. Brute force detection ---
+requests
+| where timestamp > ago(1h)
+| summarize RequestCount = count() by client_IP
+| where RequestCount > 100
+| order by RequestCount desc

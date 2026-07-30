@@ -1,0 +1,127 @@
+# ============================================================
+# CI/CD Pipeline: Deploy Azure Monitoring Infrastructure
+# Trigger: Push to main branch (infrastructure/account2/)
+# ============================================================
+name: Deploy TripTo Monitoring Infrastructure
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'infrastructure/account2/**'
+      - '.github/workflows/deploy-monitoring.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'infrastructure/account2/**'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment (development/production)'
+        required: true
+        default: 'development'
+        type: choice
+        options:
+          - development
+          - production
+
+env:
+  AZURE_RESOURCE_GROUP: rg-tripto-monitoring
+  BICEP_PATH: infrastructure/account2
+  LOCATION: southeastasia
+
+jobs:
+  validate:
+    name: Validate Bicep Templates
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Azure CLI
+        run: |
+          curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+
+      - name: Lint Bicep files
+        run: |
+          az bicep build --file ${{ env.BICEP_PATH }}/main.bicep
+
+      - name: Validate with what-if
+        run: |
+          az deployment group what-if \
+            --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+            --template-file ${{ env.BICEP_PATH }}/main.bicep \
+            --parameters @${{ env.BICEP_PATH }}/parameters.json
+
+  deploy:
+    name: Deploy to Azure
+    needs: validate
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Create Resource Group
+        run: |
+          az group create --name ${{ env.AZURE_RESOURCE_GROUP }} --location ${{ env.LOCATION }}
+
+      - name: Deploy Bicep
+        run: |
+          az deployment group create \
+            --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+            --template-file ${{ env.BICEP_PATH }}/main.bicep \
+            --parameters @${{ env.BICEP_PATH }}/parameters.json \
+            --output table
+
+      - name: Output deployment results
+        run: |
+          echo "Deployment hoan tat!"
+          echo "Resource Group: ${{ env.AZURE_RESOURCE_GROUP }}"
+
+  verify:
+    name: Verify Deployment
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Check Log Analytics Workspace
+        run: |
+          az monitor log-analytics workspace show \
+            --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+            --workspace-name law-tripto --output table
+
+      - name: Check Application Insights
+        run: |
+          az monitor app-insights component show \
+            --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+            --app appi-tripto --output table
+
+      - name: Check Recovery Vault
+        run: |
+          az backup vault show \
+            --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+            --name rsv-tripto --output table
+
+      - name: Show all resources in RG
+        run: |
+          az resource list --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --output table
+
+      - name: Summary
+        run: |
+          echo ""
+          echo "====== MONITORING STACK DEPLOYED SUCCESSFULLY ======"
+          echo "  Resource Group : ${{ env.AZURE_RESOURCE_GROUP }}"
+          echo "  Location       : ${{ env.LOCATION }}"
+          echo "  Services       : Log Analytics + App Insights +"
+          echo "                   Action Group + Alerts + Backup"
+          echo "==================================================="

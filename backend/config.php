@@ -1,7 +1,7 @@
 <?php
 /**
- * Database Connection Configuration
- * Kết nối đến cơ sở dữ liệu MySQL
+ * Database Connection Configuration + Azure Monitoring
+ * Kết nối đến cơ sở dữ liệu MySQL + Application Insights
  */
 
 // Database Configuration / Cấu hình Database
@@ -17,6 +17,17 @@ define('DB_CHARSET', 'utf8mb4');
 error_reporting(E_ALL);
 ini_set('display_errors', 0);        // Không hiển thị lỗi cho user
 ini_set('log_errors', 1);            // Ghi log lỗi
+
+// Azure Application Insights
+// Instrumentation Key được lấy từ output của Bicep deployment
+// Cập nhật giá trị này sau khi chạy scripts/deploy-monitoring.ps1
+define('APPINSIGHTS_INSTRUMENTATIONKEY', getenv('APPINSIGHTS_INSTRUMENTATIONKEY') ?: '2c156544-aac3-495d-ad96-9377a65ddcd2');
+
+// Load monitoring helper
+require_once __DIR__ . '/monitor.php';
+
+// Auto-track request
+monitorBeginRequest();
 
 // Kết nối đến Database
 try {
@@ -53,4 +64,20 @@ function closeConnection() {
         $conn->close();
     }
 }
+
+// Auto-send telemetry khi script kết thúc
+register_shutdown_function(function () {
+    $httpCode = http_response_code();
+    $success = ($httpCode >= 200 && $httpCode < 500);
+    monitorEndRequest($httpCode, $success);
+
+    // Track PHP fatal errors
+    $lastError = error_get_last();
+    if ($lastError && in_array($lastError['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR])) {
+        monitorTrackException(new ErrorException(
+            $lastError['message'], 0, $lastError['type'],
+            $lastError['file'], $lastError['line']
+        ));
+    }
+});
 ?>

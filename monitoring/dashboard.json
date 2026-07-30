@@ -1,0 +1,130 @@
+{
+  "$schema": "https://portal.azure.com/schemas/2019-01-01-preview/dashboardTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "title": "TripTo - Monitoring Dashboard (Máy 4)"
+  },
+  "parameters": {},
+  "lenses": [
+    {
+      "order": 0,
+      "parts": [
+        {
+          "position": { "x": 0, "y": 0, "rows": 4, "cols": 6 },
+          "metadata": {
+            "type": "Extension/HubsExtension/PartType/MonitorChartPart",
+            "settings": {
+              "title": "Requests theo giờ (7 ngày)",
+              "content": {
+                "options": {
+                  "chartType": "Line",
+                  "metrics": [
+                    {
+                      "resourceMetadata": { "id": "/subscriptions/{subId}/resourceGroups/rg-tripto-monitoring/providers/Microsoft.Insights/components/appi-tripto" },
+                      "name": "requests/count",
+                      "aggregationType": 1,
+                      "metricVisualization": { "displayName": "Request Count" }
+                    }
+                  ],
+                  "timeRange": "P7D"
+                }
+              }
+            }
+          }
+        },
+        {
+          "position": { "x": 6, "y": 0, "rows": 4, "cols": 6 },
+          "metadata": {
+            "type": "Extension/HubsExtension/PartType/MonitorChartPart",
+            "settings": {
+              "title": "Response Time (P50, P95, P99)",
+              "content": {
+                "options": {
+                  "chartType": "Line",
+                  "metrics": [
+                    {
+                      "resourceMetadata": { "id": "/subscriptions/{subId}/resourceGroups/rg-tripto-monitoring/providers/Microsoft.Insights/components/appi-tripto" },
+                      "name": "requests/duration",
+                      "aggregationType": 4,
+                      "metricVisualization": { "displayName": "Avg Duration" }
+                    }
+                  ],
+                  "timeRange": "P24H"
+                }
+              }
+            }
+          }
+        },
+        {
+          "position": { "x": 0, "y": 4, "rows": 4, "cols": 4 },
+          "metadata": {
+            "type": "Extension/HubsExtension/PartType/MonitorChartPart",
+            "settings": {
+              "title": "Tỉ lệ lỗi (Failed Requests)",
+              "content": {
+                "options": {
+                  "chartType": "Bar",
+                  "metrics": [
+                    {
+                      "resourceMetadata": { "id": "/subscriptions/{subId}/resourceGroups/rg-tripto-monitoring/providers/Microsoft.Insights/components/appi-tripto" },
+                      "name": "requests/failed",
+                      "aggregationType": 1,
+                      "metricVisualization": { "displayName": "Failed" }
+                    }
+                  ],
+                  "timeRange": "P24H"
+                }
+              }
+            }
+          }
+        },
+        {
+          "position": { "x": 4, "y": 4, "rows": 4, "cols": 4 },
+          "metadata": {
+            "type": "Extension/HubsExtension/PartType/MonitorChartPart",
+            "settings": {
+              "title": "Server Exceptions",
+              "content": {
+                "options": {
+                  "chartType": "Bar",
+                  "metrics": [
+                    {
+                      "resourceMetadata": { "id": "/subscriptions/{subId}/resourceGroups/rg-tripto-monitoring/providers/Microsoft.Insights/components/appi-tripto" },
+                      "name": "exceptions/server",
+                      "aggregationType": 1,
+                      "metricVisualization": { "displayName": "Exceptions" }
+                    }
+                  ],
+                  "timeRange": "P24H"
+                }
+              }
+            }
+          }
+        },
+        {
+          "position": { "x": 8, "y": 4, "rows": 4, "cols": 4 },
+          "metadata": {
+            "type": "Extension/HubsExtension/PartType/BuildersPart",
+            "settings": {
+              "title": "Alert Status",
+              "content": {
+                "query": "AzureActivity | where TimeGenerated > ago(24h) | where CategoryValue == 'Alert' | project TimeGenerated, OperationNameValue, Caller | order by TimeGenerated desc"
+              }
+            }
+          }
+        },
+        {
+          "position": { "x": 0, "y": 8, "rows": 4, "cols": 12 },
+          "metadata": {
+            "type": "Extension/HubsExtension/PartType/MarkdownPart",
+            "settings": {
+              "content": {
+                "markdownContent": "# 🚀 TripTo Monitoring Dashboard\n## Máy 4 - Monitoring & Governance\n### Dự án Nhóm 2 - Đặt Tour Du Lịch\n\n**Dashboard này hiển thị:**\n- 📊 Số lượng request, response time, tỉ lệ lỗi\n- ⚠️ Alert CPU, Memory, Failed Requests\n- 💰 Chi phí hàng tháng & budget tracking\n- 🔒 Security alerts & compliance status\n\n---\n*Last updated: $(UtcNow)*"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
