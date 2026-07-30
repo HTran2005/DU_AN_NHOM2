@@ -5,10 +5,10 @@
  */
 
 // Database Configuration / Cấu hình Database
-define('DB_HOST', 'localhost');      // Máy chủ
-define('DB_USER', 'root');           // Username
-define('DB_PASS', '');               // Password (mặc định rỗng cho XAMPP)
-define('DB_NAME', 'tripto');         // Tên cơ sở dữ liệu
+define('DB_HOST', getenv('DB_HOST') ?: 'tripto-mysql-db.mysql.database.azure.com');
+define('DB_USER', getenv('DB_USER') ?: 'nhom2');
+define('DB_PASS', getenv('DB_PASS') ?: 'tripto@123');
+define('DB_NAME', getenv('DB_NAME') ?: 'tripto_db');
 
 // Charset
 define('DB_CHARSET', 'utf8mb4');
