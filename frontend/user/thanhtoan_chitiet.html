@@ -1334,7 +1334,7 @@
             isCombo = true;
             
             // Fetch combo data from API
-            fetch(`../user.php?endpoint=get_combo_detail&id=${comboId}`)
+            fetch(`../../backend/user.php?endpoint=get_combo_detail&id=${comboId}`)
                 .then(response => {
                     console.log('📡 Combo API Response Status:', response.status);
                     return response.json();
@@ -1646,7 +1646,7 @@
             confirmBtn.textContent = '⏳ Đang xử lý...';
 
             // Send booking data to API
-            fetch('../user.php?endpoint=create_booking', {
+            fetch('../../backend/user.php?endpoint=create_booking', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

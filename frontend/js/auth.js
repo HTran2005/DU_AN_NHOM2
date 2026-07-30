@@ -58,7 +58,7 @@ class TriptoAuth {
      */
     async login(email, password) {
         try {
-            const apiUrl = '../auth.php';
+            const apiUrl = '../../backend/user.php';
             const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {

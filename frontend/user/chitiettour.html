@@ -2216,7 +2216,7 @@
                     return false;
                 }
 
-                const response = await fetch(`../user.php?endpoint=${endpoint}`);
+                const response = await fetch(`../../backend/user.php?endpoint=${endpoint}`);
                 const result = await response.json();
                 
                 if (result.success && result.isFavorited) {
@@ -2290,7 +2290,7 @@
                         return;
                     }
 
-                    const response = await fetch(`../user.php?endpoint=${endpoint}`);
+                    const response = await fetch(`../../backend/user.php?endpoint=${endpoint}`);
                     const result = await response.json();
 
                     if (result.success && result.isFavorited) {
@@ -2413,12 +2413,12 @@
             try {
                 // First, initialize tables
                 console.log('🔧 Initializing favorite tables...');
-                const initResponse = await fetch(`../user.php?endpoint=init_favorite_tables`);
+                const initResponse = await fetch(`../../backend/user.php?endpoint=init_favorite_tables`);
                 const initData = await initResponse.json();
                 console.log('📋 Init Result:', initData);
                 
                 // Now load groups
-                const response = await fetch(`../user.php?endpoint=get_favorite_groups&id_nguoi_dung=${userId}`);
+                const response = await fetch(`../../backend/user.php?endpoint=get_favorite_groups&id_nguoi_dung=${userId}`);
                 
                 console.log('🔍 Groups API Response Status:', response.status);
                 
@@ -2533,7 +2533,7 @@
                 }
 
                 try {
-                    const response = await fetch('../user.php?endpoint=add_to_favorite_group', {
+                    const response = await fetch('../../backend/user.php?endpoint=add_to_favorite_group', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -2628,7 +2628,7 @@
 
                 try {
                     console.log('📤 Creating group:', { id_nguoi_dung: userId, ten: name });
-                    const response = await fetch('../user.php?endpoint=create_favorite_group', {
+                    const response = await fetch('../../backend/user.php?endpoint=create_favorite_group', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -2648,7 +2648,7 @@
                     if (result.success) {
                         // Add to favorite group
                         console.log('📤 Adding to group:', { id_yeu_thich: favoriteId, id_nhom: result.group_id });
-                        const addResponse = await fetch('../user.php?endpoint=add_to_favorite_group', {
+                        const addResponse = await fetch('../../backend/user.php?endpoint=add_to_favorite_group', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
@@ -2735,7 +2735,7 @@
 
                 // Fetch tour detail from API - use correct relative path
                 // user.php is in USER/ folder, from USER/USER go up one level with ../
-                const response = await fetch(`../user.php?endpoint=get_tour_detail&id=${tourId}`);
+                const response = await fetch(`../../backend/user.php?endpoint=get_tour_detail&id=${tourId}`);
                 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -2920,7 +2920,7 @@
                 console.log('Loading combo detail for ID:', comboId);
 
                 // Fetch combo detail from API
-                const response = await fetch(`../user.php?endpoint=get_combo_detail&id=${comboId}`);
+                const response = await fetch(`../../backend/user.php?endpoint=get_combo_detail&id=${comboId}`);
                 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -3569,7 +3569,7 @@
                     
                     console.log('📤 Gửi yêu cầu đăng nhập đến user.php');
                     
-                    const apiUrl = '../user.php?endpoint=auth&action=login';
+                    const apiUrl = '../../backend/user.php?endpoint=auth&action=login';
                     console.log('📍 API URL:', apiUrl);
                     
                     const response = await fetch(apiUrl, {
@@ -3659,7 +3659,7 @@
                     
                     console.log('📤 Gửi yêu cầu đăng ký đến user.php');
                     
-                    const apiUrl = '../user.php?endpoint=auth&action=register';
+                    const apiUrl = '../../backend/user.php?endpoint=auth&action=register';
                     console.log('📍 API URL:', apiUrl);
                     
                     const response = await fetch(apiUrl, {

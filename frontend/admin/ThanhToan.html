@@ -963,7 +963,7 @@
         // Fetch payment methods from database
         async function loadPaymentMethods() {
             try {
-                const response = await fetch(`../admin.php?action=get_payment_methods`);
+                const response = await fetch(`../../backend/admin.php?action=get_payment_methods`);
                 const data = await response.json();
                 
                 if (data.success && data.data.length > 0) {
@@ -991,7 +991,7 @@
         // Fetch payments from database
         async function fetchPayments(page = 1, filter = 'all', paymentMethod = 'all', month = 'all') {
             try {
-                const response = await fetch(`../admin.php?action=get_payments&page=${page}&filter=${filter}&payment_method=${paymentMethod}&month=${month}`);
+                const response = await fetch(`../../backend/admin.php?action=get_payments&page=${page}&filter=${filter}&payment_method=${paymentMethod}&month=${month}`);
                 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -1209,7 +1209,7 @@
         function confirmPayment(paymentId) {
             if (confirm('Bạn có chắc chắn muốn xác nhận thanh toán này thành công?')) {
                 // Call API to confirm payment
-                fetch('../admin.php', {
+                fetch('../../backend/admin.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -1238,7 +1238,7 @@
         function deletePayment(paymentId) {
             if (confirm('Bạn có chắc chắn muốn xóa thanh toán này?')) {
                 // Call API to delete payment
-                fetch('../admin.php', {
+                fetch('../../backend/admin.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

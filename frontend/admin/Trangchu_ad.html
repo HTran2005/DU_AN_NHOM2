@@ -1214,7 +1214,7 @@
          * Hàm lấy dữ liệu thống kê dashboard từ API
          */
         function loadDashboardStats() {
-            const apiUrl = '../admin.php?action=get_dashboard_stats';
+            const apiUrl = '../../backend/admin.php?action=get_dashboard_stats';
             
             fetch(apiUrl)
                 .then(response => {
@@ -1258,7 +1258,7 @@
          * Lấy và hiển thị danh sách khởi hành sắp tới từ cơ sở dữ liệu
          */
         function loadUpcomingDepartures() {
-            fetch('../admin.php?action=get_upcoming_departures&limit=5')
+            fetch('../../backend/admin.php?action=get_upcoming_departures&limit=5')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');

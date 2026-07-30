@@ -2042,7 +2042,7 @@
                 }
                 
                 try {
-                    const response = await fetch('../user.php?endpoint=auth&action=login', {
+                    const response = await fetch('../../backend/user.php?endpoint=auth&action=login', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -2204,7 +2204,7 @@
                         return;
                     }
 
-                    const response = await fetch(`../user.php?endpoint=${endpoint}`);
+                    const response = await fetch(`../../backend/user.php?endpoint=${endpoint}`);
                     const result = await response.json();
 
                     if (result.success && result.isFavorited) {
@@ -2321,12 +2321,12 @@
             try {
                 // First, initialize tables
                 console.log('🔧 Initializing favorite tables...');
-                const initResponse = await fetch(`../user.php?endpoint=init_favorite_tables`);
+                const initResponse = await fetch(`../../backend/user.php?endpoint=init_favorite_tables`);
                 const initData = await initResponse.json();
                 console.log('📋 Init Result:', initData);
                 
                 // Now load groups
-                const response = await fetch(`../user.php?endpoint=get_favorite_groups&id_nguoi_dung=${userId}`);
+                const response = await fetch(`../../backend/user.php?endpoint=get_favorite_groups&id_nguoi_dung=${userId}`);
                 
                 console.log('🔍 Groups API Response Status:', response.status);
                 
@@ -2444,7 +2444,7 @@
                 }
 
                 try {
-                    const createFavResponse = await fetch(`../user.php?endpoint=create_combo_favorite_with_group`, {
+                    const createFavResponse = await fetch(`../../backend/user.php?endpoint=create_combo_favorite_with_group`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -2503,12 +2503,12 @@
             
             try {
                 // First, check if combo is already favorited
-                const checkResponse = await fetch(`../user.php?endpoint=check_combo_favorite&id_goi_combo=${comboId}&id_nguoi_dung=${id_nguoi_dung}`);
+                const checkResponse = await fetch(`../../backend/user.php?endpoint=check_combo_favorite&id_goi_combo=${comboId}&id_nguoi_dung=${id_nguoi_dung}`);
                 const checkData = await checkResponse.json();
                 
                 if (checkData.isFavorited) {
                     // If already favorited, remove it
-                    const deleteResponse = await fetch(`../user.php?endpoint=remove_combo_favorite&id_goi_combo=${comboId}&id_nguoi_dung=${id_nguoi_dung}`);
+                    const deleteResponse = await fetch(`../../backend/user.php?endpoint=remove_combo_favorite&id_goi_combo=${comboId}&id_nguoi_dung=${id_nguoi_dung}`);
                     const deleteData = await deleteResponse.json();
                     if (deleteData.success) {
                         button.textContent = '♡';
@@ -2621,12 +2621,12 @@
             try {
                 // First, initialize tables
                 console.log('🔧 Initializing favorite tables...');
-                const initResponse = await fetch(`../user.php?endpoint=init_favorite_tables`);
+                const initResponse = await fetch(`../../backend/user.php?endpoint=init_favorite_tables`);
                 const initData = await initResponse.json();
                 console.log('📋 Init Result:', initData);
                 
                 // Now load groups
-                const response = await fetch(`../user.php?endpoint=get_favorite_groups&id_nguoi_dung=${userId}`);
+                const response = await fetch(`../../backend/user.php?endpoint=get_favorite_groups&id_nguoi_dung=${userId}`);
                 
                 console.log('🔍 Groups API Response Status:', response.status);
                 
@@ -2741,7 +2741,7 @@
                 }
 
                 try {
-                    const response = await fetch('../user.php?endpoint=create_combo_favorite_with_group', {
+                    const response = await fetch('../../backend/user.php?endpoint=create_combo_favorite_with_group', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -2835,7 +2835,7 @@
                 }
 
                 try {
-                    const response = await fetch('../user.php?endpoint=create_favorite_group', {
+                    const response = await fetch('../../backend/user.php?endpoint=create_favorite_group', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -2848,7 +2848,7 @@
 
                     if (result.success) {
                         // Create combo favorite WITH group in one call
-                        const createFavResponse = await fetch(`../user.php?endpoint=create_combo_favorite_with_group`, {
+                        const createFavResponse = await fetch(`../../backend/user.php?endpoint=create_combo_favorite_with_group`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
@@ -2885,7 +2885,7 @@
         async function loadCombos() {
             try {
                 console.log('Loading all combos...');
-                const response = await fetch('../user.php?endpoint=get_combos');
+                const response = await fetch('../../backend/user.php?endpoint=get_combos');
                 const data = await response.json();
                 
                 console.log('Load combos response:', data);
@@ -2946,7 +2946,7 @@
                     const comboId = parseInt(comboIdMatch[1]);
                     
                     try {
-                        const response = await fetch(`../user.php?endpoint=check_combo_favorite&id_goi_combo=${comboId}&id_nguoi_dung=${id_nguoi_dung}`);
+                        const response = await fetch(`../../backend/user.php?endpoint=check_combo_favorite&id_goi_combo=${comboId}&id_nguoi_dung=${id_nguoi_dung}`);
                         const data = await response.json();
                         
                         // Check for authentication errors
@@ -3077,7 +3077,7 @@
          */
         async function loadFilterData() {
             try {
-                const response = await fetch('../user.php?endpoint=get_filter_data&type=combos');
+                const response = await fetch('../../backend/user.php?endpoint=get_filter_data&type=combos');
                 const data = await response.json();
                 
                 console.log('Filter data response:', data);
@@ -3149,7 +3149,7 @@
                     params.append('price_max', maxPrice);
                 }
                 
-                const url = '../user.php?endpoint=search_combos&' + params.toString();
+                const url = '../../backend/user.php?endpoint=search_combos&' + params.toString();
                 console.log('Searching combos with URL:', url);
                 
                 const response = await fetch(url);
