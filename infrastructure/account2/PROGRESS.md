@@ -85,8 +85,11 @@
 - [ ] Cần nhờ Dungcute redeploy từ GitHub (hoặc kiểm tra Deployment Center)
 
 ### C. Recovery Services Vault backup
-- [ ] Vault `rsv-tripto` đã tạo nhưng chưa cấu hình backup items
-- [ ] Ghi chú: MySQL Flexible Server đã có built-in backup 7 ngày (PITR), runbook backup là lớp bổ sung
+- [x] Vault `rsv-tripto` (Standard, southeastasia)
+- [x] Policy `policy-tripto-afs` (daily 02:00, retention 30 ngày)
+- [x] Backup item: Azure Files share `tripto-share` (trong `sttriptobackup`)
+- [x] **TEST THÀNH CÔNG 2026-07-31**: Backup on-demand Completed → recovery point `2261472391260650739` (FileSystemConsistent)
+- [x] Ghi chú: MySQL Flexible Server dùng built-in PITR 7 ngày (không qua vault này); vault bảo vệ Azure Files
 
 ---
 
