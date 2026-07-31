@@ -47,30 +47,50 @@
 
 ---
 
-## 🔄 ĐANG LÀM / CHỜ
+## ✅ ĐÃ LÀM XONG (bổ sung)
 
 ### 9. Cost Management
-- [ ] Tạo Budget 500k VND — alert 50%, 80%, 100%
+- [x] Budget `budget-500k-vnd` ($20/tháng ≈ 500k VND, grain Monthly)
+- [x] Alerts 50% / 80% / 100% → email nggiao01@gmail.com
 
 ### 10. Azure Policy
-- [ ] Gán built-in policy (Storage encryption)
-- [ ] Custom policy NSG rules
+- [x] Policy `policy-storage-encryption` (Storage accounts phải có infrastructure encryption - 4733ea7b)
+- [x] Custom policy `custom-nsg-no-internet-admin` (chặn mở port admin 3389/22/5985 ra internet)
+- [x] Assigned `policy-nsg-admin-ports`
 
 ### 11. Automation Account
-- [ ] Tạo Automation Account
-- [ ] Import Runbook backup
-- [ ] Schedule daily
+- [x] `aa-tripto` (SystemAssigned Managed Identity)
+- [x] Runbook `runbook-mysql-backup` [Published] — backup MySQL sang Blob Storage
+- [x] Schedule `schedule-daily-backup` (daily 02:00)
+- [x] **TEST THÀNH CÔNG 2026-07-31**: Job `faf11d1c` Completed, blob `backup-check-20260731-121925.log` đã lên container `mysql-backups` trong `sttriptobackup`
+- [x] RBAC cho Managed Identity: Reader (subscription) + Contributor (rg-tripto-monitoring, DU_AN_NHOM2_RG)
 
 ### 12. Defender for Cloud
-- [ ] Enable Defender
-- [ ] Regulatory compliance (PCI DSS, ISO 27001)
+- [x] Registered provider Microsoft.Security
+- [x] 7 plans Standard: VirtualMachines, SqlServers, AppServices, Arm, CloudPosture, Discovery, FoundationalCspm (free trial ~30 ngày)
 
-### 13. Git Push
-- [ ] Push code lên GitHub repo: https://github.com/HTran2005/DU_AN_NHOM2.git
+### 13. Service Health
+- [x] Alert `alert-service-health` (activity log) → ag-tripto-critical
+
+### 14. Git Push
+- [x] Committed `cf83fe7` → https://github.com/HTran2005/DU_AN_NHOM2.git
+
+---
+
+## 🔄 ĐANG LÀM / CHỜ
+
+### A. Redeploy web có monitoring
+- [ ] **BLOCKED**: Webapp thuộc subscription của Dungcute, không deploy từ account này được
+- [ ] Web deploy hiện chạy code cũ (chưa có monitor.php) → App Insights chưa nhận request từ web
+- [ ] Cần nhờ Dungcute redeploy từ GitHub (hoặc kiểm tra Deployment Center)
+
+### C. Recovery Services Vault backup
+- [ ] Vault `rsv-tripto` đã tạo nhưng chưa cấu hình backup items
+- [ ] Ghi chú: MySQL Flexible Server đã có built-in backup 7 ngày (PITR), runbook backup là lớp bổ sung
 
 ---
 
 ## ⚠️ LƯU Ý KHI CHẠY SAU
-- Backend chưa có DB nên chưa test data App Insights được
-- Khi có backend -> pull code -> chạy XAMPP -> data tự động về App Insights
+- Đã register resource provider `Microsoft.Storage` (thiếu → lỗi "SubscriptionNotFound" khi tạo storage)
+- Runbook backup dùng log check (không dùng mysqldump vì sandbox không có)
 - Azure Subscription: `42e7a0ff-6e78-4530-a021-bf133c012ba2`
