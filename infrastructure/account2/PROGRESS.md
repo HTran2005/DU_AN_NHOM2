@@ -1,5 +1,5 @@
 # ACCOUNT 2 — Monitoring & Governance (Máy 4)
-## Trạng thái: Đang triển khai
+## Trạng thái: Hầu hết xong — còn Task A (chờ Dungcute) + fix email Action Group
 
 ---
 
@@ -73,27 +73,47 @@
 - [x] Alert `alert-service-health` (activity log) → ag-tripto-critical
 
 ### 14. Git Push
-- [x] Committed `cf83fe7` → https://github.com/HTran2005/DU_AN_NHOM2.git
+- [x] Committed + pushed hết lên https://github.com/HTran2005/DU_AN_NHOM2.git
+- [x] Branch main đồng bộ 100% (0 commit chưa push, working tree clean)
+- [x] Các file đã lên GitHub main: `PROGRESS.md`, `runbook-mysql-backup.ps1`, `monitor.php`, `config.php`, `main.bicep`, `main.json`, `policies/nsg-no-internet-admin-port.json`, `deploy-monitoring.yml`
+
+### 15. CI/CD Pipeline (GitHub Actions)
+- [x] Workflow `deploy-monitoring.yml` hoạt động — **run gần nhất SUCCESS** (run `30631467315`, commit `98c8358`)
+- [x] 3 jobs đều pass: Validate Bicep (build + what-if) → Deploy to Azure → Verify Deployment
+- [x] Secret `AZURE_CREDENTIALS` đã tạo (service principal `sp-github-actions-tripto`, Contributor trên rg-tripto-monitoring)
+- [x] Đã fix 2 lỗi: (1) job validate thiếu bước Azure Login, (2) syntax YAML bị vỡ dòng
+- [x] `infrastructure/account2/main.json` (ARM template build từ bicep) đã commit
 
 ---
 
 ## 🔄 ĐANG LÀM / CHỜ
 
 ### A. Redeploy web có monitoring
-- [ ] **BLOCKED**: Webapp thuộc subscription của Dungcute, không deploy từ account này được
-- [ ] Web deploy hiện chạy code cũ (chưa có monitor.php) → App Insights chưa nhận request từ web
-- [ ] Cần nhờ Dungcute redeploy từ GitHub (hoặc kiểm tra Deployment Center)
+- [ ] **BLOCKED**: Webapp `tripto-gcbmg6gybegye7ex.southeastasia-01.azurewebsites.net` thuộc subscription của Dungcute (sub của mình có 0 webapp)
+- [ ] Web deploy hiện chạy code cũ (chưa có monitor.php) → App Insights chưa nhận request từ web (Log Analytics chỉ có 2 AppEvents test)
+- [ ] **Dungcute cần làm**: Azure Portal → webapp → Deployment Center → kết nối GitHub repo `HTran2005/DU_AN_NHOM2` → branch `main` → Save (tự deploy). Hoặc pull code mới từ GitHub rồi deploy lại.
+- [ ] Sau khi deploy: truy cập web vài lần, rồi kiểm tra Log Analytics có `AppRequests` mới chưa
 
-### C. Recovery Services Vault backup
-- [x] Vault `rsv-tripto` (Standard, southeastasia)
-- [x] Policy `policy-tripto-afs` (daily 02:00, retention 30 ngày)
-- [x] Backup item: Azure Files share `tripto-share` (trong `sttriptobackup`)
-- [x] **TEST THÀNH CÔNG 2026-07-31**: Backup on-demand Completed → recovery point `2261472391260650739` (FileSystemConsistent)
-- [x] Ghi chú: MySQL Flexible Server dùng built-in PITR 7 ngày (không qua vault này); vault bảo vệ Azure Files
+### B. Sửa email Action Group (LƯU Ý)
+- [ ] **Action Group email đã bị CI/CD ghi đè về `admin-tripto@yourdomain.com`** vì `parameters.json` vẫn chứa email cũ
+- [ ] Cần sửa email trong `infrastructure/account2/parameters.json` thành `nggiao01@gmail.com` rồi redeploy (tránh lần deploy sau revert tiếp)
 
 ---
 
 ## ⚠️ LƯU Ý KHI CHẠY SAU
-- Đã register resource provider `Microsoft.Storage` (thiếu → lỗi "SubscriptionNotFound" khi tạo storage)
-- Runbook backup dùng log check (không dùng mysqldump vì sandbox không có)
-- Azure Subscription: `42e7a0ff-6e78-4530-a021-bf133c012ba2`
+
+### Đã fix / kinh nghiệm
+- **`Microsoft.Storage` chưa register** → lỗi "SubscriptionNotFound" khi tạo storage. Đã register ✅
+- **Module Automation Account**: KHÔNG update lên bản mới (Az.Storage 9.7.1 + Az.Accounts 5.5.1 gây xung đột DLL "Method not found Azure.Core"). Giữ bộ gốc: Az.Accounts 2.15.0 + Az.Storage 6.1.0 + Az.MySql 1.1.1 + Az.Resources 6.13.0
+- **`mysqldump` không tồn tại** trong sandbox Automation → runbook dùng log-check + dựa vào built-in PITR 7 ngày của MySQL Flexible Server
+- **Managed Identity cần `Set-AzContext -SubscriptionId`** sau `Connect-AzAccount -Identity` mới thấy subscription
+- **RBAC cần thời gian propagate** (5-10 phút) sau khi cấp role mới
+- **`az backup`** container name phải đúng format: `StorageContainer;storage;<rg>;<account>`; item name: `AzureFileShare;<hex id>`; retain-until ≥ 1 ngày sau
+- **Storage blob list cần role** "Storage Blob Data Reader" cho user (đã cấp cho `c5cc23c6-...`)
+
+### Tài nguyên chính
+- Subscription: `42e7a0ff-6e78-4530-a021-bf133c012ba2` (Azure for Students, currency USD, $20 ≈ 500k VND)
+- Tenant: `27089f51-910a-4704-8f1d-47c335d11e1c`, user: `nggiao01@gmail.com`
+- MySQL Flexible Server `tripto-mysql-db` (8.4, PITR 7 ngày) nằm ở `DU_AN_NHOM2_RG` (trong sub của mình)
+- Storage `sttriptobackup` (tạo backup logs + file share `tripto-share`)
+- Automation Managed Identity principalId: `7203b57b-888b-4bdf-963d-85caa992abda`
