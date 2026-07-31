@@ -47,7 +47,8 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Lint Bicep files        run: |
+      - name: Lint Bicep files
+        run: |
           az bicep build --file ${{ env.BICEP_PATH }}/main.bicep
 
       - name: Validate with what-if
