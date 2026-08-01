@@ -177,6 +177,92 @@ Thứ tự thao tác thực tế trên Portal Azure + Cloud Shell. Người th�
 
 ---
 
+## KẾT NỐI GITHUB ACTIONS CHO TRIPTO2 (để cả 2 app tự cập nhật khi push code)
+
+> Mục đích: ban đầu chỉ `tripto` kết nối GitHub Actions. Để `tripto2` (bản dự phòng failover) cũng tự deploy cùng code khi push → cần kết nối Deployment Center cho tripto2.
+
+1. **Bước 1 — Bật SCM Basic Auth cho tripto2** (bắt buộc, không thì lỗi "publish profile invalid"):
+   - Portal → App Service **`tripto2`** → **Configuration** → tab **General settings**
+   - Gạt **"SCM Basic Auth Publishing Credentials"** sang **On** → **Save** → chờ restart.
+
+2. **Bước 2 — Vào Deployment Center**:
+   - App Service `tripto2` → menu trái → **Deployment Center**
+   - Nếu có kết nối cũ → **Disconnect** trước
+   - Chọn **Source: GitHub** → **Authorize** (đăng nhập GitHub nếu hỏi)
+   - Điền: **Organization** `HTran2005`, **Repository** `DU_AN_NHOM2`, **Branch** `main`
+
+3. **Bước 3 — Chọn build provider**:
+   - **Build provider**: **GitHub Actions**
+   - **Runtime stack**: **PHP**
+   - **Version**: **8.5**
+
+4. **Bước 4 — Chọn Authentication type**:
+   - Trong **Authentication settings** → chọn **Publish profile**
+   - Subscription để mặc định (không chọn OIDC / user-assigned identity)
+
+5. **Bước 5 — Save**:
+   - Bấm **Save** → Azure tự động:
+     - Tạo file `.github/workflows/main_tripto2.yml` trong repo GitHub
+     - Tạo secret riêng cho tripto2 trên GitHub
+     - Deploy lần đầu lên tripto2
+
+6. **Bước 6 — Kiểm tra**:
+   - GitHub → tab **Actions** → thấy **2 workflow**: `main_tripto.yml` (tripto) và `main_tripto2.yml` (tripto2)
+   - Cả 2 đều **xanh ✅**
+   - Kiểm chứng: sửa code → commit + push → cả 2 workflow cùng chạy → 2 app cùng cập nhật = thành công 🎉
+
+> ⚠️ **Lưu ý bảo mật:** file `maps-config.js` (chứa key Azure Maps) không nằm trong git (bị gitignore) nên không được deploy qua GitHub Actions. Khi deploy mới lên tripto2, file này sẽ **không có trên tripto2** → bản đồ có thể trống. Cần cân nhắc giải pháp an toàn (đưa key vào App Setting / biến môi trường) nếu muốn bản đồ hoạt động trên cả 2 app.
+
+---
+
+## DNS ZONES — Tạo zone `tripto.vn` (zone trắng minh họa)
+
+> **Bối cảnh:** chưa mua domain thật + App Service đang F1 (không bind custom domain được). Nên tạo **zone trắng** để chứng minh dịch vụ Azure DNS zones hoạt động. Để zone chạy thật cần: mua domain + trỏ NS + nâng tier B1+.
+
+### Các bước tạo zone
+
+1. **Mở trang tạo**: Portal → ô tìm kiếm → gõ **"DNS zones"** → chọn dịch vụ → bấm **+ Create**
+2. **Điền thông tin**:
+   - **Resource group**: `Frontend-Dung`
+   - **Name**: `tripto.vn` (tên miền dự kiến)
+   - **Resource group location**: để mặc định (Azure DNS global)
+3. Bấm **Review + create** → **Create** → **Go to resource**
+4. **Xác nhận tạo đúng chuẩn**: trong zone thấy **4 bản ghi NS** (nameserver Azure) + **1 bản ghi SOA** tự sinh ✅
+
+### Minh chứng cho giáo viên (3 bước — không cần mua domain)
+
+**Bước 1 — Lấy nameserver của zone:**
+- Portal → zone `tripto.vn` → nhìn record **NS** → copy 1 cái (vd `ns1-01.azure-dns.com`)
+
+**Bước 2 — Thêm 1 bản ghi vào zone:**
+- Trong zone → **+ Record set** → Name `www` → Type **CNAME** → Alias `tripto-gcbmg6gybegye7ex.southeastasia-01.azurewebsites.net` → **OK**
+
+**Bước 3 — Query trực tiếp nameserver (Cloud Shell hoặc máy):**
+```
+nslookup -type=CNAME www.tripto.vn ns1-01.azure-dns.com
+```
+Kết quả (bằng chứng hoạt động):
+```
+www.tripto.vn  canonical name = tripto-gcbmg6gybegye7ex.southeastasia-01.azurewebsites.net
+```
+→ Máy chủ DNS Azure trả lời đúng bản ghi = **zone đang hoạt động thật** ✅
+
+### Bảng minh chứng cho giáo viên
+
+| Câu giáo viên hỏi | Bạn trả lời + cho xem |
+|---|---|
+| "DNS zones là gì?" | Nơi quản lý bản ghi tên miền → Azure DNS zone |
+| "Bạn có tạo thật không?" | Có, mở Portal cho xem zone `tripto.vn` + NS/SOA records |
+| "Nó hoạt động không?" | Chạy `nslookup -type=CNAME www.tripto.vn <NS-Azure>` → Azure trả lời đúng bản ghi |
+| "Sao không mở web bằng domain?" | F1 không bind domain + chưa mua domain; cần B1+ để bind |
+
+### Tóm lại
+
+- **Zone trắng vẫn chứng minh được hoạt động** bằng cách query nameserver (nslookup/dig) — không cần mua domain
+- Điều kiện để zone chạy thật (web mở bằng tên miền): mua domain + trỏ NS sang Azure DNS + nâng App Service lên B1+ để bind custom domain
+
+---
+
 ## Tổng kết trạng thái hiện tại
 
 | Dịch vụ | Tài nguyên | Trạng thái |
@@ -186,5 +272,8 @@ Thứ tự thao tác thực tế trên Portal Azure + Cloud Shell. Người th�
 | Traffic Manager | `tripto-tm` | ✅ 2 endpoint Online |
 | Key Vault | `triptokv` | ✅ 2 secrets: `DB-PASS`, `MAPS-KEY` |
 | Azure Maps | `tripto-maps` | ✅ Gen2, location `global`, **đã nhúng bản đồ vào web** (Usage 165 request) |
+| GitHub Actions | `main_tripto.yml` | ✅ Deploy `tripto` tự động khi push main |
+| GitHub Actions | `main_tripto2.yml` | ✅ (kết nối xong) Deploy `tripto2` tự động khi push main |
+| DNS zones | `tripto.vn` | ✅ Zone trắng tạo xong (NS/SOA tự sinh), minh chứng bằng nslookup |
 
-**Chưa làm:** DNS zones (chưa có domain), Entra ID (nhóm bỏ qua). **Bị chặn:** Front Door, region Maps cụ thể.
+**Chưa làm:** Entra ID (nhóm bỏ qua). **Bị chặn:** Front Door, region Maps cụ thể. **DNS chạy thật:** cần mua domain + nâng B1+ (đề xuất bước tiếp theo).
