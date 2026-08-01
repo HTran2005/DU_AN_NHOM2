@@ -13,6 +13,13 @@ define('DB_NAME', getenv('DB_NAME') ?: 'tripto_db');
 // Charset
 define('DB_CHARSET', 'utf8mb4');
 
+// Microsoft Entra ID (đăng nhập bằng Microsoft)
+// Client ID và Tenant ID lấy từ App Registration trong Entra ID
+// Có thể đặt qua biến môi trường (App Service) để tránh lộ trong mã nguồn
+define('MS_CLIENT_ID', getenv('MS_CLIENT_ID') ?: '');
+define('MS_TENANT_ID', getenv('MS_TENANT_ID') ?: 'common');
+define('MS_AUTHORITY', getenv('MS_AUTHORITY') ?: ('https://login.microsoftonline.com/' . MS_TENANT_ID . '/v2.0'));
+
 // Error Reporting
 error_reporting(E_ALL);
 ini_set('display_errors', 0);        // Không hiển thị lỗi cho user
