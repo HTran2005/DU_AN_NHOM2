@@ -37,7 +37,11 @@ header('Access-Control-Allow-Headers: Content-Type');
 
 // Import config
 require_once __DIR__ . '/config.php';
-
+try {
+    $conn->query("ALTER TABLE `lich_su_dang_nhap` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT");
+} catch (Exception $e) {
+    // Bỏ qua lỗi nếu cột đã được set AUTO_INCREMENT
+}
 // =====================================================
 // AUTO-INITIALIZE DATABASE TABLES
 // =====================================================
