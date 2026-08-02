@@ -292,15 +292,16 @@ www.tripto.vn  canonical name = tripto-gcbmg6gybegye7ex.southeastasia-01.azurewe
 
 ### Bước 3 — Cấu hình frontend
 
-- Sửa file `frontend/user/msal-config.js` (file này đang gitignored):
+- File `frontend/user/msal-config.js` (đã **bỏ gitignore** 2026-08-02, commit được lên git vì clientId không phải bí mật):
   ```js
   window.MSAL_CONFIG = {
-      clientId: '<Application Client ID>',
-      authority: 'https://login.microsoftonline.com/<Tenant ID>/v2.0',
-      redirectUri: 'https://tripto-gcbmg6gybegye7ex.southeastasia-01.azurewebsites.net'
+      clientId: '9ecd3cd7-2387-41e0-ad77-c22884b2df9b',
+      authority: 'https://login.microsoftonline.com/common/v2.0',
+      redirectUri: 'https://tripto-gcbmg6gybegye7ex.southeastasia-01.azurewebsites.net/frontend/user/TRANGCHU.html'
   };
   ```
-- Deploy lại frontend (file này không nằm trong git nên phải deploy qua zip/Cloud Shell như `maps-config.js`).
+- Client ID cũng được fallback trong `backend/config.php` → không cần set env vars trên App Service.
+- Push lên git → GitHub Actions tự deploy lên cả `tripto` và `tripto2`.
 
 ### Bước 4 — Kiểm chứng
 
@@ -312,7 +313,7 @@ www.tripto.vn  canonical name = tripto-gcbmg6gybegye7ex.southeastasia-01.azurewe
 
 ### Lưu ý an toàn
 
-- `clientId`/`tenantId` **không phải bí mật** (dạng public trong SPA) nhưng đặt trong file gitignored để tránh GitHub chặn push và giữ gọn.
+- `clientId`/`tenantId` **không phải bí mật** (dạng public trong SPA) nên có thể commit `msal-config.js` lên git (khác với `maps-config.js` chứa Azure Maps key phải giữ gitignore).
 - Toàn bộ xác minh chữ ký diễn ra ở **backend** (chỉ dựa vào khóa công khai Microsoft, không tin token gửi lên) → chống làm giả token.
 
 ---
@@ -329,6 +330,6 @@ www.tripto.vn  canonical name = tripto-gcbmg6gybegye7ex.southeastasia-01.azurewe
 | GitHub Actions | `main_tripto.yml` | ✅ Deploy `tripto` tự động khi push main |
 | GitHub Actions | `main_tripto2.yml` | ✅ (kết nối xong) Deploy `tripto2` tự động khi push main |
 | DNS zones | `tripto.vn` | ✅ Zone trắng tạo xong (NS/SOA tự sinh), minh chứng bằng nslookup |
-| Entra ID | `tripto-app` (App Registration) | 🔄 **Đã code xong backend + frontend**; đang chờ tạo App Registration + điền `msal-config.js` + set env vars |
+| Entra ID | `tripto-app` (App Registration) | ✅ App Registration + `msal-config.js` + fallback backend đã xong 2026-08-02 |
 
-**Chưa làm:** Entra ID (đang chờ tạo App Registration để nối). **Bị chặn:** Front Door, region Maps cụ thể. **DNS chạy thật:** cần mua domain + nâng B1+ (đề xuất bước tiếp theo).
+**Chưa làm:** ~~Entra ID~~ (đã xong). **Bị chặn:** Front Door, region Maps cụ thể. **DNS chạy thật:** cần mua domain + nâng B1+ (đề xuất bước tiếp theo).

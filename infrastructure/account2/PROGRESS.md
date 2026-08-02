@@ -84,6 +84,16 @@
 - [x] Đã fix 2 lỗi: (1) job validate thiếu bước Azure Login, (2) syntax YAML bị vỡ dòng
 - [x] `infrastructure/account2/main.json` (ARM template build từ bicep) đã commit
 
+### 16. Entra ID App Registration (tripto-app)
+- [x] Tạo App Registration `tripto-app` 2026-08-02 (clientId `9ecd3cd7-2387-41e0-ad77-c22884b2df9b`)
+- [x] Sign-in audience: `AzureADandPersonalMicrosoftAccount`, ID token issuance: bật
+- [x] Redirect URI loại **SPA** (đã chuyển từ web sang spa):
+  - `https://tripto-gcbmg6gybegye7ex.southeastasia-01.azurewebsites.net/frontend/user/TRANGCHU.html`
+  - `https://tripto2-e3g2epfdaahzaqaa.southeastasia-01.azurewebsites.net/frontend/user/TRANGCHU.html`
+- [x] `frontend/user/msal-config.js` (đã bỏ gitignore 2026-08-02) = clientId + authority `common` + redirectUri TRANGCHU
+- [x] **Bỏ qua Dungcute** 2026-08-02: clientId (không phải bí mật) được fallback ngay trong `backend/config.php`, `msal-config.js` được commit lên git → GitHub Actions (`main_tripto.yml`/`main_tripto2.yml`) tự deploy lên web, không cần set env vars hay zip thủ công
+- [ ] Kiểm chứng: web → Đăng Nhập → "Tiếp tục với Microsoft" → popup đăng nhập → thành công
+
 ---
 
 ## 🔄 ĐANG LÀM / CHỜ
@@ -94,9 +104,9 @@
 - [ ] **Dungcute cần làm**: Azure Portal → webapp → Deployment Center → kết nối GitHub repo `HTran2005/DU_AN_NHOM2` → branch `main` → Save (tự deploy). Hoặc pull code mới từ GitHub rồi deploy lại.
 - [ ] Sau khi deploy: truy cập web vài lần, rồi kiểm tra Log Analytics có `AppRequests` mới chưa
 
-### B. Sửa email Action Group (LƯU Ý)
-- [ ] **Action Group email đã bị CI/CD ghi đè về `admin-tripto@yourdomain.com`** vì `parameters.json` vẫn chứa email cũ
-- [ ] Cần sửa email trong `infrastructure/account2/parameters.json` thành `nggiao01@gmail.com` rồi redeploy (tránh lần deploy sau revert tiếp)
+### B. Sửa email Action Group ✅
+- [x] Sửa `infrastructure/account2/parameters.json` → `nggiao01@gmail.com`
+- [x] Redeploy main.bicep thành công 2026-08-02 → email Action Group `ag-tripto-critical` = `nggiao01@gmail.com` (đã verify bằng `az monitor action-group show`)
 
 ---
 

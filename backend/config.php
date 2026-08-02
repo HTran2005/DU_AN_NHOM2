@@ -16,7 +16,7 @@ define('DB_CHARSET', 'utf8mb4');
 // Microsoft Entra ID (đăng nhập bằng Microsoft)
 // Client ID và Tenant ID lấy từ App Registration trong Entra ID
 // Có thể đặt qua biến môi trường (App Service) để tránh lộ trong mã nguồn
-define('MS_CLIENT_ID', getenv('MS_CLIENT_ID') ?: '');
+define('MS_CLIENT_ID', getenv('MS_CLIENT_ID') ?: '9ecd3cd7-2387-41e0-ad77-c22884b2df9b');
 define('MS_TENANT_ID', getenv('MS_TENANT_ID') ?: 'common');
 define('MS_AUTHORITY', getenv('MS_AUTHORITY') ?: ('https://login.microsoftonline.com/' . MS_TENANT_ID . '/v2.0'));
 
