@@ -1,0 +1,42 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+
+- checkout: self
+
+- script: |
+    echo "===== SOURCE CODE ====="
+    pwd
+    ls -R
+  displayName: "Show Project"
+
+- script: |
+    echo "===== PHP VERSION ====="
+    php -v
+  displayName: "Check PHP"
+
+- script: |
+    echo "===== FIND PHP FILE ====="
+    find . -name "*.php"
+  displayName: "Find PHP Files"
+
+- script: |
+    echo "===== DATABASE ====="
+    find . -name "*.sql"
+  displayName: "Find SQL"
+
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Build.SourcesDirectory)'
+    archiveType: zip
+    archiveFile: '$(Build.ArtifactStagingDirectory)/Website.zip'
+    replaceExistingArchive: true
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: Website
