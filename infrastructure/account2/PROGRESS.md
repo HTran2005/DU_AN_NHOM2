@@ -1,5 +1,5 @@
 # ACCOUNT 2 — Monitoring & Governance (Máy 4)
-## Trạng thái: Hầu hết xong — còn Task A (chờ Dungcute) + fix email Action Group
+## Trạng thái: Hầu hết xong — còn Task A (chờ Dungcute) + kiểm chứng Entra ID trên web
 
 ---
 
@@ -132,6 +132,48 @@
 ### B. Sửa email Action Group ✅
 - [x] Sửa `infrastructure/account2/parameters.json` → `nggiao01@gmail.com`
 - [x] Redeploy main.bicep thành công 2026-08-02 → email Action Group `ag-tripto-critical` = `nggiao01@gmail.com` (đã verify bằng `az monitor action-group show`)
+
+---
+
+---
+
+## 📅 NHẬT KÝ — 2026-08-02 (hôm nay đã làm gì)
+
+### 1. Cập nhật code mới nhất từ git
+- [x] Pull bản mới nhất `aaf8662` (Entra ID login + workflow tripto/tripto2 + STEPS_ACCOUNT1.md)
+
+### 2. Sửa email Action Group
+- [x] `parameters.json` → `nggiao01@gmail.com`, redeploy `main.bicep` thành công, verify email đã đổi
+
+### 3. Entra ID — Đăng nhập bằng Microsoft (hoàn tất, không cần chờ Dungcute)
+- [x] Tạo App Registration `tripto-app` (clientId `9ecd3cd7-2387-41e0-ad77-c22884b2df9b`), SPA redirect URI cho tripto + tripto2
+- [x] Tạo `frontend/user/msal-config.js` + bỏ gitignore → commit lên git
+- [x] Fallback clientId trong `backend/config.php` (không cần env vars)
+- [x] Push `82e4da5` → GitHub Actions deploy lên cả 2 webapp **success**
+- [x] Verify: `msal-config.js` có trên web, backend `login_microsoft` phản hồi đúng
+
+### 4. Microsoft Sentinel (SIEM) — dịch vụ mới
+- [x] Onboard Sentinel lên `law-tripto` (State: Succeeded), provider `Microsoft.OperationsManagement` đã register
+- [x] Kinh nghiệm: dùng `onboardingStates` api-version `2023-02-01-preview` (cách cũ solutions → lỗi BadGateway)
+
+### 5. Diagnostic Settings → Log Analytics (data cho Sentinel)
+- [x] `ds-mysql-to-law` (MySQL) + `ds-storage-to-law` (Storage) → law-tripto
+- [x] Verify: **AzureMetrics về liên tục** (276+ dòng) → storage metrics stream OK
+
+### 6. Azure Advisor — dịch vụ mới (subscription-level)
+- [x] Verify: **25 khuyến nghị** (17 Security + 8 HighAvailability)
+- [x] Tạo báo cáo `monitoring/advisor-service-health-report.md`
+
+### 7. Azure Service Health — dịch vụ mới (subscription-level)
+- [x] Resource health `law-tripto` = **Available**, register provider `Microsoft.ResourceHealth`
+- [x] Tạo alert `alert-resource-health` (category=ResourceHealth) → ag-tripto-critical
+
+### 8. Commit + push
+- [x] `82e4da5`: Entra ID + email Action Group + msal-config + fallback backend
+- [x] `34d6869`: PROGRESS.md + báo cáo Advisor/Service Health
+- [x] Branch main đồng bộ 100%
+
+### Kết quả: tổng cộng **12 dịch vụ chính thức** cho Account 2 (xem mục 1–20 phía trên)
 
 ---
 
