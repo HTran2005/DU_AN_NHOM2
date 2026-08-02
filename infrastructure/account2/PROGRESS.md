@@ -1,5 +1,5 @@
 # ACCOUNT 2 — Monitoring & Governance (Máy 4)
-## Trạng thái: Hầu hết xong — còn Task A (chờ Dungcute) + fix email Action Group
+## Trạng thái: Hầu hết xong — còn Task A (chờ Dungcute) + kiểm chứng Entra ID trên web
 
 ---
 
@@ -84,6 +84,41 @@
 - [x] Đã fix 2 lỗi: (1) job validate thiếu bước Azure Login, (2) syntax YAML bị vỡ dòng
 - [x] `infrastructure/account2/main.json` (ARM template build từ bicep) đã commit
 
+### 16. Entra ID App Registration (tripto-app)
+- [x] Tạo App Registration `tripto-app` 2026-08-02 (clientId `9ecd3cd7-2387-41e0-ad77-c22884b2df9b`)
+- [x] Sign-in audience: `AzureADandPersonalMicrosoftAccount`, ID token issuance: bật
+- [x] Redirect URI loại **SPA** (đã chuyển từ web sang spa):
+  - `https://tripto-gcbmg6gybegye7ex.southeastasia-01.azurewebsites.net/frontend/user/TRANGCHU.html`
+  - `https://tripto2-e3g2epfdaahzaqaa.southeastasia-01.azurewebsites.net/frontend/user/TRANGCHU.html`
+- [x] `frontend/user/msal-config.js` (đã bỏ gitignore 2026-08-02) = clientId + authority `common` + redirectUri TRANGCHU
+- [x] **Bỏ qua Dungcute** 2026-08-02: clientId (không phải bí mật) được fallback ngay trong `backend/config.php`, `msal-config.js` được commit lên git → GitHub Actions (`main_tripto.yml`/`main_tripto2.yml`) tự deploy lên web, không cần set env vars hay zip thủ công
+- [ ] Kiểm chứng: web → Đăng Nhập → "Tiếp tục với Microsoft" → popup đăng nhập → thành công
+
+### 17. Microsoft Sentinel (SIEM)
+- [x] **Bật Microsoft Sentinel** trên `law-tripto` 2026-08-02 (State: Succeeded)
+- [x] Solution `SecurityInsights(law-tripto)` trong RG `rg-tripto-monitoring`
+- [x] Đã register thêm provider `Microsoft.OperationsManagement` (bắt buộc)
+- [x] Lưu ý: onboard qua `Microsoft.SecurityInsights/onboardingStates` api-version `2023-02-01-preview` (cách cũ dùng solutions đã deprecated → lỗi BadGateway)
+- [ ] Chưa: data connectors, analytic rules (chờ dữ liệu từ web/DB về Log Analytics)
+
+### 18. Diagnostic Settings → Log Analytics (data cho Sentinel)
+- [x] `ds-mysql-to-law`: MySQL `tripto-mysql-db` → law-tripto (MySqlSlowLogs + MySqlAuditLogs + AllMetrics) 2026-08-02
+- [x] `ds-storage-to-law`: Storage `sttriptobackup` → law-tripto (Transaction + Capacity metrics) 2026-08-02
+- [x] Verify: **AzureMetrics đã về liên tục** (276+ dòng 08/02) → storage metrics stream OK
+- [ ] MySqlSlowLogs/AuditLogs chưa thấy dòng → cần query chậm thật + bật audit_log_enabled trên server
+
+### 19. Azure Advisor
+- [x] Dịch vụ tự chạy (provider Microsoft.Advisor Registered)
+- [x] Verify 2026-08-02: **25 khuyến nghị** (17 Security + 8 HighAvailability)
+- [x] File báo cáo: `monitoring/advisor-service-health-report.md`
+
+### 20. Azure Service Health
+- [x] Service health events: 0 (không sự cố — bình thường)
+- [x] Resource health `law-tripto`: **Available** ✅ (đã register provider Microsoft.ResourceHealth)
+- [x] Alert `alert-resource-health` (category=ResourceHealth) → ag-tripto-critical 2026-08-02
+- [x] Đã có sẵn `alert-service-health` (category=ServiceHealth)
+- [x] File báo cáo: `monitoring/advisor-service-health-report.md`
+
 ---
 
 ## 🔄 ĐANG LÀM / CHỜ
@@ -94,9 +129,51 @@
 - [ ] **Dungcute cần làm**: Azure Portal → webapp → Deployment Center → kết nối GitHub repo `HTran2005/DU_AN_NHOM2` → branch `main` → Save (tự deploy). Hoặc pull code mới từ GitHub rồi deploy lại.
 - [ ] Sau khi deploy: truy cập web vài lần, rồi kiểm tra Log Analytics có `AppRequests` mới chưa
 
-### B. Sửa email Action Group (LƯU Ý)
-- [ ] **Action Group email đã bị CI/CD ghi đè về `admin-tripto@yourdomain.com`** vì `parameters.json` vẫn chứa email cũ
-- [ ] Cần sửa email trong `infrastructure/account2/parameters.json` thành `nggiao01@gmail.com` rồi redeploy (tránh lần deploy sau revert tiếp)
+### B. Sửa email Action Group ✅
+- [x] Sửa `infrastructure/account2/parameters.json` → `nggiao01@gmail.com`
+- [x] Redeploy main.bicep thành công 2026-08-02 → email Action Group `ag-tripto-critical` = `nggiao01@gmail.com` (đã verify bằng `az monitor action-group show`)
+
+---
+
+---
+
+## 📅 NHẬT KÝ — 2026-08-02 (hôm nay đã làm gì)
+
+### 1. Cập nhật code mới nhất từ git
+- [x] Pull bản mới nhất `aaf8662` (Entra ID login + workflow tripto/tripto2 + STEPS_ACCOUNT1.md)
+
+### 2. Sửa email Action Group
+- [x] `parameters.json` → `nggiao01@gmail.com`, redeploy `main.bicep` thành công, verify email đã đổi
+
+### 3. Entra ID — Đăng nhập bằng Microsoft (hoàn tất, không cần chờ Dungcute)
+- [x] Tạo App Registration `tripto-app` (clientId `9ecd3cd7-2387-41e0-ad77-c22884b2df9b`), SPA redirect URI cho tripto + tripto2
+- [x] Tạo `frontend/user/msal-config.js` + bỏ gitignore → commit lên git
+- [x] Fallback clientId trong `backend/config.php` (không cần env vars)
+- [x] Push `82e4da5` → GitHub Actions deploy lên cả 2 webapp **success**
+- [x] Verify: `msal-config.js` có trên web, backend `login_microsoft` phản hồi đúng
+
+### 4. Microsoft Sentinel (SIEM) — dịch vụ mới
+- [x] Onboard Sentinel lên `law-tripto` (State: Succeeded), provider `Microsoft.OperationsManagement` đã register
+- [x] Kinh nghiệm: dùng `onboardingStates` api-version `2023-02-01-preview` (cách cũ solutions → lỗi BadGateway)
+
+### 5. Diagnostic Settings → Log Analytics (data cho Sentinel)
+- [x] `ds-mysql-to-law` (MySQL) + `ds-storage-to-law` (Storage) → law-tripto
+- [x] Verify: **AzureMetrics về liên tục** (276+ dòng) → storage metrics stream OK
+
+### 6. Azure Advisor — dịch vụ mới (subscription-level)
+- [x] Verify: **25 khuyến nghị** (17 Security + 8 HighAvailability)
+- [x] Tạo báo cáo `monitoring/advisor-service-health-report.md`
+
+### 7. Azure Service Health — dịch vụ mới (subscription-level)
+- [x] Resource health `law-tripto` = **Available**, register provider `Microsoft.ResourceHealth`
+- [x] Tạo alert `alert-resource-health` (category=ResourceHealth) → ag-tripto-critical
+
+### 8. Commit + push
+- [x] `82e4da5`: Entra ID + email Action Group + msal-config + fallback backend
+- [x] `34d6869`: PROGRESS.md + báo cáo Advisor/Service Health
+- [x] Branch main đồng bộ 100%
+
+### Kết quả: tổng cộng **12 dịch vụ chính thức** cho Account 2 (xem mục 1–20 phía trên)
 
 ---
 
