@@ -715,12 +715,17 @@ function authLogin() {
         throw new Exception('Email hoặc mật khẩu không chính xác');
     }
     
-    $updateSql = "UPDATE nguoi_dung SET luot_dang_nhap_cuoi = NOW() WHERE id = ?";
-    $updateStmt = $conn->prepare($updateSql);
-    if ($updateStmt) {
-        $updateStmt->bind_param("i", $user['id']);
-        $updateStmt->execute();
-        $updateStmt->close();
+    $// Lấy IP và thông tin thiết bị (User Agent) của người dùng
+    $ip = $_SERVER['REMOTE_ADDR'] ?? null;
+    $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? null;
+
+    // Lưu lịch sử đăng nhập vào đúng bảng lich_su_dang_nhap
+    $insertSql = "INSERT INTO lich_su_dang_nhap (id_nguoi_dung, dia_chi_ip, tac_nhan_user) VALUES (?, ?, ?)";
+    $insertStmt = $conn->prepare($insertSql);
+    if ($insertStmt) {
+        $insertStmt->bind_param("iss", $user['id'], $ip, $user_agent);
+        $insertStmt->execute();
+        $insertStmt->close();
     }
     
     session_start();
