@@ -94,6 +94,31 @@
 - [x] **Bỏ qua Dungcute** 2026-08-02: clientId (không phải bí mật) được fallback ngay trong `backend/config.php`, `msal-config.js` được commit lên git → GitHub Actions (`main_tripto.yml`/`main_tripto2.yml`) tự deploy lên web, không cần set env vars hay zip thủ công
 - [ ] Kiểm chứng: web → Đăng Nhập → "Tiếp tục với Microsoft" → popup đăng nhập → thành công
 
+### 17. Microsoft Sentinel (SIEM)
+- [x] **Bật Microsoft Sentinel** trên `law-tripto` 2026-08-02 (State: Succeeded)
+- [x] Solution `SecurityInsights(law-tripto)` trong RG `rg-tripto-monitoring`
+- [x] Đã register thêm provider `Microsoft.OperationsManagement` (bắt buộc)
+- [x] Lưu ý: onboard qua `Microsoft.SecurityInsights/onboardingStates` api-version `2023-02-01-preview` (cách cũ dùng solutions đã deprecated → lỗi BadGateway)
+- [ ] Chưa: data connectors, analytic rules (chờ dữ liệu từ web/DB về Log Analytics)
+
+### 18. Diagnostic Settings → Log Analytics (data cho Sentinel)
+- [x] `ds-mysql-to-law`: MySQL `tripto-mysql-db` → law-tripto (MySqlSlowLogs + MySqlAuditLogs + AllMetrics) 2026-08-02
+- [x] `ds-storage-to-law`: Storage `sttriptobackup` → law-tripto (Transaction + Capacity metrics) 2026-08-02
+- [x] Verify: **AzureMetrics đã về liên tục** (276+ dòng 08/02) → storage metrics stream OK
+- [ ] MySqlSlowLogs/AuditLogs chưa thấy dòng → cần query chậm thật + bật audit_log_enabled trên server
+
+### 19. Azure Advisor
+- [x] Dịch vụ tự chạy (provider Microsoft.Advisor Registered)
+- [x] Verify 2026-08-02: **25 khuyến nghị** (17 Security + 8 HighAvailability)
+- [x] File báo cáo: `monitoring/advisor-service-health-report.md`
+
+### 20. Azure Service Health
+- [x] Service health events: 0 (không sự cố — bình thường)
+- [x] Resource health `law-tripto`: **Available** ✅ (đã register provider Microsoft.ResourceHealth)
+- [x] Alert `alert-resource-health` (category=ResourceHealth) → ag-tripto-critical 2026-08-02
+- [x] Đã có sẵn `alert-service-health` (category=ServiceHealth)
+- [x] File báo cáo: `monitoring/advisor-service-health-report.md`
+
 ---
 
 ## 🔄 ĐANG LÀM / CHỜ
