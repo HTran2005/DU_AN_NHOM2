@@ -1,4 +1,22 @@
 <?php
+// ===== TAM DEBUG: bat loi that truoc khi nginx tra 404 =====
+ini_set('display_errors', 1);
+ini_set('error_reporting', E_ALL);
+set_exception_handler(function ($e) {
+    http_response_code(500);
+    header('Content-Type: application/json');
+    echo json_encode(['success' => false, 'debug' => 'EXCEPTION', 'message' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine(), 'trace' => $e->getTraceAsString()]);
+    exit;
+});
+register_shutdown_function(function () {
+    $err = error_get_last();
+    if ($err && in_array($err['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR])) {
+        http_response_code(500);
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'debug' => 'FATAL', 'message' => $err['message'], 'file' => $err['file'], 'line' => $err['line']]);
+    }
+});
+// ===== END debug handler =====
 /**
  * ===============================================
  * UNIFIED USER & TOUR API SYSTEM
