@@ -1322,7 +1322,7 @@ function formatBookingData($row) {
     $customerAddress = isset($row['customer_address']) && !empty($row['customer_address']) ? $row['customer_address'] : '-';
     
     // Normalize avatar path from database
-    $avatarPath = '../../USER/image/Avatar.png';
+    $avatarPath = '../image/Avatar.png';
     if (isset($row['customer_avatar']) && !empty($row['customer_avatar'])) {
         $avatar = trim($row['customer_avatar']);
         
@@ -1337,7 +1337,7 @@ function formatBookingData($row) {
         }
         
         // Build full path
-        $avatarPath = '../../USER/image/' . $avatar;
+        $avatarPath = '../image/' . $avatar;
     }
     
     // FALLBACK: Nếu combo mà vẫn không có tourDays, thử lấy lần nữa
@@ -1794,7 +1794,7 @@ function formatPaymentData($row) {
         if (!preg_match('/\.(jpg|jpeg|png|gif)$/i', $avatar)) {
             $avatar .= '.jpg';
         }
-        $avatarPath = '../../USER/image/' . $avatar;
+        $avatarPath = '../image/' . $avatar;
     }
     
     $customerName = isset($row['customer_name']) && !empty($row['customer_name']) ? $row['customer_name'] : 'Khách hàng';

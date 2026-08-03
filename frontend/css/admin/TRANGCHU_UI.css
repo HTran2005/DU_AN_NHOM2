@@ -523,7 +523,7 @@ button {
 .hero-background {
     position: absolute;
     inset: 0;
-    background: url('../image/nen4.jpg');
+    background: url('../../image/nen4.jpg');
     background-size: cover;
     z-index: 0;
 }
