@@ -2326,7 +2326,7 @@ function handleGetLocations() {
         $sql .= " WHERE dd.vung_mien = '$vung_mien'";
     }
     
-    $sql .= " GROUP BY dd.id ORDER BY dd.ten ASC";
+    $sql .= " GROUP BY dd.id, dd.ten, dd.quoc_gia, dd.url_anh, dd.mo_ta, dd.vung_mien ORDER BY dd.ten ASC";
     
     $result = $conn->query($sql);
     
