@@ -545,8 +545,20 @@ function authMicrosoftLogin() {
     }
 
     if (!$user) {
-        $ten_dau  = isset($claims['given_name']) && $claims['given_name'] !== '' ? $claims['given_name'] : 'Khách';
-        $ten_cuoi = isset($claims['family_name']) && $claims['family_name'] !== '' ? $claims['family_name'] : 'Microsoft';
+        // Tùy chọn tên: ưu tiên given_name/family_name, fallback name (tên đầy đủ), rồi phần đầu email
+        $ten_dau  = isset($claims['given_name']) && $claims['given_name'] !== '' ? $claims['given_name'] : '';
+        $ten_cuoi = isset($claims['family_name']) && $claims['family_name'] !== '' ? $claims['family_name'] : '';
+
+        if ($ten_dau === '' && $ten_cuoi === '' && !empty($claims['name'])) {
+            $fullName = trim($claims['name']);
+            $parts = mb_split('\s+', $fullName);
+            $ten_cuoi = array_pop($parts);
+            $ten_dau  = implode(' ', $parts);
+        }
+        if ($ten_dau === '' && $ten_cuoi === '') {
+            $ten_dau = 'Khách';
+            $ten_cuoi = 'Microsoft';
+        }
         $ten_dau  = mb_substr($ten_dau, 0, 50);
         $ten_cuoi = mb_substr($ten_cuoi, 0, 50);
 
@@ -579,6 +591,31 @@ function authMicrosoftLogin() {
             'user_id' => $newUserId
         ]);
     } else {
+        // Cập nhật tên thật nếu tài khoản Microsoft vẫn còn tên fallback "Khách Microsoft"
+        if (($user['ten_dau'] === 'Khách' && $user['ten_cuoi'] === 'Microsoft') || empty($user['ten_dau'])) {
+            $newTenDau  = isset($claims['given_name']) && $claims['given_name'] !== '' ? $claims['given_name'] : '';
+            $newTenCuoi = isset($claims['family_name']) && $claims['family_name'] !== '' ? $claims['family_name'] : '';
+            if ($newTenDau === '' && $newTenCuoi === '' && !empty($claims['name'])) {
+                $fullName = trim($claims['name']);
+                $parts = mb_split('\s+', $fullName);
+                $newTenCuoi = array_pop($parts);
+                $newTenDau  = implode(' ', $parts);
+            }
+            if ($newTenDau !== '' && $newTenCuoi !== '') {
+                $nameSql = "UPDATE nguoi_dung SET ten_dau = ?, ten_cuoi = ? WHERE id = ?";
+                $nameStmt = $conn->prepare($nameSql);
+                if ($nameStmt) {
+                    $newTenDau  = mb_substr($newTenDau, 0, 50);
+                    $newTenCuoi = mb_substr($newTenCuoi, 0, 50);
+                    $nameStmt->bind_param("ssi", $newTenDau, $newTenCuoi, $user['id']);
+                    $nameStmt->execute();
+                    $nameStmt->close();
+                    $user['ten_dau'] = $newTenDau;
+                    $user['ten_cuoi'] = $newTenCuoi;
+                }
+            }
+        }
+
         $updateSql = "UPDATE nguoi_dung SET luot_dang_nhap_cuoi = NOW() WHERE id = ?";
         $updateStmt = $conn->prepare($updateSql);
         if ($updateStmt) {
@@ -666,13 +703,11 @@ function verifyMicrosoftIdToken($idToken) {
         }
     }
     if (!$issuerValid) {
-        error_log('MSAL issuer invalid: ' . ($payload['iss'] ?? 'NULL'));
         throw new Exception('Issuer của ID token không hợp lệ');
     }
 
     // 3. Kiểm tra audience (phải khớp Client ID của app)
     if (empty($payload['aud']) || $payload['aud'] !== MS_CLIENT_ID) {
-        error_log('MSAL audience mismatch. aud=' . ($payload['aud'] ?? 'NULL') . ' expected=' . MS_CLIENT_ID . ' env=' . getenv('MS_CLIENT_ID'));
         throw new Exception('Audience của ID token không khớp Client ID');
     }
 
