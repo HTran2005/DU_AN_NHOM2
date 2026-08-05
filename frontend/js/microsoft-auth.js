@@ -18,7 +18,7 @@ const MicrosoftAuthConfig = {
 class MicrosoftAuth {
     constructor(config) {
         this.config = config;
-        this.authority = 'https://login.microsoftonline.com/' + config.tenantId + '/v2.0';
+        this.authority = 'https://login.microsoftonline.com/' + config.tenantId;
         this.msalInstance = null;
         this.msalLoaded = false;
         this.msalLoading = null;
