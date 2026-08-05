@@ -672,6 +672,7 @@ function verifyMicrosoftIdToken($idToken) {
 
     // 3. Kiểm tra audience (phải khớp Client ID của app)
     if (empty($payload['aud']) || $payload['aud'] !== MS_CLIENT_ID) {
+        error_log('MSAL audience mismatch. aud=' . ($payload['aud'] ?? 'NULL') . ' expected=' . MS_CLIENT_ID . ' env=' . getenv('MS_CLIENT_ID'));
         throw new Exception('Audience của ID token không khớp Client ID');
     }
 
