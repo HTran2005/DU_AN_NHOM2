@@ -23,30 +23,33 @@ steps:
     echo "##vso[task.setvariable variable=WORKITEM_ID]$WORKITEM"
   displayName: "Get Work Item ID"
 - script: |
+    echo "WORKITEM_ID=$(WORKITEM_ID)"
+    echo "Organization=$(organization)"
+    echo "Project=$(project)"
 
     if [ -z "$(WORKITEM_ID)" ]; then
-      echo "No Work Item"
-      exit 0
+      echo "No Work Item found"
+      exit 1
     fi
 
-    echo "WORKITEM=$(WORKITEM_ID)"
+    JSON='[
+      {
+        "op": "add",
+        "path": "/fields/System.State",
+        "value": "Active"
+      }
+    ]'
 
     AUTH=$(printf ":%s" "$PAT" | base64)
 
-    curl -v -X PATCH \
-      -H "Content-Type: application/json-patch+json" \
-      -H "Authorization: Basic $AUTH" \
-      "https://dev.azure.com/$(organization)/$(project)/_apis/wit/workitems/$(WORKITEM_ID)?api-version=7.1" \
-      -d '[
-        {
-          "op":"add",
-          "path":"/fields/System.State",
-          "value":"Active"
-        }
-      ]'
+    curl -v \
+      --request PATCH \
+      --url "https://dev.azure.com/$(organization)/$(project)/_apis/wit/workitems/$(WORKITEM_ID)?api-version=7.1" \
+      --header "Authorization: Basic $AUTH" \
+      --header "Content-Type: application/json-patch+json" \
+      --data "$JSON"
 
   displayName: "Set Active"
-
   env:
     PAT: $(PAT)
 - script: |
