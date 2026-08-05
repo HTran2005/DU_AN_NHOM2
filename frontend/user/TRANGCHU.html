@@ -2564,6 +2564,17 @@
                 
                 if (result.success) {
                     console.log('✅ Đăng nhập thành công! User:', result.user);
+
+                    // Nếu là admin, lưu thông tin admin và chuyển sang trang quản trị
+                    if (result.user && result.user.role === 'admin') {
+                        localStorage.setItem('adminName', result.user.ho_ten);
+                        localStorage.setItem('adminEmail', result.user.email);
+                        localStorage.setItem('adminId', result.user.id);
+                        alert('✅ ' + result.message + '\n\nChào mừng Admin ' + result.user.ho_ten + '! Đang chuyển đến trang quản trị...');
+                        window.location.href = '../admin/Trangchu_ad.html';
+                        return;
+                    }
+
                     alert('✅ ' + result.message + '\n\nChào mừng ' + result.user.ho_ten + '!');
                     document.getElementById('loginForm').reset();
                     loginModal.classList.remove('active');

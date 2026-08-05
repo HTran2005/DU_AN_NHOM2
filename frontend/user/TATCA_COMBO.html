@@ -2055,6 +2055,13 @@
                     const result = JSON.parse(responseText);
                     
                     if (result.success) {
+                        if (result.user && result.user.role === 'admin') {
+                            localStorage.setItem('adminName', result.user.ho_ten);
+                            localStorage.setItem('adminEmail', result.user.email);
+                            localStorage.setItem('adminId', result.user.id);
+                            window.location.href = '../admin/Trangchu_ad.html';
+                            return;
+                        }
                         sessionStorage.setItem('triptoUser', JSON.stringify(result.user));
                         sessionStorage.setItem('triptoLoggedIn', 'true');
                         setLoggedIn();

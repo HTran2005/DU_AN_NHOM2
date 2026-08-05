@@ -2384,6 +2384,15 @@
                     
                     if (result.success) {
                         console.log('✅ Đăng nhập thành công! User:', result.user);
+
+                        if (result.user && result.user.role === 'admin') {
+                            localStorage.setItem('adminName', result.user.ho_ten);
+                            localStorage.setItem('adminEmail', result.user.email);
+                            localStorage.setItem('adminId', result.user.id);
+                            window.location.href = '../admin/Trangchu_ad.html';
+                            return;
+                        }
+
                         alert('✅ ' + result.message + '\n\nChào mừng ' + result.user.ho_ten + '!');
                         document.getElementById('loginForm').reset();
                         loginModal.classList.remove('active');

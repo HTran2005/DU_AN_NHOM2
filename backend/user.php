@@ -770,6 +770,7 @@ function authLogin() {
             'quoc_gia' => $user['quoc_gia'] ?? null,
             'dia_chi' => $user['dia_chi'] ?? null,
             'ma_buu_chinh' => $user['ma_buu_chinh'] ?? null,
+            'role' => $user['vai_tro'] ?? 'user',
             'avatar' => !empty($user['avatar']) ? $user['avatar'] : (!empty($user['anh_dai_dien']) ? $user['anh_dai_dien'] : '../image/avt_pr.jpg'),
             'anh_dai_dien' => !empty($user['avatar']) ? $user['avatar'] : (!empty($user['anh_dai_dien']) ? $user['anh_dai_dien'] : '../image/avt_pr.jpg')
         ]
