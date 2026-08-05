@@ -115,8 +115,9 @@
                 throw new Error('Không nhận được id_token từ Microsoft');
             }
 
-            // Gửi lên backend xác minh + tạo session
-            const apiUrl = '../../user.php?endpoint=auth&action=login_microsoft';
+            // Gửi lên backend xác minh + tạo session.
+            // Dùng đường dẫn tuyệt đối từ gốc web để tránh 404 do URL tương đối (../../) phụ thuộc cấp thư mục trang.
+            const apiUrl = '/user.php?endpoint=auth&action=login_microsoft';
             const res = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {
