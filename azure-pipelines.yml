@@ -2,41 +2,47 @@ trigger:
 - main
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: ubuntu-latest
 
 steps:
 
 - checkout: self
 
+# Hiển thị source
 - script: |
-    echo "===== SOURCE CODE ====="
+    echo "===== PROJECT ====="
     pwd
     ls -R
-  displayName: "Show Project"
+  displayName: "Show Project Structure"
 
+# Kiểm tra PHP
 - script: |
-    echo "===== PHP VERSION ====="
     php -v
-  displayName: "Check PHP"
+  displayName: "Check PHP Version"
 
+# Validate PHP
 - script: |
-    echo "===== FIND PHP FILE ====="
-    find . -name "*.php"
-  displayName: "Find PHP Files"
+    find . -name "*.php" -exec php -l {} \;
+  displayName: "Validate PHP"
 
+# Kiểm tra SQL
 - script: |
-    echo "===== DATABASE ====="
     find . -name "*.sql"
-  displayName: "Find SQL"
+  displayName: "Find SQL Scripts"
 
+# Đóng gói source
 - task: ArchiveFiles@2
+  displayName: "Create Artifact"
   inputs:
     rootFolderOrFile: '$(Build.SourcesDirectory)'
+    includeRootFolder: false
     archiveType: zip
     archiveFile: '$(Build.ArtifactStagingDirectory)/Website.zip'
     replaceExistingArchive: true
 
+# Publish Artifact
 - task: PublishBuildArtifacts@1
+  displayName: "Publish Artifact"
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: Website
