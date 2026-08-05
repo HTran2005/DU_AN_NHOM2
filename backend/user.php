@@ -363,6 +363,9 @@ function handleAuth($action = '') {
         case 'login':
             authLogin();
             break;
+        case 'microsoft_login':
+            authMicrosoftLogin();
+            break;
         case 'register':
             authRegister();
             break;
@@ -472,6 +475,331 @@ function authLogin() {
         ]
     ]);
     exit;
+}
+
+// =====================================================
+// AUTH: MICROSOFT LOGIN (Entra ID / MSAL.js ID Token)
+// =====================================================
+
+function authMicrosoftLogin() {
+    global $conn;
+
+    $inputData = file_get_contents('php://input');
+    $data = json_decode($inputData, true);
+
+    if ($data === null) {
+        throw new Exception('Dữ liệu JSON không hợp lệ');
+    }
+
+    $idToken = isset($data['id_token']) ? trim($data['id_token']) : '';
+    if (empty($idToken)) {
+        throw new Exception('Thiếu ID token của Microsoft');
+    }
+
+    $claims = verifyMicrosoftIdToken($idToken);
+
+    $email = strtolower(trim($claims['email'] ?? ''));
+    $oid   = $claims['oid'] ?? '';
+    if (empty($email)) {
+        throw new Exception('Không lấy được email từ tài khoản Microsoft');
+    }
+    if (empty($oid)) {
+        $oid = md5($email);
+    }
+
+    ensureMicrosoftColumn();
+
+    $userId = null;
+    $checkByOidSql = "SELECT * FROM nguoi_dung WHERE microsoft_id = ? LIMIT 1";
+    $stmt = $conn->prepare($checkByOidSql);
+    if (!$stmt) {
+        throw new Exception("Lỗi prepare statement: " . $conn->error);
+    }
+    $stmt->bind_param("s", $oid);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->num_rows > 0 ? $result->fetch_assoc() : null;
+    $stmt->close();
+
+    if (!$user) {
+        $checkByEmailSql = "SELECT * FROM nguoi_dung WHERE email = ? LIMIT 1";
+        $stmt = $conn->prepare($checkByEmailSql);
+        if (!$stmt) {
+            throw new Exception("Lỗi prepare statement: " . $conn->error);
+        }
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $user = $result->num_rows > 0 ? $result->fetch_assoc() : null;
+        $stmt->close();
+
+        if ($user && !empty($oid)) {
+            $linkSql = "UPDATE nguoi_dung SET microsoft_id = ? WHERE id = ?";
+            $linkStmt = $conn->prepare($linkSql);
+            if ($linkStmt) {
+                $linkStmt->bind_param("si", $oid, $user['id']);
+                $linkStmt->execute();
+                $linkStmt->close();
+            }
+        }
+    }
+
+    if (!$user) {
+        $ten_dau  = isset($claims['given_name']) && $claims['given_name'] !== '' ? $claims['given_name'] : 'Khách';
+        $ten_cuoi = isset($claims['family_name']) && $claims['family_name'] !== '' ? $claims['family_name'] : 'Microsoft';
+        $ten_dau  = mb_substr($ten_dau, 0, 50);
+        $ten_cuoi = mb_substr($ten_cuoi, 0, 50);
+
+        $randomPassword = bin2hex(random_bytes(16));
+        $hashedPassword = password_hash($randomPassword, PASSWORD_BCRYPT, ['cost' => 10]);
+
+        $insertSql = "INSERT INTO nguoi_dung (ten_dau, ten_cuoi, email, mat_khau, microsoft_id, ngay_tao)
+                      VALUES (?, ?, ?, ?, ?, NOW())";
+        $insertStmt = $conn->prepare($insertSql);
+        if (!$insertStmt) {
+            throw new Exception("Lỗi prepare statement: " . $conn->error);
+        }
+        $insertStmt->bind_param("sssss", $ten_dau, $ten_cuoi, $email, $hashedPassword, $oid);
+        if (!$insertStmt->execute()) {
+            throw new Exception("Lỗi khi lưu dữ liệu: " . $insertStmt->error);
+        }
+        $newUserId = $insertStmt->insert_id;
+        $insertStmt->close();
+
+        $fetchSql = "SELECT * FROM nguoi_dung WHERE id = ?";
+        $fetchStmt = $conn->prepare($fetchSql);
+        $fetchStmt->bind_param("i", $newUserId);
+        $fetchStmt->execute();
+        $result = $fetchStmt->get_result();
+        $user = $result->fetch_assoc();
+        $fetchStmt->close();
+
+        monitorTrackEvent('user_microsoft_register', [
+            'email' => $email,
+            'user_id' => $newUserId
+        ]);
+    } else {
+        $updateSql = "UPDATE nguoi_dung SET luot_dang_nhap_cuoi = NOW() WHERE id = ?";
+        $updateStmt = $conn->prepare($updateSql);
+        if ($updateStmt) {
+            $updateStmt->bind_param("i", $user['id']);
+            $updateStmt->execute();
+            $updateStmt->close();
+        }
+    }
+
+    session_start();
+    $_SESSION['user_id'] = $user['id'];
+    $_SESSION['email'] = $user['email'];
+    $_SESSION['ten_dau'] = $user['ten_dau'];
+    $_SESSION['ten_cuoi'] = $user['ten_cuoi'];
+    $_SESSION['logged_in'] = true;
+    $_SESSION['login_time'] = time();
+
+    monitorTrackEvent('user_microsoft_login', [
+        'email' => $user['email'],
+        'user_id' => $user['id']
+    ]);
+
+    http_response_code(200);
+    echo json_encode([
+        'success' => true,
+        'message' => 'Đăng nhập bằng Microsoft thành công!',
+        'user' => [
+            'id' => $user['id'] ?? null,
+            'email' => $user['email'] ?? null,
+            'ten_dau' => $user['ten_dau'] ?? null,
+            'ten_cuoi' => $user['ten_cuoi'] ?? null,
+            'ho_ten' => (($user['ten_dau'] ?? '') . ' ' . ($user['ten_cuoi'] ?? '')),
+            'phone' => $user['so_dien_thoai'] ?? null,
+            'gioi_tinh' => $user['gioi_tinh'] ?? null,
+            'ngay_sinh' => $user['ngay_sinh'] ?? null,
+            'quoc_gia' => $user['quoc_gia'] ?? null,
+            'dia_chi' => $user['dia_chi'] ?? null,
+            'ma_buu_chinh' => $user['ma_buu_chinh'] ?? null,
+            'role' => $user['vai_tro'] ?? 'user',
+            'avatar' => !empty($user['avatar']) ? $user['avatar'] : (!empty($user['anh_dai_dien']) ? $user['anh_dai_dien'] : '../image/avt_pr.jpg'),
+            'anh_dai_dien' => !empty($user['avatar']) ? $user['avatar'] : (!empty($user['anh_dai_dien']) ? $user['anh_dai_dien'] : '../image/avt_pr.jpg')
+        ]
+    ]);
+    exit;
+}
+
+/**
+ * Xác thực ID token của Microsoft: kiểm tra chữ ký (JWKS), issuer, audience, expiry
+ */
+function verifyMicrosoftIdToken($idToken) {
+    $parts = explode('.', $idToken);
+    if (count($parts) !== 3) {
+        throw new Exception('ID token không hợp lệ');
+    }
+
+    $header  = json_decode(base64UrlDecodeJwt($parts[0]), true);
+    $payload = json_decode(base64UrlDecodeJwt($parts[1]), true);
+    $signature = base64UrlDecodeJwt($parts[2]);
+
+    if (!$header || !$payload) {
+        throw new Exception('ID token không đọc được');
+    }
+
+    // 1. Kiểm tra thời hạn
+    if (isset($payload['exp']) && $payload['exp'] < time()) {
+        throw new Exception('ID token đã hết hạn');
+    }
+    if (isset($payload['nbf']) && $payload['nbf'] > time()) {
+        throw new Exception('ID token chưa có hiệu lực');
+    }
+
+    // 2. Kiểm tra issuer (login.microsoftonline.com/{tenant}/v2.0 hoặc /common/)
+    if (empty($payload['iss']) || strpos($payload['iss'], 'https://login.microsoftonline.com/') !== 0 || substr($payload['iss'], -4) !== '/v2.0') {
+        throw new Exception('Issuer của ID token không hợp lệ');
+    }
+
+    // 3. Kiểm tra audience (phải khớp Client ID của app)
+    if (empty($payload['aud']) || $payload['aud'] !== MS_CLIENT_ID) {
+        throw new Exception('Audience của ID token không khớp Client ID');
+    }
+
+    // 4. Kiểm tra chữ ký bằng JWKS của Microsoft
+    $kid = $header['kid'] ?? '';
+    $alg = $header['alg'] ?? 'RS256';
+    if ($alg !== 'RS256') {
+        throw new Exception('Thuật toán ký không được hỗ trợ');
+    }
+
+    $keys = fetchMicrosoftJwks();
+    $publicKey = null;
+    foreach ($keys as $key) {
+        if (isset($key['kid']) && $key['kid'] === $kid) {
+            $publicKey = buildRsaPublicKey($key['n'], $key['e']);
+            break;
+        }
+    }
+    if (!$publicKey) {
+        throw new Exception('Không tìm thấy khóa xác thực phù hợp');
+    }
+
+    $dataToVerify = $parts[0] . '.' . $parts[1];
+    $ok = openssl_verify($dataToVerify, $signature, $publicKey, OPENSSL_ALGO_SHA256);
+    if ($ok !== 1) {
+        throw new Exception('Chữ ký ID token không hợp lệ');
+    }
+
+    return $payload;
+}
+
+function base64UrlDecodeJwt($data) {
+    $remainder = strlen($data) % 4;
+    if ($remainder) {
+        $data .= str_repeat('=', 4 - $remainder);
+    }
+    return base64_decode(strtr($data, '-_', '+/'));
+}
+
+function fetchMicrosoftJwks() {
+    $cacheFile = sys_get_temp_dir() . '/msal_jwks_' . md5(MS_TENANT_ID) . '.json';
+    $cacheTtl = 3600;
+
+    if (file_exists($cacheFile) && (time() - filemtime($cacheFile)) < $cacheTtl) {
+        $cached = json_decode(file_get_contents($cacheFile), true);
+        if (!empty($cached['keys'])) {
+            return $cached['keys'];
+        }
+    }
+
+    $jwksUrl = 'https://login.microsoftonline.com/' . MS_TENANT_ID . '/discovery/v2.0/keys';
+    $response = false;
+    $httpCode = 0;
+
+    if (function_exists('curl_init')) {
+        $ch = curl_init($jwksUrl);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => 10,
+            CURLOPT_SSL_VERIFYPEER => true
+        ]);
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+    } else {
+        $ctx = stream_context_create(['http' => ['timeout' => 10, 'ignore_errors' => true]]);
+        $response = @file_get_contents($jwksUrl, false, $ctx);
+        if ($response !== false) {
+            $httpCode = 200;
+        }
+    }
+
+    if ($response === false || $httpCode !== 200) {
+        throw new Exception('Không thể lấy khóa xác thực từ Microsoft');
+    }
+
+    $data = json_decode($response, true);
+    if (empty($data['keys'])) {
+        throw new Exception('JWKS rỗng từ Microsoft');
+    }
+
+    file_put_contents($cacheFile, json_encode($data));
+    return $data['keys'];
+}
+
+function buildRsaPublicKey($n, $e) {
+    $nDecoded = base64UrlDecodeJwt($n);
+    $eDecoded = base64UrlDecodeJwt($e);
+
+    // Tạo DER SubjectPublicKeyInfo cho RSA
+    $modulus = rsaDerInteger($nDecoded);
+    $exponent = rsaDerInteger($eDecoded);
+    $rsaPublicKey = "\x30" . derLength(strlen($modulus)) . $modulus . $exponent;
+
+    $algId = "\x30\x0d\x06\x09\x2a\x86\x48\x86\xf7\x0d\x01\x01\x01\x05\x00";
+    $bitString = "\x03" . derLength(strlen($rsaPublicKey) + 1) . "\x00" . $rsaPublicKey;
+    $spki = "\x30" . derLength(strlen($algId) + strlen($bitString)) . $algId . $bitString;
+
+    $pem = "-----BEGIN PUBLIC KEY-----\n" . chunk_split(base64_encode($spki), 64, "\n") . "-----END PUBLIC KEY-----\n";
+    $key = openssl_pkey_get_public($pem);
+    if (!$key) {
+        throw new Exception('Không thể tạo khóa công khai RSA');
+    }
+    return $key;
+}
+
+function rsaDerInteger($bytes) {
+    $bytes = ltrim($bytes, "\x00");
+    if ($bytes === '') {
+        $bytes = "\x00";
+    }
+    if (ord($bytes[0]) & 0x80) {
+        $bytes = "\x00" . $bytes;
+    }
+    return "\x02" . derLength(strlen($bytes)) . $bytes;
+}
+
+function derLength($length) {
+    if ($length < 128) {
+        return chr($length);
+    }
+    $bytes = '';
+    while ($length > 0) {
+        $bytes = chr($length & 0xff) . $bytes;
+        $length >>= 8;
+    }
+    return chr(0x80 | strlen($bytes)) . $bytes;
+}
+
+// Đảm bảo cột microsoft_id tồn tại trong bảng nguoi_dung
+function ensureMicrosoftColumn() {
+    global $conn;
+
+    $checkSql = "SHOW COLUMNS FROM nguoi_dung LIKE 'microsoft_id'";
+    $result = $conn->query($checkSql);
+    if ($result && $result->num_rows > 0) {
+        return;
+    }
+
+    $alterSql = "ALTER TABLE nguoi_dung ADD COLUMN microsoft_id VARCHAR(64) NULL DEFAULT NULL AFTER id, ADD UNIQUE INDEX uniq_microsoft_id (microsoft_id)";
+    if (!$conn->query($alterSql)) {
+        error_log("Error adding microsoft_id column: " . $conn->error);
+    }
 }
 
 // =====================================================
