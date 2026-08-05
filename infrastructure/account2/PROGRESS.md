@@ -123,11 +123,10 @@
 
 ## 🔄 ĐANG LÀM / CHỜ
 
-### A. Redeploy web có monitoring
-- [ ] **BLOCKED**: Webapp `tripto-gcbmg6gybegye7ex.southeastasia-01.azurewebsites.net` thuộc subscription của Dungcute (sub của mình có 0 webapp)
-- [ ] Web deploy hiện chạy code cũ (chưa có monitor.php) → App Insights chưa nhận request từ web (Log Analytics chỉ có 2 AppEvents test)
-- [ ] **Dungcute cần làm**: Azure Portal → webapp → Deployment Center → kết nối GitHub repo `HTran2005/DU_AN_NHOM2` → branch `main` → Save (tự deploy). Hoặc pull code mới từ GitHub rồi deploy lại.
-- [ ] Sau khi deploy: truy cập web vài lần, rồi kiểm tra Log Analytics có `AppRequests` mới chưa
+### A. Redeploy web có monitoring ✅
+- [x] **HẾT BLOCKED (2026-08-05)**: Web `tripto` đã chạy code mới có monitor.php (bằng chứng: 2 event `booking_created` 2026-08-03 15:16 về Log Analytics) — Dungcute đã kết nối Deployment Center.
+- [x] **Bug duration format**: ban đầu `monitor.php` gửi `duration="1234.0"` → App Insights trả `400` (yêu cầu TimeSpan `dd.hh:mm:ss.fffffff`) nên `AppRequests` luôn = 0. Đã sửa bằng hàm `monitorMsToTimeSpan()` (monitor.php:60) + cast `responseCode` string. Verify end-to-end: azure `itemsAccepted:1`, AppRequests đã có dòng `DurationMs=1234`, `ResultCode=200`, `Success=True`.
+- [x] Sau khi deploy: truy cập web vài lần, rồi kiểm tra Log Analytics có `AppRequests` mới chưa
 
 ### B. Sửa email Action Group ✅
 - [x] Sửa `infrastructure/account2/parameters.json` → `nggiao01@gmail.com`
@@ -187,6 +186,15 @@
 - **RBAC cần thời gian propagate** (5-10 phút) sau khi cấp role mới
 - **`az backup`** container name phải đúng format: `StorageContainer;storage;<rg>;<account>`; item name: `AzureFileShare;<hex id>`; retain-until ≥ 1 ngày sau
 - **Storage blob list cần role** "Storage Blob Data Reader" cho user (đã cấp cho `c5cc23c6-...`)
+- **App Insights `duration` format**: trường `duration` của `RequestData` bắt buộc dạng TimeSpan `dd.hh:mm:ss.fffffff`, KHÔNG phải số ms thô → gửi `"1234.0"` bị trả `400` và bỏ toàn bộ envelope. Đã sửa monitor.php bằng `monitorMsToTimeSpan()` (2026-08-05)
+
+### 📅 NHẬT KÝ — 2026-08-05 (kiểm tra Task A + fix AppRequests)
+- [x] Xác nhận Task A đã xong: web tripto chạy code mới (event booking_created về Law), DIAGNOSTIC streaming tốt (AzureMetrics 204.718 dòng)
+- [x] Phát hiện bug: `AppRequests` = 0 dù metric alert + events hoạt động
+- [x] Root cause: `monitor.php` gửi `duration` sai định dạng (ms thô thay vì TimeSpan) → RequestData bị App Insights từ chối 400
+- [x] Fix: thêm `monitorMsToTimeSpan()` (monitor.php:60), cast `responseCode` → string, verify thật qua endpoint (itemsAccepted:1 + 2 dòng AppRequests trong Log Analytics)
+- [x] Commit fix + push → GitHub Actions deploy lên web tripto/tripto2
+- [ ] (chờ) Kiểm chứng AppRequests có dòng từ web thật sau khi deploy
 
 ### Tài nguyên chính
 - Subscription: `42e7a0ff-6e78-4530-a021-bf133c012ba2` (Azure for Students, currency USD, $20 ≈ 500k VND)

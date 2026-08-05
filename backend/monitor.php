@@ -54,6 +54,24 @@ function monitorEnvelope($name, $data) {
 }
 
 /**
+ * Chuyển duration (ms) sang định dạng TimeSpan dd.hh:mm:ss.fffffff
+ * (App Insights yêu cầu đúng định dạng này, nếu không sẽ trả 400)
+ */
+function monitorMsToTimeSpan($ms) {
+  $ms = (float)$ms;
+  $days = floor($ms / 86400000);
+  $ms -= $days * 86400000;
+  $hours = floor($ms / 3600000);
+  $ms -= $hours * 3600000;
+  $minutes = floor($ms / 60000);
+  $ms -= $minutes * 60000;
+  $seconds = floor($ms / 1000);
+  $ms -= $seconds * 1000;
+  $fraction = round($ms * 10000); // 7 chữ số: 1ms = 10^4 đơn vị 100ns
+  return sprintf('%d.%02d:%02d:%02d.%07d', $days, $hours, $minutes, $seconds, $fraction);
+}
+
+/**
  * Track request (gọi tự động từ config.php)
  */
 function monitorTrackRequest($name, $url, $durationMs, $httpCode, $success = true) {
@@ -63,9 +81,9 @@ function monitorTrackRequest($name, $url, $durationMs, $httpCode, $success = tru
       'ver' => 2,
       'id' => uniqid(),
       'name' => $name,
-      'duration' => $durationMs . '.0',
+      'duration' => monitorMsToTimeSpan($durationMs),
       'success' => $success,
-      'responseCode' => $httpCode,
+      'responseCode' => (string)$httpCode,
       'url' => $url,
       'properties' => [
         'method' => $_SERVER['REQUEST_METHOD'] ?? 'GET'
