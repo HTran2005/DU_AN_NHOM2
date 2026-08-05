@@ -16,9 +16,7 @@
 
 header('Content-Type: application/json; charset=UTF-8');
 
-echo "STEP 1<br>";
 require_once __DIR__ . '/ServiceBus.php';
-echo "STEP 2<br>";
 try {
     
 
