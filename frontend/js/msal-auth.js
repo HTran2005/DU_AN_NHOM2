@@ -166,7 +166,7 @@ const res = await fetch(apiUrl, {
                 return;
             }
             if (error && error.name === 'InteractionInProgressError') {
-                alert('⏳ Một phiên đăng nhập Microsoft đang diễn ra. Vui lòng đợi và thử lại.');
+                alert('Một phiên đăng nhập Microsoft đang diễn ra. Vui lòng đợi và thử lại.');
                 return;
             }
             alert('❌ Đăng nhập Microsoft thất bại:\n\n' + (error.message || 'Không xác định'));
