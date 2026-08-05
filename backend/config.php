@@ -48,6 +48,33 @@ try {
     mysqli_ssl_set($conn, NULL, NULL, NULL, NULL, NULL);
     $conn->real_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME, 3306, NULL, MYSQLI_CLIENT_SSL);
     
+    // Service Bus Namespace Endpoint
+define(
+    'SERVICEBUS_ENDPOINT',
+    getenv('SERVICEBUS_ENDPOINT')
+        ?: 'sb://sb-tripto-backend.servicebus.windows.net/'
+);
+
+// Queue Name
+define(
+    'SERVICEBUS_QUEUE',
+    getenv('SERVICEBUS_QUEUE')
+        ?: 'booking-queue'
+);
+
+// Shared Access Policy
+define(
+    'SERVICEBUS_POLICY',
+    getenv('SERVICEBUS_POLICY')
+        ?: 'RootManageSharedAccessKey'
+);
+
+// Shared Access Key (bí mật - đọc từ biến môi trường / Key Vault, KHÔNG hardcode)
+define(
+    'SERVICEBUS_KEY',
+    getenv('SERVICEBUS_KEY')
+        ?: ''
+);
     // Xử lý lỗi kết nối
     if ($conn->connect_error) {
         throw new Exception("Database Connection Error: " . $conn->connect_error);
