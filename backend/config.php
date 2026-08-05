@@ -35,8 +35,7 @@ define('APPINSIGHTS_INSTRUMENTATIONKEY', getenv('APPINSIGHTS_INSTRUMENTATIONKEY'
  * Azure Service Bus Configuration
  * --------------------------------------------------------
  */
-
-    // Service Bus Namespace Endpoint
+// Service Bus Namespace Endpoint
 define(
     'SERVICEBUS_ENDPOINT',
     getenv('SERVICEBUS_ENDPOINT')
