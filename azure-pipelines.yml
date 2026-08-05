@@ -4,9 +4,26 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
+variables:
+  organization: 'DuAnNhom2'
+  project: 'BAO_CAO'
+
 steps:
 
 - checkout: self
+- script: |
+    echo "Commit message:"
+    git log -1 --pretty=%B
+
+    COMMIT_MSG=$(git log -1 --pretty=%B)
+
+    WORKITEM=$(echo "$COMMIT_MSG" | grep -oE 'AB#[0-9]+' | grep -oE '[0-9]+')
+
+    echo "Work Item = $WORKITEM"
+
+    echo "##vso[task.setvariable variable=WORKITEM_ID]$WORKITEM"
+
+  displayName: "Get Work Item ID"
 
 # Hiển thị source
 - script: |
