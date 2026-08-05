@@ -382,6 +382,7 @@ class TriptoAuth {
 
 // Tạo instance global
 const triptoAuth = new TriptoAuth();
+window.triptoAuth = triptoAuth; // Đính lên window để mọi script truy cập được
 
 // Tự động khởi tạo khi tài liệu load
 if (document.readyState === 'loading') {

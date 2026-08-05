@@ -125,9 +125,14 @@ class MicrosoftAuth {
             const data = await response.json();
 
             if (data.success) {
-                if (window.triptoAuth) {
-                    window.triptoAuth.setLoginData(data.user);
-                    window.triptoAuth.updateUI();
+                const auth = window.triptoAuth || globalThis.triptoAuth;
+                if (auth) {
+                    auth.setLoginData(data.user);
+                    auth.updateUI();
+                } else {
+                    console.warn('triptoAuth chưa sẵn sàng, gán sessionStorage thủ công');
+                    sessionStorage.setItem('triptoLoggedIn', 'true');
+                    sessionStorage.setItem('triptoUser', JSON.stringify(data.user));
                 }
 
                 alert('✅ ' + (data.message || 'Đăng nhập bằng Microsoft thành công!'));
