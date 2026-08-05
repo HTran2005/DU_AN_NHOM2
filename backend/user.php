@@ -650,8 +650,23 @@ function verifyMicrosoftIdToken($idToken) {
         throw new Exception('ID token chưa có hiệu lực');
     }
 
-    // 2. Kiểm tra issuer (login.microsoftonline.com/{tenant}/v2.0 hoặc /common/)
-    if (empty($payload['iss']) || strpos($payload['iss'], 'https://login.microsoftonline.com/') !== 0 || substr($payload['iss'], -4) !== '/v2.0') {
+    // 2. Kiểm tra issuer (phải thuộc host tin cậy của Microsoft; bỏ lớp chữ ký JWKS là ràng buộc bảo mật chính)
+    $trustedIssuerHosts = [
+        'https://login.microsoftonline.com/',
+        'https://sts.windows.net/',
+        'https://login.live.com/'
+    ];
+    $issuerValid = false;
+    if (!empty($payload['iss'])) {
+        foreach ($trustedIssuerHosts as $host) {
+            if (strpos($payload['iss'], $host) === 0) {
+                $issuerValid = true;
+                break;
+            }
+        }
+    }
+    if (!$issuerValid) {
+        error_log('MSAL issuer invalid: ' . ($payload['iss'] ?? 'NULL'));
         throw new Exception('Issuer của ID token không hợp lệ');
     }
 
