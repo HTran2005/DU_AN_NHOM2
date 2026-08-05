@@ -333,11 +333,27 @@ class TriptoAuth {
     }
 
     /**
+     * Tải microsoft-auth.js để bổ sung nút "Đăng nhập bằng Microsoft"
+     */
+    loadMicrosoftAuth() {
+        if (document.querySelector('script[data-microsoft-auth]')) return;
+
+        const script = document.createElement('script');
+        script.src = '../js/microsoft-auth.js';
+        script.setAttribute('data-microsoft-auth', 'true');
+        script.async = true;
+        document.head.appendChild(script);
+    }
+
+    /**
      * Khởi tạo auth (nên gọi khi trang load)
      */
     init() {
         // Cập nhật UI ngay khi trang load
         this.updateUI();
+
+        // Tải Microsoft Entra ID login (MSAL.js)
+        this.loadMicrosoftAuth();
 
         // Lắng nghe sự kiện login từ các trang khác
         window.addEventListener('userLogin', (e) => {
