@@ -11,7 +11,7 @@
 const MicrosoftAuthConfig = {
     clientId: '3e2d9308-3417-468d-a85a-6f6975c0da90',
     tenantId: 'common',
-    redirectUri: window.location.origin + window.location.pathname,
+    redirectUri: window.location.origin,
     msalCdn: 'https://alcdn.msauth.net/browser/2.38.2/js/msal-browser.min.js'
 };
 
@@ -64,7 +64,7 @@ class MicrosoftAuth {
             auth: {
                 clientId: this.config.clientId,
                 authority: this.authority,
-                redirectUri: this.config.redirectUri
+                redirectUri: this.config.redirectUri || window.location.origin
             },
             cache: {
                 cacheLocation: 'localStorage',
