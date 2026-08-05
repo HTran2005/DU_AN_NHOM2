@@ -86,7 +86,7 @@ class MicrosoftAuth {
             const btn = document.createElement('button');
             btn.type = 'button';
             btn.className = 'btn-social-modal btn-microsoft-login';
-            btn.innerHTML = '<i style="color:#0078D4;font-weight:700;">M</i> Tiếp tục với Microsoft';
+            btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 23 23" aria-hidden="true" style="vertical-align:middle"><path fill="#f35325" d="M0 0h11v11H0z"/><path fill="#81bc06" d="M12 0h11v11H12z"/><path fill="#05a6f0" d="M0 12h11v11H0z"/><path fill="#ffba08" d="M12 12h11v11H12z"/></svg> Tiếp tục với Microsoft';
             btn.addEventListener('click', () => this.login());
 
             container.appendChild(btn);

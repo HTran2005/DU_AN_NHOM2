@@ -346,6 +346,19 @@ class TriptoAuth {
     }
 
     /**
+     * Tải social-icons.js để thay logo Google/Facebook bằng SVG chính thức
+     */
+    loadSocialIcons() {
+        if (document.querySelector('script[data-social-icons]')) return;
+
+        const script = document.createElement('script');
+        script.src = '../js/social-icons.js';
+        script.setAttribute('data-social-icons', 'true');
+        script.async = true;
+        document.head.appendChild(script);
+    }
+
+    /**
      * Khởi tạo auth (nên gọi khi trang load)
      */
     init() {
