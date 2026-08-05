@@ -29,20 +29,26 @@ steps:
       exit 0
     fi
 
-    AUTH=$(printf ":%s" "$(PAT)" | base64)
+    echo "WORKITEM=$(WORKITEM_ID)"
 
-    curl -X PATCH \
+    AUTH=$(printf ":%s" "$PAT" | base64)
+
+    curl -v -X PATCH \
       -H "Content-Type: application/json-patch+json" \
       -H "Authorization: Basic $AUTH" \
       "https://dev.azure.com/$(organization)/$(project)/_apis/wit/workitems/$(WORKITEM_ID)?api-version=7.1" \
       -d '[
-      {
-        "op":"add",
-        "path":"/fields/System.State",
-        "value":"Active"
-      }]'
+        {
+          "op":"add",
+          "path":"/fields/System.State",
+          "value":"Active"
+        }
+      ]'
 
   displayName: "Set Active"
+
+  env:
+    PAT: $(PAT)
 - script: |
     echo "===== PROJECT ====="
     pwd
@@ -91,6 +97,8 @@ steps:
         "path":"/fields/System.State",
         "value":"Resolved"
       }]'
+  env:
+    PAT: $(PAT)
 
   displayName: "Set Resolved"
 
