@@ -830,11 +830,16 @@ function getBookings() {
         }
         
         // Auto-update: Đánh dấu những tour có ngày khởi hành đã qua thành "Đã hoàn thành"
-        $autoCompleteQuery = "UPDATE dat_tour 
-                              SET trang_thai = 'Đã hoàn thành' 
-                              WHERE ngay_khoi_hanh < CURDATE() 
-                              AND trang_thai NOT IN ('Đã hủy', 'Đã hoàn thành')";
-        $conn->query($autoCompleteQuery);
+        // Chỉ là tác vụ phụ (housekeeping) - nếu thất bại không được làm crash toàn bộ request (tránh nginx 404/500)
+        try {
+            $autoCompleteQuery = "UPDATE dat_tour 
+                                  SET trang_thai = 'Đã hoàn thành' 
+                                  WHERE ngay_khoi_hanh < CURDATE() 
+                                  AND trang_thai NOT IN ('Đã hủy', 'Đã hoàn thành')";
+            $conn->query($autoCompleteQuery);
+        } catch (Throwable $e) {
+            error_log("Auto-complete dat_tour skipped: " . $e->getMessage());
+        }
         
         // Lấy parameters từ GET
         $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
