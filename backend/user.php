@@ -687,7 +687,7 @@ function verifyMicrosoftIdToken($idToken) {
     $publicKey = null;
     foreach ($keys as $key) {
         if (isset($key['kid']) && $key['kid'] === $kid) {
-            $publicKey = buildRsaPublicKey($key['n'], $key['e']);
+            $publicKey = buildRsaPublicKey($key);
             break;
         }
     }
@@ -758,25 +758,48 @@ function fetchMicrosoftJwks() {
     return $data['keys'];
 }
 
-function buildRsaPublicKey($n, $e) {
-    $nDecoded = base64UrlDecodeJwt($n);
-    $eDecoded = base64UrlDecodeJwt($e);
-
-    // Tạo DER SubjectPublicKeyInfo cho RSA
-    $modulus = rsaDerInteger($nDecoded);
-    $exponent = rsaDerInteger($eDecoded);
-    $rsaPublicKey = "\x30" . derLength(strlen($modulus)) . $modulus . $exponent;
-
-    $algId = "\x30\x0d\x06\x09\x2a\x86\x48\x86\xf7\x0d\x01\x01\x01\x05\x00";
-    $bitString = "\x03" . derLength(strlen($rsaPublicKey) + 1) . "\x00" . $rsaPublicKey;
-    $spki = "\x30" . derLength(strlen($algId) + strlen($bitString)) . $algId . $bitString;
-
-    $pem = "-----BEGIN PUBLIC KEY-----\n" . chunk_split(base64_encode($spki), 64, "\n") . "-----END PUBLIC KEY-----\n";
-    $key = openssl_pkey_get_public($pem);
-    if (!$key) {
-        throw new Exception('Không thể tạo khóa công khai RSA');
+/**
+ * Tạo public key RSA từ JWK của Microsoft.
+ * Ưu tiên dùng x5c (X.509 cert đi kèm JWK) — đáng tin cậy hơn dựng DER thủ công.
+ * Fallback: dựng SPKI từ n/e.
+ */
+function buildRsaPublicKey($jwk) {
+    // Cách 1: dùng x5c certificate nếu có
+    if (!empty($jwk['x5c']) && is_array($jwk['x5c']) && !empty($jwk['x5c'][0])) {
+        $certDer = base64_decode($jwk['x5c'][0]);
+        $pemCert = "-----BEGIN CERTIFICATE-----\n" . chunk_split(base64_encode($certDer), 64, "\n") . "-----END CERTIFICATE-----\n";
+        $cert = openssl_x509_read($pemCert);
+        if ($cert !== false) {
+            $key = openssl_pkey_get_public($cert);
+            openssl_x509_free($cert);
+            if ($key) {
+                return $key;
+            }
+        }
     }
-    return $key;
+
+    // Cách 2: dựng DER SubjectPublicKeyInfo từ n/e
+    if (!empty($jwk['n']) && !empty($jwk['e'])) {
+        $nDecoded = base64UrlDecodeJwt($jwk['n']);
+        $eDecoded = base64UrlDecodeJwt($jwk['e']);
+
+        $modulus = rsaDerInteger($nDecoded);
+        $exponent = rsaDerInteger($eDecoded);
+        $rsaPublicKey = "\x30" . derLength(strlen($modulus)) . $modulus . $exponent;
+
+        $algId = "\x30\x0d\x06\x09\x2a\x86\x48\x86\xf7\x0d\x01\x01\x01\x05\x00";
+        $bitString = "\x03" . derLength(strlen($rsaPublicKey) + 1) . "\x00" . $rsaPublicKey;
+        $spki = "\x30" . derLength(strlen($algId) + strlen($bitString)) . $algId . $bitString;
+
+        $pem = "-----BEGIN PUBLIC KEY-----\n" . chunk_split(base64_encode($spki), 64, "\n") . "-----END PUBLIC KEY-----\n";
+        $key = openssl_pkey_get_public($pem);
+        if ($key) {
+            return $key;
+        }
+    }
+
+    error_log('Không thể tạo khóa công khai RSA từ JWK. kid=' . ($jwk['kid'] ?? 'NULL'));
+    throw new Exception('Không thể tạo khóa công khai RSA');
 }
 
 function rsaDerInteger($bytes) {
