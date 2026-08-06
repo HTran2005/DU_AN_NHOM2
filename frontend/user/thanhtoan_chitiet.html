@@ -1678,17 +1678,54 @@
                     console.log('id_goi_combo:', result.booking_data.id_goi_combo, '(null = not a combo)');
                     console.log('============================');
                     
-                    // Success - show confirmation message
-                    alert(`✅ ${result.message}\n\nMã đặt tour: ${result.so_dat_tour}`);
-                    
-                    // Optional: Clear sessionStorage
-                    sessionStorage.removeItem('tourData');
-                    sessionStorage.removeItem('selectedDepartDate');
-                    
-                    // Redirect to home page or booking confirmation page
-                    setTimeout(() => {
-                        window.location.href = 'TRANGCHU.html';
-                    }, 1500);
+                    return fetch("https://tripto-function-gmcahcf6embwemaw.southeastasia-01.azurewebsites.net/api/sendbookingemail", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            name: fullName,
+                            email,
+                            phone,
+                            tour: tourData?.ten || "",
+                            departDate,
+                            total: tong_tien,
+                            bookingCode: result.so_dat_tour
+                        })
+                    })
+                    .then(async res => {
+                        console.log("Email status:", res.status);
+                        const text = await res.text();
+                        console.log("Email response:", text);
+
+                        if (!res.ok) {
+                            throw new Error(text || `HTTP ${res.status}`);
+                        }
+
+                        try {
+                            return JSON.parse(text);
+                        } catch {
+                            return text;
+                        }
+                    })
+                    .then(data => {
+                        console.log("Email success:", data);
+                        alert(`✅ ${result.message}\n\nMã đặt tour: ${result.so_dat_tour}`);
+                        sessionStorage.removeItem('tourData');
+                        sessionStorage.removeItem('selectedDepartDate');
+                        setTimeout(() => {
+                            window.location.href = 'TRANGCHU.html';
+                        }, 3000);
+                    })
+                    .catch(err => {
+                        console.error("Email error:", err);
+                        alert(`✅ ${result.message}\n\nMã đặt tour: ${result.so_dat_tour}\n\nLưu ý: Email xác nhận chưa gửi được. Vui lòng kiểm tra lại hộp thư hoặc liên hệ bộ phận hỗ trợ.`);
+                        sessionStorage.removeItem('tourData');
+                        sessionStorage.removeItem('selectedDepartDate');
+                        setTimeout(() => {
+                            window.location.href = 'TRANGCHU.html';
+                        }, 3000);
+                    });
                 } else {
                     alert('❌ Lỗi: ' + (result.message || 'Không thể lưu đặt tour'));
                     confirmBtn.disabled = false;
