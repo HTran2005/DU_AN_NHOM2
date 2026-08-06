@@ -263,62 +263,6 @@ www.tripto.vn  canonical name = tripto-gcbmg6gybegye7ex.southeastasia-01.azurewe
 
 ---
 
-## ENTRA ID — Tạo App Registration + Tích hợp "Đăng nhập bằng Microsoft" vào web
-
-> **Đã code sẵn trong repo** (phần này không tốn tiền, dùng Entra ID Free):
-> - **Backend** `backend/user.php`: action `login_microsoft` → `authLoginMicrosoft()` xác minh `id_token` JWT RS256 bằng JWKS của Microsoft (không cần thư viện ngoài), tự tạo/tìm user theo email, set session như login thường.
-> - **Frontend** `frontend/js/msal-auth.js`: MSAL.js từ CDN, tự chèn nút **"Tiếp tục với Microsoft"** vào modal đăng nhập của 7 trang (TRANGCHU, BLOG, TATCA_TOUR, TATCA_COMBO, UUDAI, chitiettour, timkiem_chitiet), popup đăng nhập rồi gửi `id_token` lên backend.
-> - **Cấu hình** `frontend/user/msal-config.js`: chứa `window.MSAL_CONFIG` (gitignored, không commit). Backend đọc `MS_CLIENT_ID`/`MS_TENANT_ID` từ biến môi trường App Service.
-
-### Bước 1 — Tạo App Registration (Portal, ~15 phút)
-
-1. Portal → tìm **"Microsoft Entra ID"** → menu trái → **App registrations** → **+ New registration**
-2. Điền:
-   - **Name**: `tripto-app`
-   - **Supported account types**: chọn **"Accounts in any organizational directory and personal Microsoft accounts"** (để mọi email Microsoft đăng nhập được)
-   - **Redirect URI**: platform **Single-page application (SPA)** → nhập URL web thật:
-     `https://tripto-gcbmg6gybegye7ex.southeastasia-01.azurewebsites.net`
-3. Bấm **Register** → sang trang app → ghi lại 2 giá trị:
-   - **Application (client) ID** → điền vào `MS_CLIENT_ID`
-   - **Directory (tenant) ID** → điền vào `MS_TENANT_ID`
-4. (Tùy chọn) Nhánh trái → **Authentication** → phần **Implicit grant and hybrid flows** → tick **ID tokens** → **Save** (một số phiên bản MSAL cần, thường SPA mặc định đã đủ)
-
-### Bước 2 — Cấu hình backend (App Service)
-
-- Portal → App Service `tripto` → **Configuration** → tab **Application settings** → thêm 2 biến:
-  - `MS_CLIENT_ID` = `<Application Client ID vừa tạo>`
-  - `MS_TENANT_ID` = `<Tenant ID>` (hoặc để `common` nếu muốn chấp nhận mọi tenant)
-- **Save** → app restart tự động. Làm tương tự trên `tripto2` (nếu muốn).
-
-### Bước 3 — Cấu hình frontend
-
-- File `frontend/user/msal-config.js` (đã **bỏ gitignore** 2026-08-02, commit được lên git vì clientId không phải bí mật):
-  ```js
-  window.MSAL_CONFIG = {
-      clientId: 'd3803479-bbab-498a-ab4c-d4c9e36a3a66',
-      authority: 'https://login.microsoftonline.com/common',
-      redirectUri: ''
-  };
-  ```
-- LƯU Ý: authority KHÔNG được có đuôi `/v2.0` (MSAL 2.x tự thêm) — nếu để sẽ thành `.../v2.0/v2.0/` (lỗi resolve endpoints).
-- Client ID cũng được fallback trong `backend/config.php` → không cần set env vars trên App Service.
-- Push lên git → GitHub Actions tự deploy lên cả `tripto` và `tripto2`.
-
-### Bước 4 — Kiểm chứng
-
-1. Mở web thật → bấm **Đăng Nhập** → modal có nút **"Tiếp tục với Microsoft"**
-2. Bấm nút → popup Microsoft hiện ra → đăng nhập bằng email Microsoft bất kỳ
-3. Chọn đồng ý quyền → popup đóng → web báo đăng nhập thành công, hiện tên user
-4. Kiểm tra DB: `SELECT id, email, facebook_id FROM nguoi_dung WHERE facebook_id IS NOT NULL;` → thấy user mới tự tạo
-5. Portal Entra ID → **Sign-in logs** → thấy lần đăng nhập mới = **chứng minh đăng nhập qua Entra ID thật** ✅
-
-### Lưu ý an toàn
-
-- `clientId`/`tenantId` **không phải bí mật** (dạng public trong SPA) nên có thể commit `msal-config.js` lên git (khác với `maps-config.js` chứa Azure Maps key phải giữ gitignore).
-- Toàn bộ xác minh chữ ký diễn ra ở **backend** (chỉ dựa vào khóa công khai Microsoft, không tin token gửi lên) → chống làm giả token.
-
----
-
 ## Tổng kết trạng thái hiện tại
 
 | Dịch vụ | Tài nguyên | Trạng thái |
@@ -331,6 +275,7 @@ www.tripto.vn  canonical name = tripto-gcbmg6gybegye7ex.southeastasia-01.azurewe
 | GitHub Actions | `main_tripto.yml` | ✅ Deploy `tripto` tự động khi push main |
 | GitHub Actions | `main_tripto2.yml` | ✅ (kết nối xong) Deploy `tripto2` tự động khi push main |
 | DNS zones | `tripto.vn` | ✅ Zone trắng tạo xong (NS/SOA tự sinh), minh chứng bằng nslookup |
-| Entra ID | `tripto-app` (App Registration) | ✅ App Registration + `msal-config.js` + fallback backend đã xong 2026-08-02 |
 
-**Chưa làm:** ~~Entra ID~~ (đã xong). **Bị chặn:** Front Door, region Maps cụ thể. **DNS chạy thật:** cần mua domain + nâng B1+ (đề xuất bước tiếp theo).
+**Bị chặn:** Front Door, region Maps cụ thể. **DNS chạy thật:** cần mua domain + nâng B1+ (đề xuất bước tiếp theo).
+
+> 📌 Đăng nhập bằng Microsoft (Entra ID) có phần giải thích riêng ở file `docs/GIAI_THICH_DANG_NHAP_MICROSOFT.md`.

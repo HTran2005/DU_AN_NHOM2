@@ -7,7 +7,7 @@
 // Database Configuration / Cấu hình Database
 define('DB_HOST', getenv('DB_HOST') ?: 'tripto-mysql-db.mysql.database.azure.com');
 define('DB_USER', getenv('DB_USER') ?: 'nhom2');
-define('DB_PASS', getenv('DB_PASS') ?: 'tripto@123');
+define('DB_PASS', getenv('DB_PASS') ?: '');
 define('DB_NAME', getenv('DB_NAME') ?: 'tripto_db');
 
 // Charset
@@ -16,7 +16,7 @@ define('DB_CHARSET', 'utf8mb4');
 // Microsoft Entra ID (đăng nhập bằng Microsoft)
 // Client ID và Tenant ID lấy từ App Registration trong Entra ID
 // Có thể đặt qua biến môi trường (App Service) để tránh lộ trong mã nguồn
-define('MS_CLIENT_ID', getenv('MS_CLIENT_ID') ?: '3e2d9308-3417-468d-a85a-6f6975c0da90');
+define('MS_CLIENT_ID', getenv('MS_CLIENT_ID') ?: '');
 define('MS_TENANT_ID', getenv('MS_TENANT_ID') ?: 'common');
 define('MS_AUTHORITY', getenv('MS_AUTHORITY') ?: ('https://login.microsoftonline.com/' . MS_TENANT_ID . '/v2.0'));
 
@@ -28,7 +28,7 @@ ini_set('log_errors', 1);            // Ghi log lỗi
 // Azure Application Insights
 // Instrumentation Key được lấy từ output của Bicep deployment
 // Cập nhật giá trị này sau khi chạy scripts/deploy-monitoring.ps1
-define('APPINSIGHTS_INSTRUMENTATIONKEY', getenv('APPINSIGHTS_INSTRUMENTATIONKEY') ?: '2c156544-aac3-495d-ad96-9377a65ddcd2');
+define('APPINSIGHTS_INSTRUMENTATIONKEY', getenv('APPINSIGHTS_INSTRUMENTATIONKEY') ?: '');
 
 /**
  * --------------------------------------------------------
