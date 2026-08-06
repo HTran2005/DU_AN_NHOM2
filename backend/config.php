@@ -30,11 +30,7 @@ ini_set('log_errors', 1);            // Ghi log lỗi
 // Cập nhật giá trị này sau khi chạy scripts/deploy-monitoring.ps1
 define('APPINSIGHTS_INSTRUMENTATIONKEY', getenv('APPINSIGHTS_INSTRUMENTATIONKEY') ?: '');
 
-/**
- * --------------------------------------------------------
- * Azure Service Bus Configuration
- * --------------------------------------------------------
- */
+
 // Service Bus Namespace Endpoint
 define(
     'SERVICEBUS_ENDPOINT',
