@@ -25,6 +25,12 @@ steps:
     find . -name "*.php" -exec php -l {} \;
   displayName: "Validate PHP"
 
+# Cài đặt Composer dependencies (đảm bảo vendor/ có trong artifact)
+- script: |
+    cd backend
+    composer install --prefer-dist --no-progress --no-dev
+  displayName: "Install Composer Dependencies"
+
 # Kiểm tra SQL
 - script: |
     find . -name "*.sql"

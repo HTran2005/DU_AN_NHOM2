@@ -70,7 +70,8 @@ require_once __DIR__ . '/monitor.php';
 // Auto-track request
 monitorBeginRequest();
 
-// Kết nối đến Database
+// Kết nối đến Database (bỏ qua nếu script không cần DB - ví dụ Service Bus)
+if (!defined('APP_SKIP_DB_CONNECT')) {
 try {
     $conn = mysqli_init();
     mysqli_ssl_set($conn, NULL, NULL, NULL, NULL, NULL);
@@ -98,6 +99,7 @@ try {
         'message' => 'Lỗi kết nối cơ sở dữ liệu. Vui lòng thử lại sau.'
     ]);
     exit;
+}
 }
 
 // Hàm helper để đóng connect

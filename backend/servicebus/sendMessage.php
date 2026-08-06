@@ -16,9 +16,35 @@
 
 header('Content-Type: application/json; charset=UTF-8');
 
+// ===== Xử lý lỗi PHP (fatal/exception) trả JSON thay vì nginx 404 =====
+set_exception_handler(function ($e) {
+    http_response_code(500);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode([
+        'success' => false,
+        'message' => 'Lỗi server: ' . $e->getMessage(),
+        'file' => $e->getFile(),
+        'line' => $e->getLine()
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+});
+register_shutdown_function(function () {
+    $err = error_get_last();
+    if ($err && in_array($err['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR])) {
+        if (headers_sent()) return;
+        http_response_code(500);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode([
+            'success' => false,
+            'message' => 'Lỗi server: ' . $err['message'],
+            'file' => $err['file'],
+            'line' => $err['line']
+        ], JSON_UNESCAPED_UNICODE);
+    }
+});
+
 require_once __DIR__ . '/ServiceBus.php';
 try {
-    
 
     /**
      * ------------------------------------------------------
@@ -131,7 +157,7 @@ try {
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 
 }
-catch (Exception $e) {
+catch (Throwable $e) {
 
     http_response_code(500);
 

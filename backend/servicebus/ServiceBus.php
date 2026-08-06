@@ -20,6 +20,11 @@
  * ==========================================================
  */
 
+// Service Bus không cần kết nối Database -> bỏ qua DB để endpoint không phụ thuộc MySQL
+if (!defined('APP_SKIP_DB_CONNECT')) {
+    define('APP_SKIP_DB_CONNECT', true);
+}
+
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -168,25 +173,18 @@ class ServiceBus
 
         catch (RequestException $e) {
 
-            $status = 500;
+    $status = $e->getCode();
 
-            if ($e->hasResponse()) {
+    if ($status == 0) {
+        $status = 500;
+    }
 
-                $status = $e->getResponse()->getStatusCode();
-
-            }
-
-            return [
-
-                'success' => false,
-
-                'status' => $status,
-
-                'message' => $e->getMessage()
-
-            ];
-
-        }
+    return [
+        "success" => false,
+        "status" => $status,
+        "message" => $e->getMessage()
+    ];
+}
 
     }
 
@@ -237,28 +235,20 @@ class ServiceBus
 
         }
 
-        catch (RequestException $e) {
+       catch (RequestException $e) {
 
-            $status = 500;
+    $status = $e->getCode();
 
-            if ($e->hasResponse()) {
+    if ($status == 0) {
+        $status = 500;
+    }
 
-                $status = $e->getResponse()->getStatusCode();
-
-            }
-
-            return [
-
-                'success' => false,
-
-                'status' => $status,
-
-                'message' => $e->getMessage()
-
-            ];
-
-        }
-
+    return [
+        "success" => false,
+        "status" => $status,
+        "message" => $e->getMessage()
+    ];
+}
     }
 
     /**
@@ -307,25 +297,18 @@ class ServiceBus
 
         catch (RequestException $e) {
 
-            $status = 500;
+    $status = $e->getCode();
 
-            if ($e->hasResponse()) {
+    if ($status == 0) {
+        $status = 500;
+    }
 
-                $status = $e->getResponse()->getStatusCode();
-
-            }
-
-            return [
-
-                'success' => false,
-
-                'status' => $status,
-
-                'message' => $e->getMessage()
-
-            ];
-
-        }
+    return [
+        "success" => false,
+        "status" => $status,
+        "message" => $e->getMessage()
+    ];
+}
 
     }
 
