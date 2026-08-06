@@ -80,44 +80,29 @@ class ServiceBus
 
         $signature = base64_encode(
 
-            hash_hmac(
-                'sha256',
-                $stringToSign,
-                base64_decode(SERVICEBUS_KEY),
-                true
-            )
+    hash_hmac(
+        'sha256',
+        $stringToSign,
+        SERVICEBUS_KEY,
+        true
+    )
+
+);
+        
+
+        return sprintf(
+
+            "SharedAccessSignature sr=%s&sig=%s&se=%d&skn=%s",
+
+            rawurlencode($uri),
+
+            rawurlencode($signature),
+
+            $expires,
+
+            SERVICEBUS_POLICY
 
         );
-
-        echo "<pre>";
-echo "Queue URL:\n";
-var_dump($this->queueUrl);
-
-echo "URI:\n";
-var_dump($uri);
-
-echo "StringToSign:\n";
-var_dump($stringToSign);
-
-echo "Signature:\n";
-var_dump($signature);
-
-
-        $token = sprintf(
-    "SharedAccessSignature sr=%s&sig=%s&se=%d&skn=%s",
-    rawurlencode($uri),
-    rawurlencode($signature),
-    $expires,
-    SERVICEBUS_POLICY
-);
-
-echo "<pre>";
-echo "TOKEN:\n";
-echo $token;
-
-exit;
-
-return $token;
 
     }
 
