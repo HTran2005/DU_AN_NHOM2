@@ -102,7 +102,6 @@ var_dump($stringToSign);
 echo "Signature:\n";
 var_dump($signature);
 
-exit;
 
         $token = sprintf(
     "SharedAccessSignature sr=%s&sig=%s&se=%d&skn=%s",
