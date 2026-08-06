@@ -44,12 +44,6 @@ register_shutdown_function(function () {
 });
 
 require_once __DIR__ . '/ServiceBus.php';
-// ===== DEBUG =====
-echo "<pre>";
-echo "KEY = ";
-var_dump(getenv('SERVICEBUS_KEY'));
-exit;
-// =================
 try {
 
     /**

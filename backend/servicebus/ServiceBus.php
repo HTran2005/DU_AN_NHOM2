@@ -173,19 +173,25 @@ class ServiceBus
 
         catch (RequestException $e) {
 
-    $status = $e->getCode();
+    $status = 500;
 
-    if ($status == 0) {
-        $status = 500;
+    if ($e->getResponse()) {
+
+        $status = $e->getResponse()->getStatusCode();
+
+        return [
+            "success" => false,
+            "status" => $status,
+            "message" => (string)$e->getResponse()->getBody()
+        ];
     }
 
     return [
         "success" => false,
-        "status" => $status,
+        "status" => 500,
         "message" => $e->getMessage()
     ];
 }
-
     }
 
     /**
