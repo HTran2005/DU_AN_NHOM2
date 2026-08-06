@@ -44,21 +44,7 @@ register_shutdown_function(function () {
 });
 
 require_once __DIR__ . '/ServiceBus.php';
-echo "<pre>";
 
-echo "Policy: ";
-var_dump(SERVICEBUS_POLICY);
-
-echo "Endpoint: ";
-var_dump(SERVICEBUS_ENDPOINT);
-
-echo "Queue: ";
-var_dump(SERVICEBUS_QUEUE);
-
-echo "Key length: ";
-echo strlen(SERVICEBUS_KEY);
-
-exit;
 try {
 
     /**

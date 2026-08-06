@@ -89,6 +89,21 @@ class ServiceBus
 
         );
 
+        echo "<pre>";
+echo "Queue URL:\n";
+var_dump($this->queueUrl);
+
+echo "URI:\n";
+var_dump($uri);
+
+echo "StringToSign:\n";
+var_dump($stringToSign);
+
+echo "Signature:\n";
+var_dump($signature);
+
+exit;
+
         return sprintf(
 
             "SharedAccessSignature sr=%s&sig=%s&se=%d&skn=%s",
