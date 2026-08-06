@@ -104,19 +104,21 @@ var_dump($signature);
 
 exit;
 
-        return sprintf(
+        $token = sprintf(
+    "SharedAccessSignature sr=%s&sig=%s&se=%d&skn=%s",
+    rawurlencode($uri),
+    rawurlencode($signature),
+    $expires,
+    SERVICEBUS_POLICY
+);
 
-            "SharedAccessSignature sr=%s&sig=%s&se=%d&skn=%s",
+echo "<pre>";
+echo "TOKEN:\n";
+echo $token;
 
-            rawurlencode($uri),
+exit;
 
-            rawurlencode($signature),
-
-            $expires,
-
-            SERVICEBUS_POLICY
-
-        );
+return $token;
 
     }
 
