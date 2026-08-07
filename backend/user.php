@@ -3924,7 +3924,10 @@ function handleCreateBooking() {
             }
         }
 
-        require_once __DIR__ . '/servicebus/ServiceBus.php';
+        $serviceBusFile = is_file(__DIR__ . '/servicebus/ServiceBus.php')
+            ? __DIR__ . '/servicebus/ServiceBus.php'
+            : __DIR__ . '/backend/servicebus/ServiceBus.php';
+        require_once $serviceBusFile;
         $serviceBus = new ServiceBus();
         $serviceBus->send([
             'booking_id' => $booking_id,

@@ -99,10 +99,12 @@ try {
 }
 
 // Hàm helper để đóng connect
-function closeConnection() {
-    global $conn;
-    if ($conn) {
-        $conn->close();
+if (!function_exists('closeConnection')) {
+    function closeConnection() {
+        global $conn;
+        if ($conn) {
+            $conn->close();
+        }
     }
 }
 

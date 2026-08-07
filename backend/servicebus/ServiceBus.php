@@ -25,8 +25,11 @@ if (!defined('APP_SKIP_DB_CONNECT')) {
     define('APP_SKIP_DB_CONNECT', true);
 }
 
-require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../vendor/autoload.php';
+
+if (!defined('SERVICEBUS_QUEUE')) {
+    require_once __DIR__ . '/../config.php';
+}
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
