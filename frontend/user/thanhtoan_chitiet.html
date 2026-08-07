@@ -1678,7 +1678,7 @@
                     console.log('id_goi_combo:', result.booking_data.id_goi_combo, '(null = not a combo)');
                     console.log('============================');
                     
-                    return fetch("https://tripto-function-gmcahcf6embwemaw.southeastasia-01.azurewebsites.net/api/sendbookingemail", {
+                    return fetch("https://tripto-function-gmcahcf6embwemaw.southeastasia-01.azurewebsites.net/api/SendBookingEmail", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json"
@@ -1709,10 +1709,23 @@
                         }
                     })
                     .then(data => {
-                        console.log("Email success:", data);
-                        alert(`✅ ${result.message}\n\nMã đặt tour: ${result.so_dat_tour}`);
+                        console.log("Email response:", data);
+
+                        if (!data.success) {
+                            throw new Error(data.message || "Function không gửi được email");
+                        }
+
+                        console.log("✅ Email sent successfully");
+
+                        alert(
+                            `✅ ${result.message}\n\n` +
+                            `Mã đặt tour: ${result.so_dat_tour}\n\n` +
+                            `📧 Email xác nhận đã được gửi đến: ${email}`
+                        );
+
                         sessionStorage.removeItem('tourData');
                         sessionStorage.removeItem('selectedDepartDate');
+
                         setTimeout(() => {
                             window.location.href = 'TRANGCHU.html';
                         }, 3000);
