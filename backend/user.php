@@ -3897,6 +3897,33 @@ function handleCreateBooking() {
             }
         }
 
+        $tourName = '';
+        if ($id_tour_final) {
+            $tourStmt = $conn->prepare("SELECT ten FROM tour WHERE id = ?");
+            if ($tourStmt) {
+                $tourStmt->bind_param("i", $id_tour_final);
+                $tourStmt->execute();
+                $tourResult = $tourStmt->get_result();
+                if ($tourResult && $tourResult->num_rows > 0) {
+                    $tourRow = $tourResult->fetch_assoc();
+                    $tourName = $tourRow['ten'] ?? '';
+                }
+                $tourStmt->close();
+            }
+        } elseif ($id_goi_combo_final) {
+            $comboStmt = $conn->prepare("SELECT ten FROM goi_combo WHERE id = ?");
+            if ($comboStmt) {
+                $comboStmt->bind_param("i", $id_goi_combo_final);
+                $comboStmt->execute();
+                $comboResult = $comboStmt->get_result();
+                if ($comboResult && $comboResult->num_rows > 0) {
+                    $comboRow = $comboResult->fetch_assoc();
+                    $tourName = $comboRow['ten'] ?? '';
+                }
+                $comboStmt->close();
+            }
+        }
+
         require_once __DIR__ . '/servicebus/ServiceBus.php';
         $serviceBus = new ServiceBus();
         $serviceBus->send([
@@ -3906,7 +3933,12 @@ function handleCreateBooking() {
             'customer_name' => $customerName,
             'email' => $email,
             'phone' => $phone,
-            'price' => $tong_tien
+            'price' => $tong_tien,
+            'tour_name' => $tourName,
+            'depart_date' => $ngay_khoi_hanh,
+            'booking_code' => $so_dat_tour,
+            'adults' => $so_nguoi_lon,
+            'children' => $so_tre_em
         ]);
     } catch (Throwable $e) {
         error_log("Service Bus send error (booking_id={$booking_id}): " . $e->getMessage());
