@@ -40,6 +40,11 @@ class ServiceBus
     private Client $client;
 
     /**
+     * Namespace URL (dùng làm resource URI cho SAS token)
+     */
+    private string $namespaceUrl;
+
+    /**
      * Queue URL
      */
     private string $queueUrl;
@@ -56,6 +61,8 @@ class ServiceBus
 
         $host = parse_url(SERVICEBUS_ENDPOINT, PHP_URL_HOST);
 
+        $this->namespaceUrl = "https://{$host}";
+
         $this->queueUrl =
             "https://{$host}/" .
             SERVICEBUS_QUEUE;
@@ -69,7 +76,7 @@ class ServiceBus
     private function generateSasToken($expiry = 3600)
     {
 
-        $uri = strtolower($this->queueUrl);
+        $uri = strtolower($this->namespaceUrl);
 
         $expires = time() + $expiry;
 
