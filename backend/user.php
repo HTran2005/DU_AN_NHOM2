@@ -322,7 +322,7 @@ try {
             throw new Exception('Endpoint không hợp lệ: ' . htmlspecialchars($endpoint) . '. Vui lòng chỉ định endpoint hợp lệ.');
     }
     
-} catch (Exception $e) {
+} catch (Throwable $e) {
     http_response_code(400);
     echo json_encode([
         'success' => false,
@@ -3834,55 +3834,9 @@ function handleCreateBooking() {
     $booking_id = $insertStmt->insert_id;
     $insertStmt->close();
     
-    monitorTrackEvent('booking_created', [
-        'booking_id' => $booking_id,
-        'tour_id' => $id_tour ?? $id_goi_combo,
-        'user_id' => $id_nguoi_dung,
-        'total' => $tong_tien,
-        'payment_method' => $phuong_thuc_thanh_toan
-    ], [
-        'total_amount' => $tong_tien,
-        'adults' => $so_nguoi_lon,
-        'children' => $so_tre_em
-    ]);
-
-    // ===== Service Bus: gửi thông tin booking lên Azure =====
-    $customerSql = "SELECT CONCAT(ten_dau, ' ', ten_cuoi) AS ho_ten, email, so_dien_thoai FROM nguoi_dung WHERE id = ?";
-    $customerStmt = $conn->prepare($customerSql);
-    $customerName = '';
-    $email = '';
-    $phone = '';
-    if ($customerStmt) {
-        $customerStmt->bind_param("i", $id_nguoi_dung);
-        $customerStmt->execute();
-        $customerResult = $customerStmt->get_result();
-        $customer = $customerResult->num_rows > 0 ? $customerResult->fetch_assoc() : null;
-        $customerStmt->close();
-        if ($customer) {
-            $customerName = $customer['ho_ten'] ?? '';
-            $email = $customer['email'] ?? '';
-            $phone = $customer['so_dien_thoai'] ?? '';
-        }
-    }
-
-    require_once __DIR__ . '/servicebus/ServiceBus.php';
-    $serviceBus = new ServiceBus();
-
-    try {
-        $serviceBus->send([
-            'booking_id' => $booking_id,
-            'tour_id' => $id_tour_final ?? $id_goi_combo_final,
-            'user_id' => $id_nguoi_dung,
-            'customer_name' => $customerName,
-            'email' => $email,
-            'phone' => $phone,
-            'price' => $tong_tien
-        ]);
-    } catch (Throwable $e) {
-        error_log("Service Bus send error (booking_id={$booking_id}): " . $e->getMessage());
-    }
-
-    // Return success response
+    // ===== Trả response thành công cho client TRƯỚC =====
+    // Azure App Service Linux (nginx) chuyển mọi lỗi 5xx thành 404 vì /50x.html không tồn tại.
+    // Do đó PHẢI gửi response về client trước, rồi mới thực hiện các tác vụ nền (Service Bus).
     http_response_code(201);
     echo json_encode([
         'success' => true,
@@ -3902,6 +3856,62 @@ function handleCreateBooking() {
             'trang_thai' => $trang_thai
         ]
     ]);
+
+    // Flush response ngay lập tức về client (PHP-FPM) trước khi làm việc nền
+    if (function_exists('fastcgi_finish_request')) {
+        @fastcgi_finish_request();
+    } else {
+        @ob_end_flush();
+        @flush();
+    }
+
+    // ===== Các tác vụ nền (chạy SAU khi response đã gửi, không làm hỏng response) =====
+    try {
+        monitorTrackEvent('booking_created', [
+            'booking_id' => $booking_id,
+            'tour_id' => $id_tour ?? $id_goi_combo,
+            'user_id' => $id_nguoi_dung,
+            'total' => $tong_tien,
+            'payment_method' => $phuong_thuc_thanh_toan
+        ], [
+            'total_amount' => $tong_tien,
+            'adults' => $so_nguoi_lon,
+            'children' => $so_tre_em
+        ]);
+
+        $customerSql = "SELECT CONCAT(ten_dau, ' ', ten_cuoi) AS ho_ten, email, so_dien_thoai FROM nguoi_dung WHERE id = ?";
+        $customerStmt = $conn->prepare($customerSql);
+        $customerName = '';
+        $email = '';
+        $phone = '';
+        if ($customerStmt) {
+            $customerStmt->bind_param("i", $id_nguoi_dung);
+            $customerStmt->execute();
+            $customerResult = $customerStmt->get_result();
+            $customer = ($customerResult && $customerResult->num_rows > 0) ? $customerResult->fetch_assoc() : null;
+            $customerStmt->close();
+            if ($customer) {
+                $customerName = $customer['ho_ten'] ?? '';
+                $email = $customer['email'] ?? '';
+                $phone = $customer['so_dien_thoai'] ?? '';
+            }
+        }
+
+        require_once __DIR__ . '/servicebus/ServiceBus.php';
+        $serviceBus = new ServiceBus();
+        $serviceBus->send([
+            'booking_id' => $booking_id,
+            'tour_id' => $id_tour_final ?? $id_goi_combo_final,
+            'user_id' => $id_nguoi_dung,
+            'customer_name' => $customerName,
+            'email' => $email,
+            'phone' => $phone,
+            'price' => $tong_tien
+        ]);
+    } catch (Throwable $e) {
+        error_log("Service Bus send error (booking_id={$booking_id}): " . $e->getMessage());
+    }
+
     exit;
 }
 
