@@ -3846,6 +3846,42 @@ function handleCreateBooking() {
         'children' => $so_tre_em
     ]);
 
+    // ===== Service Bus: gửi thông tin booking lên Azure =====
+    $customerSql = "SELECT CONCAT(ten_dau, ' ', ten_cuoi) AS ho_ten, email, so_dien_thoai FROM nguoi_dung WHERE id = ?";
+    $customerStmt = $conn->prepare($customerSql);
+    $customerName = '';
+    $email = '';
+    $phone = '';
+    if ($customerStmt) {
+        $customerStmt->bind_param("i", $id_nguoi_dung);
+        $customerStmt->execute();
+        $customerResult = $customerStmt->get_result();
+        $customer = $customerResult->num_rows > 0 ? $customerResult->fetch_assoc() : null;
+        $customerStmt->close();
+        if ($customer) {
+            $customerName = $customer['ho_ten'] ?? '';
+            $email = $customer['email'] ?? '';
+            $phone = $customer['so_dien_thoai'] ?? '';
+        }
+    }
+
+    require_once __DIR__ . '/servicebus/ServiceBus.php';
+    $serviceBus = new ServiceBus();
+
+    try {
+        $serviceBus->send([
+            'booking_id' => $booking_id,
+            'tour_id' => $id_tour_final ?? $id_goi_combo_final,
+            'user_id' => $id_nguoi_dung,
+            'customer_name' => $customerName,
+            'email' => $email,
+            'phone' => $phone,
+            'price' => $tong_tien
+        ]);
+    } catch (Throwable $e) {
+        error_log("Service Bus send error (booking_id={$booking_id}): " . $e->getMessage());
+    }
+
     // Return success response
     http_response_code(201);
     echo json_encode([
