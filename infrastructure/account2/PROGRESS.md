@@ -99,13 +99,15 @@
 - [x] Solution `SecurityInsights(law-tripto)` trong RG `rg-tripto-monitoring`
 - [x] Đã register thêm provider `Microsoft.OperationsManagement` (bắt buộc)
 - [x] Lưu ý: onboard qua `Microsoft.SecurityInsights/onboardingStates` api-version `2023-02-01-preview` (cách cũ dùng solutions đã deprecated → lỗi BadGateway)
-- [ ] Chưa: data connectors, analytic rules (chờ dữ liệu từ web/DB về Log Analytics)
+- [x] Data connector **Azure Activity** (diagnostic setting subscription `ds-activity-to-sentinel`: Administrative/Security/ServiceHealth/Policy) 2026-08-06
+- [x] Analytic rule `rule-high-failed-requests` (Scheduled, query trên `AppRequests` phát hiện HTTP 5xx, severity Medium, enabled) 2026-08-06
 
 ### 18. Diagnostic Settings → Log Analytics (data cho Sentinel)
 - [x] `ds-mysql-to-law`: MySQL `tripto-mysql-db` → law-tripto (MySqlSlowLogs + MySqlAuditLogs + AllMetrics) 2026-08-02
 - [x] `ds-storage-to-law`: Storage `sttriptobackup` → law-tripto (Transaction + Capacity metrics) 2026-08-02
 - [x] Verify: **AzureMetrics đã về liên tục** (276+ dòng 08/02) → storage metrics stream OK
-- [ ] MySqlSlowLogs/AuditLogs chưa thấy dòng → cần query chậm thật + bật audit_log_enabled trên server
+- [x] Bật `audit_log_enabled=ON`, `slow_query_log=ON`, `long_query_time=1`, `audit_log_events=CONNECTION` trên MySQL 2026-08-06
+- [ ] Chờ log MySqlSlowLogs/AuditLogs về (cần chạy query chậm thật + đợi vài phút)
 
 ### 19. Azure Advisor
 - [x] Dịch vụ tự chạy (provider Microsoft.Advisor Registered)
@@ -187,6 +189,14 @@
 - **`az backup`** container name phải đúng format: `StorageContainer;storage;<rg>;<account>`; item name: `AzureFileShare;<hex id>`; retain-until ≥ 1 ngày sau
 - **Storage blob list cần role** "Storage Blob Data Reader" cho user (đã cấp cho `c5cc23c6-...`)
 - **App Insights `duration` format**: trường `duration` của `RequestData` bắt buộc dạng TimeSpan `dd.hh:mm:ss.fffffff`, KHÔNG phải số ms thô → gửi `"1234.0"` bị trả `400` và bỏ toàn bộ envelope. Đã sửa monitor.php bằng `monitorMsToTimeSpan()` (2026-08-05)
+
+### 📅 NHẬT KÝ — 2026-08-06 (fix "tạo nhưng chưa dùng" + cải thiện)
+- [x] Thêm `monitorTrackDependency()` trong `backend/monitor.php` → bảng `dependencies` giờ có thể có dữ liệu (trước đó rỗng vì chưa có hàm gửi DependencyData). Schema đúng `RemoteDependencyData`.
+- [x] Thêm helper `monitorTrackDbQuery()` trong `backend/config.php` để gói gọn việc track 1 query MySQL (type=SQL) → dùng chung với `database-performance.kql`.
+- [x] Xoá `monitoring/alerts.json` (file mẫu alert CPU trỏ VM không tồn tại trong project → gây hiểu nhầm). Alert thật nằm ở `modules/alerts.bicep`.
+- [x] Xác nhận lại Recovery Services Vault `rsv-tripto`: **KHÔNG trống** — backup file share `tripto-share` (policy `policy-tripto-afs`, Daily 02:00, giữ 30 ngày) đã chạy Completed liên tục từ 31/07/2026.
+- [x] Bật MySQL `audit_log_enabled=ON`, `slow_query_log=ON`, `long_query_time=1`, `audit_log_events=CONNECTION` 2026-08-06 (chờ log chảy).
+- [x] Sentinel: gắn data connector Azure Activity (`ds-activity-to-sentinel`) + tạo analytic rule `rule-high-failed-requests` 2026-08-06.
 
 ### 📅 NHẬT KÝ — 2026-08-05 (kiểm tra Task A + fix AppRequests)
 - [x] Xác nhận Task A đã xong: web tripto chạy code mới (event booking_created về Law), DIAGNOSTIC streaming tốt (AzureMetrics 204.718 dòng)

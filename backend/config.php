@@ -108,6 +108,12 @@ if (!function_exists('closeConnection')) {
     }
 }
 
+// Helper gửi 1 dependency (MySQL query) lên App Insights -> bảng dependencies
+// Cách dùng: gói câu lệnh query để đong thời gian rồi gọi hàm này.
+function monitorTrackDbQuery($sql, $durationMs = 0, $success = true, $target = DB_HOST) {
+  monitorTrackDependency($target, 'MySQL Query', $sql, $durationMs, $success, 'SQL', $success ? '200' : '500');
+}
+
 // Auto-send telemetry khi script kết thúc
 register_shutdown_function(function () {
     $httpCode = http_response_code();

@@ -114,6 +114,28 @@ function monitorTrackException($message, $file = '', $line = 0) {
 }
 
 /**
+ * Track dependency (MySQL/Redis/HTTP ra ngoài) -> bảng dependencies
+ * Gọi khi backend thực hiện gọi database hoặc service bên ngoài.
+ */
+function monitorTrackDependency($target, $name, $data, $durationMs, $success = true, $type = 'SQL', $resultCode = '') {
+  $data = [
+    'baseType' => 'RemoteDependencyData',
+    'baseData' => [
+      'ver' => 2,
+      'id' => uniqid(),
+      'name' => $name,
+      'type' => $type,
+      'target' => $target,
+      'data' => $data,
+      'duration' => monitorMsToTimeSpan($durationMs),
+      'success' => $success,
+      'resultCode' => (string)$resultCode
+    ]
+  ];
+  monitorSend(monitorEnvelope('Microsoft.ApplicationInsights.RemoteDependency', $data));
+}
+
+/**
  * Track event (login, register, booking, v.v.)
  */
 function monitorTrackEvent($name, $properties = [], $measurements = []) {
