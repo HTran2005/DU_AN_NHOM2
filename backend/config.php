@@ -25,6 +25,22 @@ error_reporting(E_ALL);
 ini_set('display_errors', 0);        // Không hiển thị lỗi cho user
 ini_set('log_errors', 1);            // Ghi log lỗi
 
+// ===== CORS - cho phép frontend gọi API qua API Management (cross-origin) =====
+// Phải gửi header Access-Control-Allow-Origin, nếu không trình duyệt sẽ chặn
+// request và admin page hiển thị "Lỗi lấy dữ liệu" (Failed to fetch).
+$corsOrigin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '*';
+header('Access-Control-Allow-Origin: ' . $corsOrigin);
+header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization, Origin, X-Requested-With, Accept');
+header('Access-Control-Max-Age: 86400');
+header('Vary: Origin');
+
+// Xử lý preflight request (OPTIONS) - trình duyệt gửi trước khi gọi API
+if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(204);
+    exit;
+}
+
 // Azure Application Insights
 // Instrumentation Key được lấy từ output của Bicep deployment
 // Cập nhật giá trị này sau khi chạy scripts/deploy-monitoring.ps1
