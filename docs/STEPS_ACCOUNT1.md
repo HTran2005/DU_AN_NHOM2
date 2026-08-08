@@ -237,6 +237,9 @@ Thứ tự thao tác thực tế trên Portal Azure + Cloud Shell. Người th�
 **Bước 2 — Thêm 1 bản ghi vào zone:**
 - Trong zone → **+ Record set** → Name `www` → Type **CNAME** → Alias `tripto-gcbmg6gybegye7ex.southeastasia-01.azurewebsites.net` → **OK**
 
+> 📝 Lưu ý: bản ghi ban đầu từng tạo tên **`ww`** (nhập thiếu chữ `w`) → đã được **sửa lại đúng thành `www`** và xóa `ww` (query NS Azure xác nhận).
+> ✔ Có thêm lựa chọn CLI: `az network dns record-set cname set-record -g frontend-dung -z tripto.vn -n www --cname tripto-gcbmg6gybegye7ex.southeastasia-01.azurewebsites.net`
+
 **Bước 3 — Query trực tiếp nameserver (Cloud Shell hoặc máy):**
 ```
 nslookup -type=CNAME www.tripto.vn ns1-01.azure-dns.com
@@ -245,7 +248,7 @@ Kết quả (bằng chứng hoạt động):
 ```
 www.tripto.vn  canonical name = tripto-gcbmg6gybegye7ex.southeastasia-01.azurewebsites.net
 ```
-→ Máy chủ DNS Azure trả lời đúng bản ghi = **zone đang hoạt động thật** ✅
+- Máy chủ DNS Azure trả về đúng bản ghi = **zone đang hoạt động thật** ✅
 
 ### Bảng minh chứng cho giáo viên
 
