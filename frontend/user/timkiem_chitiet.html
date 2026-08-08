@@ -1803,7 +1803,7 @@
                 // Gọi API
                 resultCountTextEl.textContent = 'Đang tải kết quả...';
                 
-                const response = await fetch(`../../user.php?endpoint=search_tours&${apiParams.toString()}`);
+                const response = await fetch(`https://tripto-api-management.azure-api.net/tripto/user.php?endpoint=search_tours&${apiParams.toString()}`);
                 const result = await response.json();
 
                 if (!response.ok || !result.success) {
@@ -2356,7 +2356,7 @@
                     
                     console.log('📤 Gửi yêu cầu đăng nhập đến user.php');
                     
-                    const apiUrl = '../../user.php?endpoint=auth&action=login';
+                    const apiUrl = 'https://tripto-api-management.azure-api.net/tripto/user.php?endpoint=auth&action=login';
                     console.log('📍 API URL:', apiUrl);
                     
                     const response = await fetch(apiUrl, {
@@ -2455,7 +2455,7 @@
                     
                     console.log('📤 Gửi yêu cầu đăng ký đến user.php');
                     
-                    const apiUrl = '../../user.php?endpoint=auth&action=register';
+                    const apiUrl = 'https://tripto-api-management.azure-api.net/tripto/user.php?endpoint=auth&action=register';
                     console.log('📍 API URL:', apiUrl);
                     
                     const response = await fetch(apiUrl, {

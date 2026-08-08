@@ -58,7 +58,7 @@ class TriptoAuth {
      */
     async login(email, password) {
         try {
-            const apiUrl = '../../user.php';
+            const apiUrl = 'https://tripto-api-management.azure-api.net/tripto/user.php';
             const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {

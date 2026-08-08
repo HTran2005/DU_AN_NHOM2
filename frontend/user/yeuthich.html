@@ -404,13 +404,13 @@
 
                 // Initialize tables
                 console.log('🔧 Initializing favorite tables...');
-                const initResponse = await fetch(`../../user.php?endpoint=init_favorite_tables`);
+                const initResponse = await fetch(`https://tripto-api-management.azure-api.net/tripto/user.php?endpoint=init_favorite_tables`);
                 const initData = await initResponse.json();
                 console.log('📋 Init Result:', initData);
 
                 // Get favorite groups
                 console.log(`🔍 Loading favorite groups for user ${user.id}...`);
-                const groupsResponse = await fetch(`../../user.php?endpoint=get_favorite_groups&id_nguoi_dung=${user.id}`);
+                const groupsResponse = await fetch(`https://tripto-api-management.azure-api.net/tripto/user.php?endpoint=get_favorite_groups&id_nguoi_dung=${user.id}`);
                 const groupsData = await groupsResponse.json();
                 
                 if (!groupsResponse.ok) {
@@ -453,7 +453,7 @@
         async function loadToursInGroup(userId, groupId) {
             try {
                 // Use get_user_favorites which joins tour/combo data directly
-                const response = await fetch(`../../user.php?endpoint=get_user_favorites&id_nguoi_dung=${userId}&id_nhom=${groupId}`);
+                const response = await fetch(`https://tripto-api-management.azure-api.net/tripto/user.php?endpoint=get_user_favorites&id_nguoi_dung=${userId}&id_nhom=${groupId}`);
                 const data = await response.json();
                 
                 if (data.success && data.favorites && data.favorites.length > 0) {
@@ -573,7 +573,7 @@
             if (!listName.trim() || !currentUser) return;
 
             try {
-                const response = await fetch('../../user.php?endpoint=create_favorite_group', {
+                const response = await fetch('https://tripto-api-management.azure-api.net/tripto/user.php?endpoint=create_favorite_group', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -663,7 +663,7 @@
             if (confirm('Bạn có chắc muốn xóa tour này khỏi danh sách?')) {
                 try {
                     const listInfo = listData[listTitle];
-                    const response = await fetch(`../../user.php?endpoint=remove_tour_from_group`, {
+                    const response = await fetch(`https://tripto-api-management.azure-api.net/tripto/user.php?endpoint=remove_tour_from_group`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -710,7 +710,7 @@
             if (confirm(`Bạn có chắc muốn xóa danh sách "${listTitle}"?`)) {
                 try {
                     const listInfo = listData[listTitle];
-                    const response = await fetch(`../../user.php?endpoint=delete_favorite_group`, {
+                    const response = await fetch(`https://tripto-api-management.azure-api.net/tripto/user.php?endpoint=delete_favorite_group`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({

@@ -1231,7 +1231,7 @@
         async function loadAllReviews(page = 1) {
             try {
                 currentPage = page;
-                const response = await fetch(`../../user.php?endpoint=get_all_reviews&page=${page}`);
+                const response = await fetch(`https://tripto-api-management.azure-api.net/tripto/user.php?endpoint=get_all_reviews&page=${page}`);
                 const result = await response.json();
                 
                 if (!result.success) {
@@ -1406,7 +1406,7 @@
         // Load destinations and populate filter dropdown
         async function loadDestinations() {
             try {
-                const response = await fetch('../../user.php?endpoint=get_filter_data&type=tours');
+                const response = await fetch('https://tripto-api-management.azure-api.net/tripto/user.php?endpoint=get_filter_data&type=tours');
                 const result = await response.json();
                 
                 if (!result.success) {

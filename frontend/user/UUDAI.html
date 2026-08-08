@@ -2741,7 +2741,7 @@
                     console.log('📤 Gửi yêu cầu đăng nhập đến user.php');
                     
                     // Xác định đường dẫn API - sử dụng user.php unified API
-                    const apiUrl = '../../user.php?endpoint=auth&action=login';
+                    const apiUrl = 'https://tripto-api-management.azure-api.net/tripto/user.php?endpoint=auth&action=login';
                     console.log('📍 API URL:', apiUrl);
                     
                     // Gửi POST request với JSON content-type
@@ -2902,7 +2902,7 @@
          */
         async function loadDestinations() {
             try {
-                const response = await fetch('../../user.php?endpoint=get_filter_destinations');
+                const response = await fetch('https://tripto-api-management.azure-api.net/tripto/user.php?endpoint=get_filter_destinations');
                 const result = await response.json();
                 
                 if (result.success && result.data.length > 0) {
@@ -3115,7 +3115,7 @@
             const loadingContainer = document.getElementById('loadingContainer');
             
             try {
-                const response = await fetch('../../user.php?endpoint=get_khuyen_mai');
+                const response = await fetch('https://tripto-api-management.azure-api.net/tripto/user.php?endpoint=get_khuyen_mai');
                 const result = await response.json();
                 
                 console.log('API Response:', result);
