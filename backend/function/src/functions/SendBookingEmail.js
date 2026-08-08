@@ -122,35 +122,74 @@ app.http('SendBookingEmail', {
 
             context.log("===== ENV CHECK =====");
             context.log(
-                "EMAIL_USER exists:",
-                !!process.env.EMAIL_USER
+                "SMTP_HOST exists:",
+                !!process.env.SMTP_HOST
             );
 
             context.log(
-                "EMAIL_PASS exists:",
-                !!process.env.EMAIL_PASS
+                "SMTP_PORT exists:",
+                !!process.env.SMTP_PORT
             );
 
+            context.log(
+                "SMTP_USERNAME exists:",
+                !!process.env.SMTP_USERNAME
+            );
+
+            context.log(
+                "SMTP_PASSWORD exists:",
+                !!process.env.SMTP_PASSWORD
+            );
+
+            context.log(
+                "MAIL_FROM exists:",
+                !!process.env.MAIL_FROM
+            );
+
+            if (
+                !process.env.SMTP_HOST ||
+                !process.env.SMTP_PORT ||
+                !process.env.SMTP_USERNAME ||
+                !process.env.SMTP_PASSWORD ||
+                !process.env.MAIL_FROM
+            ) {
+
+                context.log("❌ Missing required SMTP environment variables");
+
+                return {
+                    status: 500,
+                    headers: {
+                        'Access-Control-Allow-Origin': '*'
+                    },
+                    jsonBody: {
+                        success: false,
+                        message: "Cấu hình SMTP chưa hoàn chỉnh trên server."
+                    }
+                };
+            }
+
             // ==========================
-            // Tạo SMTP Gmail
+            // Tạo SMTP Azure Communication Services
             // ==========================
 
             const transporter = nodemailer.createTransport({
-                service: "gmail",
+                host: process.env.SMTP_HOST,
+                port: Number(process.env.SMTP_PORT),
+                secure: false,
 
                 auth: {
-                    user: process.env.EMAIL_USER,
-                    pass: process.env.EMAIL_PASS
+                    user: process.env.SMTP_USERNAME,
+                    pass: process.env.SMTP_PASSWORD
                 }
             });
 
             // ==========================
-            // Kiểm tra kết nối Gmail
+            // Kiểm tra kết nối SMTP
             // ==========================
 
             await transporter.verify();
 
-            context.log("✅ Gmail SMTP connection successful");
+            context.log("✅ ACS SMTP connection successful");
 
             // ==========================
             // Gửi email
@@ -158,7 +197,7 @@ app.http('SendBookingEmail', {
 
             const info = await transporter.sendMail({
 
-                from: `"Tripto" <${process.env.EMAIL_USER}>`,
+                from: process.env.MAIL_FROM,
 
                 to: email,
 
