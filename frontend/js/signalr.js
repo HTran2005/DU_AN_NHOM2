@@ -5,6 +5,25 @@ const connectionInfo = await fetch(
     }
 );
 
+if (!connectionInfo.ok) {
+    throw new Error('Không gọi được negotiate');
+}
+
 const data = await connectionInfo.json();
 
 console.log('SignalR connection info:', data);
+
+const connection = new signalR.HubConnectionBuilder()
+    .withUrl(data.url, {
+        accessTokenFactory: () => data.accessToken
+    })
+    .withAutomaticReconnect()
+    .build();
+
+connection.on('newNotification', (data) => {
+    console.log('Nhận notification:', data);
+});
+
+await connection.start();
+
+console.log('SignalR connected!');
