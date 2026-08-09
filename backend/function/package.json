@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@azure/functions": "^4.0.0",
+    "@azure/notification-hubs": "^2.1.0",
     "mysql2": "^3.5.2",
     "nodemailer": "^9.0.4"
   }
