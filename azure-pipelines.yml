@@ -89,10 +89,17 @@ steps:
 
       echo "Work Item: $WORKITEM_ID"
 
-      CURRENT_STATE=$(curl --http1.1 -s \
+      RESPONSE=$(curl --http1.1 -s \
         --user ":$PAT" \
-        "https://dev.azure.com/$(organization)/$(project)/_apis/wit/workitems/$WORKITEM_ID?api-version=7.1" \
-        | grep -oE '"System.State":"[^"]+"' | head -1 | cut -d'"' -f4)
+        "https://dev.azure.com/$(organization)/$(project)/_apis/wit/workitems/$WORKITEM_ID?api-version=7.1")
+
+      CURRENT_STATE=$(echo "$RESPONSE" | grep -oE '"System.State":[[:space:]]*"[^"]+"' | head -1 | cut -d'"' -f4)
+
+      if [ -z "$CURRENT_STATE" ]; then
+        echo "DEBUG - khong doc duoc trang thai. Phan hoi tu API:"
+        echo "$RESPONSE" | head -c 500
+        echo ""
+      fi
 
       echo "Trang thai hien tai: $CURRENT_STATE"
 
@@ -252,8 +259,7 @@ steps:
     echo "CHANGE WORK ITEMS TO RESOLVED"
     echo "======================================"
 
-    # Chi chuyen Resolved khi build la build CI tren main (sau khi merge PR)
-    echo "Build.Reason: $BUILD_REASON"
+    # Chi chuyen Resolved khi build la build CI tren main (sau khi merge PR)    echo "Build.Reason: $BUILD_REASON"
     echo "SourceBranch: $SOURCE_BRANCH"
 
     if [ "$BUILD_REASON" != "IndividualCI" ] && [ "$BUILD_REASON" != "BatchedCI" ]; then
@@ -292,10 +298,17 @@ steps:
 
       echo "Work Item: $WORKITEM_ID"
 
-      CURRENT_STATE=$(curl --http1.1 -s \
+      RESPONSE=$(curl --http1.1 -s \
         --user ":$PAT" \
-        "https://dev.azure.com/$(organization)/$(project)/_apis/wit/workitems/$WORKITEM_ID?api-version=7.1" \
-        | grep -oE '"System.State":"[^"]+"' | head -1 | cut -d'"' -f4)
+        "https://dev.azure.com/$(organization)/$(project)/_apis/wit/workitems/$WORKITEM_ID?api-version=7.1")
+
+      CURRENT_STATE=$(echo "$RESPONSE" | grep -oE '"System.State":[[:space:]]*"[^"]+"' | head -1 | cut -d'"' -f4)
+
+      if [ -z "$CURRENT_STATE" ]; then
+        echo "DEBUG - khong doc duoc trang thai. Phan hoi tu API:"
+        echo "$RESPONSE" | head -c 500
+        echo ""
+      fi
 
       echo "Trang thai hien tai: $CURRENT_STATE"
 
