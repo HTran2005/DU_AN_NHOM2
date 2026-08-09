@@ -1,42 +1,141 @@
 trigger:
-- main
+  branches:
+    include:
+      - main
+      - feature/*
 
 pool:
   vmImage: ubuntu-latest
 
 steps:
 
-- checkout: self
+# ==========================================
+# CHECKOUT SOURCE
+# ==========================================
 
-# Hiển thị source
+- checkout: self
+  persistCredentials: true
+
+
+# ==========================================
+# LẤY WORK ITEM ID TỪ TÊN BRANCH
+#
+# Ví dụ:
+# feature/34-microsoft-entra-id
+#                ↓
+#              ID = 34
+#
+# Dùng chung cho tất cả Work Item
+# ==========================================
+
+- script: |
+    BRANCH="$(Build.SourceBranch)"
+
+    echo "========================================"
+    echo "Branch = $BRANCH"
+    echo "========================================"
+
+    WORKITEM=$(echo "$BRANCH" | sed -n 's#refs/heads/feature/\([0-9]\+\)-.*#\1#p')
+
+    echo "Work Item ID = $WORKITEM"
+
+    if [ -z "$WORKITEM" ]; then
+      echo "ERROR: Không tìm thấy Work Item ID."
+      echo "Branch phải có dạng:"
+      echo "feature/34-ten-cong-viec"
+      exit 1
+    fi
+
+    echo "##vso[task.setvariable variable=WORKITEM_ID]$WORKITEM"
+
+  displayName: "Get Work Item ID"
+
+
+# ==========================================
+# NEW → ACTIVE
+# ==========================================
+
+- script: |
+    echo "========================================"
+    echo "Changing Work Item $(WORKITEM_ID)"
+    echo "New → Active"
+    echo "========================================"
+
+    JSON='[
+      {
+        "op": "add",
+        "path": "/fields/System.State",
+        "value": "Active"
+      }
+    ]'
+
+    AUTH=$(printf ":%s" "$SYSTEM_ACCESSTOKEN" | base64 -w 0)
+
+    curl --fail-with-body \
+      --request PATCH \
+      --header "Authorization: Basic $AUTH" \
+      --header "Content-Type: application/json-patch+json" \
+      --data "$JSON" \
+      "https://dev.azure.com/DuAnNhom2/BAO_CAO/_apis/wit/workitems/$(WORKITEM_ID)?api-version=7.1"
+
+  displayName: "New → Active"
+
+  env:
+    SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+
+
+# ==========================================
+# HIỂN THỊ SOURCE
+# ==========================================
+
 - script: |
     echo "===== PROJECT ====="
     pwd
     ls -R
   displayName: "Show Project Structure"
 
-# Kiểm tra PHP
+
+# ==========================================
+# KIỂM TRA PHP
+# ==========================================
+
 - script: |
     php -v
-  displayName: "Check PHP Version.."
+  displayName: "Check PHP Version"
 
-# Validate PHP
+
+# ==========================================
+# VALIDATE PHP
+# ==========================================
+
 - script: |
     find . -name "*.php" -exec php -l {} \;
   displayName: "Validate PHP"
 
-# Cài đặt Composer dependencies (đảm bảo vendor/ có trong artifact)
+
+# ==========================================
+# CÀI COMPOSER DEPENDENCIES
+# ==========================================
+
 - script: |
     cd backend
     composer install --prefer-dist --no-progress --no-dev
   displayName: "Install Composer Dependencies"
 
-# Kiểm tra SQL
+
+# ==========================================
+# KIỂM TRA SQL
+# ==========================================
+
 - script: |
     find . -name "*.sql"
   displayName: "Find SQL Scripts"
 
-# Đóng gói source
+
+# ==========================================
+# ĐÓNG GÓI SOURCE
+# ==========================================
+
 - task: ArchiveFiles@2
   displayName: "Create Artifact"
   inputs:
@@ -46,10 +145,50 @@ steps:
     archiveFile: '$(Build.ArtifactStagingDirectory)/Website.zip'
     replaceExistingArchive: true
 
-# Publish Artifact
+
+# ==========================================
+# PUBLISH ARTIFACT
+# ==========================================
+
 - task: PublishBuildArtifacts@1
   displayName: "Publish Artifact"
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: Website
 
+
+# ==========================================
+# ACTIVE → RESOLVED
+#
+# Chỉ chạy nếu toàn bộ bước phía trên thành công
+# ==========================================
+
+- script: |
+    echo "========================================"
+    echo "Changing Work Item $(WORKITEM_ID)"
+    echo "Active → Resolved"
+    echo "========================================"
+
+    JSON='[
+      {
+        "op": "add",
+        "path": "/fields/System.State",
+        "value": "Resolved"
+      }
+    ]'
+
+    AUTH=$(printf ":%s" "$SYSTEM_ACCESSTOKEN" | base64 -w 0)
+
+    curl --fail-with-body \
+      --request PATCH \
+      --header "Authorization: Basic $AUTH" \
+      --header "Content-Type: application/json-patch+json" \
+      --data "$JSON" \
+      "https://dev.azure.com/DuAnNhom2/BAO_CAO/_apis/wit/workitems/$(WORKITEM_ID)?api-version=7.1"
+
+  displayName: "Active → Resolved"
+
+  condition: succeeded()
+
+  env:
+    SYSTEM_ACCESSTOKEN: $(System.AccessToken)
