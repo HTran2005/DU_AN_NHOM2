@@ -354,6 +354,14 @@
     </footer>
 
     <script src="../js/auth.js"></script>
+    <script src="../js/push-notification.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof window.initPushNotifications === 'function') {
+                window.initPushNotifications();
+            }
+        });
+    </script>
     <script>
         // Kiểm tra người dùng đã đăng nhập chưa
         document.addEventListener('DOMContentLoaded', function() {
