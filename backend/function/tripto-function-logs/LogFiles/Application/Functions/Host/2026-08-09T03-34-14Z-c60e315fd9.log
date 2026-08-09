@@ -1,0 +1,407 @@
+2026-08-09T03:34:14.122 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "c60e315fd98a9ee0cde6353c3893bd7ae13eec56c0e3570e11463b8e2d689665",
+  "computerName": "10-30-1-17",
+  "processUptime": 341794,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T03:34:17.080 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "c60e315fd98a9ee0cde6353c3893bd7ae13eec56c0e3570e11463b8e2d689665",
+  "computerName": "10-30-1-17",
+  "processUptime": 344763,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T03:34:17.124 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "c60e315fd98a9ee0cde6353c3893bd7ae13eec56c0e3570e11463b8e2d689665",
+  "computerName": "10-30-1-17",
+  "processUptime": 344807,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T03:34:18.951 [Information] Host lock lease acquired by instance ID 'c60e315fd98a9ee0cde6353c3893bd7a'.
+2026-08-09T03:34:23.000 [Information] HttpOptions
+{
+  "DynamicThrottlesEnabled": true,
+  "EnableChunkedRequestBinding": false,
+  "MaxConcurrentRequests": 100,
+  "MaxOutstandingRequests": 200,
+  "RoutePrefix": "api"
+}
+2026-08-09T03:34:23.000 [Information] ConcurrencyOptions
+{
+  "DynamicConcurrencyEnabled": false,
+  "MaximumFunctionConcurrency": 500,
+  "CPUThreshold": 0.8,
+  "SnapshotPersistenceEnabled": true
+}
+2026-08-09T03:52:29.788 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "c60e315fd98a9ee0cde6353c3893bd7ae13eec56c0e3570e11463b8e2d689665",
+  "computerName": "10-30-1-17",
+  "processUptime": 1437471,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T03:52:29.810 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "c60e315fd98a9ee0cde6353c3893bd7ae13eec56c0e3570e11463b8e2d689665",
+  "computerName": "10-30-1-17",
+  "processUptime": 1437493,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T03:52:44.167 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "c60e315fd98a9ee0cde6353c3893bd7ae13eec56c0e3570e11463b8e2d689665",
+  "computerName": "10-30-1-17",
+  "processUptime": 1451851,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T03:54:10.198 [Information] Stopping JobHost
+2026-08-09T03:54:10.199 [Information] Stopping the listener 'Microsoft.Azure.WebJobs.Extensions.EventGrid.EventGridListener' for function 'BlobEventHandler'
+2026-08-09T03:54:10.199 [Information] Stopped the listener 'Microsoft.Azure.WebJobs.Extensions.EventGrid.EventGridListener' for function 'BlobEventHandler'
+2026-08-09T03:54:10.199 [Information] Job host stopped
+2026-08-09T03:55:40.377 [Information] registered EventGrid Endpoint = https://tripto-function-gmcahcf6embwemaw.southeastasia-01.azurewebsites.net/runtime/webhooks/eventgrid
+2026-08-09T03:55:40.461 [Information] Initializing Host. OperationId: '06309f20-f08b-498d-9310-a64182b1f53e'.
+2026-08-09T03:55:40.475 [Information] Host initialization: ConsecutiveErrors=0, StartupCount=1, OperationId=06309f20-f08b-498d-9310-a64182b1f53e
+2026-08-09T03:55:40.562 [Information] ScriptJobHostOptions
+{
+  "FileWatchingEnabled": false,
+  "FileLoggingMode": "DebugOnly",
+  "FunctionTimeout": "00:05:00",
+  "TelemetryMode": "ApplicationInsights"
+}
+2026-08-09T03:55:40.564 [Information] ApplicationInsightsLoggerOptions
+{
+  "SamplingSettings": {
+    "EvaluationInterval": "00:00:15",
+    "InitialSamplingPercentage": 100.0,
+    "MaxSamplingPercentage": 100.0,
+    "MaxTelemetryItemsPerSecond": 20.0,
+    "MinSamplingPercentage": 0.1,
+    "MovingAverageRatio": 0.25,
+    "SamplingPercentageDecreaseTimeout": "00:02:00",
+    "SamplingPercentageIncreaseTimeout": "00:15:00"
+  },
+  "SamplingExcludedTypes": "Request",
+  "SamplingIncludedTypes": null,
+  "SnapshotConfiguration": null,
+  "EnablePerformanceCountersCollection": true,
+  "HttpAutoCollectionOptions": {
+    "EnableHttpTriggerExtendedInfoCollection": true,
+    "EnableW3CDistributedTracing": true,
+    "EnableResponseHeaderInjection": true
+  },
+  "LiveMetricsInitializationDelay": "00:00:15",
+  "EnableLiveMetrics": true,
+  "EnableLiveMetricsFilters": false,
+  "EnableQueryStringTracing": false,
+  "EnableDependencyTracking": true,
+  "DependencyTrackingOptions": null,
+  "TokenCredentialOptions": null,
+  "DiagnosticsEventListenerLogLevel": null,
+  "EnableAutocollectedMetricsExtractor": false,
+  "EnableMetricsCustomDimensionOptimization": false,
+  "EnableAdaptiveSamplingDelay": true,
+  "AdaptiveSamplingInitializationDelay": "00:00:15"
+}
+2026-08-09T03:55:40.564 [Information] LoggerFilterOptions
+{
+  "MinLevel": "None",
+  "Rules": [
+    {
+      "ProviderName": null,
+      "CategoryName": null,
+      "LogLevel": null,
+      "Filter": "<AddFilter>b__0"
+    },
+    {
+      "ProviderName": "Microsoft.Azure.WebJobs.Script.WebHost.Diagnostics.WebHostSystemLoggerProvider",
+      "CategoryName": null,
+      "LogLevel": "None",
+      "Filter": null
+    },
+    {
+      "ProviderName": "Microsoft.Azure.WebJobs.Script.WebHost.Diagnostics.WebHostSystemLoggerProvider",
+      "CategoryName": null,
+      "LogLevel": null,
+      "Filter": "<AddFilter>b__0"
+    },
+    {
+      "ProviderName": null,
+      "CategoryName": null,
+      "LogLevel": null,
+      "Filter": "<AddFilter>b__0"
+    },
+    {
+      "ProviderName": "Microsoft.Azure.WebJobs.Script.WebHost.Diagnostics.SystemLoggerProvider",
+      "CategoryName": null,
+      "LogLevel": "None",
+      "Filter": null
+    },
+    {
+      "ProviderName": "Microsoft.Azure.WebJobs.Script.WebHost.Diagnostics.SystemLoggerProvider",
+      "CategoryName": null,
+      "LogLevel": null,
+      "Filter": "<AddFilter>b__0"
+    },
+    {
+      "ProviderName": "Microsoft.Azure.WebJobs.Logging.ApplicationInsights.ApplicationInsightsLoggerProvider",
+      "CategoryName": null,
+      "LogLevel": "Trace",
+      "Filter": null
+    }
+  ]
+}
+2026-08-09T03:55:40.564 [Information] LoggerFilterOptions
+{
+  "MinLevel": "None",
+  "Rules": [
+    {
+      "ProviderName": null,
+      "CategoryName": null,
+      "LogLevel": null,
+      "Filter": "<AddFilter>b__0"
+    },
+    {
+      "ProviderName": "Microsoft.Azure.WebJobs.Script.WebHost.Diagnostics.WebHostSystemLoggerProvider",
+      "CategoryName": null,
+      "LogLevel": "None",
+      "Filter": null
+    },
+    {
+      "ProviderName": "Microsoft.Azure.WebJobs.Script.WebHost.Diagnostics.WebHostSystemLoggerProvider",
+      "CategoryName": null,
+      "LogLevel": null,
+      "Filter": "<AddFilter>b__0"
+    },
+    {
+      "ProviderName": null,
+      "CategoryName": null,
+      "LogLevel": null,
+      "Filter": "<AddFilter>b__0"
+    },
+    {
+      "ProviderName": "Microsoft.Azure.WebJobs.Script.WebHost.Diagnostics.SystemLoggerProvider",
+      "CategoryName": null,
+      "LogLevel": "None",
+      "Filter": null
+    },
+    {
+      "ProviderName": "Microsoft.Azure.WebJobs.Script.WebHost.Diagnostics.SystemLoggerProvider",
+      "CategoryName": null,
+      "LogLevel": null,
+      "Filter": "<AddFilter>b__0"
+    },
+    {
+      "ProviderName": "Microsoft.Azure.WebJobs.Logging.ApplicationInsights.ApplicationInsightsLoggerProvider",
+      "CategoryName": null,
+      "LogLevel": "Trace",
+      "Filter": null
+    }
+  ]
+}
+2026-08-09T03:55:40.564 [Information] HttpWorkerOptions
+{
+  "Type": 0,
+  "Description": null,
+  "Arguments": null,
+  "Port": 50982,
+  "IsPortManuallySet": false,
+  "EnableForwardingHttpRequest": false,
+  "EnableProxyingHttpRequest": false,
+  "InitializationTimeout": "00:00:30",
+  "CustomRoutesEnabled": false,
+  "Http": null
+}
+2026-08-09T03:55:40.564 [Information] ScriptJobHostOptions
+{
+  "FileWatchingEnabled": false,
+  "FileLoggingMode": "DebugOnly",
+  "FunctionTimeout": "00:05:00",
+  "TelemetryMode": "ApplicationInsights"
+}
+2026-08-09T03:55:40.564 [Information] FunctionResultAggregatorOptions
+{
+  "BatchSize": 1000,
+  "FlushTimeout": "00:00:30",
+  "IsEnabled": true
+}
+2026-08-09T03:55:40.564 [Information] ConcurrencyOptions
+{
+  "DynamicConcurrencyEnabled": false,
+  "MaximumFunctionConcurrency": 500,
+  "CPUThreshold": 0.8,
+  "SnapshotPersistenceEnabled": true
+}
+2026-08-09T03:55:40.564 [Information] SingletonOptions
+{
+  "LockPeriod": "00:00:15",
+  "ListenerLockPeriod": "00:01:00",
+  "LockAcquisitionTimeout": "10675199.02:48:05.4775807",
+  "LockAcquisitionPollingInterval": "00:00:05",
+  "ListenerLockRecoveryPollingInterval": "00:01:00"
+}
+2026-08-09T03:55:40.564 [Information] TimerTriggerPlatformOptions
+{
+  "NonCronScheduleBehavior": "Error"
+}
+2026-08-09T03:55:40.564 [Information] ScaleOptions
+{
+  "ScaleMetricsMaxAge": "00:02:00",
+  "ScaleMetricsSampleInterval": "00:00:10",
+  "MetricsPurgeEnabled": true,
+  "IsTargetScalingEnabled": true,
+  "IsRuntimeScalingEnabled": false
+}
+2026-08-09T03:55:40.570 [Information] Starting JobHost
+2026-08-09T03:55:40.573 [Information] Starting Host (HostId=tripto-function, InstanceId=5d427af1-22f8-4dc7-b393-8f4a7b80f3fc, Version=4.1052.300.26370, ProcessId=6084, AppDomainId=1, InDebugMode=True, InDiagnosticMode=False, FunctionsExtensionVersion=~4)
+2026-08-09T03:55:40.603 [Information] Loading functions metadata
+2026-08-09T03:55:40.612 [Information] Reading functions metadata (Custom)
+2026-08-09T03:55:40.641 [Information] 0 functions found (Custom)
+2026-08-09T03:55:40.651 [Information] 2 functions loaded
+2026-08-09T03:55:40.739 [Information] Generating 2 job function(s)
+2026-08-09T03:55:40.790 [Information] Worker process started and initialized.
+2026-08-09T03:55:40.849 [Information] Found the following functions:
+Host.Functions.BlobEventHandler
+Host.Functions.SendBookingEmail
+2026-08-09T03:55:40.888 [Information] HttpOptions
+{
+  "DynamicThrottlesEnabled": true,
+  "EnableChunkedRequestBinding": false,
+  "MaxConcurrentRequests": 100,
+  "MaxOutstandingRequests": 200,
+  "RoutePrefix": "api"
+}
+2026-08-09T03:55:40.890 [Information] Initializing function HTTP routes
+Mapped function route 'api/SendBookingEmail' [POST,OPTIONS] to 'SendBookingEmail'
+2026-08-09T03:55:40.905 [Information] Host initialized (320ms)
+2026-08-09T03:55:40.918 [Information] Host started (342ms)
+2026-08-09T03:55:40.918 [Information] Job host started
+2026-08-09T03:55:42.276 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "c60e315fd98a9ee0cde6353c3893bd7ae13eec56c0e3570e11463b8e2d689665",
+  "computerName": "10-30-1-17",
+  "processUptime": 9546,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T03:55:42.276 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "c60e315fd98a9ee0cde6353c3893bd7ae13eec56c0e3570e11463b8e2d689665",
+  "computerName": "10-30-1-17",
+  "processUptime": 9546,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T03:55:42.281 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "c60e315fd98a9ee0cde6353c3893bd7ae13eec56c0e3570e11463b8e2d689665",
+  "computerName": "10-30-1-17",
+  "processUptime": 9546,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T03:55:43.118 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "c60e315fd98a9ee0cde6353c3893bd7ae13eec56c0e3570e11463b8e2d689665",
+  "computerName": "10-30-1-17",
+  "processUptime": 10429,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T03:55:45.716 [Information] Host lock lease acquired by instance ID 'c60e315fd98a9ee0cde6353c3893bd7a'.
+2026-08-09T03:56:10.994 [Information] HttpOptions
+{
+  "DynamicThrottlesEnabled": true,
+  "EnableChunkedRequestBinding": false,
+  "MaxConcurrentRequests": 100,
+  "MaxOutstandingRequests": 200,
+  "RoutePrefix": "api"
+}
+2026-08-09T03:56:11.021 [Information] ConcurrencyOptions
+{
+  "DynamicConcurrencyEnabled": false,
+  "MaximumFunctionConcurrency": 500,
+  "CPUThreshold": 0.8,
+  "SnapshotPersistenceEnabled": true
+}
+2026-08-09T03:56:15.452 [Information] Stopping JobHost
+2026-08-09T03:56:15.458 [Information] Stopping the listener 'Microsoft.Azure.WebJobs.Extensions.EventGrid.EventGridListener' for function 'BlobEventHandler'
+2026-08-09T03:56:15.460 [Information] Stopped the listener 'Microsoft.Azure.WebJobs.Extensions.EventGrid.EventGridListener' for function 'BlobEventHandler'
+2026-08-09T03:56:15.463 [Information] Job host stopped

@@ -1,0 +1,8 @@
+<step title="BackgroundTrace" date="2026-08-07T02:26:06.725" instance="2b5289" url="synctriggers-operation" method="POST" >
+  <step title="Updating shutdown sentinel last write time" date="2026-08-07T02:26:06.756" SemaphoreCount="6" /><!-- duration: 16ms -->
+  <step title="Delaying &apos;00:01:00&apos; for Functions site to restart." date="2026-08-07T02:26:06.787" /><!-- duration: 33ms -->
+  <step title="Begin HttpPost https://tripto-function-gmcahcf6embwemaw.southeastasia-01.azurewebsites.net/admin/host/synctriggers, x-ms-request-id: 8df31558-e3c2-49c3-8d2c-16e101d42d55" date="2026-08-07T02:27:06.840" /><!-- duration: 31ms -->
+  <step title="End HttpPost, status: OK" date="2026-08-07T02:27:07.168" /><!-- duration: 16ms -->
+  <step title="Syncing function triggers by calling the functions runtime site successful." date="2026-08-07T02:27:07.215" /><!-- duration: 31ms -->
+  <step title="Deleting shutdown sentinel file" date="2026-08-07T02:27:07.262" SemaphoreCount="8" /><!-- duration: 15ms -->
+</step><!-- duration: 60584ms -->

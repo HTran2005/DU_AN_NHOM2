@@ -1,0 +1,205 @@
+2026-08-08T16:42:53.176 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "d3c4286ca1a415c16d555002fc6c951bb5f80a01dbedb65dbc46a7cb763d470c",
+  "computerName": "10-30-10-197",
+  "processUptime": 1815862,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-08T16:42:53.874 [Information] Host lock lease acquired by instance ID 'd3c4286ca1a415c16d555002fc6c951b'.
+2026-08-08T16:43:18.903 [Information] HttpOptions
+{
+  "DynamicThrottlesEnabled": true,
+  "EnableChunkedRequestBinding": false,
+  "MaxConcurrentRequests": 100,
+  "MaxOutstandingRequests": 200,
+  "RoutePrefix": "api"
+}
+2026-08-08T16:43:18.904 [Information] ConcurrencyOptions
+{
+  "DynamicConcurrencyEnabled": false,
+  "MaximumFunctionConcurrency": 500,
+  "CPUThreshold": 0.8,
+  "SnapshotPersistenceEnabled": true
+}
+2026-08-08T17:01:24.061 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "d3c4286ca1a415c16d555002fc6c951bb5f80a01dbedb65dbc46a7cb763d470c",
+  "computerName": "10-30-10-197",
+  "processUptime": 57210,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-08T17:01:24.126 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "d3c4286ca1a415c16d555002fc6c951bb5f80a01dbedb65dbc46a7cb763d470c",
+  "computerName": "10-30-10-197",
+  "processUptime": 57279,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-08T17:04:51.251 [Information] Executing 'Functions.SendBookingEmail' (Reason='This function was programmatically called via the host APIs.', Id=0feee068-04d8-4755-b8f4-7752f2d4c8c0)
+2026-08-08T17:04:51.380 [Information] ===== REQUEST RECEIVED =====
+2026-08-08T17:04:51.380 [Information] {
+  name: 'Cẩm Ly',
+  email: 'camlylv2021@gmail.com',
+  phone: '0564238974',
+  tour: 'Đà Lạt – Làng Cù Lần & Resort rừng 3 ngày 2 đêm',
+  departDate: '2026-04-30',
+  total: 12950000,
+  bookingCode: 'BOOK-32-1786208690'
+}
+2026-08-08T17:04:51.388 [Information] ===== BOOKING INFO =====
+2026-08-08T17:04:51.389 [Information] {
+  name: 'Cẩm Ly',
+  email: 'camlylv2021@gmail.com',
+  phone: '0564238974',
+  tour: 'Đà Lạt – Làng Cù Lần & Resort rừng 3 ngày 2 đêm',
+  departDate: '2026-04-30',
+  total: 12950000,
+  bookingCode: 'BOOK-32-1786208690'
+}
+2026-08-08T17:04:51.394 [Information] ===== ENV CHECK =====
+2026-08-08T17:04:51.394 [Information] SMTP_HOST exists: true
+2026-08-08T17:04:51.394 [Information] SMTP_PORT exists: true
+2026-08-08T17:04:51.395 [Information] SMTP_USERNAME exists: true
+2026-08-08T17:04:51.395 [Information] SMTP_PASSWORD exists: true
+2026-08-08T17:04:51.396 [Information] MAIL_FROM exists: true
+2026-08-08T17:04:53.448 [Information] ✅ ACS SMTP connection successful
+2026-08-08T17:04:56.840 [Information] ========== EMAIL RESULT ==========
+2026-08-08T17:04:56.840 [Information] Email người nhận: camlylv2021@gmail.com
+2026-08-08T17:04:56.840 [Information] Accepted: [ 'camlylv2021@gmail.com' ]
+2026-08-08T17:04:56.840 [Information] Rejected: []
+2026-08-08T17:04:56.840 [Information] Message ID: <d022cd44-ebc9-705a-4d53-8d253d8bc4d1@f7fbfdda-bbcd-443b-8b1c-e3b573539f61.azurecomm.net>
+2026-08-08T17:04:56.840 [Information] SMTP Response: 250 2.6.0 8a86daed-f411-4b0e-9e6d-58afcdf4b90b Queued mail for delivery
+2026-08-08T17:04:56.840 [Information] ==================================
+2026-08-08T17:04:56.862 [Information] Executed 'Functions.SendBookingEmail' (Succeeded, Id=0feee068-04d8-4755-b8f4-7752f2d4c8c0, Duration=5632ms)
+2026-08-08T17:06:49.297 [Information] Executing 'Functions.SendBookingEmail' (Reason='This function was programmatically called via the host APIs.', Id=3db69856-f09e-46a7-b2af-a98e8a22c50a)
+2026-08-08T17:06:49.301 [Information] ===== REQUEST RECEIVED =====
+2026-08-08T17:06:49.302 [Information] {
+  name: 'Ngọc Lan',
+  email: '0023411831@student.dthu.edu.vn',
+  phone: '0788707910',
+  tour: 'Tour khám phá biển đảo',
+  departDate: '2026-08-09',
+  total: 5950000,
+  bookingCode: 'BOOK-33-1786208808'
+}
+2026-08-08T17:06:49.302 [Information] ===== BOOKING INFO =====
+2026-08-08T17:06:49.303 [Information] {
+  name: 'Ngọc Lan',
+  email: '0023411831@student.dthu.edu.vn',
+  phone: '0788707910',
+  tour: 'Tour khám phá biển đảo',
+  departDate: '2026-08-09',
+  total: 5950000,
+  bookingCode: 'BOOK-33-1786208808'
+}
+2026-08-08T17:06:49.303 [Information] ===== ENV CHECK =====
+2026-08-08T17:06:49.303 [Information] SMTP_HOST exists: true
+2026-08-08T17:06:49.304 [Information] SMTP_PORT exists: true
+2026-08-08T17:06:49.304 [Information] SMTP_USERNAME exists: true
+2026-08-08T17:06:49.304 [Information] SMTP_PASSWORD exists: true
+2026-08-08T17:06:49.304 [Information] MAIL_FROM exists: true
+2026-08-08T17:06:51.059 [Information] ✅ ACS SMTP connection successful
+2026-08-08T17:06:53.751 [Information] ========== EMAIL RESULT ==========
+2026-08-08T17:06:53.751 [Information] Email người nhận: 0023411831@student.dthu.edu.vn
+2026-08-08T17:06:53.752 [Information] Accepted: [ '0023411831@student.dthu.edu.vn' ]
+2026-08-08T17:06:53.752 [Information] Rejected: []
+2026-08-08T17:06:53.752 [Information] Message ID: <cb603b66-a980-062c-3674-cfb12d61f730@f7fbfdda-bbcd-443b-8b1c-e3b573539f61.azurecomm.net>
+2026-08-08T17:06:53.752 [Information] SMTP Response: 250 2.6.0 a89773e2-02c6-40bf-95df-9d96b1b67d8b Queued mail for delivery
+2026-08-08T17:06:53.752 [Information] ==================================
+2026-08-08T17:06:53.752 [Information] Executed 'Functions.SendBookingEmail' (Succeeded, Id=3db69856-f09e-46a7-b2af-a98e8a22c50a, Duration=4458ms)
+2026-08-08T17:07:21.956 [Information] Executing 'Functions.SendBookingEmail' (Reason='This function was programmatically called via the host APIs.', Id=92711476-e6ae-409b-82a8-5d5fc53e2aee)
+2026-08-08T17:07:21.974 [Information] ===== REQUEST RECEIVED =====
+2026-08-08T17:07:21.974 [Information] {
+  name: 'Cẩm Ly',
+  email: 'camlylv2021@gmail.com',
+  phone: '0969327309',
+  tour: 'Đà Lạt – Làng Cù Lần & Resort rừng 3 ngày 2 đêm',
+  departDate: '2026-04-30',
+  total: 12950000,
+  bookingCode: 'BOOK-32-1786208690'
+}
+2026-08-08T17:07:21.974 [Information] ===== BOOKING INFO =====
+2026-08-08T17:07:21.974 [Information] {
+  name: 'Cẩm Ly',
+  email: 'camlylv2021@gmail.com',
+  phone: '0969327309',
+  tour: 'Đà Lạt – Làng Cù Lần & Resort rừng 3 ngày 2 đêm',
+  departDate: '2026-04-30',
+  total: 12950000,
+  bookingCode: 'BOOK-32-1786208690'
+}
+2026-08-08T17:07:21.974 [Information] ===== ENV CHECK =====
+2026-08-08T17:07:21.974 [Information] SMTP_HOST exists: true
+2026-08-08T17:07:21.974 [Information] SMTP_PORT exists: true
+2026-08-08T17:07:21.974 [Information] SMTP_USERNAME exists: true
+2026-08-08T17:07:21.974 [Information] SMTP_PASSWORD exists: true
+2026-08-08T17:07:21.974 [Information] MAIL_FROM exists: true
+2026-08-08T17:07:22.551 [Information] Executing 'Functions.SendBookingEmail' (Reason='This function was programmatically called via the host APIs.', Id=6141cc06-e51c-4607-b1b4-5ee116744bb1)
+2026-08-08T17:07:22.557 [Information] ===== REQUEST RECEIVED =====
+2026-08-08T17:07:22.557 [Information] {
+  name: 'Ngọc Lan',
+  email: '0023411831@student.dthu.edu.vn',
+  phone: '0788707910',
+  tour: 'Tour khám phá biển đảo',
+  departDate: '2026-08-09',
+  total: 5950000,
+  bookingCode: 'BOOK-33-1786208808'
+}
+2026-08-08T17:07:22.557 [Information] ===== BOOKING INFO =====
+2026-08-08T17:07:22.557 [Information] {
+  name: 'Ngọc Lan',
+  email: '0023411831@student.dthu.edu.vn',
+  phone: '0788707910',
+  tour: 'Tour khám phá biển đảo',
+  departDate: '2026-08-09',
+  total: 5950000,
+  bookingCode: 'BOOK-33-1786208808'
+}
+2026-08-08T17:07:22.557 [Information] ===== ENV CHECK =====
+2026-08-08T17:07:22.557 [Information] SMTP_HOST exists: true
+2026-08-08T17:07:22.557 [Information] SMTP_PORT exists: true
+2026-08-08T17:07:22.557 [Information] SMTP_USERNAME exists: true
+2026-08-08T17:07:22.557 [Information] SMTP_PASSWORD exists: true
+2026-08-08T17:07:22.557 [Information] MAIL_FROM exists: true
+2026-08-08T17:07:23.584 [Information] ✅ ACS SMTP connection successful
+2026-08-08T17:07:24.097 [Information] ✅ ACS SMTP connection successful
+2026-08-08T17:07:25.691 [Information] ========== EMAIL RESULT ==========
+2026-08-08T17:07:25.691 [Information] Email người nhận: camlylv2021@gmail.com
+2026-08-08T17:07:25.692 [Information] Accepted: [ 'camlylv2021@gmail.com' ]
+2026-08-08T17:07:25.692 [Information] Rejected: []
+2026-08-08T17:07:25.692 [Information] Message ID: <8805c2f1-4c1b-f980-0c61-1a8a4f194a79@f7fbfdda-bbcd-443b-8b1c-e3b573539f61.azurecomm.net>
+2026-08-08T17:07:25.692 [Information] SMTP Response: 250 2.6.0 458f0a4f-7f4b-49bd-901c-6ce180e9901c Queued mail for delivery
+2026-08-08T17:07:25.692 [Information] ==================================
+2026-08-08T17:07:25.692 [Information] Executed 'Functions.SendBookingEmail' (Succeeded, Id=92711476-e6ae-409b-82a8-5d5fc53e2aee, Duration=3735ms)
+2026-08-08T17:07:26.428 [Information] ========== EMAIL RESULT ==========
+2026-08-08T17:07:26.428 [Information] Email người nhận: 0023411831@student.dthu.edu.vn
+2026-08-08T17:07:26.428 [Information] Accepted: [ '0023411831@student.dthu.edu.vn' ]
+2026-08-08T17:07:26.428 [Information] Rejected: []
+2026-08-08T17:07:26.428 [Information] Message ID: <5ef7a4d2-cb97-bf65-a1dd-eb39c5c4a14f@f7fbfdda-bbcd-443b-8b1c-e3b573539f61.azurecomm.net>
+2026-08-08T17:07:26.428 [Information] SMTP Response: 250 2.6.0 d9d58d04-8a6b-4d55-a759-92f9779124c6 Queued mail for delivery
+2026-08-08T17:07:26.428 [Information] ==================================
+2026-08-08T17:07:26.428 [Information] Executed 'Functions.SendBookingEmail' (Succeeded, Id=6141cc06-e51c-4607-b1b4-5ee116744bb1, Duration=3877ms)

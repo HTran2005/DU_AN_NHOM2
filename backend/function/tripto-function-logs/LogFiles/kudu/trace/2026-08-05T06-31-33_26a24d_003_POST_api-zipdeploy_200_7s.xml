@@ -1,0 +1,53 @@
+<step title="Incoming Request" date="2026-08-05T06:31:33.846" instance="26a24d" url="/api/zipdeploy" method="POST" type="request" pid="1860,2,8" Content-Length="235101" Content-Type="application/zip" Authorization="Bea..." Host="tripto-function-gmcahcf6embwemaw.scm.southeastasia-01.azurewebsites.net" If-Match="*" User-Agent="functions-core-tools/4.12.1" X-ARR-LOG-ID="c7c540a2-fc39-4766-b28d-5f529ef523fa" CLIENT-IP="14.224.133.154:56383" X-SITE-DEPLOYMENT-ID="tripto-function" WAS-DEFAULT-HOSTNAME="tripto-function-gmcahcf6embwemaw.scm.southeastasia-01.azurewebsites.net" X-Forwarded-Proto="https" X-AppService-Proto="https" X-Forwarded-TlsVersion="1.3" X-WAWS-Unencoded-URL="/api/zipdeploy" >
+  <step title="ZipPushDeploy" date="2026-08-05T06:31:33.955" >
+    <step title="Functions App ZipDeploy. Run from package." date="2026-08-05T06:31:34.017" /><!-- duration: 31ms -->
+    <step title="Starting PushDeployAsync" date="2026-08-05T06:31:34.080" /><!-- duration: 31ms -->
+    <step title="Updating shutdown sentinel last write time" date="2026-08-05T06:31:34.267" SemaphoreCount="7" /><!-- duration: 31ms -->
+    <step title="LockFile &apos;C:\home\site\locks\deployments.lock&apos; acquired" date="2026-08-05T06:31:34.330" /><!-- duration: 47ms -->
+    <step title="Saving request content to C:\home\data\SitePackages\20260805063134.zip" date="2026-08-05T06:31:34.471" >
+      <step title="Total 235,101 bytes written to C:\home\data\SitePackages\20260805063134.zip" date="2026-08-05T06:31:34.549" /><!-- duration: 31ms -->
+    </step><!-- duration: 172ms -->
+    <step title="LockFile &apos;C:\home\site\locks\deployments.lock&apos; released" date="2026-08-05T06:31:34.674" /><!-- duration: 31ms -->
+    <step title="Deleting shutdown sentinel file" date="2026-08-05T06:31:34.752" SemaphoreCount="8" /><!-- duration: 31ms -->
+    <step title="Starting FetchDeploy" date="2026-08-05T06:31:34.830" /><!-- duration: 31ms -->
+    <step title="Attempting to fetch target branch HEAD" date="2026-08-05T06:31:34.877" /><!-- duration: 62ms -->
+    <step title="Updating shutdown sentinel last write time" date="2026-08-05T06:31:35.033" SemaphoreCount="7" /><!-- duration: 31ms -->
+    <step title="LockFile &apos;C:\home\site\locks\deployments.lock&apos; acquired" date="2026-08-05T06:31:35.096" /><!-- duration: 31ms -->
+    <step title="Performing fetch based deployment" date="2026-08-05T06:31:35.158" >
+      <step title="Creating temporary deployment" date="2026-08-05T06:31:35.189" /><!-- duration: 203ms -->
+      <step title="Fetching changes." date="2026-08-05T06:31:35.705" /><!-- duration: 15ms -->
+      <step title="Starting LocalZipHandler" date="2026-08-05T06:31:35.783" /><!-- duration: 16ms -->
+      <step title="Starting ExtractTriggers" date="2026-08-05T06:31:35.846" /><!-- duration: 47ms -->
+      <step title="None repository commit" date="2026-08-05T06:31:35.971" >
+        <step title="Commit id: 9338e7d9ec3649bc874e5c05f8245d6b" date="2026-08-05T06:31:36.002" Message="Created via a push deployment" AuthorName="N/A" AuthorEmail="N/A" /><!-- duration: 32ms -->
+      </step><!-- duration: 94ms -->
+      <step title="Before sending BuildRequestReceived status to /api/updatedeploystatus" date="2026-08-05T06:31:36.127" /><!-- duration: 31ms -->
+      <step title="DeploymentManager.Deploy(id:9338e7d9ec3649bc874e5c05f8245d6b)" date="2026-08-05T06:31:36.189" >
+        <step title="Collecting changeset information" date="2026-08-05T06:31:36.252" /><!-- duration: 219ms -->
+        <step title="Updating submodules" date="2026-08-05T06:31:36.502" >
+          <step title="Updating submodules." date="2026-08-05T06:31:36.783" /><!-- duration: 16ms -->
+        </step><!-- duration: 344ms -->
+        <step title="Preparing deployment for commit id &apos;9338e7d9ec&apos;." date="2026-08-05T06:31:37.158" /><!-- duration: 31ms -->
+        <step title="Determining deployment builder" date="2026-08-05T06:31:37.439" >
+          <step title="Builder is RunFromZipSiteBuilder" date="2026-08-05T06:31:37.471" /><!-- duration: 16ms -->
+        </step><!-- duration: 78ms -->
+        <step title="Copying SSH keys" date="2026-08-05T06:31:37.596" /><!-- duration: 47ms -->
+        <step title="Building" date="2026-08-05T06:31:37.658" >
+          <step title="Skipping build. Project type: Run-From-Zip" date="2026-08-05T06:31:37.882" /><!-- duration: 11ms -->
+          <step title="Skipping post build. Project type: Run-From-Zip" date="2026-08-05T06:31:38.190" /><!-- duration: 31ms -->
+          <step title="Triggering recycle (preview mode disabled)." date="2026-08-05T06:31:38.502" /><!-- duration: 16ms -->
+          <step title="Ignoring FS watcher based recycle request as this is a classic Windows app." date="2026-08-05T06:31:38.565" /><!-- duration: 31ms -->
+          <step title="Deployment successful. DEPLOYMENTINFO: deploymentPath = Functions App ZipDeploy. Run from package., deployer = ZipDeploy, os = windows, sku = Dynamic, language = node, siteName = tripto-function, slotName = Production, siteHostName = tripto-function-gmcahcf6embwemaw.southeastasia-01.azurewebsites.net, deploymentStatus = Success" date="2026-08-05T06:31:38.862" /><!-- duration: 16ms -->
+        </step><!-- duration: 1829ms -->
+      </step><!-- duration: 3329ms -->
+      <step title="Cleaning up temp files" date="2026-08-05T06:31:39.571" /><!-- duration: 31ms -->
+      <step title="Updating C:\home\data\SitePackages\packagename.txt with deployment 20260805063134.zip" date="2026-08-05T06:31:39.618" /><!-- duration: 63ms -->
+      <step title="Begin HttpPost https://tripto-function-gmcahcf6embwemaw.scm.southeastasia-01.azurewebsites.net/operations/settriggers, x-ms-request-id: c7c540a2-fc39-4766-b28d-5f529ef523fa" date="2026-08-05T06:31:39.758" /><!-- duration: 32ms -->
+      <step title="End HttpPost, status: OK" date="2026-08-05T06:31:40.290" /><!-- duration: 16ms -->
+      <step title="Scheduling background sync triggers after delay" date="2026-08-05T06:31:40.336" /><!-- duration: 31ms -->
+    </step><!-- duration: 5445ms -->
+    <step title="Deployment completed. Total deployment time: 5463ms" date="2026-08-05T06:31:40.618" /><!-- duration: 31ms -->
+    <step title="LockFile &apos;C:\home\site\locks\deployments.lock&apos; released" date="2026-08-05T06:31:40.681" /><!-- duration: 31ms -->
+  </step><!-- duration: 6835ms -->
+  <step title="Outgoing response" date="2026-08-05T06:31:40.821" type="response" statusCode="200" statusText="OK" Server="Microsoft-IIS/10.0" x-ms-request-id="c7c540a2-fc39-4766-b28d-5f529ef523fa" Cache-Control="private" X-AspNet-Version="4.0.30319" /><!-- duration: 31ms -->
+</step><!-- duration: 7038ms -->

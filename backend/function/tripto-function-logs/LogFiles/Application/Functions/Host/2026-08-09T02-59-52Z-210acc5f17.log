@@ -1,0 +1,268 @@
+2026-08-09T02:59:51.765 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "210acc5f179b44909407eaa30df5ef54ff34b0b002dd816afad0f151e8434b95",
+  "computerName": "10-30-17-30",
+  "processUptime": 159698,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T02:59:51.765 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "210acc5f179b44909407eaa30df5ef54ff34b0b002dd816afad0f151e8434b95",
+  "computerName": "10-30-17-30",
+  "processUptime": 159698,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T03:00:18.865 [Information] Executing 'Functions.SendBookingEmail' (Reason='This function was programmatically called via the host APIs.', Id=ff0d18f3-647e-4aea-9ba3-255c8cc35ea8)
+2026-08-09T03:00:18.870 [Information] ===== REQUEST RECEIVED =====
+2026-08-09T03:00:18.870 [Information] {
+  name: 'Anh Kỹ Sư',
+  email: '0023412018@student.dthu.edu.vn',
+  phone: '0784561234',
+  tour: 'Combo Đà Lạt Đồi Mộng Mơ',
+  departDate: '2026-04-30',
+  total: 13550000,
+  bookingCode: 'BOOK-4-1786244343'
+}
+2026-08-09T03:00:18.871 [Information] ===== BOOKING INFO =====
+2026-08-09T03:00:18.871 [Information] {
+  name: 'Anh Kỹ Sư',
+  email: '0023412018@student.dthu.edu.vn',
+  phone: '0784561234',
+  tour: 'Combo Đà Lạt Đồi Mộng Mơ',
+  departDate: '2026-04-30',
+  total: 13550000,
+  bookingCode: 'BOOK-4-1786244343'
+}
+2026-08-09T03:00:18.871 [Information] ===== ENV CHECK =====
+2026-08-09T03:00:18.871 [Information] SMTP_HOST exists: true
+2026-08-09T03:00:18.872 [Information] SMTP_PORT exists: true
+2026-08-09T03:00:18.872 [Information] SMTP_USERNAME exists: true
+2026-08-09T03:00:18.872 [Information] SMTP_PASSWORD exists: true
+2026-08-09T03:00:18.872 [Information] MAIL_FROM exists: true
+2026-08-09T03:00:20.192 [Information] ✅ ACS SMTP connection successful
+2026-08-09T03:00:22.486 [Information] ========== EMAIL RESULT ==========
+2026-08-09T03:00:22.486 [Information] Email người nhận: 0023412018@student.dthu.edu.vn
+2026-08-09T03:00:22.486 [Information] Accepted: [ '0023412018@student.dthu.edu.vn' ]
+2026-08-09T03:00:22.487 [Information] Rejected: []
+2026-08-09T03:00:22.487 [Information] Message ID: <16fb1f2d-3413-842b-0073-04d66b0c7dea@f7fbfdda-bbcd-443b-8b1c-e3b573539f61.azurecomm.net>
+2026-08-09T03:00:22.487 [Information] SMTP Response: 250 2.6.0 6b42de87-65e8-48f5-8e5e-b34a841c89f4 Queued mail for delivery
+2026-08-09T03:00:22.487 [Information] ==================================
+2026-08-09T03:00:22.487 [Information] Executed 'Functions.SendBookingEmail' (Succeeded, Id=ff0d18f3-647e-4aea-9ba3-255c8cc35ea8, Duration=3624ms)
+2026-08-09T03:08:54.445 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "210acc5f179b44909407eaa30df5ef54ff34b0b002dd816afad0f151e8434b95",
+  "computerName": "10-30-17-30",
+  "processUptime": 702381,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T03:08:54.702 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "210acc5f179b44909407eaa30df5ef54ff34b0b002dd816afad0f151e8434b95",
+  "computerName": "10-30-17-30",
+  "processUptime": 702638,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T03:11:07.245 [Information] ExtensionSystemOptions
+{
+  "extensionName": "eventgrid",
+  "webhookAuthorizationLevel": "System"
+}
+2026-08-09T03:11:07.308 [Information] Executing 'Functions.BlobEventHandler' (Reason='EventGrid trigger fired at 2026-08-09T03:11:07.3023767+00:00', Id=0ccfb91e-2108-4ed7-bfb3-7113d191a788)
+2026-08-09T03:11:07.326 [Information] =================================
+2026-08-09T03:11:07.326 [Information] 📦 EVENT GRID EVENT RECEIVED
+2026-08-09T03:11:07.326 [Information] =================================
+2026-08-09T03:11:07.326 [Information] Event type: Microsoft.Storage.BlobCreated
+2026-08-09T03:11:07.326 [Information] Subject: /blobServices/default/containers/tour-images/blobs/hatien.jpg
+2026-08-09T03:11:07.326 [Information] Event time: 2026-08-09T03:11:04.2277562Z
+2026-08-09T03:11:07.326 [Information] ✅ BLOB CREATED
+2026-08-09T03:11:07.326 [Information] Blob URL: https://sttriptobackup.blob.core.windows.net/tour-images/hatien.jpg
+2026-08-09T03:11:07.326 [Information] Content type: image/jpeg
+2026-08-09T03:11:07.326 [Information] Size: 46315
+2026-08-09T03:11:07.326 [Information] =================================
+2026-08-09T03:11:07.328 [Information] Executed 'Functions.BlobEventHandler' (Succeeded, Id=0ccfb91e-2108-4ed7-bfb3-7113d191a788, Duration=26ms)
+2026-08-09T03:11:11.560 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "210acc5f179b44909407eaa30df5ef54ff34b0b002dd816afad0f151e8434b95",
+  "computerName": "10-30-17-30",
+  "processUptime": 839496,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T03:11:11.665 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "210acc5f179b44909407eaa30df5ef54ff34b0b002dd816afad0f151e8434b95",
+  "computerName": "10-30-17-30",
+  "processUptime": 839601,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T03:20:03.448 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "210acc5f179b44909407eaa30df5ef54ff34b0b002dd816afad0f151e8434b95",
+  "computerName": "10-30-17-30",
+  "processUptime": 1371384,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T03:20:06.662 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "210acc5f179b44909407eaa30df5ef54ff34b0b002dd816afad0f151e8434b95",
+  "computerName": "10-30-17-30",
+  "processUptime": 1374598,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T03:20:13.885 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "210acc5f179b44909407eaa30df5ef54ff34b0b002dd816afad0f151e8434b95",
+  "computerName": "10-30-17-30",
+  "processUptime": 1381821,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T03:20:17.728 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "210acc5f179b44909407eaa30df5ef54ff34b0b002dd816afad0f151e8434b95",
+  "computerName": "10-30-17-30",
+  "processUptime": 1385664,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T03:20:18.039 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "210acc5f179b44909407eaa30df5ef54ff34b0b002dd816afad0f151e8434b95",
+  "computerName": "10-30-17-30",
+  "processUptime": 1385975,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T03:22:41.437 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "210acc5f179b44909407eaa30df5ef54ff34b0b002dd816afad0f151e8434b95",
+  "computerName": "10-30-17-30",
+  "processUptime": 1529373,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T03:22:41.452 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "210acc5f179b44909407eaa30df5ef54ff34b0b002dd816afad0f151e8434b95",
+  "computerName": "10-30-17-30",
+  "processUptime": 1529388,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T03:22:41.455 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "210acc5f179b44909407eaa30df5ef54ff34b0b002dd816afad0f151e8434b95",
+  "computerName": "10-30-17-30",
+  "processUptime": 1529391,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T03:23:25.903 [Information] Stopping JobHost
+2026-08-09T03:23:25.904 [Information] Stopping the listener 'Microsoft.Azure.WebJobs.Extensions.EventGrid.EventGridListener' for function 'BlobEventHandler'
+2026-08-09T03:23:25.904 [Information] Stopped the listener 'Microsoft.Azure.WebJobs.Extensions.EventGrid.EventGridListener' for function 'BlobEventHandler'
+2026-08-09T03:23:25.904 [Information] Job host stopped

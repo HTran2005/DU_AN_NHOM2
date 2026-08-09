@@ -1,23 +1,24 @@
-const {
+﻿const {
     NotificationHubsClient
 } = require("@azure/notification-hubs");
 
-const connectionString =
-    process.env.NOTIFICATION_HUB_CONNECTION_STRING;
+function createNotificationHubClient() {
+    const connectionString =
+        process.env.NOTIFICATION_HUB_CONNECTION_STRING;
 
-const hubName =
-    process.env.NOTIFICATION_HUB_NAME || "tripto-hub";
+    const hubName =
+        process.env.NOTIFICATION_HUB_NAME || "tripto-hub";
 
-if (!connectionString) {
-    throw new Error(
-        "NOTIFICATION_HUB_CONNECTION_STRING is not configured."
-    );
-}
+    if (!connectionString) {
+        return null;
+    }
 
-const notificationHubClient =
-    new NotificationHubsClient(
+    return new NotificationHubsClient(
         connectionString,
         hubName
     );
+}
 
-module.exports = notificationHubClient;
+module.exports = {
+    createNotificationHubClient
+};

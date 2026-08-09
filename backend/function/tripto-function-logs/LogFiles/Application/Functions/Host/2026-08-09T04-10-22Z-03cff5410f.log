@@ -1,0 +1,593 @@
+2026-08-09T04:10:21.891 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "03cff5410faf78ab18c1c4b8018181dcec7bf018d113cb8017a741d92c3d48c1",
+  "computerName": "10-30-11-98",
+  "processUptime": 1900815,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T04:10:26.093 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "03cff5410faf78ab18c1c4b8018181dcec7bf018d113cb8017a741d92c3d48c1",
+  "computerName": "10-30-11-98",
+  "processUptime": 1905020,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T04:10:26.656 [Information] Host lock lease acquired by instance ID '03cff5410faf78ab18c1c4b8018181dc'.
+2026-08-09T04:10:51.675 [Information] HttpOptions
+{
+  "DynamicThrottlesEnabled": true,
+  "EnableChunkedRequestBinding": false,
+  "MaxConcurrentRequests": 100,
+  "MaxOutstandingRequests": 200,
+  "RoutePrefix": "api"
+}
+2026-08-09T04:10:51.675 [Information] ConcurrencyOptions
+{
+  "DynamicConcurrencyEnabled": false,
+  "MaximumFunctionConcurrency": 500,
+  "CPUThreshold": 0.8,
+  "SnapshotPersistenceEnabled": true
+}
+2026-08-09T04:21:50.743 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "03cff5410faf78ab18c1c4b8018181dcec7bf018d113cb8017a741d92c3d48c1",
+  "computerName": "10-30-11-98",
+  "processUptime": 2589670,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T04:21:50.965 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "03cff5410faf78ab18c1c4b8018181dcec7bf018d113cb8017a741d92c3d48c1",
+  "computerName": "10-30-11-98",
+  "processUptime": 2589892,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T04:21:50.989 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "03cff5410faf78ab18c1c4b8018181dcec7bf018d113cb8017a741d92c3d48c1",
+  "computerName": "10-30-11-98",
+  "processUptime": 2589916,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T04:21:54.140 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "03cff5410faf78ab18c1c4b8018181dcec7bf018d113cb8017a741d92c3d48c1",
+  "computerName": "10-30-11-98",
+  "processUptime": 2593067,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T04:22:09.394 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "03cff5410faf78ab18c1c4b8018181dcec7bf018d113cb8017a741d92c3d48c1",
+  "computerName": "10-30-11-98",
+  "processUptime": 2608321,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T04:22:09.468 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "03cff5410faf78ab18c1c4b8018181dcec7bf018d113cb8017a741d92c3d48c1",
+  "computerName": "10-30-11-98",
+  "processUptime": 2608395,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T04:22:17.339 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "03cff5410faf78ab18c1c4b8018181dcec7bf018d113cb8017a741d92c3d48c1",
+  "computerName": "10-30-11-98",
+  "processUptime": 2616265,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T04:22:17.712 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "03cff5410faf78ab18c1c4b8018181dcec7bf018d113cb8017a741d92c3d48c1",
+  "computerName": "10-30-11-98",
+  "processUptime": 2616639,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T04:23:23.389 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "03cff5410faf78ab18c1c4b8018181dcec7bf018d113cb8017a741d92c3d48c1",
+  "computerName": "10-30-11-98",
+  "processUptime": 2682315,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T04:23:23.763 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "03cff5410faf78ab18c1c4b8018181dcec7bf018d113cb8017a741d92c3d48c1",
+  "computerName": "10-30-11-98",
+  "processUptime": 2682690,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T04:29:47.306 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "03cff5410faf78ab18c1c4b8018181dcec7bf018d113cb8017a741d92c3d48c1",
+  "computerName": "10-30-11-98",
+  "processUptime": 3066233,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T04:29:47.415 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "03cff5410faf78ab18c1c4b8018181dcec7bf018d113cb8017a741d92c3d48c1",
+  "computerName": "10-30-11-98",
+  "processUptime": 3066341,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T04:29:50.430 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "03cff5410faf78ab18c1c4b8018181dcec7bf018d113cb8017a741d92c3d48c1",
+  "computerName": "10-30-11-98",
+  "processUptime": 3069357,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T04:31:15.249 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "03cff5410faf78ab18c1c4b8018181dcec7bf018d113cb8017a741d92c3d48c1",
+  "computerName": "10-30-11-98",
+  "processUptime": 3154176,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T04:31:15.450 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "03cff5410faf78ab18c1c4b8018181dcec7bf018d113cb8017a741d92c3d48c1",
+  "computerName": "10-30-11-98",
+  "processUptime": 3154377,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T04:31:15.527 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "03cff5410faf78ab18c1c4b8018181dcec7bf018d113cb8017a741d92c3d48c1",
+  "computerName": "10-30-11-98",
+  "processUptime": 3154454,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T04:31:18.117 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "03cff5410faf78ab18c1c4b8018181dcec7bf018d113cb8017a741d92c3d48c1",
+  "computerName": "10-30-11-98",
+  "processUptime": 3157044,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T04:31:22.412 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "03cff5410faf78ab18c1c4b8018181dcec7bf018d113cb8017a741d92c3d48c1",
+  "computerName": "10-30-11-98",
+  "processUptime": 3161339,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T04:49:05.526 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "03cff5410faf78ab18c1c4b8018181dcec7bf018d113cb8017a741d92c3d48c1",
+  "computerName": "10-30-11-98",
+  "processUptime": 4224453,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T04:49:05.566 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "03cff5410faf78ab18c1c4b8018181dcec7bf018d113cb8017a741d92c3d48c1",
+  "computerName": "10-30-11-98",
+  "processUptime": 4224493,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T04:49:08.655 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "03cff5410faf78ab18c1c4b8018181dcec7bf018d113cb8017a741d92c3d48c1",
+  "computerName": "10-30-11-98",
+  "processUptime": 4227582,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T04:49:09.019 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "03cff5410faf78ab18c1c4b8018181dcec7bf018d113cb8017a741d92c3d48c1",
+  "computerName": "10-30-11-98",
+  "processUptime": 4227945,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T05:00:37.819 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "03cff5410faf78ab18c1c4b8018181dcec7bf018d113cb8017a741d92c3d48c1",
+  "computerName": "10-30-11-98",
+  "processUptime": 4916746,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T05:00:37.979 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "03cff5410faf78ab18c1c4b8018181dcec7bf018d113cb8017a741d92c3d48c1",
+  "computerName": "10-30-11-98",
+  "processUptime": 4916905,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T05:00:40.603 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "03cff5410faf78ab18c1c4b8018181dcec7bf018d113cb8017a741d92c3d48c1",
+  "computerName": "10-30-11-98",
+  "processUptime": 4919530,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T05:01:48.804 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "03cff5410faf78ab18c1c4b8018181dcec7bf018d113cb8017a741d92c3d48c1",
+  "computerName": "10-30-11-98",
+  "processUptime": 4987731,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T05:01:48.927 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "03cff5410faf78ab18c1c4b8018181dcec7bf018d113cb8017a741d92c3d48c1",
+  "computerName": "10-30-11-98",
+  "processUptime": 4987854,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T05:01:50.996 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "03cff5410faf78ab18c1c4b8018181dcec7bf018d113cb8017a741d92c3d48c1",
+  "computerName": "10-30-11-98",
+  "processUptime": 4989923,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T05:02:23.600 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "03cff5410faf78ab18c1c4b8018181dcec7bf018d113cb8017a741d92c3d48c1",
+  "computerName": "10-30-11-98",
+  "processUptime": 5022527,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T05:02:25.410 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "03cff5410faf78ab18c1c4b8018181dcec7bf018d113cb8017a741d92c3d48c1",
+  "computerName": "10-30-11-98",
+  "processUptime": 5024337,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T05:02:25.518 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "03cff5410faf78ab18c1c4b8018181dcec7bf018d113cb8017a741d92c3d48c1",
+  "computerName": "10-30-11-98",
+  "processUptime": 5024445,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T05:02:50.996 [Information] Stopping JobHost
+2026-08-09T05:02:50.997 [Information] Stopping the listener 'Microsoft.Azure.WebJobs.Extensions.EventGrid.EventGridListener' for function 'BlobEventHandler'
+2026-08-09T05:02:50.997 [Information] Stopped the listener 'Microsoft.Azure.WebJobs.Extensions.EventGrid.EventGridListener' for function 'BlobEventHandler'
+2026-08-09T05:02:50.997 [Information] Job host stopped
+2026-08-09T05:03:04.293 [Information] Host lock lease acquired by instance ID '03cff5410faf78ab18c1c4b8018181dc'.
+2026-08-09T05:10:29.988 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "03cff5410faf78ab18c1c4b8018181dcec7bf018d113cb8017a741d92c3d48c1",
+  "computerName": "10-30-11-98",
+  "processUptime": 456351,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T05:10:29.988 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "03cff5410faf78ab18c1c4b8018181dcec7bf018d113cb8017a741d92c3d48c1",
+  "computerName": "10-30-11-98",
+  "processUptime": 456351,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T05:10:30.291 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "03cff5410faf78ab18c1c4b8018181dcec7bf018d113cb8017a741d92c3d48c1",
+  "computerName": "10-30-11-98",
+  "processUptime": 456661,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T05:26:37.648 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "03cff5410faf78ab18c1c4b8018181dcec7bf018d113cb8017a741d92c3d48c1",
+  "computerName": "10-30-11-98",
+  "processUptime": 1424017,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T05:26:38.184 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "03cff5410faf78ab18c1c4b8018181dcec7bf018d113cb8017a741d92c3d48c1",
+  "computerName": "10-30-11-98",
+  "processUptime": 1424554,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T05:29:53.853 [Information] Executing 'Functions.negotiate' (Reason='This function was programmatically called via the host APIs.', Id=f8171a80-d613-45b9-a203-d0db27210a9e)
+2026-08-09T05:29:54.287 [Information] Executed 'Functions.negotiate' (Succeeded, Id=f8171a80-d613-45b9-a203-d0db27210a9e, Duration=454ms)

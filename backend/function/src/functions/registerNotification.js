@@ -1,26 +1,22 @@
 const { app } = require("@azure/functions");
-
-const {
-    NotificationHubsClient
-} = require("@azure/notification-hubs");
-
-const connectionString =
-    process.env.NOTIFICATION_HUB_CONNECTION_STRING;
-
-const hubName =
-    process.env.NOTIFICATION_HUB_NAME || "tripto-hub";
-
-const client =
-    new NotificationHubsClient(
-        connectionString,
-        hubName
-    );
+const { createNotificationHubClient } = require("./notificationHub");
 
 app.http("RegisterNotification", {
     methods: ["POST"],
     authLevel: "anonymous",
 
     handler: async (request, context) => {
+        const client = createNotificationHubClient();
+        if (!client) {
+            return {
+                status: 500,
+                jsonBody: {
+                    success: false,
+                    message:
+                        "Notification hub connection string is not configured."
+                }
+            };
+        }
 
         try {
 
