@@ -4084,8 +4084,41 @@ function handleCreateBooking() {
             'adults' => $so_nguoi_lon,
             'children' => $so_tre_em
         ]);
+
+        // ===== Azure SignalR: gửi notification realtime (chỉ là nhánh bổ sung, không làm ảnh hưởng luồng booking) =====
+        $signalRPayload = [
+            'type' => 'booking_success',
+            'title' => 'Đặt tour thành công!',
+            'message' => 'Đặt tour ' . $so_dat_tour . ' thành công.',
+            'bookingId' => $booking_id,
+            'bookingCode' => $so_dat_tour,
+            'tourName' => $tourName,
+            'departDate' => $ngay_khoi_hanh,
+            'totalPrice' => $tong_tien
+        ];
+
+        $signalRUrl = 'https://tripto-function-gmcahcf6embwemaw.southeastasia-01.azurewebsites.net/api/sendNotification';
+        $signalRCh = curl_init($signalRUrl);
+        curl_setopt_array($signalRCh, [
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => json_encode($signalRPayload, JSON_UNESCAPED_UNICODE),
+            CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => 3,
+            CURLOPT_CONNECTTIMEOUT => 2
+        ]);
+        $signalRResponse = curl_exec($signalRCh);
+        if ($signalRResponse === false) {
+            error_log("SignalR send error (booking_id={$booking_id}): " . curl_error($signalRCh));
+        } else {
+            $signalRHttpCode = curl_getinfo($signalRCh, CURLINFO_HTTP_CODE);
+            if ($signalRHttpCode >= 400) {
+                error_log("SignalR send HTTP error (booking_id={$booking_id}): HTTP {$signalRHttpCode} - " . $signalRResponse);
+            }
+        }
+        curl_close($signalRCh);
     } catch (Throwable $e) {
-        error_log("Service Bus send error (booking_id={$booking_id}): " . $e->getMessage());
+        error_log("Service Bus / SignalR send error (booking_id={$booking_id}): " . $e->getMessage());
     }
 
     exit;
