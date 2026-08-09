@@ -1,4 +1,6 @@
 (function () {
+    const FUNCTION_APP_URL =
+        "https://tripto-function-gmcahcf6embwemaw.southeastasia-01.azurewebsites.net";
     const SW_PATH = "/sw.js";
     const INSTALLATION_ID_KEY =
         "tripto_notification_installation_id";
@@ -96,7 +98,7 @@
     async function getVapidPublicKey() {
         try {
             const response = await fetch(
-                "/api/GetVapidPublicKey"
+                FUNCTION_APP_URL + "/api/GetVapidPublicKey"
             );
 
             if (!response.ok) {
@@ -156,7 +158,7 @@
 
         try {
             const response = await fetch(
-                "/api/RegisterNotification",
+                FUNCTION_APP_URL + "/api/RegisterNotification",
                 {
                     method: "POST",
                     headers: {
