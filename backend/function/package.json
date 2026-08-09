@@ -1,5 +1,5 @@
 {
-  "name": "",
+  "name": "function",
   "version": "1.0.0",
   "description": "",
   "main": "src/functions/*.js",
@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@azure/functions": "^4.0.0",
+    "mysql2": "^3.5.2",
     "nodemailer": "^9.0.4"
   }
 }

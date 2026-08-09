@@ -10,6 +10,14 @@ define('DB_USER', getenv('DB_USER') ?: 'nhom2');
 define('DB_PASS', getenv('DB_PASS') ?: '');
 define('DB_NAME', getenv('DB_NAME') ?: 'tripto_db');
 
+// Azure Blob Storage Configuration
+define('AZURE_STORAGE_ACCOUNT', getenv('AZURE_STORAGE_ACCOUNT') ?: getenv('AZURE_STORAGE_ACCOUNT_NAME') ?: '');
+define('AZURE_STORAGE_CONTAINER', getenv('AZURE_STORAGE_CONTAINER') ?: getenv('AZURE_STORAGE_CONTAINER_NAME') ?: 'tour-images');
+define('AZURE_STORAGE_CONNECTION_STRING', getenv('AZURE_STORAGE_CONNECTION_STRING') ?: '');
+define('AZURE_STORAGE_ACCOUNT_KEY', getenv('AZURE_STORAGE_ACCOUNT_KEY') ?: '');
+
+define('JWT_SECRET', getenv('JWT_SECRET') ?: '');
+
 // Charset
 define('DB_CHARSET', 'utf8mb4');
 

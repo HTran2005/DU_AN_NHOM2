@@ -6,6 +6,7 @@
 
 // Kết nối database
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/blob/BlobStorage.php';
 
 // Set header cho JSON response
 header('Content-Type: application/json; charset=utf-8');
@@ -439,6 +440,81 @@ function deleteTour() {
 }
 
 /**
+ * Tạo tên blob an toàn dựa trên tên file gốc
+ */
+function sanitizeBlobName(string $originalFilename): string {
+    $extension = pathinfo($originalFilename, PATHINFO_EXTENSION);
+    $baseName = pathinfo($originalFilename, PATHINFO_FILENAME);
+    $safeBaseName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $baseName);
+    if (empty($safeBaseName)) {
+        $safeBaseName = 'tour-image';
+    }
+    $safeExtension = preg_replace('/[^A-Za-z0-9]/', '', $extension);
+    $blobName = uniqid($safeBaseName . '-', true);
+    if (!empty($safeExtension)) {
+        $blobName .= '.' . $safeExtension;
+    }
+    return $blobName;
+}
+
+/**
+ * Parse base64 image data, including data URI prefix if present.
+ */
+function parseImagePayload(string $imageData, string $originalFilename): array {
+    $contentType = 'application/octet-stream';
+    $base64Data = $imageData;
+
+    if (preg_match('/^data:(.*?);base64,(.*)$/', $imageData, $matches)) {
+        $contentType = trim($matches[1]) ?: $contentType;
+        $base64Data = $matches[2];
+    }
+
+    $decoded = base64_decode($base64Data, true);
+    if ($decoded === false) {
+        throw new Exception('Dữ liệu ảnh base64 không hợp lệ');
+    }
+
+    if (strpos($contentType, 'image/') !== 0) {
+        $contentType = mime_content_type($originalFilename) ?: $contentType;
+    }
+
+    return [
+        'content' => $decoded,
+        'contentType' => $contentType
+    ];
+}
+
+/**
+ * Kiểm tra xem URL có phải là đường dẫn tuyệt đối hay không
+ */
+function isAbsoluteUrl(string $url): bool {
+    return filter_var($url, FILTER_VALIDATE_URL) !== false;
+}
+
+/**
+ * Nếu URL là blob Azure của container hiện tại, trả về tên blob tương ứng.
+ */
+function getAzureBlobNameFromUrl(string $url): ?string {
+    $parts = parse_url($url);
+    if (!$parts || !isset($parts['host'], $parts['path'])) {
+        return null;
+    }
+
+    $accountHost = AZURE_STORAGE_ACCOUNT . '.blob.core.windows.net';
+    if (stripos($parts['host'], $accountHost) === false) {
+        return null;
+    }
+
+    $path = ltrim($parts['path'], '/');
+    $prefix = AZURE_STORAGE_CONTAINER . '/';
+    if (stripos($path, $prefix) !== 0) {
+        return null;
+    }
+
+    return substr($path, strlen($prefix));
+}
+
+/**
  * Thêm tour mới vào database
  */
 function addTour() {
@@ -462,50 +538,43 @@ function addTour() {
             throw new Exception('Vui lòng điền đầy đủ thông tin bắt buộc');
         }
         
-        // Xử lý ảnh
+        $blobStorage = new BlobStorage();
         $url_anh_chinh = '';
-        
-        // Nếu nhận base64 từ client
-        if (isset($_POST['anh_base64']) && !empty($_POST['anh_base64']) && isset($_POST['anh_filename']) && !empty($_POST['anh_filename'])) {
-            // Decode base64 image data
-            $imageData = $_POST['anh_base64'];
-            
-            // Lấy tên file gốc
-            $originalFilename = $_POST['anh_filename'];
-            $filename = basename($originalFilename); // Lấy tên file cuối cùng, tránh path traversal
-            
-            $imageData = base64_decode($imageData);
-            
-            // Tạo folder nếu chưa tồn tại - Lưu vào img/
-            $uploadDir = '../img/';
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0755, true);
+
+        if (isset($_FILES['anh_file']) && $_FILES['anh_file']['error'] === UPLOAD_ERR_OK) {
+            $file = $_FILES['anh_file'];
+            if ($file['size'] > 5 * 1024 * 1024) {
+                throw new Exception('Kích thước ảnh không được vượt quá 5MB');
             }
-            
-            $filepath = $uploadDir . $filename;
-            
-            // Lưu file
-            if (file_put_contents($filepath, $imageData)) {
-                $url_anh_chinh = $filename;
-            } else {
-                throw new Exception('Lỗi lưu ảnh tour');
+
+            $originalFilename = basename($file['name']);
+            $blobName = sanitizeBlobName($originalFilename);
+            $content = file_get_contents($file['tmp_name']);
+            if ($content === false) {
+                throw new Exception('Không thể đọc file ảnh tạm');
             }
-        } else if (isset($_FILES['anh_file']) && $_FILES['anh_file']['error'] === 0) {
-            // Xử lý upload file từ form - Lưu vào img/
-            $uploadDir = '../img/';
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0755, true);
+
+            $result = $blobStorage->uploadFromData($content, $blobName, $file['type'] ?: 'application/octet-stream');
+            if (!$result['success']) {
+                throw new Exception($result['message']);
             }
-            
-            // Lấy tên file gốc
-            $filename = basename($_FILES['anh_file']['name']);
-            $filepath = $uploadDir . $filename;
-            
-            if (move_uploaded_file($_FILES['anh_file']['tmp_name'], $filepath)) {
-                $url_anh_chinh = $filename;
-            } else {
-                throw new Exception('Lỗi upload ảnh tour');
+
+            $url_anh_chinh = $result['url'];
+        } elseif (isset($_POST['anh_base64']) && !empty($_POST['anh_base64']) && isset($_POST['anh_filename']) && !empty($_POST['anh_filename'])) {
+            $originalFilename = basename($_POST['anh_filename']);
+            $payload = parseImagePayload($_POST['anh_base64'], $originalFilename);
+            $blobName = sanitizeBlobName($originalFilename);
+
+            if (strlen($payload['content']) > 5 * 1024 * 1024) {
+                throw new Exception('Kích thước ảnh không được vượt quá 5MB');
             }
+
+            $result = $blobStorage->uploadFromData($payload['content'], $blobName, $payload['contentType']);
+            if (!$result['success']) {
+                throw new Exception($result['message']);
+            }
+
+            $url_anh_chinh = $result['url'];
         } else {
             throw new Exception('Vui lòng chọn ảnh tour');
         }
@@ -593,49 +662,51 @@ function updateTour() {
         $url_anh_chinh = $current['url_anh_chinh']; // Giữ ảnh cũ nếu không upload ảnh mới
         $stmtCurrent->close();
         
-        // Xử lý ảnh (nếu có ảnh mới)
-        if ((isset($_POST['anh_base64']) && !empty($_POST['anh_base64'])) || (isset($_FILES['anh_file']) && $_FILES['anh_file']['error'] === 0)) {
-            
-            if (isset($_POST['anh_base64']) && !empty($_POST['anh_base64']) && isset($_POST['anh_filename']) && !empty($_POST['anh_filename'])) {
-                // Decode base64 image data
-                $imageData = $_POST['anh_base64'];
-                
-                // Lấy tên file gốc
-                $originalFilename = $_POST['anh_filename'];
-                $filename = basename($originalFilename);
-                
-                $imageData = base64_decode($imageData);
-                
-                // Tạo folder nếu chưa tồn tại
-                $uploadDir = '../img/';
-                if (!is_dir($uploadDir)) {
-                    mkdir($uploadDir, 0755, true);
-                }
-                
-                $filepath = $uploadDir . $filename;
-                
-                // Lưu file
-                if (file_put_contents($filepath, $imageData)) {
-                    $url_anh_chinh = $filename;
-                } else {
-                    throw new Exception('Lỗi lưu ảnh tour');
-                }
-            } else if (isset($_FILES['anh_file']) && $_FILES['anh_file']['error'] === 0) {
-                // Xử lý upload file từ form
-                $uploadDir = '../img/';
-                if (!is_dir($uploadDir)) {
-                    mkdir($uploadDir, 0755, true);
-                }
-                
-                // Lấy tên file gốc
-                $filename = basename($_FILES['anh_file']['name']);
-                $filepath = $uploadDir . $filename;
-                
-                if (move_uploaded_file($_FILES['anh_file']['tmp_name'], $filepath)) {
-                    $url_anh_chinh = $filename;
-                } else {
-                    throw new Exception('Lỗi upload ảnh tour');
-                }
+        $blobStorage = new BlobStorage();
+        $previousBlobName = isAbsoluteUrl($url_anh_chinh) ? getAzureBlobNameFromUrl($url_anh_chinh) : null;
+        $newUrlAnhChinh = $url_anh_chinh;
+
+        if (isset($_FILES['anh_file']) && $_FILES['anh_file']['error'] === UPLOAD_ERR_OK) {
+            $file = $_FILES['anh_file'];
+            if ($file['size'] > 5 * 1024 * 1024) {
+                throw new Exception('Kích thước ảnh không được vượt quá 5MB');
+            }
+
+            $originalFilename = basename($file['name']);
+            $blobName = sanitizeBlobName($originalFilename);
+            $content = file_get_contents($file['tmp_name']);
+            if ($content === false) {
+                throw new Exception('Không thể đọc file ảnh tạm');
+            }
+
+            $result = $blobStorage->uploadFromData($content, $blobName, $file['type'] ?: 'application/octet-stream');
+            if (!$result['success']) {
+                throw new Exception($result['message']);
+            }
+
+            $newUrlAnhChinh = $result['url'];
+        } elseif (isset($_POST['anh_base64']) && !empty($_POST['anh_base64']) && isset($_POST['anh_filename']) && !empty($_POST['anh_filename'])) {
+            $originalFilename = basename($_POST['anh_filename']);
+            $payload = parseImagePayload($_POST['anh_base64'], $originalFilename);
+            $blobName = sanitizeBlobName($originalFilename);
+
+            if (strlen($payload['content']) > 5 * 1024 * 1024) {
+                throw new Exception('Kích thước ảnh không được vượt quá 5MB');
+            }
+
+            $result = $blobStorage->uploadFromData($payload['content'], $blobName, $payload['contentType']);
+            if (!$result['success']) {
+                throw new Exception($result['message']);
+            }
+
+            $newUrlAnhChinh = $result['url'];
+        }
+
+        if ($newUrlAnhChinh !== $url_anh_chinh) {
+            $url_anh_chinh = $newUrlAnhChinh;
+
+            if (!empty($previousBlobName)) {
+                $blobStorage->delete($previousBlobName);
             }
         }
         
@@ -739,7 +810,12 @@ function searchToursAPI() {
  * Định dạng dữ liệu tour để trả về API
  */
 function formatTourDataForAPI($row) {
-    $imagePath = '/img/' . $row['url_anh_chinh'];
+    $imagePath = $row['url_anh_chinh'];
+    if (empty($imagePath)) {
+        $imagePath = '/img/default.jpg';
+    } elseif (!isAbsoluteUrl($imagePath)) {
+        $imagePath = '/img/' . $imagePath;
+    }
     
     return [
         'id' => intval($row['id']),
