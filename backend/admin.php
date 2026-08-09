@@ -233,17 +233,19 @@ function getTours() {
         // Tính offset
         $offset = ($page - 1) * $limit;
         
-        // Xây dựng query cơ bản
-        $query = "SELECT id, ten, mo_ta, gia, id_dia_diem, so_ngay, url_anh_chinh, 
-                         danh_gia, so_danh_gia, trang_thai, ngay_khoi_hanh 
-                  FROM tour";
+        // Xây dựng query cơ bản - JOIN dia_diem để tránh N+1 query khi lấy tên địa điểm
+        $query = "SELECT tour.id, tour.ten, tour.mo_ta, tour.gia, tour.id_dia_diem, tour.so_ngay, tour.url_anh_chinh, 
+                         tour.danh_gia, tour.so_danh_gia, tour.trang_thai, tour.ngay_khoi_hanh,
+                         dd.ten AS dia_diem_name 
+                  FROM tour
+                  LEFT JOIN dia_diem dd ON tour.id_dia_diem = dd.id";
         
         // Filter theo status
         $queryWhere = " WHERE 1=1";
         if ($filter === 'active') {
-            $queryWhere .= " AND trang_thai = 'Hoạt động'";
+            $queryWhere .= " AND tour.trang_thai = 'Hoạt động'";
         } elseif ($filter === 'inactive') {
-            $queryWhere .= " AND trang_thai = 'Không hoạt động'";
+            $queryWhere .= " AND tour.trang_thai = 'Không hoạt động'";
         }
         
         // Sắp xếp
@@ -251,27 +253,27 @@ function getTours() {
         switch($sort) {
             case 'price-asc':
             case 'price_low':
-                $queryOrder .= " gia ASC";
+                $queryOrder .= " tour.gia ASC";
                 break;
             case 'price-desc':
             case 'price_high':
-                $queryOrder .= " gia DESC";
+                $queryOrder .= " tour.gia DESC";
                 break;
             case 'name-asc':
-                $queryOrder .= " ten ASC";
+                $queryOrder .= " tour.ten ASC";
                 break;
             case 'name-desc':
-                $queryOrder .= " ten DESC";
+                $queryOrder .= " tour.ten DESC";
                 break;
             case 'oldest':
-                $queryOrder .= " ngay_tao ASC";
+                $queryOrder .= " tour.ngay_tao ASC";
                 break;
             case 'rating':
-                $queryOrder .= " danh_gia DESC";
+                $queryOrder .= " tour.danh_gia DESC";
                 break;
             case 'newest':
             default:
-                $queryOrder .= " id DESC";
+                $queryOrder .= " tour.id DESC";
         }
         
         // Thêm limit
@@ -770,7 +772,7 @@ function searchToursAPI() {
         // Tìm kiếm theo tên, mô tả hoặc địa điểm
         $searchKeyword = '%' . $keyword . '%';
         
-        $query = "SELECT DISTINCT t.* FROM tour t
+        $query = "SELECT DISTINCT t.*, dd.ten AS dia_diem_name FROM tour t
                   LEFT JOIN dia_diem dd ON t.id_dia_diem = dd.id
                   WHERE t.ten LIKE ? OR t.mo_ta LIKE ? OR dd.ten LIKE ?
                   ORDER BY t.id DESC";
@@ -821,7 +823,7 @@ function formatTourDataForAPI($row) {
         'id' => intval($row['id']),
         'name' => $row['ten'],
         'description' => $row['mo_ta'],
-        'location' => getLocationName($row['id_dia_diem']),
+        'location' => !empty($row['dia_diem_name']) ? $row['dia_diem_name'] : getLocationName($row['id_dia_diem']),
         'price' => floatval($row['gia']),
         'price_formatted' => number_format($row['gia'], 0, ',', '.') . ' VND',
         'days' => $row['so_ngay'],
@@ -1338,34 +1340,24 @@ function getBookingStats() {
     global $conn;
     
     try {
-        // Tổng số đơn đặt
-        $query = "SELECT COUNT(*) as total FROM dat_tour";
+        // Ghép tất cả thống kê vào 1 query
+        $query = "SELECT COUNT(*) AS total_bookings,
+                         COALESCE(SUM(trang_thai = 'Đã xác nhận'), 0) AS confirmed_bookings,
+                         COALESCE(SUM(trang_thai = 'Chờ xác nhận' OR trang_thai = 'Chờ Xác Nhận Hủy'), 0) AS pending_bookings,
+                         COALESCE(SUM(tong_tien), 0) AS total_revenue
+                  FROM dat_tour";
         $result = $conn->query($query);
+        if (!$result) {
+            throw new Exception("Query failed: " . $conn->error);
+        }
         $row = $result->fetch_assoc();
-        $totalBookings = isset($row['total']) ? intval($row['total']) : 0;
         
-        // Đã xác nhận
-        $query = "SELECT COUNT(*) as count FROM dat_tour WHERE trang_thai = 'Đã xác nhận'";
-        $result = $conn->query($query);
-        $row = $result->fetch_assoc();
-        $confirmedBookings = isset($row['count']) ? intval($row['count']) : 0;
-        
-        // Chờ xác nhận
-        $query = "SELECT COUNT(*) as count FROM dat_tour WHERE trang_thai = 'Chờ xác nhận' OR trang_thai = 'Chờ Xác Nhận Hủy'";
-        $result = $conn->query($query);
-        $row = $result->fetch_assoc();
-        $pendingBookings = isset($row['count']) ? intval($row['count']) : 0;
-        
-        // Tổng doanh thu
-        $query = "SELECT SUM(tong_tien) as total FROM dat_tour";
-        $result = $conn->query($query);
-        $row = $result->fetch_assoc();
-        $totalRevenue = isset($row['total']) ? floatval($row['total']) : 0;
+        $totalRevenue = isset($row['total_revenue']) ? floatval($row['total_revenue']) : 0;
         
         return [
-            'total_bookings' => $totalBookings,
-            'confirmed_bookings' => $confirmedBookings,
-            'pending_bookings' => $pendingBookings,
+            'total_bookings' => isset($row['total_bookings']) ? intval($row['total_bookings']) : 0,
+            'confirmed_bookings' => isset($row['confirmed_bookings']) ? intval($row['confirmed_bookings']) : 0,
+            'pending_bookings' => isset($row['pending_bookings']) ? intval($row['pending_bookings']) : 0,
             'total_revenue' => $totalRevenue,
             'total_revenue_formatted' => number_format($totalRevenue, 0, ',', '.') . ' VND'
         ];
@@ -1502,7 +1494,7 @@ function formatTourData($row) {
         'id' => intval($row['id']),
         'name' => $row['ten'],
         'description' => $row['mo_ta'],
-        'location' => getLocationName($row['id_dia_diem']),
+        'location' => !empty($row['dia_diem_name']) ? $row['dia_diem_name'] : getLocationName($row['id_dia_diem']),
         'price' => floatval($row['gia']),
         'price_formatted' => number_format($row['gia'], 0, ',', '.') . ' VND',
         'days' => $row['so_ngay'],
@@ -2175,41 +2167,33 @@ function getDashboardStats() {
     global $conn;
     
     try {
-        // Tổng số tour
-        $query = "SELECT COUNT(*) as total FROM tour";
+        // Ghép tất cả truy vấn tour vào 1 query (giảm round-trip đến DB)
+        $query = "SELECT COUNT(*) AS total_tours,
+                         COALESCE(SUM(trang_thai = 'Hoạt động'), 0) AS active_tours
+                  FROM tour";
         $result = $conn->query($query);
+        if (!$result) {
+            throw new Exception("Query failed: " . $conn->error);
+        }
         $row = $result->fetch_assoc();
-        $totalTours = isset($row['total']) ? intval($row['total']) : 0;
-        
-        // Tour hoạt động
-        $query = "SELECT COUNT(*) as total FROM tour WHERE trang_thai = 'Hoạt động'";
+        $totalTours = isset($row['total_tours']) ? intval($row['total_tours']) : 0;
+        $activeTours = isset($row['active_tours']) ? intval($row['active_tours']) : 0;
+
+        // Ghép tất cả truy vấn booking + doanh thu vào 1 query
+        $query = "SELECT COUNT(*) AS total_bookings,
+                         COALESCE(SUM(trang_thai = 'Đã xác nhận'), 0) AS confirmed_bookings,
+                         COALESCE(SUM(trang_thai = 'Chờ xác nhận'), 0) AS pending_bookings,
+                         COALESCE(SUM(tong_tien), 0) AS total_revenue
+                  FROM dat_tour";
         $result = $conn->query($query);
+        if (!$result) {
+            throw new Exception("Query failed: " . $conn->error);
+        }
         $row = $result->fetch_assoc();
-        $activeTours = isset($row['total']) ? intval($row['total']) : 0;
-        
-        // Số đơn đặt tour - Đã xác nhận
-        $query = "SELECT COUNT(*) as total FROM dat_tour WHERE trang_thai = 'Đã xác nhận'";
-        $result = $conn->query($query);
-        $row = $result->fetch_assoc();
-        $confirmedBookings = isset($row['total']) ? intval($row['total']) : 0;
-        
-        // Số đơn đặt tour - Chờ xác nhận
-        $query = "SELECT COUNT(*) as total FROM dat_tour WHERE trang_thai = 'Chờ xác nhận'";
-        $result = $conn->query($query);
-        $row = $result->fetch_assoc();
-        $pendingBookings = isset($row['total']) ? intval($row['total']) : 0;
-        
-        // Tổng số đơn đặt tour
-        $query = "SELECT COUNT(*) as total FROM dat_tour";
-        $result = $conn->query($query);
-        $row = $result->fetch_assoc();
-        $totalBookings = isset($row['total']) ? intval($row['total']) : 0;
-        
-        // Doanh thu từ tất cả tour
-        $query = "SELECT SUM(tong_tien) as total FROM dat_tour";
-        $result = $conn->query($query);
-        $row = $result->fetch_assoc();
-        $totalRevenue = isset($row['total']) ? floatval($row['total']) : 0;
+        $confirmedBookings = isset($row['confirmed_bookings']) ? intval($row['confirmed_bookings']) : 0;
+        $pendingBookings = isset($row['pending_bookings']) ? intval($row['pending_bookings']) : 0;
+        $totalBookings = isset($row['total_bookings']) ? intval($row['total_bookings']) : 0;
+        $totalRevenue = isset($row['total_revenue']) ? floatval($row['total_revenue']) : 0;
         
         // Tính doanh thu theo định dạng (K, M, B)
         $revenueFormatted = formatRevenue($totalRevenue);
