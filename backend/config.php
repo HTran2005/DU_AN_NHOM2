@@ -40,6 +40,8 @@ $corsOrigin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '*';
 header('Access-Control-Allow-Origin: ' . $corsOrigin);
 header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization, Origin, X-Requested-With, Accept');
+// Allow credentials (cookies) so frontend can send session cookie with fetch
+header('Access-Control-Allow-Credentials: true');
 header('Access-Control-Max-Age: 86400');
 header('Vary: Origin');
 

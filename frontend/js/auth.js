@@ -8,6 +8,7 @@ class TriptoAuth {
         this.AUTH_KEY = 'triptoLoggedIn';
         this.USER_KEY = 'triptoUser';
         this.TOKEN_KEY = 'triptoToken';
+        this.heartbeatInterval = null;
     }
 
     /**
@@ -39,6 +40,8 @@ class TriptoAuth {
         sessionStorage.setItem(this.USER_KEY, JSON.stringify(userData));
         // Phát sự kiện để các trang khác biết user đã đăng nhập
         window.dispatchEvent(new CustomEvent('userLogin', { detail: userData }));
+        // start heartbeat to refresh online status
+        try { this.startHeartbeat(); } catch (e) { console.error('startHeartbeat error', e); }
     }
 
     /**
@@ -50,6 +53,8 @@ class TriptoAuth {
         sessionStorage.removeItem(this.TOKEN_KEY);
         // Phát sự kiện để các trang khác biết user đã đăng xuất
         window.dispatchEvent(new CustomEvent('userLogout'));
+        // stop heartbeat
+        try { this.stopHeartbeat(); } catch (e) { }
         window.location.href = 'TRANGCHU.html';
     }
 
@@ -65,6 +70,7 @@ class TriptoAuth {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
                 },
+                credentials: 'include',
                 body: JSON.stringify({ action: 'login', email, password })
             });
 
@@ -126,6 +132,27 @@ class TriptoAuth {
             userNameElements.forEach(element => {
                 element.textContent = user.ho_ten;
             });
+        }
+
+        // Cập nhật trạng thái online nếu có phần tử hiển thị
+        const statusElements = document.querySelectorAll('.user-online-status');
+        if (statusElements.length > 0) {
+            // Query backend for real online status
+            (async () => {
+                try {
+                    const apiUrl = 'https://tripto-api-management.azure-api.net/tripto/user.php?endpoint=online&action=status&user_id=' + encodeURIComponent(user.id);
+                    const resp = await fetch(apiUrl, { credentials: 'include' });
+                    const j = await resp.json();
+                    const online = j && j.online;
+                    statusElements.forEach(el => {
+                        el.textContent = online ? '🟢 Đang online' : '⚪ Offline';
+                        el.classList.toggle('online', !!online);
+                    });
+                } catch (e) {
+                    console.error('Fetch online status failed', e);
+                    statusElements.forEach(el => el.textContent = '⚪ Offline');
+                }
+            })();
         }
 
         // Cập nhật email nếu có
@@ -356,6 +383,37 @@ class TriptoAuth {
         script.setAttribute('data-social-icons', 'true');
         script.async = true;
         document.head.appendChild(script);
+    }
+
+    startHeartbeat() {
+        if (this.heartbeatInterval) return; // already running
+        // send immediate heartbeat
+        this.sendHeartbeat();
+        this.heartbeatInterval = setInterval(() => {
+            this.sendHeartbeat();
+        }, 30000);
+    }
+
+    stopHeartbeat() {
+        if (this.heartbeatInterval) {
+            clearInterval(this.heartbeatInterval);
+            this.heartbeatInterval = null;
+        }
+    }
+
+    async sendHeartbeat() {
+        if (!this.isLoggedIn()) return;
+        try {
+            const apiUrl = 'https://tripto-api-management.azure-api.net/tripto/user.php?endpoint=online&action=heartbeat';
+            await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ action: 'heartbeat' })
+            });
+        } catch (e) {
+            console.error('Heartbeat failed', e);
+        }
     }
 
     /**

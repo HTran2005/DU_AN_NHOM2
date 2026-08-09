@@ -58,6 +58,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 // Import config
 require_once __DIR__ . '/config.php';
+// Redis client wrapper
+require_once __DIR__ . '/RedisClient.php';
 
 // =====================================================
 // AUTO-INITIALIZE DATABASE TABLES
@@ -206,6 +208,9 @@ try {
     switch ($endpoint) {
         case 'auth':
             handleAuth($action);
+            break;
+        case 'online':
+            handleOnline($action);
             break;
         case 'get_tours':
             handleGetTours();
@@ -1321,6 +1326,142 @@ function authUpdateProfileWithAvatar() {
         ],
         'avatar_url' => $avatarUrl
     ]);
+    exit;
+}
+
+// =====================================================
+// ONLINE USER HANDLERS
+// Endpoint: ?endpoint=online&action=heartbeat|status|list
+// heartbeat: POST, requires authenticated session -> setex online:user:{id} 60
+// status: GET, ?user_id=123 -> return online boolean
+// list: GET, returns list of users with online status (avoids N+1 by using MGET)
+function handleOnline($action = '') {
+    global $conn;
+
+    if (isset($_POST['action'])) {
+        $action = $_POST['action'];
+    } else {
+        $input = file_get_contents('php://input');
+        $data = json_decode($input, true);
+        if (is_array($data) && isset($data['action'])) $action = $data['action'];
+    }
+
+    // Default to 405 for unsupported methods per action
+    if ($action === 'heartbeat') {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['success' => false, 'message' => 'Method not allowed']);
+            exit;
+        }
+
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        if (empty($_SESSION['user_id'])) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'message' => 'Not authenticated']);
+            exit;
+        }
+
+        $userId = intval($_SESSION['user_id']);
+        $key = "online:user:" . $userId;
+
+        $rc = getRedisClientInstance();
+        if ($rc->available()) {
+            $res = $rc->setex($key, 60, 1);
+            if ($res === null) {
+                // Redis call failed, but do not block login flow
+                error_log('Redis setex returned null for heartbeat user=' . $userId);
+                echo json_encode(['success' => true, 'message' => 'heartbeat accepted', 'redis_available' => false]);
+                exit;
+            }
+            echo json_encode(['success' => true, 'message' => 'heartbeat accepted', 'redis_available' => true]);
+            exit;
+        } else {
+            // Redis not available
+            echo json_encode(['success' => true, 'message' => 'heartbeat accepted', 'redis_available' => false]);
+            exit;
+        }
+    }
+
+    if ($action === 'status') {
+        $userId = isset($_GET['user_id']) ? intval($_GET['user_id']) : (isset($_POST['user_id']) ? intval($_POST['user_id']) : 0);
+        if ($userId <= 0) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Invalid user_id']);
+            exit;
+        }
+
+        $key = "online:user:" . $userId;
+        $rc = getRedisClientInstance();
+        if ($rc->available()) {
+            $exists = $rc->exists($key);
+            $online = $exists === null ? false : ($exists ? true : false);
+            echo json_encode(['success' => true, 'user_id' => $userId, 'online' => $online, 'redis_available' => true]);
+            exit;
+        } else {
+            echo json_encode(['success' => true, 'user_id' => $userId, 'online' => false, 'redis_available' => false]);
+            exit;
+        }
+    }
+
+    if ($action === 'list') {
+        // optional limit/offset
+        $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 100;
+        if ($limit < 1) $limit = 100;
+
+        $sql = "SELECT id, ten_dau, ten_cuoi, email FROM nguoi_dung ORDER BY id ASC LIMIT ?";
+        $stmt = $conn->prepare($sql);
+        if (!$stmt) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'DB prepare error']);
+            exit;
+        }
+        $stmt->bind_param('i', $limit);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $users = [];
+        $keys = [];
+        while ($row = $result->fetch_assoc()) {
+            $row['ho_ten'] = trim(($row['ten_dau'] ?? '') . ' ' . ($row['ten_cuoi'] ?? ''));
+            $users[] = $row;
+            $keys[] = 'online:user:' . intval($row['id']);
+        }
+        $stmt->close();
+
+        $rc = getRedisClientInstance();
+        $onlineMap = [];
+        if ($rc->available()) {
+            $vals = $rc->mget($keys);
+            if (is_array($vals)) {
+                foreach ($keys as $i => $k) {
+                    $onlineMap[$k] = isset($vals[$i]) && $vals[$i] !== null && $vals[$i] !== false && $vals[$i] !== '';
+                }
+            } else {
+                // fallback to individual exists (slower) but safe
+                foreach ($keys as $k) {
+                    $onlineMap[$k] = (bool)$rc->exists($k);
+                }
+            }
+        }
+
+        $out = [];
+        foreach ($users as $u) {
+            $k = 'online:user:' . intval($u['id']);
+            $isOnline = isset($onlineMap[$k]) ? (bool)$onlineMap[$k] : false;
+            $out[] = [
+                'id' => intval($u['id']),
+                'name' => $u['ho_ten'],
+                'email' => $u['email'],
+                'online' => $isOnline
+            ];
+        }
+
+        echo json_encode(['success' => true, 'data' => $out, 'redis_available' => $rc->available()]);
+        exit;
+    }
+
+    // Unknown action
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'Invalid online action']);
     exit;
 }
 
