@@ -3658,6 +3658,14 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/@microsoft/signalr@8.0.7/dist/browser/signalr.min.js"></script>
     <script src="../js/signalr.js"></script>
+    <script src="../js/push-notification.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeof window.initPushNotifications === 'function') {
+                window.initPushNotifications();
+            }
+        });
+    </script>
 </body>
 
 </html>
