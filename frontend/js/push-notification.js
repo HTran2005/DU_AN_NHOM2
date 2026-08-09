@@ -202,6 +202,58 @@
         }
     }
 
+    async function ensureFreshSubscription(
+        registration,
+        publicKey
+    ) {
+        let subscription =
+            await registration.pushManager.getSubscription();
+
+        if (subscription) {
+            const currentKeyBytes =
+                urlBase64ToUint8Array(publicKey);
+            const existingKey =
+                subscription.getKey("applicationServerKey");
+
+            let keysMatch = false;
+
+            if (existingKey) {
+                const existingKeyBytes = new Uint8Array(
+                    existingKey
+                );
+
+                keysMatch =
+                    existingKeyBytes.length ===
+                        currentKeyBytes.length &&
+                    currentKeyBytes.every(function (
+                        value,
+                        index
+                    ) {
+                        return value === existingKeyBytes[index];
+                    });
+            }
+
+            if (!keysMatch) {
+                console.warn(
+                    "Existing push subscription uses a different VAPID key. Re-subscribing."
+                );
+                await subscription.unsubscribe();
+                subscription = null;
+            }
+        }
+
+        if (!subscription) {
+            subscription =
+                await registration.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey:
+                        urlBase64ToUint8Array(publicKey)
+                });
+        }
+
+        return subscription;
+    }
+
     async function initPushNotifications() {
         if (!isPushSupported()) {
             console.warn(
@@ -215,6 +267,10 @@
         try {
             registration =
                 await navigator.serviceWorker.register(SW_PATH);
+            console.log(
+                "Service worker registered with scope:",
+                registration.scope
+            );
         } catch (error) {
             console.error(
                 "Service worker registration failed.",
@@ -227,6 +283,11 @@
             await Notification.requestPermission();
 
         if (permission !== "granted") {
+            console.warn(
+                "Notification permission is",
+                permission,
+                "- push notifications disabled."
+            );
             return null;
         }
 
@@ -239,17 +300,14 @@
         let subscription;
 
         try {
-            subscription =
-                await registration.pushManager.getSubscription();
-
-            if (!subscription) {
-                subscription =
-                    await registration.pushManager.subscribe({
-                        userVisibleOnly: true,
-                        applicationServerKey:
-                            urlBase64ToUint8Array(publicKey)
-                    });
-            }
+            subscription = await ensureFreshSubscription(
+                registration,
+                publicKey
+            );
+            console.log(
+                "Push subscription ready. Endpoint:",
+                subscription.endpoint
+            );
         } catch (error) {
             console.error(
                 "Push subscription creation failed.",
@@ -278,7 +336,42 @@
         return registrationResult;
     }
 
+    async function getPushDebugInfo() {
+        const info = {
+            secureContext: window.isSecureContext,
+            permission:
+                "Notification" in window
+                    ? Notification.permission
+                    : "unsupported",
+            serviceWorkerSupported:
+                "serviceWorker" in navigator,
+            serviceWorkerActive: false,
+            subscription: null,
+            installationId: getOrCreateInstallationId()
+        };
+
+        try {
+            const registration =
+                await navigator.serviceWorker.ready;
+
+            info.serviceWorkerActive =
+                registration.active &&
+                registration.active.state === "activated";
+
+            info.subscription =
+                await registration.pushManager.getSubscription();
+        } catch (error) {
+            console.error(
+                "getPushDebugInfo error.",
+                error
+            );
+        }
+
+        return info;
+    }
+
     window.initPushNotifications = initPushNotifications;
+    window.getPushDebugInfo = getPushDebugInfo;
     window.urlBase64ToUint8Array = urlBase64ToUint8Array;
     window.getOrCreateInstallationId =
         getOrCreateInstallationId;

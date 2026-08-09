@@ -30,11 +30,29 @@ self.addEventListener("push", function (event) {
         url: payload.url || ""
     };
 
+    const title = payload.title || DEFAULT_TITLE;
+
+    console.log(
+        "[sw] push received:",
+        title,
+        options.body || ""
+    );
+
     event.waitUntil(
-        self.registration.showNotification(
-            payload.title || DEFAULT_TITLE,
-            options
-        )
+        self.registration
+            .showNotification(title, options)
+            .catch(function (error) {
+                console.error(
+                    "[sw] showNotification failed:",
+                    error
+                );
+            })
+    );
+});
+
+self.addEventListener("pushsubscriptionchange", function (event) {
+    console.warn(
+        "[sw] Push subscription changed; re-subscription will happen on next page load."
     );
 });
 
