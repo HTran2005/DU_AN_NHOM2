@@ -97,7 +97,9 @@ if (!defined('APP_SKIP_DB_CONNECT')) {
 try {
     $conn = mysqli_init();
     mysqli_ssl_set($conn, NULL, NULL, NULL, NULL, NULL);
-    $conn->real_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME, 3306, NULL, MYSQLI_CLIENT_SSL);
+    // Dùng kết nối persistent (p:) để PHP-FPM tái sử dụng connection giữa các request
+    // -> tránh phải bắt tay TCP+TLS lại mỗi request (giảm độ trễ rõ rệt trên Azure MySQL)
+    $conn->real_connect('p:' . DB_HOST, DB_USER, DB_PASS, DB_NAME, 3306, NULL, MYSQLI_CLIENT_SSL);
     
     // Xử lý lỗi kết nối
     if ($conn->connect_error) {
@@ -136,13 +138,21 @@ if (!function_exists('closeConnection')) {
 
 // Auto-send telemetry khi script kết thúc
 register_shutdown_function(function () {
+    $lastError = error_get_last();
+    $fatal = $lastError && in_array($lastError['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR]);
+
+    // Gửi response về client ngay lập tức, telemetry chạy nền không chặn request
+    // (chỉ áp dụng khi không có fatal error để handler lỗi vẫn ghi JSON được)
+    if (!$fatal && function_exists('fastcgi_finish_request')) {
+        @fastcgi_finish_request();
+    }
+
     $httpCode = http_response_code();
     $success = ($httpCode >= 200 && $httpCode < 500);
     monitorEndRequest($httpCode, $success);
 
     // Track PHP fatal errors
-    $lastError = error_get_last();
-    if ($lastError && in_array($lastError['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR])) {
+    if ($fatal) {
         monitorTrackException(new ErrorException(
             $lastError['message'], 0, $lastError['type'],
             $lastError['file'], $lastError['line']

@@ -1674,6 +1674,26 @@
     </style>
 </head>
 
+<script>
+(async function trackVisit() {
+    try {
+        const response = await fetch(
+            'https://tripto-function-gmcahcf6embwemaw.southeastasia-01.azurewebsites.net/api/track-visit',
+            {
+                method: 'POST'
+            }
+        );
+
+        const data = await response.json();
+
+        console.log('✅ Visit tracked:', data);
+
+    } catch (error) {
+        console.error('❌ Track visit failed:', error);
+    }
+})();
+</script>
+
 <body>
     <!-- Header/Navigation -->
 
