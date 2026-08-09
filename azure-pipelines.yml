@@ -1,3 +1,8 @@
+pr:
+  branches:
+    include:
+      - main
+
 trigger:
   branches:
     include:
@@ -22,10 +27,11 @@ steps:
 
 
 # =========================================================
-# 2. LẤY WORK ITEM ID TỪ COMMIT
+# 2. LẤY CÁC WORK ITEM ID TỪ COMMIT
 # Ví dụ commit:
 # Implement Microsoft Entra ID AB#34
-# => WORKITEM_ID = 34
+# => lấy được ID 34
+# Quét toàn bộ commit trong lần push, có thể lấy nhiều ID
 # =========================================================
 
 - script: |
@@ -34,31 +40,26 @@ steps:
     echo "COMMIT INFORMATION"
     echo "======================================"
 
-    COMMIT_MSG=$(git log -1 --pretty=%B)
-
-    echo "Commit message:"
-    echo "$COMMIT_MSG"
-
-    # Lay ID tu commit message: AB#123
-    WORKITEM=$(echo "$COMMIT_MSG" | grep -oE 'AB#[0-9]+' | head -1 | grep -oE '[0-9]+')
+    # Lay toan bo AB#ID tu 20 commit gan nhat (du cho push nhieu commit)
+    WORKITEM_IDS=$(git log -20 --pretty=%B | grep -oE 'AB#[0-9]+' | grep -oE '[0-9]+' | sort -un | tr '\n' ' ')
 
     # Neu khong co trong commit, thu lay tu ten nhanh: feature/AB123-ten
-    if [ -z "$WORKITEM" ]; then
+    if [ -z "$WORKITEM_IDS" ]; then
       echo "Khong thay AB# trong commit, thu tim trong ten nhanh: $BRANCH_NAME"
-      WORKITEM=$(echo "$BRANCH_NAME" | grep -oE 'AB[0-9]+' | head -1 | grep -oE '[0-9]+')
+      WORKITEM_IDS=$(echo "$BRANCH_NAME" | grep -oE 'AB[0-9]+' | grep -oE '[0-9]+' | sort -un | tr '\n' ' ')
     fi
 
-    if [ -z "$WORKITEM" ]; then
+    if [ -z "$WORKITEM_IDS" ]; then
       echo "Khong tim thay AB#ID trong commit hoac ten nhanh."
       echo "Pipeline van tiep tuc."
       exit 0
     fi
 
-    echo "Found Work Item: $WORKITEM"
+    echo "Found Work Item IDs: $WORKITEM_IDS"
 
-    echo "##vso[task.setvariable variable=WORKITEM_ID]$WORKITEM"
+    echo "##vso[task.setvariable variable=WORKITEM_IDS]$WORKITEM_IDS"
 
-  displayName: "Get Work Item ID"
+  displayName: "Get Work Item IDs"
 
   env:
     BRANCH_NAME: $(Build.SourceBranchName)
@@ -70,7 +71,7 @@ steps:
 
 - script: |
 
-    if [ -z "$(WORKITEM_ID)" ]; then
+    if [ -z "$(WORKITEM_IDS)" ]; then
       echo "Khong co Work Item ID."
       exit 0
     fi
@@ -81,40 +82,44 @@ steps:
     fi
 
     echo "======================================"
-    echo "CHANGE WORK ITEM TO ACTIVE"
+    echo "CHANGE WORK ITEMS TO ACTIVE"
     echo "======================================"
 
-    echo "Work Item: $(WORKITEM_ID)"
+    for WORKITEM_ID in $(WORKITEM_IDS); do
 
-    CURRENT_STATE=$(curl --http1.1 -s \
-      --user ":$PAT" \
-      "https://dev.azure.com/$(organization)/$(project)/_apis/wit/workitems/$(WORKITEM_ID)?api-version=7.1" \
-      | grep -oE '"System.State":"[^"]+"' | head -1 | cut -d'"' -f4)
+      echo "Work Item: $WORKITEM_ID"
 
-    echo "Trang thai hien tai: $CURRENT_STATE"
-
-    if [ "$CURRENT_STATE" = "New" ]; then
-      curl --http1.1 \
-        --fail-with-body \
+      CURRENT_STATE=$(curl --http1.1 -s \
         --user ":$PAT" \
-        -X PATCH \
-        -H "Content-Type: application/json-patch+json" \
-        "https://dev.azure.com/$(organization)/$(project)/_apis/wit/workitems/$(WORKITEM_ID)?api-version=7.1" \
-        --data '[
-          {
-            "op": "add",
-            "path": "/fields/System.State",
-            "value": "Active"
-          }
-        ]'
+        "https://dev.azure.com/$(organization)/$(project)/_apis/wit/workitems/$WORKITEM_ID?api-version=7.1" \
+        | grep -oE '"System.State":"[^"]+"' | head -1 | cut -d'"' -f4)
 
-      echo ""
-      echo "Work Item $(WORKITEM_ID) -> Active"
-    else
-      echo "Work Item $(WORKITEM_ID) dang o trang thai '$CURRENT_STATE', khong can chuyen sang Active."
-    fi
+      echo "Trang thai hien tai: $CURRENT_STATE"
 
-  displayName: "Set Work Item Active"
+      if [ "$CURRENT_STATE" = "New" ]; then
+        curl --http1.1 \
+          --fail-with-body \
+          --user ":$PAT" \
+          -X PATCH \
+          -H "Content-Type: application/json-patch+json" \
+          "https://dev.azure.com/$(organization)/$(project)/_apis/wit/workitems/$WORKITEM_ID?api-version=7.1" \
+          --data '[
+            {
+              "op": "add",
+              "path": "/fields/System.State",
+              "value": "Active"
+            }
+          ]'
+
+        echo ""
+        echo "Work Item $WORKITEM_ID -> Active"
+      else
+        echo "Work Item $WORKITEM_ID dang o trang thai '$CURRENT_STATE', khong can chuyen sang Active."
+      fi
+
+    done
+
+  displayName: "Set Work Items Active"
 
   env:
     PAT: $(PAT)
@@ -228,12 +233,12 @@ steps:
 
 
 # =========================================================
-# 11. ACTIVE -> RESOLVED
+# 11. ACTIVE -> RESOLVED (chỉ khi merge PR lên main)
 # =========================================================
 
 - script: |
 
-    if [ -z "$(WORKITEM_ID)" ]; then
+    if [ -z "$(WORKITEM_IDS)" ]; then
       echo "Khong co Work Item ID."
       exit 0
     fi
@@ -244,42 +249,87 @@ steps:
     fi
 
     echo "======================================"
-    echo "CHANGE WORK ITEM TO RESOLVED"
+    echo "CHANGE WORK ITEMS TO RESOLVED"
     echo "======================================"
 
-    echo "Work Item: $(WORKITEM_ID)"
+    # Chi chuyen Resolved khi build la build CI tren main (sau khi merge PR)
+    echo "Build.Reason: $BUILD_REASON"
+    echo "SourceBranch: $SOURCE_BRANCH"
 
-    CURRENT_STATE=$(curl --http1.1 -s \
-      --user ":$PAT" \
-      "https://dev.azure.com/$(organization)/$(project)/_apis/wit/workitems/$(WORKITEM_ID)?api-version=7.1" \
-      | grep -oE '"System.State":"[^"]+"' | head -1 | cut -d'"' -f4)
-
-    echo "Trang thai hien tai: $CURRENT_STATE"
-
-    if [ "$CURRENT_STATE" = "Active" ]; then
-      curl --http1.1 \
-        --fail-with-body \
-        --user ":$PAT" \
-        -X PATCH \
-        -H "Content-Type: application/json-patch+json" \
-        "https://dev.azure.com/$(organization)/$(project)/_apis/wit/workitems/$(WORKITEM_ID)?api-version=7.1" \
-        --data '[
-          {
-            "op": "add",
-            "path": "/fields/System.State",
-            "value": "Resolved"
-          }
-        ]'
-
-      echo ""
-      echo "Work Item $(WORKITEM_ID) -> Resolved"
-    else
-      echo "Work Item $(WORKITEM_ID) dang o trang thai '$CURRENT_STATE', khong can chuyen sang Resolved."
+    if [ "$BUILD_REASON" != "IndividualCI" ] && [ "$BUILD_REASON" != "BatchedCI" ]; then
+      echo "Khong phai build CI (co the dang la build PR). Bo qua Resolved."
+      exit 0
     fi
 
-  displayName: "Set Work Item Resolved"
+    if [ "$SOURCE_BRANCH" != "refs/heads/main" ]; then
+      echo "Khong phai build tren nhanh main. Bo qua Resolved."
+      exit 0
+    fi
+
+    if [ -z "$GH_TOKEN" ]; then
+      echo "Thieu bien GH_TOKEN. Khong the kiem tra PR tren GitHub."
+      exit 0
+    fi
+
+    # Kiem tra commit hien tai co thuoc mot PR GitHub da merge khong
+    echo "Kiem tra PR da merge cho commit: $SOURCE_VERSION (repo: $GITHUB_REPO)"
+
+    RESPONSE=$(curl --http1.1 -s \
+      -H "Authorization: token $GH_TOKEN" \
+      -H "Accept: application/vnd.github+json" \
+      "https://api.github.com/repos/$GITHUB_REPO/commits/$SOURCE_VERSION/pulls")
+
+    IS_MERGE=$(echo "$RESPONSE" | grep -oE '"merged_at":"[^"]+"' | wc -l)
+
+    if [ "$IS_MERGE" = "0" ]; then
+      echo "Commit nay khong thuoc PR GitHub da merge. Bo qua Resolved."
+      exit 0
+    fi
+
+    echo "Xac nhan day la build sau khi merge PR. Bat dau chuyen trang thai."
+
+    for WORKITEM_ID in $(WORKITEM_IDS); do
+
+      echo "Work Item: $WORKITEM_ID"
+
+      CURRENT_STATE=$(curl --http1.1 -s \
+        --user ":$PAT" \
+        "https://dev.azure.com/$(organization)/$(project)/_apis/wit/workitems/$WORKITEM_ID?api-version=7.1" \
+        | grep -oE '"System.State":"[^"]+"' | head -1 | cut -d'"' -f4)
+
+      echo "Trang thai hien tai: $CURRENT_STATE"
+
+      if [ "$CURRENT_STATE" = "Active" ]; then
+        curl --http1.1 \
+          --fail-with-body \
+          --user ":$PAT" \
+          -X PATCH \
+          -H "Content-Type: application/json-patch+json" \
+          "https://dev.azure.com/$(organization)/$(project)/_apis/wit/workitems/$WORKITEM_ID?api-version=7.1" \
+          --data '[
+            {
+              "op": "add",
+              "path": "/fields/System.State",
+              "value": "Resolved"
+            }
+          ]'
+
+        echo ""
+        echo "Work Item $WORKITEM_ID -> Resolved"
+      else
+        echo "Work Item $WORKITEM_ID dang o trang thai '$CURRENT_STATE', khong can chuyen sang Resolved."
+      fi
+
+    done
+
+  displayName: "Set Work Items Resolved"
 
   condition: succeeded()
 
   env:
     PAT: $(PAT)
+    BUILD_REASON: $(Build.Reason)
+    SOURCE_BRANCH: $(Build.SourceBranch)
+    SOURCE_VERSION: $(Build.SourceVersion)
+    GITHUB_REPO: $(Build.Repository.Name)
+    GH_TOKEN: $(GH_TOKEN)
