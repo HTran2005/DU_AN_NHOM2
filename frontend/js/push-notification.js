@@ -210,19 +210,20 @@
             await registration.pushManager.getSubscription();
 
         if (subscription) {
-            const currentKeyBytes =
-                urlBase64ToUint8Array(publicKey);
-            const existingKey =
-                subscription.getKey("applicationServerKey");
+            const subscriptionKey =
+                subscription.options &&
+                subscription.options.applicationServerKey
+                    ? subscription.options.applicationServerKey
+                    : null;
 
-            let keysMatch = false;
-
-            if (existingKey) {
+            if (subscriptionKey) {
+                const currentKeyBytes =
+                    urlBase64ToUint8Array(publicKey);
                 const existingKeyBytes = new Uint8Array(
-                    existingKey
+                    subscriptionKey
                 );
 
-                keysMatch =
+                const keysMatch =
                     existingKeyBytes.length ===
                         currentKeyBytes.length &&
                     currentKeyBytes.every(function (
@@ -231,14 +232,14 @@
                     ) {
                         return value === existingKeyBytes[index];
                     });
-            }
 
-            if (!keysMatch) {
-                console.warn(
-                    "Existing push subscription uses a different VAPID key. Re-subscribing."
-                );
-                await subscription.unsubscribe();
-                subscription = null;
+                if (!keysMatch) {
+                    console.warn(
+                        "Existing push subscription uses a different VAPID key. Re-subscribing."
+                    );
+                    await subscription.unsubscribe();
+                    subscription = null;
+                }
             }
         }
 
