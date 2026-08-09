@@ -1,5 +1,8 @@
 trigger:
-- main
+  branches:
+    include:
+      - main
+      - feature/*
 
 pool:
   vmImage: ubuntu-latest
@@ -7,69 +10,202 @@ pool:
 variables:
   organization: 'DuAnNhom2'
   project: 'BAO_CAO'
+
 steps:
 
+# =========================================================
+# 1. CHECKOUT SOURCE
+# =========================================================
+
 - checkout: self
+  fetchDepth: 0
+
+
+# =========================================================
+# 2. LẤY WORK ITEM ID TỪ COMMIT
+# Ví dụ commit:
+# Implement Microsoft Entra ID AB#34
+# => WORKITEM_ID = 34
+# =========================================================
+
 - script: |
+
+    echo "======================================"
+    echo "COMMIT INFORMATION"
+    echo "======================================"
+
     COMMIT_MSG=$(git log -1 --pretty=%B)
 
-    echo "Commit:"
+    echo "Commit message:"
     echo "$COMMIT_MSG"
 
-    WORKITEM=$(echo "$COMMIT_MSG" | grep -oE 'AB#[0-9]+' | grep -oE '[0-9]+')
+    # Lay ID tu commit message: AB#123
+    WORKITEM=$(echo "$COMMIT_MSG" | grep -oE 'AB#[0-9]+' | head -1 | grep -oE '[0-9]+')
+
+    # Neu khong co trong commit, thu lay tu ten nhanh: feature/AB123-ten
+    if [ -z "$WORKITEM" ]; then
+      echo "Khong thay AB# trong commit, thu tim trong ten nhanh: $BRANCH_NAME"
+      WORKITEM=$(echo "$BRANCH_NAME" | grep -oE 'AB[0-9]+' | head -1 | grep -oE '[0-9]+')
+    fi
+
+    if [ -z "$WORKITEM" ]; then
+      echo "Khong tim thay AB#ID trong commit hoac ten nhanh."
+      echo "Pipeline van tiep tuc."
+      exit 0
+    fi
 
     echo "Found Work Item: $WORKITEM"
 
     echo "##vso[task.setvariable variable=WORKITEM_ID]$WORKITEM"
+
   displayName: "Get Work Item ID"
+
+  env:
+    BRANCH_NAME: $(Build.SourceBranchName)
+
+
+# =========================================================
+# 3. NEW -> ACTIVE
+# =========================================================
+
 - script: |
-    echo "WORKITEM_ID=$(WORKITEM_ID)"
-    echo "Organization=$(organization)"
-    echo "Project=$(project)"
 
     if [ -z "$(WORKITEM_ID)" ]; then
-      echo "No Work Item found"
-      exit 1
+      echo "Khong co Work Item ID."
+      exit 0
     fi
 
-    JSON='[
-      {
-        "op": "add",
-        "path": "/fields/System.State",
-        "value": "Active"
-      }
-    ]'
+    if [ -z "$PAT" ]; then
+      echo "Thieu bien PAT. Khong the cap nhat trang thai."
+      exit 0
+    fi
 
-    AUTH=$(printf ":%s" "$PAT" | base64)
+    echo "======================================"
+    echo "CHANGE WORK ITEM TO ACTIVE"
+    echo "======================================"
 
-    curl -v \
-      --request PATCH \
-      --url "https://dev.azure.com/$(organization)/$(project)/_apis/wit/workitems/$(WORKITEM_ID)?api-version=7.1" \
-      --header "Authorization: Basic $AUTH" \
-      --header "Content-Type: application/json-patch+json" \
-      --data "$JSON"
+    echo "Work Item: $(WORKITEM_ID)"
 
-  displayName: "Set Active"
+    CURRENT_STATE=$(curl --http1.1 -s \
+      --user ":$PAT" \
+      "https://dev.azure.com/$(organization)/$(project)/_apis/wit/workitems/$(WORKITEM_ID)?api-version=7.1" \
+      | grep -oE '"System.State":"[^"]+"' | head -1 | cut -d'"' -f4)
+
+    echo "Trang thai hien tai: $CURRENT_STATE"
+
+    if [ "$CURRENT_STATE" = "New" ]; then
+      curl --http1.1 \
+        --fail-with-body \
+        --user ":$PAT" \
+        -X PATCH \
+        -H "Content-Type: application/json-patch+json" \
+        "https://dev.azure.com/$(organization)/$(project)/_apis/wit/workitems/$(WORKITEM_ID)?api-version=7.1" \
+        --data '[
+          {
+            "op": "add",
+            "path": "/fields/System.State",
+            "value": "Active"
+          }
+        ]'
+
+      echo ""
+      echo "Work Item $(WORKITEM_ID) -> Active"
+    else
+      echo "Work Item $(WORKITEM_ID) dang o trang thai '$CURRENT_STATE', khong can chuyen sang Active."
+    fi
+
+  displayName: "Set Work Item Active"
+
   env:
     PAT: $(PAT)
+
+
+# =========================================================
+# 4. HIỂN THỊ SOURCE
+# =========================================================
+
 - script: |
-    echo "===== PROJECT ====="
+
+    echo "======================================"
+    echo "PROJECT STRUCTURE"
+    echo "======================================"
+
     pwd
     ls -R
+
   displayName: "Show Project Structure"
 
-- script: php -v
-  displayName: "Check PHP"
+
+# =========================================================
+# 5. KIỂM TRA PHP
+# =========================================================
 
 - script: |
+
+    echo "======================================"
+    echo "PHP VERSION"
+    echo "======================================"
+
+    php -v
+
+  displayName: "Check PHP Version"
+
+
+# =========================================================
+# 6. VALIDATE PHP
+# =========================================================
+
+- script: |
+
+    echo "======================================"
+    echo "VALIDATE PHP"
+    echo "======================================"
+
     find . -name "*.php" -exec php -l {} \;
+
   displayName: "Validate PHP"
 
+
+# =========================================================
+# 7. CÀI COMPOSER
+# =========================================================
+
 - script: |
+
+    echo "======================================"
+    echo "INSTALL COMPOSER"
+    echo "======================================"
+
+    cd backend
+
+    composer install --prefer-dist --no-progress --no-dev
+
+  displayName: "Install Composer Dependencies"
+
+
+# =========================================================
+# 8. KIỂM TRA SQL
+# =========================================================
+
+- script: |
+
+    echo "======================================"
+    echo "SQL FILES"
+    echo "======================================"
+
     find . -name "*.sql"
-  displayName: "Find SQL"
+
+  displayName: "Find SQL Scripts"
+
+
+# =========================================================
+# 9. ĐÓNG GÓI SOURCE
+# =========================================================
 
 - task: ArchiveFiles@2
+
+  displayName: "Create Artifact"
+
   inputs:
     rootFolderOrFile: '$(Build.SourcesDirectory)'
     includeRootFolder: false
@@ -77,32 +213,73 @@ steps:
     archiveFile: '$(Build.ArtifactStagingDirectory)/Website.zip'
     replaceExistingArchive: true
 
+
+# =========================================================
+# 10. PUBLISH ARTIFACT
+# =========================================================
+
 - task: PublishBuildArtifacts@1
+
+  displayName: "Publish Artifact"
+
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: Website
+
+
+# =========================================================
+# 11. ACTIVE -> RESOLVED
+# =========================================================
+
 - script: |
 
     if [ -z "$(WORKITEM_ID)" ]; then
-      echo "No Work Item"
+      echo "Khong co Work Item ID."
       exit 0
     fi
 
-    AUTH=$(printf ":%s" "$(PAT)" | base64)
+    if [ -z "$PAT" ]; then
+      echo "Thieu bien PAT. Khong the cap nhat trang thai."
+      exit 0
+    fi
 
-    curl -X PATCH \
-      -H "Content-Type: application/json-patch+json" \
-      -H "Authorization: Basic $AUTH" \
+    echo "======================================"
+    echo "CHANGE WORK ITEM TO RESOLVED"
+    echo "======================================"
+
+    echo "Work Item: $(WORKITEM_ID)"
+
+    CURRENT_STATE=$(curl --http1.1 -s \
+      --user ":$PAT" \
       "https://dev.azure.com/$(organization)/$(project)/_apis/wit/workitems/$(WORKITEM_ID)?api-version=7.1" \
-      -d '[
-      {
-        "op":"add",
-        "path":"/fields/System.State",
-        "value":"Resolved"
-      }]'
-  env:
-    PAT: $(PAT)
+      | grep -oE '"System.State":"[^"]+"' | head -1 | cut -d'"' -f4)
 
-  displayName: "Set Resolved"
+    echo "Trang thai hien tai: $CURRENT_STATE"
+
+    if [ "$CURRENT_STATE" = "Active" ]; then
+      curl --http1.1 \
+        --fail-with-body \
+        --user ":$PAT" \
+        -X PATCH \
+        -H "Content-Type: application/json-patch+json" \
+        "https://dev.azure.com/$(organization)/$(project)/_apis/wit/workitems/$(WORKITEM_ID)?api-version=7.1" \
+        --data '[
+          {
+            "op": "add",
+            "path": "/fields/System.State",
+            "value": "Resolved"
+          }
+        ]'
+
+      echo ""
+      echo "Work Item $(WORKITEM_ID) -> Resolved"
+    else
+      echo "Work Item $(WORKITEM_ID) dang o trang thai '$CURRENT_STATE', khong can chuyen sang Resolved."
+    fi
+
+  displayName: "Set Work Item Resolved"
 
   condition: succeeded()
+
+  env:
+    PAT: $(PAT)
