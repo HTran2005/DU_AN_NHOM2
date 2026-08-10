@@ -95,22 +95,43 @@ monitorBeginRequest();
 // Kết nối đến Database (bỏ qua nếu script không cần DB - ví dụ Service Bus)
 if (!defined('APP_SKIP_DB_CONNECT')) {
 try {
-    $conn = mysqli_init();
-    mysqli_ssl_set($conn, NULL, NULL, NULL, NULL, NULL);
     // Dùng kết nối persistent (p:) để PHP-FPM tái sử dụng connection giữa các request
     // -> tránh phải bắt tay TCP+TLS lại mỗi request (giảm độ trễ rõ rệt trên Azure MySQL)
+    // Lưu ý: Azure MySQL có thể đóng connection không hoạt động (wait_timeout / firewall / restart),
+    // nên PHP-FPM có thể tái sử dụng một socket đã chết -> lỗi "MySQL server has gone away"
+    // khiến thao tác lưu (INSERT/UPDATE) thỉnh thoảng thất bại. Do đó luôn kiểm tra ping
+    // và tự kết nối lại nếu pooled connection bị cũ/chết.
+
+    $conn = mysqli_init();
+    mysqli_ssl_set($conn, NULL, NULL, NULL, NULL, NULL);
+    $conn->options(MYSQLI_OPT_CONNECT_TIMEOUT, 10);
     $conn->real_connect('p:' . DB_HOST, DB_USER, DB_PASS, DB_NAME, 3306, NULL, MYSQLI_CLIENT_SSL);
-    
+
     // Xử lý lỗi kết nối
     if ($conn->connect_error) {
         throw new Exception("Database Connection Error: " . $conn->connect_error);
     }
-    
+
+    // Kiểm tra connection persistent có còn "sống" hay không.
+    // Nếu server đã đóng (idle timeout), ping() trả false -> đóng (recycle khỏi pool)
+    // và mở connection mới ngay để request hiện tại không bị lỗi giữa chừng.
+    if (!$conn->ping()) {
+        @$conn->close();
+
+        $conn = mysqli_init();
+        mysqli_ssl_set($conn, NULL, NULL, NULL, NULL, NULL);
+        $conn->options(MYSQLI_OPT_CONNECT_TIMEOUT, 10);
+        $conn->real_connect('p:' . DB_HOST, DB_USER, DB_PASS, DB_NAME, 3306, NULL, MYSQLI_CLIENT_SSL);
+        if ($conn->connect_error) {
+            throw new Exception("Database Connection Error: " . $conn->connect_error);
+        }
+    }
+
     // Thiết lập charset
     if (!$conn->set_charset(DB_CHARSET)) {
         throw new Exception("Error setting charset: " . $conn->error);
     }
-    
+
     // Kết nối thành công (không cần thông báo cho user)
 } catch (Exception $e) {
     // Ghi log lỗi

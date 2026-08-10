@@ -1,2 +1,25 @@
+# Frontend env/config (chứa khóa API) - không commit
 frontend/user/maps-config.js
 frontend/user/maps-config.php.bak
+
+# Dependencies - không commit node_modules (giữ repo gọn, deploy nhanh)
+node_modules/
+backend/function/node_modules/
+
+# Công cụ cục bộ
+composer.phar
+backend/composer.phar
+
+# Azurite (blob emulator local) - không commit
+__azurite_db_*.json
+__blobstorage__/
+
+# Logs & artifacts của Azure Functions - không commit
+backend/function/tripto-function-logs/
+backend/function/tripto-function-logs.zip
+backend/function/kudu-*.json
+backend/function/publish-log.txt
+backend/function/*.log
+
+# File log thường
+*.log
