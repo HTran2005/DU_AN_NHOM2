@@ -223,6 +223,9 @@ class BlobStorage
 
     private function buildCanonicalizedResource(string $blobName): string
     {
-        return sprintf('/%s/%s/%s', $this->accountName, $this->container, $blobName);
+        // URL phải khớp canonicalized resource dùng trong SharedKey signature.
+        // Trước đây request dùng rawurlencode($blobName) nhưng signature dùng tên thật
+        // -> lệch nhau khi tên có ký tự đặc biệt -> 403 SignatureDoesNotMatch.
+        return sprintf('/%s/%s/%s', $this->accountName, $this->container, rawurlencode($blobName));
     }
 }

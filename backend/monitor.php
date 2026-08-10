@@ -25,7 +25,7 @@ function monitorSend($data) {
       'method' => 'POST',
       'header' => "Content-Type: application/x-json-stream\r\n",
       'content' => $payload,
-      'timeout' => 2
+      'timeout' => 1
     ]
   ];
   $context = stream_context_create($options);
@@ -166,6 +166,14 @@ function monitorEndRequest($httpCode = 200, $success = true) {
     $durationMs = (microtime(true) - $GLOBALS['_monitor_start']) * 1000;
     $url = $_SERVER['REQUEST_URI'] ?? 'unknown';
     $name = ($_SERVER['REQUEST_METHOD'] ?? 'GET') . ' ' . parse_url($url, PHP_URL_PATH);
+
+    // Bỏ qua telemetry cho các GET nhanh (<250ms) - đây là phần lớn các request load dữ liệu.
+    // Giảm lượng HTTP call nền, giúp PHP-FPM worker không bị chiếm giữ -> web ổn định hơn.
+    $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+    if ($method === 'GET' && $durationMs < 250) {
+      return;
+    }
+
     monitorTrackRequest($name, $url, $durationMs, $httpCode, $success);
   }
 }

@@ -145,8 +145,11 @@ function initializeFavoriteTables() {
     }
 }
 
-// Initialize tables on every request (safe, uses IF NOT EXISTS)
-initializeFavoriteTables();
+// LƯU Ý: Không chạy initializeFavoriteTables() ở đây nữa.
+// Trước đây hàm này chạy trên MỌI request -> mỗi API call phải thực hiện thêm 2-4 query
+// (SHOW TABLES, SHOW COLUMNS, có thể cả ALTER/DROP/CREATE) gây chậm và tăng tải DB.
+// Các trang frontend đã gọi endpoint `init_favorite_tables` tường minh khi cần,
+// vì vậy chỉ chạy migration khi được yêu cầu.
 
 // =====================================================
 // HELPER FUNCTIONS
@@ -1504,12 +1507,12 @@ function handleGetTours() {
         case 'price-high':
             $sql .= " ORDER BY t.gia DESC";
             break;
-        case 'newest':
-            $sql .= " ORDER BY t.id DESC";
-            break;
         case 'random':
-        default:
             $sql .= " ORDER BY RAND()";
+            break;
+        case 'newest':
+        default:
+            $sql .= " ORDER BY t.id DESC";
             break;
     }
     

@@ -59,7 +59,7 @@ class ServiceBus
     {
 
         $this->client = new Client([
-            'timeout' => 30
+            'timeout' => 10
         ]);
 
         $host = parse_url(SERVICEBUS_ENDPOINT, PHP_URL_HOST);
