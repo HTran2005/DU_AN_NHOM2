@@ -139,7 +139,7 @@ Web gửi telemetry qua **HTTP REST** (không cần Composer/SDK):
 | `monitorTrackRequest()` | `Microsoft.ApplicationInsights.Request` | `AppRequests` | Tự động từ `config.php` (đầu/cuối mỗi request) |
 | `monitorTrackEvent()` | `Microsoft.ApplicationInsights.Event` | `AppEvents` | `user.php`: `booking_created`, `user_login`, `user_register`, `user_microsoft_login`, `user_microsoft_register` |
 | `monitorTrackException()` | `Microsoft.ApplicationInsights.Exception` | `AppExceptions` | Tự động khi có lỗi PHP fatal |
-| `monitorTrackDependency()` | `Microsoft.ApplicationInsights.RemoteDependency` | `dependencies` | Gọi khi ghi nhận gọi DB/service ngoài |
+| `monitorTrackDependency()` | `Microsoft.ApplicationInsights.RemoteDependency` | `AppDependencies` | Gọi khi ghi nhận gọi DB/service ngoài |
 
 ### Instrumentation Key — `backend/config.php:31`
 ```php
@@ -536,15 +536,19 @@ GitHub Actions → **Azure** (deploy Bicep).
 
 ## 17. CÁC BẢNG DỮ LIỆU TRONG LOG ANALYTICS
 
-> Quan trọng: **Trong Log Analytics workspace**, tên bảng App Insights có tiền tố **`App`**.
-> (Còn file `monitoring/queries/*.kql` viết `requests`, `events`... là để chạy trong giao diện
-> **Logs của App Insights** — cùng dữ liệu nhưng 2 góc nhìn.)
+> Quan trọng: **Trong Log Analytics workspace**, tên bảng App Insights có tiền tố **`App`**
+> và cột viết **PascalCase** (`Name`, `DurationMs`, `TimeGenerated`...).
+> Các file `monitoring/queries/*.kql` trong repo **đã viết theo schema workspace-based**
+> (`AppRequests`, `AppExceptions`, `AppDependencies`) nên chạy được trực tiếp trong
+> **Logs của Log Analytics workspace `law-tripto`**. Nếu mở Logs từ blade Application Insights,
+> portal tự dịch sang tên cổ (`requests`, `name`, `problemId`...) nên query vẫn chạy được.
 
 | Bảng (workspace) | Nguồn | Ý nghĩa |
 |-------------------|-------|---------|
 | `AppRequests` | App Insights (`monitorTrackRequest`) | Mỗi request vào web: duration, resultCode, success |
 | `AppEvents` | App Insights (`monitorTrackEvent`) | Sự kiện người dùng: login, booking_created |
 | `AppExceptions` | App Insights (`monitorTrackException`) | Lỗi PHP |
+| `AppDependencies` | App Insights (`monitorTrackDependency`) | Gọi DB/service ngoài (MySQL query, HTTP...) |
 | `AzureMetrics` | Diagnostic Settings (Storage/MySQL) | Metric hạ tầng |
 | `MySqlSlowLogs` | Diagnostic Settings (MySQL) | Truy vấn chậm > long_query_time |
 | `MySqlAuditLogs` | Diagnostic Settings (MySQL) | Hoạt động kết nối/audit |

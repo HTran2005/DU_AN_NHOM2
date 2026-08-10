@@ -1,44 +1,49 @@
 // ============================================================
 // KQL: Top requests chậm nhất (cần App Insights gắn vào PHP)
 // ============================================================
-// Chạy trong: Log Analytics -> Logs
+// Chạy trong: Log Analytics workspace (law-tripto) -> Logs
+// Schema: workspace-based App* tables (PascalCase columns)
+// Nếu chạy từ blade Application Insights, portal tự dịch sang tên cổ
+// (requests, exceptions, name, problemId...) nên cũng hoạt động.
 // ============================================================
 
 // --- 1. TOP 20 request chậm nhất ---
-requests
-| where timestamp > ago(24h)
-| project timestamp, name, duration, success, resultCode, url
-| order by duration desc
+AppRequests
+| where TimeGenerated > ago(24h)
+| project TimeGenerated, Name, DurationMs, Success, ResultCode, Url
+| order by DurationMs desc
 | take 20
 
 // --- 2. Requests thất bại (HTTP 5xx) ---
-requests
-| where timestamp > ago(24h)
-| where resultCode startswith "5"
-| summarize Count = count() by resultCode, name
+AppRequests
+| where TimeGenerated > ago(24h)
+| where ResultCode startswith "5"
+| summarize Count = count() by ResultCode, Name
 | order by Count desc
 
 // --- 3. Hiệu suất theo endpoint ---
-requests
-| where timestamp > ago(24h)
+AppRequests
+| where TimeGenerated > ago(24h)
 | summarize
-    AvgDuration = avg(duration),
-    MaxDuration = max(duration),
-    P95Duration = percentile(duration, 95),
-    P99Duration = percentile(duration, 99),
+    AvgDuration = avg(DurationMs),
+    MaxDuration = max(DurationMs),
+    P95Duration = percentile(DurationMs, 95),
+    P99Duration = percentile(DurationMs, 99),
     TotalRequests = count(),
-    FailedRequests = countif(success == false)
-  by name
+    FailedRequests = countif(Success == false)
+  by Name
 | order by AvgDuration desc
 
 // --- 4. Số lượng request theo giờ ---
-requests
-| where timestamp > ago(7d)
-| summarize RequestCount = count() by bin(timestamp, 1h)
+AppRequests
+| where TimeGenerated > ago(7d)
+| summarize RequestCount = count() by bin(TimeGenerated, 1h)
 | render timechart
 
 // --- 5. Lỗi exception từ PHP backend ---
-exceptions
-| where timestamp > ago(24h)
-| project timestamp, type, method, problemId, outerMessage
-| order by timestamp desc
+// Lưu ý: cột Type trong AppExceptions chứa tên bảng ("AppExceptions"),
+// loại exception thật nằm ở cột OuterType.
+AppExceptions
+| where TimeGenerated > ago(24h)
+| project TimeGenerated, OuterType, Method, ProblemId, OuterMessage
+| order by TimeGenerated desc

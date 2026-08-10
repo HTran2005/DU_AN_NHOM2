@@ -1,37 +1,42 @@
 // ============================================================
 // KQL: Database performance tracking (MySQL queries)
 // ============================================================
+// Chạy trong: Log Analytics workspace (law-tripto) -> Logs
+// Schema: workspace-based App* tables (PascalCase columns)
+// Nếu chạy từ blade Application Insights, portal tự dịch sang tên cổ
+// (dependencies, name, duration...) nên cũng hoạt động.
+// ============================================================
 
 // --- 1. Tổng quan dependencies (MySQL queries từ PHP) ---
-dependencies
-| where timestamp > ago(24h)
-| where type == "SQL"
+AppDependencies
+| where TimeGenerated > ago(24h)
+| where Type == "SQL"
 | summarize
-    AvgDuration = avg(duration),
-    MaxDuration = max(duration),
+    AvgDuration = avg(DurationMs),
+    MaxDuration = max(DurationMs),
     TotalCalls = count()
-  by target
+  by Target
 | order by AvgDuration desc
 
 // --- 2. Slow queries (> 1 giây) ---
-dependencies
-| where timestamp > ago(24h)
-| where type == "SQL"
-| where duration > 1000
-| project timestamp, target, duration, data
-| order by duration desc
+AppDependencies
+| where TimeGenerated > ago(24h)
+| where Type == "SQL"
+| where DurationMs > 1000
+| project TimeGenerated, Target, DurationMs, Data
+| order by DurationMs desc
 
 // --- 3. Lỗi kết nối database ---
-dependencies
-| where timestamp > ago(24h)
-| where type == "SQL"
-| where success == false
-| project timestamp, target, duration, resultCode
-| order by timestamp desc
+AppDependencies
+| where TimeGenerated > ago(24h)
+| where Type == "SQL"
+| where Success == false
+| project TimeGenerated, Target, DurationMs, ResultCode
+| order by TimeGenerated desc
 
 // --- 4. Số lượng kết nối theo giờ ---
-dependencies
-| where timestamp > ago(7d)
-| where type == "SQL"
-| summarize ConnectionCount = count() by bin(timestamp, 1h)
+AppDependencies
+| where TimeGenerated > ago(7d)
+| where Type == "SQL"
+| summarize ConnectionCount = count() by bin(TimeGenerated, 1h)
 | render timechart

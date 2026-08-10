@@ -1,34 +1,39 @@
 // ============================================================
 // KQL: Security audit queries
 // ============================================================
+// Chạy trong: Log Analytics workspace (law-tripto) -> Logs
+// Schema: workspace-based App* tables (PascalCase columns)
+// Nếu chạy từ blade Application Insights, portal tự dịch sang tên cổ
+// (requests, name, client_IP...) nên cũng hoạt động.
+// ============================================================
 
 // --- 1. Failed login attempts ---
-requests
-| where timestamp > ago(7d)
-| where name contains "login" or name contains "auth"
-| where success == false
-| summarize FailedAttempts = count() by bin(timestamp, 1h), client_IP
+AppRequests
+| where TimeGenerated > ago(7d)
+| where Name contains "login" or Name contains "auth"
+| where Success == false
+| summarize FailedAttempts = count() by bin(TimeGenerated, 1h), ClientIP
 | where FailedAttempts > 5
 | order by FailedAttempts desc
 
 // --- 2. SQL Injection attempts (pattern detection) ---
 // Dùng raw request URL từ App Insights
-requests
-| where timestamp > ago(7d)
-| where url contains "'" or url contains "1=1" or url contains " UNION " or url contains " SELECT "
-| project timestamp, url, client_IP
-| order by timestamp desc
+AppRequests
+| where TimeGenerated > ago(7d)
+| where Url contains "'" or Url contains "1=1" or Url contains " UNION " or Url contains " SELECT "
+| project TimeGenerated, Url, ClientIP
+| order by TimeGenerated desc
 
 // --- 3. Admin actions audit trail ---
-requests
-| where timestamp > ago(30d)
-| where name contains "admin" or url contains "admin.php"
-| project timestamp, name, url, success, resultCode, client_IP
-| order by timestamp desc
+AppRequests
+| where TimeGenerated > ago(30d)
+| where Name contains "admin" or Url contains "admin.php"
+| project TimeGenerated, Name, Url, Success, ResultCode, ClientIP
+| order by TimeGenerated desc
 
 // --- 4. Brute force detection ---
-requests
-| where timestamp > ago(1h)
-| summarize RequestCount = count() by client_IP
+AppRequests
+| where TimeGenerated > ago(1h)
+| summarize RequestCount = count() by ClientIP
 | where RequestCount > 100
 | order by RequestCount desc
