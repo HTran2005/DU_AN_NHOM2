@@ -12,7 +12,7 @@ define('DB_NAME', getenv('DB_NAME') ?: 'tripto_db');
 
 // Azure Blob Storage Configuration
 define('AZURE_STORAGE_ACCOUNT', getenv('AZURE_STORAGE_ACCOUNT') ?: getenv('AZURE_STORAGE_ACCOUNT_NAME') ?: '');
-define('AZURE_STORAGE_CONTAINER', getenv('AZURE_STORAGE_CONTAINER') ?: getenv('AZURE_STORAGE_CONTAINER_NAME') ?: 'tour-images');
+define('AZURE_STORAGE_CONTAINER', getenv('AZURE_STORAGE_CONTAINER') ?: getenv('AZURE_STORAGE_CONTAINER_NAME') ?: 'image-tour');
 define('AZURE_STORAGE_CONNECTION_STRING', getenv('AZURE_STORAGE_CONNECTION_STRING') ?: '');
 define('AZURE_STORAGE_ACCOUNT_KEY', getenv('AZURE_STORAGE_ACCOUNT_KEY') ?: '');
 
