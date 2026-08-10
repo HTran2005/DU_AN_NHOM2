@@ -618,7 +618,9 @@ function addTour() {
         ], JSON_UNESCAPED_UNICODE);
         
     } catch (Exception $e) {
-        http_response_code(500);
+        // nginx trên App Service Linux che lỗi 5xx thành 404 -> với lỗi cấu hình blob trả 422 để user thấy rõ thông báo
+        $blobConfigError = strpos($e->getMessage(), 'Azure Storage configuration missing') !== false;
+        http_response_code($blobConfigError ? 422 : 500);
         echo json_encode([
             'success' => false,
             'message' => 'Lỗi thêm tour: ' . $e->getMessage()
@@ -748,7 +750,9 @@ function updateTour() {
         ], JSON_UNESCAPED_UNICODE);
         
     } catch (Exception $e) {
-        http_response_code(500);
+        // Lỗi cấu hình blob trả 422 để không bị nginx che thành 404, giúp thấy rõ nguyên nhân
+        $blobConfigError = strpos($e->getMessage(), 'Azure Storage configuration missing') !== false;
+        http_response_code($blobConfigError ? 422 : 500);
         echo json_encode([
             'success' => false,
             'message' => 'Lỗi cập nhật tour: ' . $e->getMessage()
