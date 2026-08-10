@@ -200,17 +200,7 @@ steps:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: Website
 
-# =========================================================
-# 11. DEPLOY TO AZURE WEB APP (CD)
-# =========================================================
 
-- task: AzureWebApp@1
-  displayName: "Deploy to Azure Web App"
-  inputs:
-    azureSubscription: 'BAO_CAO_WEB'
-    appType: 'webAppLinux'
-    appName: 'bao-cao-nhom2-web'
-    package: '$(Build.ArtifactStagingDirectory)/Website/Website.zip'
 # =========================================================
 # 12. ACTIVE -> RESOLVED
 # =========================================================
