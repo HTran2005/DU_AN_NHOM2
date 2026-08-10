@@ -211,7 +211,7 @@ steps:
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
 
   inputs:
-    azureSubscription: 'BAO_CAO-Azure-Deploy'
+    azureSubscription: 'BAO_CAO_WEB'
     appType: 'webAppLinux'
     appName: 'bao-cao-nhom2-web'
     package: '$(Build.ArtifactStagingDirectory)/Website.zip'
