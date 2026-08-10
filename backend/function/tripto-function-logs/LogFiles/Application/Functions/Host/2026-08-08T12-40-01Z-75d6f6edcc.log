@@ -1,0 +1,97 @@
+2026-08-08T12:40:00.209 [Information] Host lock lease acquired by instance ID '75d6f6edcc0582ad07e4a1ec467f24ba'.
+2026-08-08T12:40:25.194 [Information] HttpOptions
+{
+  "DynamicThrottlesEnabled": true,
+  "EnableChunkedRequestBinding": false,
+  "MaxConcurrentRequests": 100,
+  "MaxOutstandingRequests": 200,
+  "RoutePrefix": "api"
+}
+2026-08-08T12:40:25.195 [Information] ConcurrencyOptions
+{
+  "DynamicConcurrencyEnabled": false,
+  "MaximumFunctionConcurrency": 500,
+  "CPUThreshold": 0.8,
+  "SnapshotPersistenceEnabled": true
+}
+2026-08-08T12:53:56.508 [Information] Executing 'Functions.SendBookingEmail' (Reason='This function was programmatically called via the host APIs.', Id=2c46df7d-1ae2-4832-8178-d1ea11511247)
+2026-08-08T12:53:56.646 [Information] ===== REQUEST RECEIVED =====
+2026-08-08T12:53:56.646 [Information] {
+  name: 'Cẩm Ly',
+  email: 'camlylv2021@gmail.com',
+  phone: '0564238974',
+  tour: 'Đà Lạt – Làng Cù Lần & Resort rừng 3 ngày 2 đêm',
+  departDate: '2026-04-30',
+  total: 12950000,
+  bookingCode: 'BOOK-32-1786193636'
+}
+2026-08-08T12:53:56.663 [Information] ===== BOOKING INFO =====
+2026-08-08T12:53:56.663 [Information] {
+  name: 'Cẩm Ly',
+  email: 'camlylv2021@gmail.com',
+  phone: '0564238974',
+  tour: 'Đà Lạt – Làng Cù Lần & Resort rừng 3 ngày 2 đêm',
+  departDate: '2026-04-30',
+  total: 12950000,
+  bookingCode: 'BOOK-32-1786193636'
+}
+2026-08-08T12:53:56.669 [Information] ===== ENV CHECK =====
+2026-08-08T12:53:56.670 [Information] EMAIL_USER exists: true
+2026-08-08T12:53:56.670 [Information] EMAIL_PASS exists: true
+2026-08-08T12:53:58.562 [Information] ✅ Gmail SMTP connection successful
+2026-08-08T12:54:01.673 [Information] ========== EMAIL RESULT ==========
+2026-08-08T12:54:01.673 [Information] Email người nhận: camlylv2021@gmail.com
+2026-08-08T12:54:01.674 [Information] Accepted: [ 'camlylv2021@gmail.com' ]
+2026-08-08T12:54:01.674 [Information] Rejected: []
+2026-08-08T12:54:01.674 [Information] Message ID: <29bf36a2-c214-cc1e-59f6-db2c8f4e6b4d@gmail.com>
+2026-08-08T12:54:01.674 [Information] SMTP Response: 250 2.0.0 OK  1786193641 98e67ed59e1d1-3925ff7ee35sm6145662a91.16 - gsmtp
+2026-08-08T12:54:01.674 [Information] ==================================
+2026-08-08T12:54:01.677 [Information] Executed 'Functions.SendBookingEmail' (Succeeded, Id=2c46df7d-1ae2-4832-8178-d1ea11511247, Duration=5183ms)
+2026-08-08T12:54:33.661 [Information] Executing 'Functions.SendBookingEmail' (Reason='This function was programmatically called via the host APIs.', Id=2d5cdebb-b8e3-448c-84d4-6e3598d98c79)
+2026-08-08T12:54:33.666 [Information] ===== REQUEST RECEIVED =====
+2026-08-08T12:54:33.666 [Information] {
+  name: 'Cẩm Ly',
+  email: 'camlylv2021@gmail.com',
+  phone: '0969327309',
+  tour: 'Đà Lạt – Làng Cù Lần & Resort rừng 3 ngày 2 đêm',
+  departDate: '2026-04-30',
+  total: 12950000,
+  bookingCode: 'BOOK-32-1786193636'
+}
+2026-08-08T12:54:33.668 [Information] ===== BOOKING INFO =====
+2026-08-08T12:54:33.668 [Information] {
+  name: 'Cẩm Ly',
+  email: 'camlylv2021@gmail.com',
+  phone: '0969327309',
+  tour: 'Đà Lạt – Làng Cù Lần & Resort rừng 3 ngày 2 đêm',
+  departDate: '2026-04-30',
+  total: 12950000,
+  bookingCode: 'BOOK-32-1786193636'
+}
+2026-08-08T12:54:33.668 [Information] ===== ENV CHECK =====
+2026-08-08T12:54:33.668 [Information] EMAIL_USER exists: true
+2026-08-08T12:54:33.668 [Information] EMAIL_PASS exists: true
+2026-08-08T12:54:35.140 [Information] ✅ Gmail SMTP connection successful
+2026-08-08T12:54:37.714 [Information] ========== EMAIL RESULT ==========
+2026-08-08T12:54:37.714 [Information] Email người nhận: camlylv2021@gmail.com
+2026-08-08T12:54:37.714 [Information] Accepted: [ 'camlylv2021@gmail.com' ]
+2026-08-08T12:54:37.714 [Information] Rejected: []
+2026-08-08T12:54:37.714 [Information] Message ID: <bc754dcb-d11b-f220-e0d1-3ac0954d81ad@gmail.com>
+2026-08-08T12:54:37.714 [Information] SMTP Response: 250 2.0.0 OK  1786193677 d9443c01a7336-2d15ecf309asm18344625ad.60 - gsmtp
+2026-08-08T12:54:37.714 [Information] ==================================
+2026-08-08T12:54:37.715 [Information] Executed 'Functions.SendBookingEmail' (Succeeded, Id=2d5cdebb-b8e3-448c-84d4-6e3598d98c79, Duration=4056ms)
+2026-08-08T13:01:36.647 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "75d6f6edcc0582ad07e4a1ec467f24baadac7b8a0fd2756f5ee2dc0e88bf6dd3",
+  "computerName": "10-30-13-247",
+  "processUptime": 1435805,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}

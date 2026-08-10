@@ -6,6 +6,7 @@
 
 // Kết nối database
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/blob/BlobStorage.php';
 
 // Set header cho JSON response
 header('Content-Type: application/json; charset=utf-8');
@@ -232,17 +233,19 @@ function getTours() {
         // Tính offset
         $offset = ($page - 1) * $limit;
         
-        // Xây dựng query cơ bản
-        $query = "SELECT id, ten, mo_ta, gia, id_dia_diem, so_ngay, url_anh_chinh, 
-                         danh_gia, so_danh_gia, trang_thai, ngay_khoi_hanh 
-                  FROM tour";
+        // Xây dựng query cơ bản - JOIN dia_diem để tránh N+1 query khi lấy tên địa điểm
+        $query = "SELECT tour.id, tour.ten, tour.mo_ta, tour.gia, tour.id_dia_diem, tour.so_ngay, tour.url_anh_chinh, 
+                         tour.danh_gia, tour.so_danh_gia, tour.trang_thai, tour.ngay_khoi_hanh,
+                         dd.ten AS dia_diem_name 
+                  FROM tour
+                  LEFT JOIN dia_diem dd ON tour.id_dia_diem = dd.id";
         
         // Filter theo status
         $queryWhere = " WHERE 1=1";
         if ($filter === 'active') {
-            $queryWhere .= " AND trang_thai = 'Hoạt động'";
+            $queryWhere .= " AND tour.trang_thai = 'Hoạt động'";
         } elseif ($filter === 'inactive') {
-            $queryWhere .= " AND trang_thai = 'Không hoạt động'";
+            $queryWhere .= " AND tour.trang_thai = 'Không hoạt động'";
         }
         
         // Sắp xếp
@@ -250,27 +253,27 @@ function getTours() {
         switch($sort) {
             case 'price-asc':
             case 'price_low':
-                $queryOrder .= " gia ASC";
+                $queryOrder .= " tour.gia ASC";
                 break;
             case 'price-desc':
             case 'price_high':
-                $queryOrder .= " gia DESC";
+                $queryOrder .= " tour.gia DESC";
                 break;
             case 'name-asc':
-                $queryOrder .= " ten ASC";
+                $queryOrder .= " tour.ten ASC";
                 break;
             case 'name-desc':
-                $queryOrder .= " ten DESC";
+                $queryOrder .= " tour.ten DESC";
                 break;
             case 'oldest':
-                $queryOrder .= " ngay_tao ASC";
+                $queryOrder .= " tour.ngay_tao ASC";
                 break;
             case 'rating':
-                $queryOrder .= " danh_gia DESC";
+                $queryOrder .= " tour.danh_gia DESC";
                 break;
             case 'newest':
             default:
-                $queryOrder .= " id DESC";
+                $queryOrder .= " tour.id DESC";
         }
         
         // Thêm limit
@@ -439,6 +442,81 @@ function deleteTour() {
 }
 
 /**
+ * Tạo tên blob an toàn dựa trên tên file gốc
+ */
+function sanitizeBlobName(string $originalFilename): string {
+    $extension = pathinfo($originalFilename, PATHINFO_EXTENSION);
+    $baseName = pathinfo($originalFilename, PATHINFO_FILENAME);
+    $safeBaseName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $baseName);
+    if (empty($safeBaseName)) {
+        $safeBaseName = 'tour-image';
+    }
+    $safeExtension = preg_replace('/[^A-Za-z0-9]/', '', $extension);
+    $blobName = uniqid($safeBaseName . '-', true);
+    if (!empty($safeExtension)) {
+        $blobName .= '.' . $safeExtension;
+    }
+    return $blobName;
+}
+
+/**
+ * Parse base64 image data, including data URI prefix if present.
+ */
+function parseImagePayload(string $imageData, string $originalFilename): array {
+    $contentType = 'application/octet-stream';
+    $base64Data = $imageData;
+
+    if (preg_match('/^data:(.*?);base64,(.*)$/', $imageData, $matches)) {
+        $contentType = trim($matches[1]) ?: $contentType;
+        $base64Data = $matches[2];
+    }
+
+    $decoded = base64_decode($base64Data, true);
+    if ($decoded === false) {
+        throw new Exception('Dữ liệu ảnh base64 không hợp lệ');
+    }
+
+    if (strpos($contentType, 'image/') !== 0) {
+        $contentType = mime_content_type($originalFilename) ?: $contentType;
+    }
+
+    return [
+        'content' => $decoded,
+        'contentType' => $contentType
+    ];
+}
+
+/**
+ * Kiểm tra xem URL có phải là đường dẫn tuyệt đối hay không
+ */
+function isAbsoluteUrl(string $url): bool {
+    return filter_var($url, FILTER_VALIDATE_URL) !== false;
+}
+
+/**
+ * Nếu URL là blob Azure của container hiện tại, trả về tên blob tương ứng.
+ */
+function getAzureBlobNameFromUrl(string $url): ?string {
+    $parts = parse_url($url);
+    if (!$parts || !isset($parts['host'], $parts['path'])) {
+        return null;
+    }
+
+    $accountHost = AZURE_STORAGE_ACCOUNT . '.blob.core.windows.net';
+    if (stripos($parts['host'], $accountHost) === false) {
+        return null;
+    }
+
+    $path = ltrim($parts['path'], '/');
+    $prefix = AZURE_STORAGE_CONTAINER . '/';
+    if (stripos($path, $prefix) !== 0) {
+        return null;
+    }
+
+    return substr($path, strlen($prefix));
+}
+
+/**
  * Thêm tour mới vào database
  */
 function addTour() {
@@ -462,50 +540,43 @@ function addTour() {
             throw new Exception('Vui lòng điền đầy đủ thông tin bắt buộc');
         }
         
-        // Xử lý ảnh
+        $blobStorage = new BlobStorage();
         $url_anh_chinh = '';
-        
-        // Nếu nhận base64 từ client
-        if (isset($_POST['anh_base64']) && !empty($_POST['anh_base64']) && isset($_POST['anh_filename']) && !empty($_POST['anh_filename'])) {
-            // Decode base64 image data
-            $imageData = $_POST['anh_base64'];
-            
-            // Lấy tên file gốc
-            $originalFilename = $_POST['anh_filename'];
-            $filename = basename($originalFilename); // Lấy tên file cuối cùng, tránh path traversal
-            
-            $imageData = base64_decode($imageData);
-            
-            // Tạo folder nếu chưa tồn tại - Lưu vào img/
-            $uploadDir = '../img/';
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0755, true);
+
+        if (isset($_FILES['anh_file']) && $_FILES['anh_file']['error'] === UPLOAD_ERR_OK) {
+            $file = $_FILES['anh_file'];
+            if ($file['size'] > 5 * 1024 * 1024) {
+                throw new Exception('Kích thước ảnh không được vượt quá 5MB');
             }
-            
-            $filepath = $uploadDir . $filename;
-            
-            // Lưu file
-            if (file_put_contents($filepath, $imageData)) {
-                $url_anh_chinh = $filename;
-            } else {
-                throw new Exception('Lỗi lưu ảnh tour');
+
+            $originalFilename = basename($file['name']);
+            $blobName = sanitizeBlobName($originalFilename);
+            $content = file_get_contents($file['tmp_name']);
+            if ($content === false) {
+                throw new Exception('Không thể đọc file ảnh tạm');
             }
-        } else if (isset($_FILES['anh_file']) && $_FILES['anh_file']['error'] === 0) {
-            // Xử lý upload file từ form - Lưu vào img/
-            $uploadDir = '../img/';
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0755, true);
+
+            $result = $blobStorage->uploadFromData($content, $blobName, $file['type'] ?: 'application/octet-stream');
+            if (!$result['success']) {
+                throw new Exception($result['message']);
             }
-            
-            // Lấy tên file gốc
-            $filename = basename($_FILES['anh_file']['name']);
-            $filepath = $uploadDir . $filename;
-            
-            if (move_uploaded_file($_FILES['anh_file']['tmp_name'], $filepath)) {
-                $url_anh_chinh = $filename;
-            } else {
-                throw new Exception('Lỗi upload ảnh tour');
+
+            $url_anh_chinh = $result['url'];
+        } elseif (isset($_POST['anh_base64']) && !empty($_POST['anh_base64']) && isset($_POST['anh_filename']) && !empty($_POST['anh_filename'])) {
+            $originalFilename = basename($_POST['anh_filename']);
+            $payload = parseImagePayload($_POST['anh_base64'], $originalFilename);
+            $blobName = sanitizeBlobName($originalFilename);
+
+            if (strlen($payload['content']) > 5 * 1024 * 1024) {
+                throw new Exception('Kích thước ảnh không được vượt quá 5MB');
             }
+
+            $result = $blobStorage->uploadFromData($payload['content'], $blobName, $payload['contentType']);
+            if (!$result['success']) {
+                throw new Exception($result['message']);
+            }
+
+            $url_anh_chinh = $result['url'];
         } else {
             throw new Exception('Vui lòng chọn ảnh tour');
         }
@@ -593,49 +664,51 @@ function updateTour() {
         $url_anh_chinh = $current['url_anh_chinh']; // Giữ ảnh cũ nếu không upload ảnh mới
         $stmtCurrent->close();
         
-        // Xử lý ảnh (nếu có ảnh mới)
-        if ((isset($_POST['anh_base64']) && !empty($_POST['anh_base64'])) || (isset($_FILES['anh_file']) && $_FILES['anh_file']['error'] === 0)) {
-            
-            if (isset($_POST['anh_base64']) && !empty($_POST['anh_base64']) && isset($_POST['anh_filename']) && !empty($_POST['anh_filename'])) {
-                // Decode base64 image data
-                $imageData = $_POST['anh_base64'];
-                
-                // Lấy tên file gốc
-                $originalFilename = $_POST['anh_filename'];
-                $filename = basename($originalFilename);
-                
-                $imageData = base64_decode($imageData);
-                
-                // Tạo folder nếu chưa tồn tại
-                $uploadDir = '../img/';
-                if (!is_dir($uploadDir)) {
-                    mkdir($uploadDir, 0755, true);
-                }
-                
-                $filepath = $uploadDir . $filename;
-                
-                // Lưu file
-                if (file_put_contents($filepath, $imageData)) {
-                    $url_anh_chinh = $filename;
-                } else {
-                    throw new Exception('Lỗi lưu ảnh tour');
-                }
-            } else if (isset($_FILES['anh_file']) && $_FILES['anh_file']['error'] === 0) {
-                // Xử lý upload file từ form
-                $uploadDir = '../img/';
-                if (!is_dir($uploadDir)) {
-                    mkdir($uploadDir, 0755, true);
-                }
-                
-                // Lấy tên file gốc
-                $filename = basename($_FILES['anh_file']['name']);
-                $filepath = $uploadDir . $filename;
-                
-                if (move_uploaded_file($_FILES['anh_file']['tmp_name'], $filepath)) {
-                    $url_anh_chinh = $filename;
-                } else {
-                    throw new Exception('Lỗi upload ảnh tour');
-                }
+        $blobStorage = new BlobStorage();
+        $previousBlobName = isAbsoluteUrl($url_anh_chinh) ? getAzureBlobNameFromUrl($url_anh_chinh) : null;
+        $newUrlAnhChinh = $url_anh_chinh;
+
+        if (isset($_FILES['anh_file']) && $_FILES['anh_file']['error'] === UPLOAD_ERR_OK) {
+            $file = $_FILES['anh_file'];
+            if ($file['size'] > 5 * 1024 * 1024) {
+                throw new Exception('Kích thước ảnh không được vượt quá 5MB');
+            }
+
+            $originalFilename = basename($file['name']);
+            $blobName = sanitizeBlobName($originalFilename);
+            $content = file_get_contents($file['tmp_name']);
+            if ($content === false) {
+                throw new Exception('Không thể đọc file ảnh tạm');
+            }
+
+            $result = $blobStorage->uploadFromData($content, $blobName, $file['type'] ?: 'application/octet-stream');
+            if (!$result['success']) {
+                throw new Exception($result['message']);
+            }
+
+            $newUrlAnhChinh = $result['url'];
+        } elseif (isset($_POST['anh_base64']) && !empty($_POST['anh_base64']) && isset($_POST['anh_filename']) && !empty($_POST['anh_filename'])) {
+            $originalFilename = basename($_POST['anh_filename']);
+            $payload = parseImagePayload($_POST['anh_base64'], $originalFilename);
+            $blobName = sanitizeBlobName($originalFilename);
+
+            if (strlen($payload['content']) > 5 * 1024 * 1024) {
+                throw new Exception('Kích thước ảnh không được vượt quá 5MB');
+            }
+
+            $result = $blobStorage->uploadFromData($payload['content'], $blobName, $payload['contentType']);
+            if (!$result['success']) {
+                throw new Exception($result['message']);
+            }
+
+            $newUrlAnhChinh = $result['url'];
+        }
+
+        if ($newUrlAnhChinh !== $url_anh_chinh) {
+            $url_anh_chinh = $newUrlAnhChinh;
+
+            if (!empty($previousBlobName)) {
+                $blobStorage->delete($previousBlobName);
             }
         }
         
@@ -699,7 +772,7 @@ function searchToursAPI() {
         // Tìm kiếm theo tên, mô tả hoặc địa điểm
         $searchKeyword = '%' . $keyword . '%';
         
-        $query = "SELECT DISTINCT t.* FROM tour t
+        $query = "SELECT DISTINCT t.*, dd.ten AS dia_diem_name FROM tour t
                   LEFT JOIN dia_diem dd ON t.id_dia_diem = dd.id
                   WHERE t.ten LIKE ? OR t.mo_ta LIKE ? OR dd.ten LIKE ?
                   ORDER BY t.id DESC";
@@ -739,13 +812,18 @@ function searchToursAPI() {
  * Định dạng dữ liệu tour để trả về API
  */
 function formatTourDataForAPI($row) {
-    $imagePath = '/img/' . $row['url_anh_chinh'];
+    $imagePath = $row['url_anh_chinh'];
+    if (empty($imagePath)) {
+        $imagePath = '/img/default.jpg';
+    } elseif (!isAbsoluteUrl($imagePath)) {
+        $imagePath = '/img/' . $imagePath;
+    }
     
     return [
         'id' => intval($row['id']),
         'name' => $row['ten'],
         'description' => $row['mo_ta'],
-        'location' => getLocationName($row['id_dia_diem']),
+        'location' => !empty($row['dia_diem_name']) ? $row['dia_diem_name'] : getLocationName($row['id_dia_diem']),
         'price' => floatval($row['gia']),
         'price_formatted' => number_format($row['gia'], 0, ',', '.') . ' VND',
         'days' => $row['so_ngay'],
@@ -1262,34 +1340,24 @@ function getBookingStats() {
     global $conn;
     
     try {
-        // Tổng số đơn đặt
-        $query = "SELECT COUNT(*) as total FROM dat_tour";
+        // Ghép tất cả thống kê vào 1 query
+        $query = "SELECT COUNT(*) AS total_bookings,
+                         COALESCE(SUM(trang_thai = 'Đã xác nhận'), 0) AS confirmed_bookings,
+                         COALESCE(SUM(trang_thai = 'Chờ xác nhận' OR trang_thai = 'Chờ Xác Nhận Hủy'), 0) AS pending_bookings,
+                         COALESCE(SUM(tong_tien), 0) AS total_revenue
+                  FROM dat_tour";
         $result = $conn->query($query);
+        if (!$result) {
+            throw new Exception("Query failed: " . $conn->error);
+        }
         $row = $result->fetch_assoc();
-        $totalBookings = isset($row['total']) ? intval($row['total']) : 0;
         
-        // Đã xác nhận
-        $query = "SELECT COUNT(*) as count FROM dat_tour WHERE trang_thai = 'Đã xác nhận'";
-        $result = $conn->query($query);
-        $row = $result->fetch_assoc();
-        $confirmedBookings = isset($row['count']) ? intval($row['count']) : 0;
-        
-        // Chờ xác nhận
-        $query = "SELECT COUNT(*) as count FROM dat_tour WHERE trang_thai = 'Chờ xác nhận' OR trang_thai = 'Chờ Xác Nhận Hủy'";
-        $result = $conn->query($query);
-        $row = $result->fetch_assoc();
-        $pendingBookings = isset($row['count']) ? intval($row['count']) : 0;
-        
-        // Tổng doanh thu
-        $query = "SELECT SUM(tong_tien) as total FROM dat_tour";
-        $result = $conn->query($query);
-        $row = $result->fetch_assoc();
-        $totalRevenue = isset($row['total']) ? floatval($row['total']) : 0;
+        $totalRevenue = isset($row['total_revenue']) ? floatval($row['total_revenue']) : 0;
         
         return [
-            'total_bookings' => $totalBookings,
-            'confirmed_bookings' => $confirmedBookings,
-            'pending_bookings' => $pendingBookings,
+            'total_bookings' => isset($row['total_bookings']) ? intval($row['total_bookings']) : 0,
+            'confirmed_bookings' => isset($row['confirmed_bookings']) ? intval($row['confirmed_bookings']) : 0,
+            'pending_bookings' => isset($row['pending_bookings']) ? intval($row['pending_bookings']) : 0,
             'total_revenue' => $totalRevenue,
             'total_revenue_formatted' => number_format($totalRevenue, 0, ',', '.') . ' VND'
         ];
@@ -1426,7 +1494,7 @@ function formatTourData($row) {
         'id' => intval($row['id']),
         'name' => $row['ten'],
         'description' => $row['mo_ta'],
-        'location' => getLocationName($row['id_dia_diem']),
+        'location' => !empty($row['dia_diem_name']) ? $row['dia_diem_name'] : getLocationName($row['id_dia_diem']),
         'price' => floatval($row['gia']),
         'price_formatted' => number_format($row['gia'], 0, ',', '.') . ' VND',
         'days' => $row['so_ngay'],
@@ -2099,41 +2167,33 @@ function getDashboardStats() {
     global $conn;
     
     try {
-        // Tổng số tour
-        $query = "SELECT COUNT(*) as total FROM tour";
+        // Ghép tất cả truy vấn tour vào 1 query (giảm round-trip đến DB)
+        $query = "SELECT COUNT(*) AS total_tours,
+                         COALESCE(SUM(trang_thai = 'Hoạt động'), 0) AS active_tours
+                  FROM tour";
         $result = $conn->query($query);
+        if (!$result) {
+            throw new Exception("Query failed: " . $conn->error);
+        }
         $row = $result->fetch_assoc();
-        $totalTours = isset($row['total']) ? intval($row['total']) : 0;
-        
-        // Tour hoạt động
-        $query = "SELECT COUNT(*) as total FROM tour WHERE trang_thai = 'Hoạt động'";
+        $totalTours = isset($row['total_tours']) ? intval($row['total_tours']) : 0;
+        $activeTours = isset($row['active_tours']) ? intval($row['active_tours']) : 0;
+
+        // Ghép tất cả truy vấn booking + doanh thu vào 1 query
+        $query = "SELECT COUNT(*) AS total_bookings,
+                         COALESCE(SUM(trang_thai = 'Đã xác nhận'), 0) AS confirmed_bookings,
+                         COALESCE(SUM(trang_thai = 'Chờ xác nhận'), 0) AS pending_bookings,
+                         COALESCE(SUM(tong_tien), 0) AS total_revenue
+                  FROM dat_tour";
         $result = $conn->query($query);
+        if (!$result) {
+            throw new Exception("Query failed: " . $conn->error);
+        }
         $row = $result->fetch_assoc();
-        $activeTours = isset($row['total']) ? intval($row['total']) : 0;
-        
-        // Số đơn đặt tour - Đã xác nhận
-        $query = "SELECT COUNT(*) as total FROM dat_tour WHERE trang_thai = 'Đã xác nhận'";
-        $result = $conn->query($query);
-        $row = $result->fetch_assoc();
-        $confirmedBookings = isset($row['total']) ? intval($row['total']) : 0;
-        
-        // Số đơn đặt tour - Chờ xác nhận
-        $query = "SELECT COUNT(*) as total FROM dat_tour WHERE trang_thai = 'Chờ xác nhận'";
-        $result = $conn->query($query);
-        $row = $result->fetch_assoc();
-        $pendingBookings = isset($row['total']) ? intval($row['total']) : 0;
-        
-        // Tổng số đơn đặt tour
-        $query = "SELECT COUNT(*) as total FROM dat_tour";
-        $result = $conn->query($query);
-        $row = $result->fetch_assoc();
-        $totalBookings = isset($row['total']) ? intval($row['total']) : 0;
-        
-        // Doanh thu từ tất cả tour
-        $query = "SELECT SUM(tong_tien) as total FROM dat_tour";
-        $result = $conn->query($query);
-        $row = $result->fetch_assoc();
-        $totalRevenue = isset($row['total']) ? floatval($row['total']) : 0;
+        $confirmedBookings = isset($row['confirmed_bookings']) ? intval($row['confirmed_bookings']) : 0;
+        $pendingBookings = isset($row['pending_bookings']) ? intval($row['pending_bookings']) : 0;
+        $totalBookings = isset($row['total_bookings']) ? intval($row['total_bookings']) : 0;
+        $totalRevenue = isset($row['total_revenue']) ? floatval($row['total_revenue']) : 0;
         
         // Tính doanh thu theo định dạng (K, M, B)
         $revenueFormatted = formatRevenue($totalRevenue);

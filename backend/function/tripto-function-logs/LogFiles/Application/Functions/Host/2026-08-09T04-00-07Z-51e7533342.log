@@ -1,0 +1,205 @@
+2026-08-09T04:00:06.344 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "51e7533342ce56cab22f29a777e50440552b7bbe3e01d7f2731d1bb2094be70b",
+  "computerName": "10-30-1-168",
+  "processUptime": 1750145,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T04:00:09.321 [Information] Host lock lease acquired by instance ID '51e7533342ce56cab22f29a777e50440'.
+2026-08-09T04:00:34.302 [Information] HttpOptions
+{
+  "DynamicThrottlesEnabled": true,
+  "EnableChunkedRequestBinding": false,
+  "MaxConcurrentRequests": 100,
+  "MaxOutstandingRequests": 200,
+  "RoutePrefix": "api"
+}
+2026-08-09T04:00:34.303 [Information] ConcurrencyOptions
+{
+  "DynamicConcurrencyEnabled": false,
+  "MaximumFunctionConcurrency": 500,
+  "CPUThreshold": 0.8,
+  "SnapshotPersistenceEnabled": true
+}
+2026-08-09T04:00:44.077 [Information] Stopping JobHost
+2026-08-09T04:00:44.078 [Information] Stopping the listener 'Microsoft.Azure.WebJobs.Extensions.EventGrid.EventGridListener' for function 'BlobEventHandler'
+2026-08-09T04:00:44.079 [Information] Stopped the listener 'Microsoft.Azure.WebJobs.Extensions.EventGrid.EventGridListener' for function 'BlobEventHandler'
+2026-08-09T04:00:44.079 [Information] Job host stopped
+2026-08-09T04:01:05.376 [Information] Host lock lease acquired by instance ID '51e7533342ce56cab22f29a777e50440'.
+2026-08-09T04:01:30.467 [Information] HttpOptions
+{
+  "DynamicThrottlesEnabled": true,
+  "EnableChunkedRequestBinding": false,
+  "MaxConcurrentRequests": 100,
+  "MaxOutstandingRequests": 200,
+  "RoutePrefix": "api"
+}
+2026-08-09T04:01:30.471 [Information] ConcurrencyOptions
+{
+  "DynamicConcurrencyEnabled": false,
+  "MaximumFunctionConcurrency": 500,
+  "CPUThreshold": 0.8,
+  "SnapshotPersistenceEnabled": true
+}
+2026-08-09T04:02:33.537 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "51e7533342ce56cab22f29a777e50440552b7bbe3e01d7f2731d1bb2094be70b",
+  "computerName": "10-30-1-168",
+  "processUptime": 99019,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T04:02:33.601 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "51e7533342ce56cab22f29a777e50440552b7bbe3e01d7f2731d1bb2094be70b",
+  "computerName": "10-30-1-168",
+  "processUptime": 99088,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T04:02:33.939 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "51e7533342ce56cab22f29a777e50440552b7bbe3e01d7f2731d1bb2094be70b",
+  "computerName": "10-30-1-168",
+  "processUptime": 99425,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T04:02:43.552 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "51e7533342ce56cab22f29a777e50440552b7bbe3e01d7f2731d1bb2094be70b",
+  "computerName": "10-30-1-168",
+  "processUptime": 109038,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T04:02:43.875 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "51e7533342ce56cab22f29a777e50440552b7bbe3e01d7f2731d1bb2094be70b",
+  "computerName": "10-30-1-168",
+  "processUptime": 109362,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T04:02:45.938 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "51e7533342ce56cab22f29a777e50440552b7bbe3e01d7f2731d1bb2094be70b",
+  "computerName": "10-30-1-168",
+  "processUptime": 111424,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T04:03:11.524 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "51e7533342ce56cab22f29a777e50440552b7bbe3e01d7f2731d1bb2094be70b",
+  "computerName": "10-30-1-168",
+  "processUptime": 137011,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T04:03:11.672 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "51e7533342ce56cab22f29a777e50440552b7bbe3e01d7f2731d1bb2094be70b",
+  "computerName": "10-30-1-168",
+  "processUptime": 137158,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T04:05:49.956 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "51e7533342ce56cab22f29a777e50440552b7bbe3e01d7f2731d1bb2094be70b",
+  "computerName": "10-30-1-168",
+  "processUptime": 295442,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T04:05:50.758 [Information] Host Status: {
+  "id": "tripto-function",
+  "state": "Running",
+  "version": "4.1052.300.26370",
+  "versionDetails": "4.1052.300+00515b21db39db50346f38f951eceb85fdbd05d4",
+  "platformVersion": "109.0.7.36",
+  "instanceId": "51e7533342ce56cab22f29a777e50440552b7bbe3e01d7f2731d1bb2094be70b",
+  "computerName": "10-30-1-168",
+  "processUptime": 296244,
+  "functionAppContentEditingState": "Unknown",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "4.32.0"
+  }
+}
+2026-08-09T04:06:14.574 [Information] Stopping JobHost
+2026-08-09T04:06:14.578 [Information] Stopping the listener 'Microsoft.Azure.WebJobs.Extensions.EventGrid.EventGridListener' for function 'BlobEventHandler'
+2026-08-09T04:06:14.578 [Information] Stopped the listener 'Microsoft.Azure.WebJobs.Extensions.EventGrid.EventGridListener' for function 'BlobEventHandler'
+2026-08-09T04:06:14.579 [Information] Job host stopped

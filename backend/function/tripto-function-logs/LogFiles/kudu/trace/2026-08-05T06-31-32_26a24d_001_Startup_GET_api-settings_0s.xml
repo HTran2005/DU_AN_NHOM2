@@ -1,0 +1,3 @@
+<step title="Startup Request" date="2026-08-05T06:31:32.076" instance="26a24d" url="/api/settings" method="GET" type="request" pid="1860,2,8" ScmType="None" >
+  <step title="Cleanup Xml Logs" date="2026-08-05T06:31:32.107" /><!-- duration: 31ms -->
+</step><!-- duration: 94ms -->

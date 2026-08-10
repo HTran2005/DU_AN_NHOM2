@@ -1,44 +1,185 @@
 trigger:
-- main
+  branches:
+    include:
+      - main
+      - feature/*
 
 pool:
   vmImage: ubuntu-latest
 
+variables:
+  organization: 'DuAnNhom2'
+  project: 'BAO_CAO'
+
 steps:
 
-- checkout: self
+# =========================================================
+# 1. CHECKOUT SOURCE
+# =========================================================
 
-# Hiển thị source
+- checkout: self
+  fetchDepth: 0
+
+
+# =========================================================
+# 2. LẤY WORK ITEM ID TỪ COMMIT
+# Ví dụ commit:
+# Implement Microsoft Entra ID AB#34
+# => WORKITEM_ID = 34
+# =========================================================
+
 - script: |
-    echo "===== PROJECT ====="
+
+    echo "======================================"
+    echo "COMMIT INFORMATION"
+    echo "======================================"
+
+    COMMIT_MSG=$(git log -1 --pretty=%B)
+
+    echo "Commit message:"
+    echo "$COMMIT_MSG"
+
+    WORKITEM=$(echo "$COMMIT_MSG" | grep -oE 'AB#[0-9]+' | head -1 | grep -oE '[0-9]+')
+
+    if [ -z "$WORKITEM" ]; then
+      echo "Khong tim thay AB#ID trong commit."
+      echo "Pipeline van tiep tuc."
+      exit 0
+    fi
+
+    echo "Found Work Item: $WORKITEM"
+
+    echo "##vso[task.setvariable variable=WORKITEM_ID]$WORKITEM"
+
+  displayName: "Get Work Item ID"
+
+
+# =========================================================
+# 3. NEW -> ACTIVE
+# =========================================================
+
+- script: |
+
+    if [ -z "$(WORKITEM_ID)" ]; then
+      echo "Khong co Work Item ID."
+      exit 0
+    fi
+
+    echo "======================================"
+    echo "CHANGE WORK ITEM TO ACTIVE"
+    echo "======================================"
+
+    echo "Work Item: $(WORKITEM_ID)"
+
+    curl --http1.1 \
+      --fail-with-body \
+      --user ":$PAT" \
+      -X PATCH \
+      -H "Content-Type: application/json-patch+json" \
+      "https://dev.azure.com/$(organization)/$(project)/_apis/wit/workitems/$(WORKITEM_ID)?api-version=7.1" \
+      --data '[
+        {
+          "op": "add",
+          "path": "/fields/System.State",
+          "value": "Active"
+        }
+      ]'
+
+    echo ""
+    echo "Work Item $(WORKITEM_ID) -> Active"
+
+  displayName: "Set Work Item Active"
+
+  env:
+    PAT: $(PAT)
+
+
+# =========================================================
+# 4. HIỂN THỊ SOURCE
+# =========================================================
+
+- script: |
+
+    echo "======================================"
+    echo "PROJECT STRUCTURE"
+    echo "======================================"
+
     pwd
     ls -R
+
   displayName: "Show Project Structure"
 
-# Kiểm tra PHP
-- script: |
-    php -v
-  displayName: "Check PHP Version.."
 
-# Validate PHP
+# =========================================================
+# 5. KIỂM TRA PHP
+# =========================================================
+
 - script: |
+
+    echo "======================================"
+    echo "PHP VERSION"
+    echo "======================================"
+
+    php -v
+
+  displayName: "Check PHP Version"
+
+
+# =========================================================
+# 6. VALIDATE PHP
+# =========================================================
+
+- script: |
+
+    echo "======================================"
+    echo "VALIDATE PHP"
+    echo "======================================"
+
     find . -name "*.php" -exec php -l {} \;
+
   displayName: "Validate PHP"
 
-# Cài đặt Composer dependencies (đảm bảo vendor/ có trong artifact)
+
+# =========================================================
+# 7. CÀI COMPOSER
+# =========================================================
+
 - script: |
+
+    echo "======================================"
+    echo "INSTALL COMPOSER"
+    echo "======================================"
+
     cd backend
+
     composer install --prefer-dist --no-progress --no-dev
+
   displayName: "Install Composer Dependencies"
 
-# Kiểm tra SQL
+
+# =========================================================
+# 8. KIỂM TRA SQL
+# =========================================================
+
 - script: |
+
+    echo "======================================"
+    echo "SQL FILES"
+    echo "======================================"
+
     find . -name "*.sql"
+
   displayName: "Find SQL Scripts"
 
-# Đóng gói source
+
+# =========================================================
+# 9. ĐÓNG GÓI SOURCE
+# =========================================================
+
 - task: ArchiveFiles@2
+
   displayName: "Create Artifact"
+
   inputs:
     rootFolderOrFile: '$(Build.SourcesDirectory)'
     includeRootFolder: false
@@ -46,10 +187,57 @@ steps:
     archiveFile: '$(Build.ArtifactStagingDirectory)/Website.zip'
     replaceExistingArchive: true
 
-# Publish Artifact
+
+# =========================================================
+# 10. PUBLISH ARTIFACT
+# =========================================================
+
 - task: PublishBuildArtifacts@1
+
   displayName: "Publish Artifact"
+
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: Website
 
+
+# =========================================================
+# 11. ACTIVE -> RESOLVED
+# =========================================================
+
+- script: |
+
+    if [ -z "$(WORKITEM_ID)" ]; then
+      echo "Khong co Work Item ID."
+      exit 0
+    fi
+
+    echo "======================================"
+    echo "CHANGE WORK ITEM TO RESOLVED"
+    echo "======================================"
+
+    echo "Work Item: $(WORKITEM_ID)"
+
+    curl --http1.1 \
+      --fail-with-body \
+      --user ":$PAT" \
+      -X PATCH \
+      -H "Content-Type: application/json-patch+json" \
+      "https://dev.azure.com/$(organization)/$(project)/_apis/wit/workitems/$(WORKITEM_ID)?api-version=7.1" \
+      --data '[
+        {
+          "op": "add",
+          "path": "/fields/System.State",
+          "value": "Resolved"
+        }
+      ]'
+
+    echo ""
+    echo "Work Item $(WORKITEM_ID) -> Resolved"
+
+  displayName: "Set Work Item Resolved"
+
+  condition: succeeded()
+
+  env:
+    PAT: $(PAT)

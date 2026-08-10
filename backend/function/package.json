@@ -1,5 +1,5 @@
 {
-  "name": "",
+  "name": "function",
   "version": "1.0.0",
   "description": "",
   "main": "src/functions/*.js",
@@ -9,6 +9,11 @@
   },
   "dependencies": {
     "@azure/functions": "^4.0.0",
-    "nodemailer": "^9.0.4"
+    "@azure/notification-hubs": "^2.1.0",
+    "@azure/storage-blob": "^12.33.0",
+    "ioredis": "^6.0.0",
+    "mysql2": "^3.5.2",
+    "nodemailer": "^9.0.4",
+    "redis": "^6.2.0"
   }
 }

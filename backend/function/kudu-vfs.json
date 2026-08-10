@@ -1,0 +1,47 @@
+﻿[
+    {
+        "name":  "host.json",
+        "size":  302,
+        "mtime":  "2026-08-09T09:44:50+00:00",
+        "crtime":  "2026-08-09T09:44:50+00:00",
+        "mime":  "application/json",
+        "href":  "https://tripto-function-gmcahcf6embwemaw.scm.southeastasia-01.azurewebsites.net/api/vfs/site/wwwroot/host.json",
+        "path":  "C:\\home\\site\\wwwroot\\host.json"
+    },
+    {
+        "name":  "package-lock.json",
+        "size":  20530,
+        "mtime":  "2026-08-09T17:46:10+00:00",
+        "crtime":  "2026-08-09T17:46:10+00:00",
+        "mime":  "application/json",
+        "href":  "https://tripto-function-gmcahcf6embwemaw.scm.southeastasia-01.azurewebsites.net/api/vfs/site/wwwroot/package-lock.json",
+        "path":  "C:\\home\\site\\wwwroot\\package-lock.json"
+    },
+    {
+        "name":  "package.json",
+        "size":  352,
+        "mtime":  "2026-08-09T17:46:10+00:00",
+        "crtime":  "2026-08-09T17:46:10+00:00",
+        "mime":  "application/json",
+        "href":  "https://tripto-function-gmcahcf6embwemaw.scm.southeastasia-01.azurewebsites.net/api/vfs/site/wwwroot/package.json",
+        "path":  "C:\\home\\site\\wwwroot\\package.json"
+    },
+    {
+        "name":  "node_modules",
+        "size":  0,
+        "mtime":  "2026-08-09T13:13:24+00:00",
+        "crtime":  "2026-08-09T13:13:24+00:00",
+        "mime":  "inode/directory",
+        "href":  "https://tripto-function-gmcahcf6embwemaw.scm.southeastasia-01.azurewebsites.net/api/vfs/site/wwwroot/node_modules/",
+        "path":  "C:\\home\\site\\wwwroot\\node_modules"
+    },
+    {
+        "name":  "src",
+        "size":  0,
+        "mtime":  "2026-08-09T13:17:26+00:00",
+        "crtime":  "2026-08-09T13:17:26+00:00",
+        "mime":  "inode/directory",
+        "href":  "https://tripto-function-gmcahcf6embwemaw.scm.southeastasia-01.azurewebsites.net/api/vfs/site/wwwroot/src/",
+        "path":  "C:\\home\\site\\wwwroot\\src"
+    }
+]

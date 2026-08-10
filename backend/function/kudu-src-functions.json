@@ -1,0 +1,65 @@
+﻿[
+    {
+        "name":  "BlobEventHandler.js",
+        "size":  3240,
+        "mtime":  "2026-08-09T13:17:26+00:00",
+        "crtime":  "2026-08-09T13:17:26+00:00",
+        "mime":  "application/javascript",
+        "href":  "https://tripto-function-gmcahcf6embwemaw.scm.southeastasia-01.azurewebsites.net/api/vfs/site/wwwroot/src/functions/BlobEventHandler.js",
+        "path":  "C:\\home\\site\\wwwroot\\src\\functions\\BlobEventHandler.js"
+    },
+    {
+        "name":  "negotiate.js",
+        "size":  742,
+        "mtime":  "2026-08-09T11:49:56+00:00",
+        "crtime":  "2026-08-09T11:49:56+00:00",
+        "mime":  "application/javascript",
+        "href":  "https://tripto-function-gmcahcf6embwemaw.scm.southeastasia-01.azurewebsites.net/api/vfs/site/wwwroot/src/functions/negotiate.js",
+        "path":  "C:\\home\\site\\wwwroot\\src\\functions\\negotiate.js"
+    },
+    {
+        "name":  "notificationHub.js",
+        "size":  520,
+        "mtime":  "2026-08-09T17:46:10+00:00",
+        "crtime":  "2026-08-09T17:46:10+00:00",
+        "mime":  "application/javascript",
+        "href":  "https://tripto-function-gmcahcf6embwemaw.scm.southeastasia-01.azurewebsites.net/api/vfs/site/wwwroot/src/functions/notificationHub.js",
+        "path":  "C:\\home\\site\\wwwroot\\src\\functions\\notificationHub.js"
+    },
+    {
+        "name":  "registerNotification.js",
+        "size":  2505,
+        "mtime":  "2026-08-09T17:46:10+00:00",
+        "crtime":  "2026-08-09T17:46:10+00:00",
+        "mime":  "application/javascript",
+        "href":  "https://tripto-function-gmcahcf6embwemaw.scm.southeastasia-01.azurewebsites.net/api/vfs/site/wwwroot/src/functions/registerNotification.js",
+        "path":  "C:\\home\\site\\wwwroot\\src\\functions\\registerNotification.js"
+    },
+    {
+        "name":  "SendBookingEmail.js",
+        "size":  11730,
+        "mtime":  "2026-08-09T09:44:50+00:00",
+        "crtime":  "2026-08-09T09:44:50+00:00",
+        "mime":  "application/javascript",
+        "href":  "https://tripto-function-gmcahcf6embwemaw.scm.southeastasia-01.azurewebsites.net/api/vfs/site/wwwroot/src/functions/SendBookingEmail.js",
+        "path":  "C:\\home\\site\\wwwroot\\src\\functions\\SendBookingEmail.js"
+    },
+    {
+        "name":  "sendNotification.js",
+        "size":  906,
+        "mtime":  "2026-08-09T13:17:44+00:00",
+        "crtime":  "2026-08-09T13:17:44+00:00",
+        "mime":  "application/javascript",
+        "href":  "https://tripto-function-gmcahcf6embwemaw.scm.southeastasia-01.azurewebsites.net/api/vfs/site/wwwroot/src/functions/sendNotification.js",
+        "path":  "C:\\home\\site\\wwwroot\\src\\functions\\sendNotification.js"
+    },
+    {
+        "name":  "sendNotificationHub.js",
+        "size":  2230,
+        "mtime":  "2026-08-09T17:46:10+00:00",
+        "crtime":  "2026-08-09T17:46:10+00:00",
+        "mime":  "application/javascript",
+        "href":  "https://tripto-function-gmcahcf6embwemaw.scm.southeastasia-01.azurewebsites.net/api/vfs/site/wwwroot/src/functions/sendNotificationHub.js",
+        "path":  "C:\\home\\site\\wwwroot\\src\\functions\\sendNotificationHub.js"
+    }
+]

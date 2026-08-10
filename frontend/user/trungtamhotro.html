@@ -746,6 +746,14 @@
         }
     </style>
     <script src="../js/auth.js"></script>
+    <script src="../js/push-notification.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof window.initPushNotifications === 'function') {
+                window.initPushNotifications();
+            }
+        });
+    </script>
 </head>
 <body>
     <!-- Header -->
