@@ -85,6 +85,12 @@ define(
         ?: ''
 );
 
+// Azure Event Grid - Topic đăng nhập (User.Login)
+// Endpoint ví dụ: https://tripto-login-topic.southeastasia-1.eventgrid.azure.net/api/events?api-version=2018-01-01
+// Key lấy từ Azure Portal (Event Grid Topic -> Access keys) hoặc az eventgrid topic key list
+define('EVENTGRID_LOGIN_TOPIC_ENDPOINT', getenv('EVENTGRID_LOGIN_TOPIC_ENDPOINT') ?: '');
+define('EVENTGRID_LOGIN_TOPIC_KEY', getenv('EVENTGRID_LOGIN_TOPIC_KEY') ?: '');
+
     
 // Load monitoring helper
 require_once __DIR__ . '/monitor.php';

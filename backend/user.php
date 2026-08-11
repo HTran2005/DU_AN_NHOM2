@@ -54,6 +54,21 @@ header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/config.php';
 // Redis client wrapper
 require_once __DIR__ . '/RedisClient.php';
+// Azure Event Grid publisher (sự kiện đăng nhập)
+require_once __DIR__ . '/eventgrid/EventGridPublisher.php';
+
+/**
+ * Helper publish sự kiện đăng nhập lên Event Grid.
+ * Luôn chạy trong try/catch để KHÔNG làm hỏng luồng đăng nhập khi Event Grid lỗi.
+ * KHÔNG ghi password/token.
+ */
+function publishLoginEvent($status, $email = '', $userId = null, $reason = null) {
+    try {
+        EventGridPublisher::publishLoginEvent($status, $email, $userId, $reason);
+    } catch (Throwable $e) {
+        error_log('[EventGrid] publishLoginEvent error: ' . $e->getMessage());
+    }
+}
 
 // =====================================================
 // AUTO-INITIALIZE DATABASE TABLES
@@ -659,6 +674,9 @@ function authLogin() {
             error_log('Login failed event error: ' . $e->getMessage());
         }
 
+        // Azure Event Grid: phát event đăng nhập thất bại (email không tồn tại)
+        publishLoginEvent('False', $email, null, 'Invalid credentials');
+
         $stmt->close();
 
         throw new Exception('Email hoặc mật khẩu không chính xác');
@@ -681,6 +699,9 @@ function authLogin() {
         } catch (Throwable $e) {
             error_log('Login failed event error: ' . $e->getMessage());
         }
+
+        // Azure Event Grid: phát event đăng nhập thất bại (sai mật khẩu)
+        publishLoginEvent('False', $email, $user['id'], 'Invalid credentials');
 
         // authLogin() sẽ throw ra ngoài,
         // catch bên ngoài user.php sẽ trả HTTP 400
@@ -725,6 +746,9 @@ function authLogin() {
     } catch (Throwable $e) {
         error_log('Login success event error: ' . $e->getMessage());
     }
+
+    // Azure Event Grid: phát event đăng nhập thành công
+    publishLoginEvent('Success', $user['email'], $user['id']);
 
     // =====================================================
     // RESPONSE THÀNH CÔNG
