@@ -1491,8 +1491,13 @@ function formatBookingData($row) {
  * Format dữ liệu tour để trả về client
  */
 function formatTourData($row) {
-    // Fix đường dẫn ảnh: thêm /img/ vào đầu
-    $imagePath = '/img/' . $row['url_anh_chinh'];
+    // Fix đường dẫn ảnh: chỉ thêm /img/ cho ảnh local (không phải URL tuyệt đối)
+    $imagePath = $row['url_anh_chinh'];
+    if (empty($imagePath)) {
+        $imagePath = '/img/default.jpg';
+    } elseif (!isAbsoluteUrl($imagePath)) {
+        $imagePath = '/img/' . $imagePath;
+    }
     
     return [
         'id' => intval($row['id']),

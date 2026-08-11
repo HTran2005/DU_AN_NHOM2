@@ -90,7 +90,18 @@ app.eventGrid('BlobEventHandler', {
 
                 const subject = singleEvent.subject || '';
 
-                context.log('Subject:', subject);
+                const containerMatch =
+                    subject.match(/containers\/([^/]+)\//);
+
+                const container = containerMatch
+                    ? containerMatch[1]
+                    : '(unknown)';
+
+                const blobName =
+                    subject.split('/blobs/')[1] || '(unknown)';
+
+                context.log('Container:', container);
+                context.log('Blob Name:', blobName);
 
 
                 // ==================================================
@@ -108,23 +119,49 @@ app.eventGrid('BlobEventHandler', {
 
 
                 // ==================================================
-                // TĂNG REDIS
+                // TĂNG REDIS (idempotent theo event id)
                 // ==================================================
 
                 try {
 
                     const redis = await getRedisClient(context);
 
+                    const eventId =
+                        singleEvent.id ||
+                        `${singleEvent.topic}-${singleEvent.eventTime}`;
+
+                    const processedKey =
+                        `tripto:visits:processed:${eventId}`;
+
+                    const firstTime = await redis.set(
+                        processedKey,
+                        '1',
+                        { NX: true, EX: 3600 }
+                    );
+
+                    if (firstTime !== 'OK') {
+
+                        context.log(
+                            `⏭️ Duplicate event ignored (id=${eventId}).`
+                        );
+
+                        continue;
+                    }
+
                     const totalVisits = await redis.incr(
                         'tripto:visits:total'
                     );
 
                     context.log(
-                        `🌐 WEB VISIT DETECTED`
+                        '🌐 REDIS COUNTER UPDATED'
                     );
 
                     context.log(
-                        `🌐 TOTAL VISITS: ${totalVisits}`
+                        `Key: tripto:visits:total`
+                    );
+
+                    context.log(
+                        `Total: ${totalVisits}`
                     );
 
                 } catch (error) {

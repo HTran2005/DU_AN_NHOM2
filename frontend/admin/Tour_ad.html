@@ -2242,21 +2242,25 @@
                     method: 'POST',
                     body: formData
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Thêm tour thành công!');
-                        loadTours();
-                        loadTourStats(); // Reload statistics data
-                        const modal = bootstrap.Modal.getInstance(document.getElementById('addTourModal'));
-                        modal.hide();
-                    } else {
-                        alert('Lỗi: ' + data.message);
+                .then(async response => {
+                    const text = await response.text();
+                    let data = null;
+                    try { data = JSON.parse(text); } catch (e) { data = null; }
+                    if (!response.ok || !data || data.success !== true) {
+                        throw new Error(data && data.message ? data.message : ('Server trả về mã lỗi ' + response.status));
                     }
+                    return data;
+                })
+                .then(data => {
+                    alert('Thêm tour thành công!');
+                    loadTours();
+                    loadTourStats(); // Reload statistics data
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addTourModal'));
+                    modal.hide();
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Lỗi kết nối server: ' + error.message);
+                    alert('Lỗi: ' + error.message);
                 });
             });
         }
@@ -2294,21 +2298,25 @@
                     method: 'POST',
                     body: formData
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Cập nhật tour thành công!');
-                        loadTours();
-                        loadTourStats();
-                        const modal = bootstrap.Modal.getInstance(document.getElementById('editTourModal'));
-                        modal.hide();
-                    } else {
-                        alert('Lỗi: ' + data.message);
+                .then(async response => {
+                    const text = await response.text();
+                    let data = null;
+                    try { data = JSON.parse(text); } catch (e) { data = null; }
+                    if (!response.ok || !data || data.success !== true) {
+                        throw new Error(data && data.message ? data.message : ('Server trả về mã lỗi ' + response.status));
                     }
+                    return data;
+                })
+                .then(data => {
+                    alert('Cập nhật tour thành công!');
+                    loadTours();
+                    loadTourStats();
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('editTourModal'));
+                    modal.hide();
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Lỗi kết nối server: ' + error.message);
+                    alert('Lỗi: ' + error.message);
                 });
             });
         }

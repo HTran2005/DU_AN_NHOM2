@@ -49,14 +49,8 @@ register_shutdown_function(function () {
 // HEADERS & CONFIG
 // =====================================================
 header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit();
-}
-// Import config
+// CORS do config.php xử lý (echo origin + Access-Control-Allow-Credentials: true)
+// để preflight OPTIONS của request credentials:'include' không bị chặn.
 require_once __DIR__ . '/config.php';
 // Redis client wrapper
 require_once __DIR__ . '/RedisClient.php';
@@ -1849,7 +1843,7 @@ function handleGetTours() {
         }
         
         $url_anh = $row['url_anh_chinh'];
-        if (!empty($url_anh) && strpos($url_anh, '/') !== 0) {
+        if (!empty($url_anh) && strpos($url_anh, '/') !== 0 && strpos($url_anh, 'http') === false) {
             $url_anh = '/img/' . $url_anh;
         }
         
@@ -2220,7 +2214,7 @@ function handleSearchTours() {
         }
         
         $url_anh = $row['url_anh_chinh'];
-        if (!empty($url_anh) && strpos($url_anh, '/') !== 0) {
+        if (!empty($url_anh) && strpos($url_anh, '/') !== 0 && strpos($url_anh, 'http') === false) {
             $url_anh = '/img/' . $url_anh;
         }
         
@@ -2420,8 +2414,8 @@ function handleFilterTours() {
         // Xử lý ảnh giống handleGetTours
         if (empty($url_anh)) {
             $url_anh = '/img/default.jpg';
-        } else if (strpos($url_anh, '/') !== 0) {
-            // Nếu không bắt đầu với '/', thêm '/img/' vào đầu
+        } else if (strpos($url_anh, '/') !== 0 && strpos($url_anh, 'http') === false) {
+            // Nếu không bắt đầu với '/' và không phải URL tuyệt đối, thêm '/img/' vào đầu
             $url_anh = '/img/' . $url_anh;
         }
         
