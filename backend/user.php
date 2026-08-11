@@ -331,6 +331,7 @@ try {
     }
     
 } catch (Throwable $e) {
+    $GLOBALS['_monitor_request_failed'] = true;
     http_response_code(400);
     echo json_encode([
         'success' => false,
