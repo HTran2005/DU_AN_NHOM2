@@ -1691,6 +1691,19 @@
     } catch (error) {
         console.error('❌ Track visit failed:', error);
     }
+
+    try {
+        const visitsResponse = await fetch(
+            'https://tripto-function-gmcahcf6embwemaw.southeastasia-01.azurewebsites.net/api/visits'
+        );
+
+        const visitsData = await visitsResponse.json();
+
+        console.log('📊 Tổng số lượt truy cập (Redis tripto:visits:total):', visitsData.totalVisits);
+
+    } catch (error) {
+        console.error('❌ Get total visits failed:', error);
+    }
 })();
 </script>
 
