@@ -3,6 +3,30 @@
  * Quản lý phiên đăng nhập và hiển thị thông tin người dùng
  */
 
+// ============================================================
+// REQUIRED: send session cookie with every API fetch.
+// Backend now identifies the user via $_SESSION (getCurrentUserId),
+// NOT via the client-supplied userId. All requests to user.php must
+// therefore send credentials:'include'. This wrapper covers every
+// page because all of them load this auth.js.
+// ============================================================
+(function () {
+    const __triptoOrigFetch = window.fetch;
+    window.fetch = function (input, init) {
+        init = init || {};
+        let url = '';
+        if (typeof input === 'string') {
+            url = input;
+        } else if (input && input.url) {
+            url = input.url;
+        }
+        if (url.indexOf('tripto-api-management.azure-api.net/tripto/user.php') !== -1 && !init.credentials) {
+            init.credentials = 'include';
+        }
+        return __triptoOrigFetch.call(this, input, init);
+    };
+})();
+
 class TriptoAuth {
     constructor() {
         this.AUTH_KEY = 'triptoLoggedIn';

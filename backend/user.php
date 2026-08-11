@@ -152,6 +152,46 @@ function initializeFavoriteTables() {
 // vì vậy chỉ chạy migration khi được yêu cầu.
 
 // =====================================================
+// SESSION HELPERS
+// =====================================================
+
+/**
+ * Khởi tạo PHP session an toàn cho môi trường cross-site.
+ * Frontend (azurewebsites.net) gọi API qua gateway (azure-api.net) bằng fetch
+ * có credentials:'include'. PHP mặc định set cookie SameSite=Lax nên trình duyệt
+ * không gửi cookie khi request cross-site -> phải dùng SameSite=None + Secure.
+ * LƯU Ý: file backend/redis.php KHÔNG được có ký tự thừa trước <?php, nếu không
+ * output sẽ bắt đầu sớm và session_start() sẽ thất bại ("headers already sent").
+ */
+function triptoStartSession() {
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        return;
+    }
+    if (PHP_VERSION_ID >= 70300) {
+        session_set_cookie_params([
+            'lifetime' => 0,
+            'path'     => '/',
+            'secure'   => true,
+            'httponly' => true,
+            'samesite' => 'None',
+        ]);
+    }
+    session_start();
+}
+
+/**
+ * Lấy user id của user ĐÃ ĐĂNG NHẬP từ session.
+ * KHÔNG tin userId gửi từ frontend; backend phải xác định user từ session hiện có.
+ * @return int 0 nếu chưa đăng nhập.
+ */
+function getCurrentUserId() {
+    if (session_status() === PHP_SESSION_NONE) {
+        triptoStartSession();
+    }
+    return isset($_SESSION['user_id']) ? intval($_SESSION['user_id']) : 0;
+}
+
+// =====================================================
 // HELPER FUNCTIONS
 // =====================================================
 
@@ -581,7 +621,7 @@ function authLogin() {
     // =====================================================
     // TẠO SESSION
     // =====================================================
-    session_start();
+    triptoStartSession();
 
     $_SESSION['user_id'] = $user['id'];
     $_SESSION['email'] = $user['email'];
@@ -789,7 +829,7 @@ function authMicrosoftLogin() {
         }
     }
 
-    session_start();
+    triptoStartSession();
     $_SESSION['user_id'] = $user['id'];
     $_SESSION['email'] = $user['email'];
     $_SESSION['ten_dau'] = $user['ten_dau'];
@@ -1513,7 +1553,7 @@ function handleOnline($action = '') {
             exit;
         }
 
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        triptoStartSession();
         if (empty($_SESSION['user_id'])) {
             http_response_code(401);
             echo json_encode(['success' => false, 'message' => 'Not authenticated']);
@@ -2944,77 +2984,246 @@ function handleGetFilterData() {
 // FAVORITE/WISHLIST FUNCTIONS
 // =====================================================
 
+// =====================================================
+// FAVORITE REDIS CACHE-ASIDE HELPERS
+// =====================================================
+// Database (yeu_thich) là SOURCE OF TRUTH.
+// Redis chỉ là CACHE theo Cache-Aside Pattern:
+//   READ : Redis GET -> HIT trả ngay / MISS -> Database -> Redis SETEX -> trả
+//   WRITE: Database INSERT/DELETE -> Redis DEL (invalidate)
+// Key   : tripto:favorite:user:{userId}  ->  JSON {"tours":[...],"combos":[...]}
+// TTL   : REDIS_FAVORITE_TTL (mặc định 600 giây)
+
+function getFavoriteTtl() {
+    $ttl = (int)getenv('REDIS_FAVORITE_TTL');
+    return $ttl > 0 ? $ttl : 600;
+}
+
+function favoriteCacheKey($userId) {
+    return 'tripto:favorite:user:' . intval($userId);
+}
+
+/**
+ * Đọc danh sách yêu thích của user từ Redis.
+ * Trả về ['tours'=>[], 'combos'=>[]] nếu CACHE HIT, hoặc null nếu MISS/lỗi.
+ */
+function getFavoriteCache($userId) {
+    $rc = getRedisClientInstance();
+    if (!$rc->available()) {
+        return null;
+    }
+    $raw = $rc->get(favoriteCacheKey($userId));
+    if ($raw === null || $raw === false || $raw === '') {
+        return null;
+    }
+    $data = json_decode($raw, true);
+    if (!is_array($data)) {
+        return null;
+    }
+    return [
+        'tours'  => array_map('intval', is_array($data['tours'] ?? null)  ? $data['tours']  : []),
+        'combos' => array_map('intval', is_array($data['combos'] ?? null) ? $data['combos'] : []),
+    ];
+}
+
+/**
+ * Ghi danh sách yêu thích vào Redis kèm TTL. Trả về true/false.
+ */
+function setFavoriteCache($userId, array $tours, array $combos) {
+    $rc = getRedisClientInstance();
+    if (!$rc->available()) {
+        return false;
+    }
+    $value = json_encode([
+        'tours'  => array_map('intval', $tours),
+        'combos' => array_map('intval', $combos),
+    ]);
+    $res = $rc->setex(favoriteCacheKey($userId), getFavoriteTtl(), $value);
+    if ($res === null) {
+        error_log('[Favorite] Redis SET failed user=' . intval($userId));
+        return false;
+    }
+    error_log('[Favorite] Redis SET user=' . intval($userId) . ' ttl=' . getFavoriteTtl());
+    return true;
+}
+
+/**
+ * Invalidate cache yêu thích của user sau khi Database thay đổi.
+ */
+function invalidateFavoriteCache($userId) {
+    $rc = getRedisClientInstance();
+    if (!$rc->available()) {
+        return false;
+    }
+    $res = $rc->del(favoriteCacheKey($userId));
+    if ($res === null) {
+        error_log('[Favorite] Redis INVALIDATE failed user=' . intval($userId));
+        return false;
+    }
+    error_log('[Favorite] Redis INVALIDATE user=' . intval($userId));
+    return true;
+}
+
+/**
+ * Cache-aside check trạng thái yêu thích của 1 item (tour hoặc combo) cho 1 user.
+ * @param int $userId
+ * @param int $itemId
+ * @param string $type 'combo' | 'tour'
+ * @return array ['isFavorite'=>bool, 'cache'=>'HIT'|'MISS'|'OFF']
+ */
+function checkFavoriteCached($userId, $itemId, $type = 'combo') {
+    $userId  = intval($userId);
+    $itemId  = intval($itemId);
+    $type    = ($type === 'tour') ? 'tour' : 'combo';
+
+    $cached = getFavoriteCache($userId);
+    if ($cached !== null) {
+        $list = ($type === 'combo') ? $cached['combos'] : $cached['tours'];
+        error_log('[Favorite] Redis HIT user=' . $userId . ' ' . $type . '=' . $itemId);
+        monitorTrackEvent('favorite_cache_hit', [
+            'user_id' => $userId,
+            'item_id' => $itemId,
+            'type'    => $type,
+        ]);
+        return ['isFavorite' => in_array($itemId, $list, true), 'cache' => 'HIT'];
+    }
+
+    // CACHE MISS -> query Database (source of truth)
+    global $conn;
+    error_log('[Favorite] Redis MISS user=' . $userId . ' ' . $type . '=' . $itemId);
+    monitorTrackEvent('favorite_cache_miss', [
+        'user_id' => $userId,
+        'item_id' => $itemId,
+        'type'    => $type,
+    ]);
+
+    $tours  = [];
+    $combos = [];
+    $sql = "SELECT id_tour, id_goi_combo FROM yeu_thich WHERE id_nguoi_dung = ?";
+    $stmt = $conn->prepare($sql);
+    if ($stmt) {
+        $stmt->bind_param('i', $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        while ($row = $result->fetch_assoc()) {
+            if (!empty($row['id_tour']))      $tours[]  = intval($row['id_tour']);
+            if (!empty($row['id_goi_combo'])) $combos[] = intval($row['id_goi_combo']);
+        }
+        $stmt->close();
+    }
+
+    setFavoriteCache($userId, $tours, $combos);
+
+    $list = ($type === 'combo') ? $combos : $tours;
+    return ['isFavorite' => in_array($itemId, $list, true), 'cache' => 'MISS'];
+}
+
+/**
+ * Trả JSON lỗi chung khi chưa đăng nhập (HTTP 401).
+ */
+function favoriteRequireLogin($message = 'Vui lòng đăng nhập') {
+    http_response_code(401);
+    echo json_encode([
+        'success' => false,
+        'message' => $message,
+        'isFavorited' => false
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
 function handleToggleFavorite() {
     global $conn;
-    
-    $id_tour = isset($_GET['id_tour']) ? intval($_GET['id_tour']) : 0;
+
+    // Yêu cầu đăng nhập: backend xác định user từ SESSION, không tin userId từ client.
+    $currentUserId = getCurrentUserId();
+    if (!$currentUserId) {
+        favoriteRequireLogin('Vui lòng đăng nhập để thêm vào yêu thích');
+    }
+
+    $id_tour      = isset($_GET['id_tour'])      ? intval($_GET['id_tour'])      : 0;
+    $id_goi_combo = isset($_GET['id_goi_combo']) ? intval($_GET['id_goi_combo']) : 0;
     $id_nguoi_dung = isset($_GET['id_nguoi_dung']) ? intval($_GET['id_nguoi_dung']) : 0;
-    
-    if (!$id_tour || !$id_nguoi_dung) {
+
+    if ($id_nguoi_dung !== $currentUserId) {
+        http_response_code(401);
         echo json_encode([
             'success' => false,
-            'message' => 'Thiếu thông tin tour hoặc người dùng'
+            'message' => 'Không có quyền thực hiện hành động này'
         ], JSON_UNESCAPED_UNICODE);
         exit;
     }
-    
-    // Check if favorite already exists
-    $checkSql = "SELECT id FROM yeu_thich 
-                 WHERE id_nguoi_dung = ? AND id_tour = ? AND id_goi_combo IS NULL";
-    $checkStmt = $conn->prepare($checkSql);
-    $checkStmt->bind_param("ii", $id_nguoi_dung, $id_tour);
-    $checkStmt->execute();
-    $checkResult = $checkStmt->get_result();
-    
-    if ($checkResult && $checkResult->num_rows > 0) {
-        // Already favorited - remove it
-        $deleteSql = "DELETE FROM yeu_thich 
-                      WHERE id_nguoi_dung = ? AND id_tour = ? AND id_goi_combo IS NULL";
-        $deleteStmt = $conn->prepare($deleteSql);
-        $deleteStmt->bind_param("ii", $id_nguoi_dung, $id_tour);
-        
-        if ($deleteStmt->execute()) {
-            $deleteStmt->close();
-            echo json_encode([
-                'success' => true,
-                'isFavorited' => false,
-                'message' => 'Đã xóa khỏi yêu thích'
-            ], JSON_UNESCAPED_UNICODE);
-            exit;
+
+    if (!$id_tour && !$id_goi_combo) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Thiếu thông tin tour hoặc combo'
+        ], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    // Toggle: nếu đang favorite -> DELETE, ngược lại -> INSERT. Sau đó invalidate cache.
+    $wasFavorite = false;
+    if ($id_tour) {
+        $checkSql = "SELECT id FROM yeu_thich WHERE id_nguoi_dung = ? AND id_tour = ? AND id_goi_combo IS NULL";
+        $checkStmt = $conn->prepare($checkSql);
+        $checkStmt->bind_param("ii", $id_nguoi_dung, $id_tour);
+        $checkStmt->execute();
+        $wasFavorite = $checkStmt->get_result()->num_rows > 0;
+        $checkStmt->close();
+
+        if ($wasFavorite) {
+            $deleteSql = "DELETE FROM yeu_thich WHERE id_nguoi_dung = ? AND id_tour = ? AND id_goi_combo IS NULL";
+            $delStmt = $conn->prepare($deleteSql);
+            $delStmt->bind_param("ii", $id_nguoi_dung, $id_tour);
+            $ok = $delStmt->execute();
+            $delStmt->close();
         } else {
-            echo json_encode([
-                'success' => false,
-                'message' => 'Lỗi xóa yêu thích: ' . $conn->error
-            ], JSON_UNESCAPED_UNICODE);
-            exit;
+            $insertSql = "INSERT INTO yeu_thich (id_nguoi_dung, id_tour, ngay_them) VALUES (?, ?, CURRENT_TIMESTAMP)";
+            $insStmt = $conn->prepare($insertSql);
+            $insStmt->bind_param("ii", $id_nguoi_dung, $id_tour);
+            $ok = $insStmt->execute();
+            $insStmt->close();
         }
     } else {
-        // Not favorited - add it
-        $insertSql = "INSERT INTO yeu_thich (id_nguoi_dung, id_tour, ngay_them) 
-                      VALUES (?, ?, CURRENT_TIMESTAMP)";
-        $insertStmt = $conn->prepare($insertSql);
-        $insertStmt->bind_param("ii", $id_nguoi_dung, $id_tour);
-        
-        if ($insertStmt->execute()) {
-            $favorite_id = $insertStmt->insert_id;
-            $insertStmt->close();
-            $checkStmt->close();
-            
-            echo json_encode([
-                'success' => true,
-                'isFavorited' => true,
-                'id' => $favorite_id,
-                'message' => 'Đã thêm vào yêu thích'
-            ], JSON_UNESCAPED_UNICODE);
-            exit;
+        $checkSql = "SELECT id FROM yeu_thich WHERE id_nguoi_dung = ? AND id_goi_combo = ?";
+        $checkStmt = $conn->prepare($checkSql);
+        $checkStmt->bind_param("ii", $id_nguoi_dung, $id_goi_combo);
+        $checkStmt->execute();
+        $wasFavorite = $checkStmt->get_result()->num_rows > 0;
+        $checkStmt->close();
+
+        if ($wasFavorite) {
+            $deleteSql = "DELETE FROM yeu_thich WHERE id_nguoi_dung = ? AND id_goi_combo = ?";
+            $delStmt = $conn->prepare($deleteSql);
+            $delStmt->bind_param("ii", $id_nguoi_dung, $id_goi_combo);
+            $ok = $delStmt->execute();
+            $delStmt->close();
         } else {
-            echo json_encode([
-                'success' => false,
-                'message' => 'Lỗi thêm yêu thích: ' . $conn->error
-            ], JSON_UNESCAPED_UNICODE);
-            exit;
+            $insertSql = "INSERT INTO yeu_thich (id_nguoi_dung, id_goi_combo, ngay_them) VALUES (?, ?, CURRENT_TIMESTAMP)";
+            $insStmt = $conn->prepare($insertSql);
+            $insStmt->bind_param("ii", $id_nguoi_dung, $id_goi_combo);
+            $ok = $insStmt->execute();
+            $insStmt->close();
         }
     }
+
+    if (!$ok) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Lỗi cập nhật yêu thích: ' . $conn->error
+        ], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    // BẮT BUỘC: sau khi Database thay đổi phải invalidate/update cache Redis.
+    invalidateFavoriteCache($id_nguoi_dung);
+
+    echo json_encode([
+        'success' => true,
+        'isFavorited' => !$wasFavorite,
+        'message' => $wasFavorite ? 'Đã xóa khỏi yêu thích' : 'Đã thêm vào yêu thích'
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
 }
 
 // Create favorite WITH group (for tours)
@@ -3050,6 +3259,7 @@ function handleCreateFavoriteWithGroup() {
     if ($stmt->execute()) {
         $favorite_id = $stmt->insert_id;
         $stmt->close();
+        invalidateFavoriteCache($id_nguoi_dung);
         echo json_encode([
             'success' => true,
             'id' => $favorite_id,
@@ -3097,6 +3307,7 @@ function handleCreateComboFavoriteWithGroup() {
     if ($stmt->execute()) {
         $favorite_id = $stmt->insert_id;
         $stmt->close();
+        invalidateFavoriteCache($id_nguoi_dung);
         echo json_encode([
             'success' => true,
             'id' => $favorite_id,
@@ -3112,39 +3323,47 @@ function handleCreateComboFavoriteWithGroup() {
 }
 
 function handleCheckFavorite() {
-    global $conn;
-    
-    $id_tour = isset($_GET['id_tour']) ? intval($_GET['id_tour']) : 0;
+    // Hỗ trợ cả tour (id_tour) lẫn combo (id_goi_combo) cho tương thích ngược.
+    $currentUserId = getCurrentUserId();
+    if (!$currentUserId) {
+        favoriteRequireLogin('Vui lòng đăng nhập để kiểm tra yêu thích');
+    }
+
+    $id_tour      = isset($_GET['id_tour'])      ? intval($_GET['id_tour'])      : 0;
+    $id_goi_combo = isset($_GET['id_goi_combo']) ? intval($_GET['id_goi_combo']) : 0;
     $id_nguoi_dung = isset($_GET['id_nguoi_dung']) ? intval($_GET['id_nguoi_dung']) : 0;
-    
-    if (!$id_tour || !$id_nguoi_dung) {
+
+    if ($id_nguoi_dung !== $currentUserId) {
+        http_response_code(401);
         echo json_encode([
             'success' => false,
-            'message' => 'Thiếu thông tin tour hoặc người dùng',
+            'message' => 'Không có quyền thực hiện hành động này',
             'isFavorited' => false
         ], JSON_UNESCAPED_UNICODE);
         exit;
     }
-    
-    $sql = "SELECT id FROM yeu_thich 
-            WHERE id_nguoi_dung = $id_nguoi_dung AND id_tour = $id_tour AND id_goi_combo IS NULL
-            LIMIT 1";
-    
-    $result = $conn->query($sql);
-    
-    if ($result && $result->num_rows > 0) {
-        // Already in favorites
+
+    if (!$id_tour && !$id_goi_combo) {
         echo json_encode([
-            'success' => true,
-            'isFavorited' => true
-        ], JSON_UNESCAPED_UNICODE);
-    } else {
-        // Not in favorites
-        echo json_encode([
-            'success' => true,
+            'success' => false,
+            'message' => 'Thiếu thông tin tour hoặc combo',
             'isFavorited' => false
         ], JSON_UNESCAPED_UNICODE);
+        exit;
     }
+
+    if ($id_goi_combo) {
+        $check = checkFavoriteCached($id_nguoi_dung, $id_goi_combo, 'combo');
+    } else {
+        $check = checkFavoriteCached($id_nguoi_dung, $id_tour, 'tour');
+    }
+
+    echo json_encode([
+        'success' => true,
+        'isFavorited' => $check['isFavorite'],
+        'isFavorite' => $check['isFavorite'],
+        'cache' => $check['cache']
+    ], JSON_UNESCAPED_UNICODE);
     exit;
 }
 
@@ -3154,23 +3373,18 @@ function handleCheckFavorite() {
 
 function handleToggleComboFavorite() {
     global $conn;
-    
-    // Check if user is logged in
-    session_start();
-    if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])) {
-        http_response_code(401);
-        echo json_encode([
-            'success' => false,
-            'message' => 'Vui lòng đăng nhập để thêm vào yêu thích'
-        ], JSON_UNESCAPED_UNICODE);
-        exit;
+
+    // Backend xác định user từ SESSION (không tin userId từ client).
+    $currentUserId = getCurrentUserId();
+    if (!$currentUserId) {
+        favoriteRequireLogin('Vui lòng đăng nhập để thêm vào yêu thích');
     }
-    
+
     $id_goi_combo = isset($_GET['id_goi_combo']) ? intval($_GET['id_goi_combo']) : 0;
     $id_nguoi_dung = isset($_GET['id_nguoi_dung']) ? intval($_GET['id_nguoi_dung']) : 0;
-    
+
     // Verify user ID from session matches the request
-    if ($id_nguoi_dung != $_SESSION['user_id']) {
+    if ($id_nguoi_dung !== $currentUserId) {
         http_response_code(401);
         echo json_encode([
             'success' => false,
@@ -3194,8 +3408,10 @@ function handleToggleComboFavorite() {
     $checkStmt->bind_param("ii", $id_nguoi_dung, $id_goi_combo);
     $checkStmt->execute();
     $checkResult = $checkStmt->get_result();
+    $isFavorite = $checkResult && $checkResult->num_rows > 0;
+    $checkStmt->close();
     
-    if ($checkResult && $checkResult->num_rows > 0) {
+    if ($isFavorite) {
         // Already favorited - remove it
         $deleteSql = "DELETE FROM yeu_thich 
                       WHERE id_nguoi_dung = ? AND id_goi_combo = ?";
@@ -3204,9 +3420,12 @@ function handleToggleComboFavorite() {
         
         if ($deleteStmt->execute()) {
             $deleteStmt->close();
+            // BẮT BUỘC: invalidate cache Redis sau khi Database thay đổi.
+            invalidateFavoriteCache($id_nguoi_dung);
             echo json_encode([
                 'success' => true,
                 'isFavorited' => false,
+                'cache' => 'INVALIDATED',
                 'message' => 'Đã xóa khỏi yêu thích'
             ], JSON_UNESCAPED_UNICODE);
             exit;
@@ -3227,12 +3446,13 @@ function handleToggleComboFavorite() {
         if ($insertStmt->execute()) {
             $favorite_id = $insertStmt->insert_id;
             $insertStmt->close();
-            $checkStmt->close();
-            
+            // BẮT BUỘC: invalidate cache Redis sau khi Database thay đổi.
+            invalidateFavoriteCache($id_nguoi_dung);
             echo json_encode([
                 'success' => true,
                 'isFavorited' => true,
                 'id' => $favorite_id,
+                'cache' => 'INVALIDATED',
                 'message' => 'Đã thêm vào yêu thích'
             ], JSON_UNESCAPED_UNICODE);
             exit;
@@ -3247,25 +3467,17 @@ function handleToggleComboFavorite() {
 }
 
 function handleCheckComboFavorite() {
-    global $conn;
-    
-    // Check if user is logged in
-    session_start();
-    if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])) {
-        http_response_code(401);
-        echo json_encode([
-            'success' => false,
-            'message' => 'Vui lòng đăng nhập để kiểm tra yêu thích',
-            'isFavorited' => false
-        ], JSON_UNESCAPED_UNICODE);
-        exit;
+    // Backend xác định user từ SESSION.
+    $currentUserId = getCurrentUserId();
+    if (!$currentUserId) {
+        favoriteRequireLogin('Vui lòng đăng nhập để kiểm tra yêu thích');
     }
-    
+
     $id_goi_combo = isset($_GET['id_goi_combo']) ? intval($_GET['id_goi_combo']) : 0;
     $id_nguoi_dung = isset($_GET['id_nguoi_dung']) ? intval($_GET['id_nguoi_dung']) : 0;
-    
+
     // Verify user ID from session matches the request
-    if ($id_nguoi_dung != $_SESSION['user_id']) {
+    if ($id_nguoi_dung !== $currentUserId) {
         http_response_code(401);
         echo json_encode([
             'success' => false,
@@ -3283,26 +3495,16 @@ function handleCheckComboFavorite() {
         ], JSON_UNESCAPED_UNICODE);
         exit;
     }
-    
-    $sql = "SELECT id FROM yeu_thich 
-            WHERE id_nguoi_dung = $id_nguoi_dung AND id_goi_combo = $id_goi_combo
-            LIMIT 1";
-    
-    $result = $conn->query($sql);
-    
-    if ($result && $result->num_rows > 0) {
-        // Already in favorites
-        echo json_encode([
-            'success' => true,
-            'isFavorited' => true
-        ], JSON_UNESCAPED_UNICODE);
-    } else {
-        // Not in favorites
-        echo json_encode([
-            'success' => true,
-            'isFavorited' => false
-        ], JSON_UNESCAPED_UNICODE);
-    }
+
+    // Cache-Aside: Redis GET -> HIT/MISS -> Database -> Redis SETEX.
+    $check = checkFavoriteCached($id_nguoi_dung, $id_goi_combo, 'combo');
+
+    echo json_encode([
+        'success' => true,
+        'isFavorited' => $check['isFavorite'],
+        'isFavorite' => $check['isFavorite'],
+        'cache' => $check['cache']
+    ], JSON_UNESCAPED_UNICODE);
     exit;
 }
 
@@ -3312,23 +3514,18 @@ function handleCheckComboFavorite() {
 
 function handleRemoveComboFavorite() {
     global $conn;
-    
-    // Check if user is logged in
-    session_start();
-    if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])) {
-        http_response_code(401);
-        echo json_encode([
-            'success' => false,
-            'message' => 'Vui lòng đăng nhập để bỏ yêu thích'
-        ], JSON_UNESCAPED_UNICODE);
-        exit;
+
+    // Backend xác định user từ SESSION.
+    $currentUserId = getCurrentUserId();
+    if (!$currentUserId) {
+        favoriteRequireLogin('Vui lòng đăng nhập để bỏ yêu thích');
     }
-    
+
     $id_goi_combo = isset($_GET['id_goi_combo']) ? intval($_GET['id_goi_combo']) : 0;
     $id_nguoi_dung = isset($_GET['id_nguoi_dung']) ? intval($_GET['id_nguoi_dung']) : 0;
-    
+
     // Verify user ID from session matches the request
-    if ($id_nguoi_dung != $_SESSION['user_id']) {
+    if ($id_nguoi_dung !== $currentUserId) {
         http_response_code(401);
         echo json_encode([
             'success' => false,
@@ -3345,13 +3542,18 @@ function handleRemoveComboFavorite() {
         exit;
     }
     
-    // Delete from favorites
-    $sql = "DELETE FROM yeu_thich 
-            WHERE id_nguoi_dung = $id_nguoi_dung AND id_goi_combo = $id_goi_combo";
+    // Delete from favorites (Database = source of truth)
+    $sql = "DELETE FROM yeu_thich WHERE id_nguoi_dung = ? AND id_goi_combo = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ii", $id_nguoi_dung, $id_goi_combo);
     
-    if ($conn->query($sql)) {
+    if ($stmt->execute()) {
+        $stmt->close();
+        // BẮT BUỘC: invalidate cache Redis sau khi Database thay đổi.
+        invalidateFavoriteCache($id_nguoi_dung);
         echo json_encode([
-            'success' => true
+            'success' => true,
+            'cache' => 'INVALIDATED'
         ], JSON_UNESCAPED_UNICODE);
     } else {
         http_response_code(400);
@@ -3604,6 +3806,19 @@ function handleAddToFavoriteGroup() {
         ], JSON_UNESCAPED_UNICODE);
         exit;
     }
+
+    // Lấy id_nguoi_dung của favorite để invalidate cache Redis sau khi Database thay đổi.
+    $favUser = 0;
+    $uidStmt = $conn->prepare("SELECT id_nguoi_dung FROM yeu_thich WHERE id = ?");
+    if ($uidStmt) {
+        $uidStmt->bind_param("i", $id_yeu_thich);
+        $uidStmt->execute();
+        $uidRes = $uidStmt->get_result();
+        if ($uidRes && $uidRes->num_rows > 0) {
+            $favUser = intval($uidRes->fetch_assoc()['id_nguoi_dung']);
+        }
+        $uidStmt->close();
+    }
     
     try {
         $sql = "UPDATE yeu_thich SET id_nhom = ? WHERE id = ?";
@@ -3621,6 +3836,11 @@ function handleAddToFavoriteGroup() {
         }
         
         $stmt->close();
+
+        // BẮT BUỘC: invalidate cache Redis sau khi Database thay đổi.
+        if ($favUser > 0) {
+            invalidateFavoriteCache($favUser);
+        }
         
         http_response_code(200);
         echo json_encode([
@@ -3846,6 +4066,9 @@ function handleDeleteFavoriteGroup() {
         }
         $stmt->close();
         
+        // BẮT BUỘC: invalidate cache Redis sau khi Database thay đổi.
+        invalidateFavoriteCache($id_nguoi_dung);
+        
         http_response_code(200);
         echo json_encode([
             'success' => true,
@@ -3900,6 +4123,9 @@ function handleRemoveTourFromGroup() {
         }
         
         $stmt->close();
+        
+        // BẮT BUỘC: invalidate cache Redis sau khi Database thay đổi.
+        invalidateFavoriteCache($id_nguoi_dung);
         
         http_response_code(200);
         echo json_encode([

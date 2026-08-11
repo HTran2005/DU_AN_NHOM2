@@ -105,6 +105,15 @@ class RedisClient {
         });
     }
 
+    public function get($key) {
+        return $this->safeCall(function($c, $using) use ($key) {
+            if ($using === 'predis') {
+                return $c->get($key);
+            }
+            return $c->get($key);
+        });
+    }
+
     public function del($key) {
         return $this->safeCall(function($c, $using) use ($key) {
             if ($using === 'predis') {
