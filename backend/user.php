@@ -395,73 +395,212 @@ function handleAuth($action = '') {
 // AUTH: LOGIN
 // =====================================================
 
+// function authLogin() {
+//     global $conn;
+    
+//     $inputData = file_get_contents('php://input');
+//     $data = json_decode($inputData, true);
+    
+//     if ($data === null) {
+//         throw new Exception('Dữ liệu JSON không hợp lệ');
+//     }
+    
+//     $email      = isset($data['email']) ? strtolower(trim($data['email'])) : '';
+//     $password   = isset($data['password']) ? $data['password'] : '';
+    
+//     if (empty($email)) {
+//         throw new Exception('Vui lòng nhập email');
+//     }
+//     if (empty($password)) {
+//         throw new Exception('Vui lòng nhập mật khẩu');
+//     }
+//     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+//         throw new Exception('Email không hợp lệ');
+//     }
+    
+//     $sql = "SELECT * FROM nguoi_dung WHERE email = ?";
+//     $stmt = $conn->prepare($sql);
+    
+//     if (!$stmt) {
+//         throw new Exception("Lỗi prepare statement: " . $conn->error);
+//     }
+    
+//     $stmt->bind_param("s", $email);
+//     $stmt->execute();
+//     $result = $stmt->get_result();
+    
+//     if ($result->num_rows === 0) {
+//         throw new Exception('Email hoặc mật khẩu không chính xác');
+//     }
+    
+//     $user = $result->fetch_assoc();
+//     $stmt->close();
+    
+//     if (!password_verify($password, $user['mat_khau'])) {
+//         throw new Exception('Email hoặc mật khẩu không chính xác');
+//     }
+    
+//     $updateSql = "UPDATE nguoi_dung SET luot_dang_nhap_cuoi = NOW() WHERE id = ?";
+//     $updateStmt = $conn->prepare($updateSql);
+//     if ($updateStmt) {
+//         $updateStmt->bind_param("i", $user['id']);
+//         $updateStmt->execute();
+//         $updateStmt->close();
+//     }
+    
+//     session_start();
+//     $_SESSION['user_id'] = $user['id'];
+//     $_SESSION['email'] = $user['email'];
+//     $_SESSION['ten_dau'] = $user['ten_dau'];
+//     $_SESSION['ten_cuoi'] = $user['ten_cuoi'];
+//     $_SESSION['logged_in'] = true;
+//     $_SESSION['login_time'] = time();
+    
+//     monitorTrackEvent('user_login', [
+//         'email' => $user['email'],
+//         'user_id' => $user['id']
+//     ]);
+
+//     http_response_code(200);
+//     echo json_encode([
+//         'success' => true,
+//         'message' => 'Đăng nhập thành công!',
+//         'user' => [
+//             'id' => $user['id'] ?? null,
+//             'email' => $user['email'] ?? null,
+//             'ten_dau' => $user['ten_dau'] ?? null,
+//             'ten_cuoi' => $user['ten_cuoi'] ?? null,
+//             'ho_ten' => (($user['ten_dau'] ?? '') . ' ' . ($user['ten_cuoi'] ?? '')),
+//             'phone' => $user['so_dien_thoai'] ?? null,
+//             'gioi_tinh' => $user['gioi_tinh'] ?? null,
+//             'ngay_sinh' => $user['ngay_sinh'] ?? null,
+//             'quoc_gia' => $user['quoc_gia'] ?? null,
+//             'dia_chi' => $user['dia_chi'] ?? null,
+//             'ma_buu_chinh' => $user['ma_buu_chinh'] ?? null,
+//             'role' => $user['vai_tro'] ?? 'user',
+//             'avatar' => !empty($user['avatar']) ? $user['avatar'] : (!empty($user['anh_dai_dien']) ? $user['anh_dai_dien'] : '../image/avt_pr.jpg'),
+//             'anh_dai_dien' => !empty($user['avatar']) ? $user['avatar'] : (!empty($user['anh_dai_dien']) ? $user['anh_dai_dien'] : '../image/avt_pr.jpg')
+//         ]
+//     ]);
+//     exit;
+// }
 function authLogin() {
     global $conn;
-    
+
     $inputData = file_get_contents('php://input');
     $data = json_decode($inputData, true);
-    
+
     if ($data === null) {
         throw new Exception('Dữ liệu JSON không hợp lệ');
     }
-    
-    $email      = isset($data['email']) ? strtolower(trim($data['email'])) : '';
-    $password   = isset($data['password']) ? $data['password'] : '';
-    
+
+    $email    = isset($data['email']) ? strtolower(trim($data['email'])) : '';
+    $password = isset($data['password']) ? $data['password'] : '';
+
     if (empty($email)) {
         throw new Exception('Vui lòng nhập email');
     }
+
     if (empty($password)) {
         throw new Exception('Vui lòng nhập mật khẩu');
     }
+
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         throw new Exception('Email không hợp lệ');
     }
-    
+
     $sql = "SELECT * FROM nguoi_dung WHERE email = ?";
     $stmt = $conn->prepare($sql);
-    
+
     if (!$stmt) {
         throw new Exception("Lỗi prepare statement: " . $conn->error);
     }
-    
+
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
-    
+
+    // ================================
+    // ĐĂNG NHẬP THẤT BẠI: EMAIL KHÔNG TỒN TẠI
+    // ================================
     if ($result->num_rows === 0) {
+
+        try {
+            monitorTrackEvent('user_login_failed', [
+                'email' => $email,
+                'reason' => 'email_not_found'
+            ]);
+        } catch (Throwable $e) {
+            error_log('Login failed event error: ' . $e->getMessage());
+        }
+
+        $stmt->close();
+
         throw new Exception('Email hoặc mật khẩu không chính xác');
     }
-    
+
     $user = $result->fetch_assoc();
     $stmt->close();
-    
+
+    // ================================
+    // ĐĂNG NHẬP THẤT BẠI: SAI MẬT KHẨU
+    // ================================
     if (!password_verify($password, $user['mat_khau'])) {
+
+        try {
+            monitorTrackEvent('user_login_failed', [
+                'email' => $email,
+                'user_id' => $user['id'],
+                'reason' => 'wrong_password'
+            ]);
+        } catch (Throwable $e) {
+            error_log('Login failed event error: ' . $e->getMessage());
+        }
+
         throw new Exception('Email hoặc mật khẩu không chính xác');
     }
-    
+
+    // ================================
+    // CẬP NHẬT LẦN ĐĂNG NHẬP CUỐI
+    // ================================
     $updateSql = "UPDATE nguoi_dung SET luot_dang_nhap_cuoi = NOW() WHERE id = ?";
     $updateStmt = $conn->prepare($updateSql);
+
     if ($updateStmt) {
         $updateStmt->bind_param("i", $user['id']);
         $updateStmt->execute();
         $updateStmt->close();
     }
-    
+
+    // ================================
+    // TẠO SESSION
+    // ================================
     session_start();
+
     $_SESSION['user_id'] = $user['id'];
     $_SESSION['email'] = $user['email'];
     $_SESSION['ten_dau'] = $user['ten_dau'];
     $_SESSION['ten_cuoi'] = $user['ten_cuoi'];
     $_SESSION['logged_in'] = true;
     $_SESSION['login_time'] = time();
-    
-    monitorTrackEvent('user_login', [
-        'email' => $user['email'],
-        'user_id' => $user['id']
-    ]);
 
+    // ================================
+    // ĐĂNG NHẬP THÀNH CÔNG
+    // ================================
+    try {
+        monitorTrackEvent('user_login_success', [
+            'email' => $user['email'],
+            'user_id' => $user['id']
+        ]);
+    } catch (Throwable $e) {
+        error_log('Login success event error: ' . $e->getMessage());
+    }
+
+    // ================================
+    // RESPONSE
+    // ================================
     http_response_code(200);
+
     echo json_encode([
         'success' => true,
         'message' => 'Đăng nhập thành công!',
@@ -478,10 +617,19 @@ function authLogin() {
             'dia_chi' => $user['dia_chi'] ?? null,
             'ma_buu_chinh' => $user['ma_buu_chinh'] ?? null,
             'role' => $user['vai_tro'] ?? 'user',
-            'avatar' => !empty($user['avatar']) ? $user['avatar'] : (!empty($user['anh_dai_dien']) ? $user['anh_dai_dien'] : '../image/avt_pr.jpg'),
-            'anh_dai_dien' => !empty($user['avatar']) ? $user['avatar'] : (!empty($user['anh_dai_dien']) ? $user['anh_dai_dien'] : '../image/avt_pr.jpg')
+            'avatar' => !empty($user['avatar'])
+                ? $user['avatar']
+                : (!empty($user['anh_dai_dien'])
+                    ? $user['anh_dai_dien']
+                    : '../image/avt_pr.jpg'),
+            'anh_dai_dien' => !empty($user['avatar'])
+                ? $user['avatar']
+                : (!empty($user['anh_dai_dien'])
+                    ? $user['anh_dai_dien']
+                    : '../image/avt_pr.jpg')
         ]
     ]);
+
     exit;
 }
 
