@@ -5,10 +5,16 @@
 
 // ============================================================
 // REQUIRED: send session cookie with every API fetch.
-// Backend now identifies the user via $_SESSION (getCurrentUserId),
-// NOT via the client-supplied userId. All requests to user.php must
-// therefore send credentials:'include'. This wrapper covers every
-// page because all of them load this auth.js.
+// Backend now identifies the user via $_SESSION (getCurrentUserId)
+// OR a signed token (Authorization: Bearer). The token works even
+// when the browser blocks the cross-site session cookie, so this
+// wrapper:
+//   1. always sends credentials:'include'
+//   2. attaches Authorization: Bearer <triptoToken> when present
+//   3. auto-captures the token from any login response and stores
+//      it in sessionStorage ('triptoToken') — covers auth.js login,
+//      Microsoft login AND every inline login handler on the pages.
+// This wrapper covers every page because all of them load this auth.js.
 // ============================================================
 (function () {
     const __triptoOrigFetch = window.fetch;
@@ -20,8 +26,36 @@
         } else if (input && input.url) {
             url = input.url;
         }
-        if (url.indexOf('tripto-api-management.azure-api.net/tripto/user.php') !== -1 && !init.credentials) {
-            init.credentials = 'include';
+        if (url.indexOf('tripto-api-management.azure-api.net/tripto/user.php') !== -1) {
+            if (!init.credentials) {
+                init.credentials = 'include';
+            }
+            const token = sessionStorage.getItem('triptoToken');
+            if (token) {
+                const headers = init.headers || {};
+                if (typeof Headers !== 'undefined' && headers instanceof Headers) {
+                    headers.set('Authorization', 'Bearer ' + token);
+                } else {
+                    headers['Authorization'] = 'Bearer ' + token;
+                }
+                init.headers = headers;
+            }
+            const isLoginCall = url.indexOf('endpoint=auth') !== -1 ||
+                (typeof init.body === 'string' && init.body.indexOf('"login"') !== -1);
+            const promise = __triptoOrigFetch.call(this, input, init);
+            if (isLoginCall) {
+                return promise.then((resp) => {
+                    try {
+                        resp.clone().json().then((j) => {
+                            if (j && j.token) {
+                                sessionStorage.setItem('triptoToken', j.token);
+                            }
+                        }).catch(function () {});
+                    } catch (e) {}
+                    return resp;
+                });
+            }
+            return promise;
         }
         return __triptoOrigFetch.call(this, input, init);
     };

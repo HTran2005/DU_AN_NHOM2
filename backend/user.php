@@ -180,15 +180,105 @@ function triptoStartSession() {
 }
 
 /**
- * Lấy user id của user ĐÃ ĐĂNG NHẬP từ session.
- * KHÔNG tin userId gửi từ frontend; backend phải xác định user từ session hiện có.
+ * Lấy user id của user ĐÃ ĐĂNG NHẬP.
+ * Ưu tiên token (Authorization: Bearer) — hoạt động cross-origin qua APIM
+ * ngay cả khi trình duyệt chặn third-party cookie.
+ * Fallback: session cookie hiện có.
+ * KHÔNG tin userId gửi từ frontend; backend phải xác định user từ nguồn tin cậy.
  * @return int 0 nếu chưa đăng nhập.
  */
 function getCurrentUserId() {
+    $token = getBearerToken();
+    if ($token !== '') {
+        $uid = verifyAuthToken($token);
+        if ($uid > 0) {
+            return $uid;
+        }
+    }
     if (session_status() === PHP_SESSION_NONE) {
         triptoStartSession();
     }
     return isset($_SESSION['user_id']) ? intval($_SESSION['user_id']) : 0;
+}
+
+/**
+ * Mã hóa base64url (an toàn cho URL, bỏ padding).
+ */
+function triptoBase64UrlEncode($data) {
+    return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
+}
+
+/**
+ * Giải mã base64url.
+ */
+function triptoBase64UrlDecode($data) {
+    return base64_decode(strtr($data, '-_', '+/'));
+}
+
+/**
+ * Lấy token từ header Authorization: Bearer <token>.
+ * @return string '' nếu không có.
+ */
+function getBearerToken() {
+    $auth = isset($_SERVER['HTTP_AUTHORIZATION']) ? $_SERVER['HTTP_AUTHORIZATION'] : '';
+    if ($auth === '' && function_exists('getallheaders')) {
+        foreach (getallheaders() as $name => $value) {
+            if (strcasecmp($name, 'Authorization') === 0) {
+                $auth = $value;
+                break;
+            }
+        }
+    }
+    if (preg_match('/Bearer\s+(\S+)/i', $auth, $m)) {
+        return $m[1];
+    }
+    return '';
+}
+
+/**
+ * Phát hành token xác thực (HMAC-SHA256, ký bằng JWT_SECRET).
+ * Không phát token khi JWT_SECRET chưa được cấu hình (fail-closed).
+ * @return string '' nếu không thể phát hành.
+ */
+function issueAuthToken($userId) {
+    if (empty(JWT_SECRET)) {
+        error_log('WARN: JWT_SECRET chưa được cấu hình, bỏ qua phát hành token.');
+        return '';
+    }
+    $header  = triptoBase64UrlEncode(json_encode(['alg' => 'HS256', 'typ' => 'JWT']));
+    $payload = triptoBase64UrlEncode(json_encode([
+        'user_id' => intval($userId),
+        'iat'     => time(),
+        'exp'     => time() + 30 * 24 * 3600
+    ]));
+    $sig = triptoBase64UrlEncode(hash_hmac('sha256', $header . '.' . $payload, JWT_SECRET, true));
+    return $header . '.' . $payload . '.' . $sig;
+}
+
+/**
+ * Xác thực token, trả về user_id (0 nếu không hợp lệ/hết hạn/sai chữ ký).
+ */
+function verifyAuthToken($token) {
+    if (empty(JWT_SECRET)) {
+        return 0;
+    }
+    $parts = explode('.', $token);
+    if (count($parts) !== 3) {
+        return 0;
+    }
+    list($header, $payload, $sig) = $parts;
+    $expected = triptoBase64UrlEncode(hash_hmac('sha256', $header . '.' . $payload, JWT_SECRET, true));
+    if (!hash_equals($expected, $sig)) {
+        return 0;
+    }
+    $claims = json_decode(triptoBase64UrlDecode($payload), true);
+    if (!is_array($claims)) {
+        return 0;
+    }
+    if (isset($claims['exp']) && intval($claims['exp']) < time()) {
+        return 0;
+    }
+    return isset($claims['user_id']) ? intval($claims['user_id']) : 0;
 }
 
 // =====================================================
@@ -650,6 +740,7 @@ function authLogin() {
     echo json_encode([
         'success' => true,
         'message' => 'Đăng nhập thành công!',
+        'token' => issueAuthToken($user['id']),
         'user' => [
             'id' => $user['id'] ?? null,
             'email' => $user['email'] ?? null,
@@ -846,6 +937,7 @@ function authMicrosoftLogin() {
     echo json_encode([
         'success' => true,
         'message' => 'Đăng nhập bằng Microsoft thành công!',
+        'token' => issueAuthToken($user['id']),
         'user' => [
             'id' => $user['id'] ?? null,
             'email' => $user['email'] ?? null,
@@ -1553,14 +1645,12 @@ function handleOnline($action = '') {
             exit;
         }
 
-        triptoStartSession();
-        if (empty($_SESSION['user_id'])) {
+        $userId = getCurrentUserId();
+        if ($userId <= 0) {
             http_response_code(401);
             echo json_encode(['success' => false, 'message' => 'Not authenticated']);
             exit;
         }
-
-        $userId = intval($_SESSION['user_id']);
         $key = "online:user:" . $userId;
 
         $rc = getRedisClientInstance();
