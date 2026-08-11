@@ -1,7 +1,16 @@
+
+# <?php
+
+# return [
+   # 'host' => $_ENV['REDIS_HOST'] ?? '',
+    #'port' => (int)($_ENV['REDIS_PORT'] ?? 10000),
+    #'password' => $_ENV['REDIS_PASSWORD'] ?? '',
+#];
+
 <?php
 
 return [
-    'host' => $_ENV['REDIS_HOST'] ?? '',
-    'port' => (int)($_ENV['REDIS_PORT'] ?? 10000),
-    'password' => $_ENV['REDIS_PASSWORD'] ?? '',
+    'host' => getenv('REDIS_HOST') ?: '',
+    'port' => (int)(getenv('REDIS_PORT') ?: 10000),
+    'password' => getenv('REDIS_PASSWORD') ?: '',
 ];
