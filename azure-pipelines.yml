@@ -210,7 +210,7 @@ steps:
     azureSubscription: 'BAO_CAO_DEPLOY'
     appType: 'webAppLinux'
     appName: 'bao-cao-nhom2-web'
-    package: '$(Build.ArtifactStagingDirectory)/Website/Website.zip'
+    package: '$(Build.ArtifactStagingDirectory)/Website.zip'
 # =========================================================
 # 12. ACTIVE -> RESOLVED
 # =========================================================
