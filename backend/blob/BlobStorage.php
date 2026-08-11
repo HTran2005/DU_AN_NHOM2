@@ -74,6 +74,32 @@ class BlobStorage
         }
 
         $url = sprintf('%s/%s/%s', $this->endpoint, $this->container, rawurlencode($blobName));
+
+        $statusCode = $this->putBlob($url, $content, $blobName, $contentType);
+
+        // Nếu container chưa tồn tại (404), tạo container rồi thử lại một lần
+        if ($statusCode === 404 && $this->ensureContainerExists()) {
+            $statusCode = $this->putBlob($url, $content, $blobName, $contentType);
+        }
+
+        if ($statusCode === 201) {
+            return [
+                'success' => true,
+                'message' => 'Upload ảnh lên Azure Blob Storage thành công.',
+                'url' => $url,
+                'blobName' => $blobName
+            ];
+        }
+
+        return [
+            'success' => false,
+            'message' => 'Azure Blob upload failed. Status: ' . $statusCode,
+            'blobName' => $blobName
+        ];
+    }
+
+    private function putBlob(string $url, string $content, string $blobName, string $contentType): int
+    {
         $contentLength = strlen($content);
         $date = gmdate('D, d M Y H:i:s') . ' GMT';
         $headers = [
@@ -96,26 +122,39 @@ class BlobStorage
         curl_setopt($ch, CURLOPT_FAILONERROR, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
 
-        $response = curl_exec($ch);
+        curl_exec($ch);
         $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $error = curl_error($ch);
         curl_close($ch);
 
-        if ($statusCode === 201) {
-            return [
-                'success' => true,
-                'message' => 'Upload ảnh lên Azure Blob Storage thành công.',
-                'url' => $url,
-                'blobName' => $blobName
-            ];
-        }
+        return $statusCode;
+    }
 
-        return [
-            'success' => false,
-            'message' => 'Azure Blob upload failed. Status: ' . $statusCode . '. Error: ' . $error,
-            'response' => $response,
-            'blobName' => $blobName
+    private function ensureContainerExists(): bool
+    {
+        $date = gmdate('D, d M Y H:i:s') . ' GMT';
+        $url = sprintf('%s/%s?restype=container', $this->endpoint, $this->container);
+        $headers = [
+            'x-ms-date: ' . $date,
+            'x-ms-version: 2020-10-02',
+            'Content-Length: 0'
         ];
+        $authorization = $this->buildAuthorizationHeaderForContainer('PUT', $headers);
+        $headers[] = 'Authorization: ' . $authorization;
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HEADER, true);
+        curl_setopt($ch, CURLOPT_FAILONERROR, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+
+        curl_exec($ch);
+        $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        // 201 = tạo mới thành công, 409 = container đã tồn tại
+        return in_array($statusCode, [201, 409], true);
     }
 
     public function uploadFromData(string $content, string $blobName, string $contentType): array
@@ -227,5 +266,32 @@ class BlobStorage
         // Trước đây request dùng rawurlencode($blobName) nhưng signature dùng tên thật
         // -> lệch nhau khi tên có ký tự đặc biệt -> 403 SignatureDoesNotMatch.
         return sprintf('/%s/%s/%s', $this->accountName, $this->container, rawurlencode($blobName));
+    }
+
+    private function buildAuthorizationHeaderForContainer(string $method, array $headers): string
+    {
+        $stringToSign = implode("\n", [
+            strtoupper($method),
+            '', // Content-Encoding
+            '', // Content-Language
+            '', // Content-Length
+            '', // Content-MD5
+            '', // Content-Type
+            '', // Date
+            '', // If-Modified-Since
+            '', // If-Match
+            '', // If-None-Match
+            '', // If-Unmodified-Since
+            '', // Range
+            $this->buildCanonicalizedHeaders($headers) . $this->buildCanonicalizedResourceForContainer()
+        ]);
+
+        $signature = base64_encode(hash_hmac('sha256', $stringToSign, base64_decode($this->accountKey), true));
+        return sprintf('SharedKey %s:%s', $this->accountName, $signature);
+    }
+
+    private function buildCanonicalizedResourceForContainer(): string
+    {
+        return sprintf("/%s/%s\nrestype:container", $this->accountName, $this->container);
     }
 }
