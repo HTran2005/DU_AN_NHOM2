@@ -521,9 +521,9 @@ function authLogin() {
     $stmt->execute();
     $result = $stmt->get_result();
 
-    // ================================
+    // =====================================================
     // ĐĂNG NHẬP THẤT BẠI: EMAIL KHÔNG TỒN TẠI
-    // ================================
+    // =====================================================
     if ($result->num_rows === 0) {
 
         try {
@@ -543,9 +543,9 @@ function authLogin() {
     $user = $result->fetch_assoc();
     $stmt->close();
 
-    // ================================
+    // =====================================================
     // ĐĂNG NHẬP THẤT BẠI: SAI MẬT KHẨU
-    // ================================
+    // =====================================================
     if (!password_verify($password, $user['mat_khau'])) {
 
         try {
@@ -558,13 +558,18 @@ function authLogin() {
             error_log('Login failed event error: ' . $e->getMessage());
         }
 
+        // authLogin() sẽ throw ra ngoài,
+        // catch bên ngoài user.php sẽ trả HTTP 400
         throw new Exception('Email hoặc mật khẩu không chính xác');
     }
 
-    // ================================
+    // =====================================================
     // CẬP NHẬT LẦN ĐĂNG NHẬP CUỐI
-    // ================================
-    $updateSql = "UPDATE nguoi_dung SET luot_dang_nhap_cuoi = NOW() WHERE id = ?";
+    // =====================================================
+    $updateSql = "UPDATE nguoi_dung
+                  SET luot_dang_nhap_cuoi = NOW()
+                  WHERE id = ?";
+
     $updateStmt = $conn->prepare($updateSql);
 
     if ($updateStmt) {
@@ -573,9 +578,9 @@ function authLogin() {
         $updateStmt->close();
     }
 
-    // ================================
+    // =====================================================
     // TẠO SESSION
-    // ================================
+    // =====================================================
     session_start();
 
     $_SESSION['user_id'] = $user['id'];
@@ -585,9 +590,9 @@ function authLogin() {
     $_SESSION['logged_in'] = true;
     $_SESSION['login_time'] = time();
 
-    // ================================
+    // =====================================================
     // ĐĂNG NHẬP THÀNH CÔNG
-    // ================================
+    // =====================================================
     try {
         monitorTrackEvent('user_login_success', [
             'email' => $user['email'],
@@ -597,9 +602,9 @@ function authLogin() {
         error_log('Login success event error: ' . $e->getMessage());
     }
 
-    // ================================
-    // RESPONSE
-    // ================================
+    // =====================================================
+    // RESPONSE THÀNH CÔNG
+    // =====================================================
     http_response_code(200);
 
     echo json_encode([
@@ -618,11 +623,13 @@ function authLogin() {
             'dia_chi' => $user['dia_chi'] ?? null,
             'ma_buu_chinh' => $user['ma_buu_chinh'] ?? null,
             'role' => $user['vai_tro'] ?? 'user',
+
             'avatar' => !empty($user['avatar'])
                 ? $user['avatar']
                 : (!empty($user['anh_dai_dien'])
                     ? $user['anh_dai_dien']
                     : '../image/avt_pr.jpg'),
+
             'anh_dai_dien' => !empty($user['avatar'])
                 ? $user['avatar']
                 : (!empty($user['anh_dai_dien'])
