@@ -14,7 +14,7 @@
 | 1 | **Subscription ID của ACC1** (Frontend & Backend) | ✅ Đã có: `bbad92f7-b7ef-4fa7-b3ef-61c200f5802e` (đã điền vào `parameters.json`) |
 | 2 | **Subscription ID của ACC2** (Database & Monitoring) | ✅ Đã có: `42e7a0ff-6e78-4530-a021-bf133c012ba2` (đã điền vào `parameters.json`) |
 | 3 | **Subscription ID của ACC3** (DevOps & Security) | ⚠️ **Để trống** — DevOps thường không có Azure subscription (tài nguyên DevOps nằm trong Azure DevOps). Báo cáo sẽ gồm ACC1 + ACC2 |
-| 4 | **PAT Azure DevOps** (scope: Service Connections Read&manage + Build Read&execute) | dev.azure.com → User settings → Personal Access Tokens | ☐ |
+| 4 | **PAT Azure DevOps** (scope: Service Connections Read&manage + Build Read&execute + **Project and Team Read**) | dev.azure.com → User settings → Personal Access Tokens (chi tiết: Phụ lục A) | ☐ |
 | 5 | Azure CLI (`az`) | https://aka.ms/installazurecliwindows | ☐ |
 | 6 | `jq` + `bash` (Git Bash/WSL) | `choco install jq` / `winget install jq` | ☐ |
 
@@ -67,10 +67,10 @@ Gặp lỗi gì xem bảng Xử lý sự cố cuối runbook, hoặc liên hệ 
 
 ## BƯỚC 0 — KIỂM TRA SẴN SÀNG (PREFLIGHT) · ~5 phút
 
-Mở **PowerShell** tại thư mục repo và chạy:
+Mở **PowerShell** tại thư mục đã clone repo (đã `git pull` lấy code mới nhất) và chạy:
 
 ```powershell
-cd D:\DU_AN_NHOM2
+cd <đường dẫn thư mục DU_AN_NHOM2 trên máy bạn>
 .\infrastructure\account3\preflight-check.ps1
 ```
 
@@ -92,9 +92,9 @@ az account list -o table
 
 ---
 
-## BƯỚC 1 — ĐIỀN `parameters.json` · ~5 phút
+## BƯỚC 1 — KIỂM TRA `parameters.json` (đã điền sẵn) · ~2 phút
 
-Mở file `infrastructure/account3/parameters.json`, điền `subscriptionId` cho **ACC1** và **ACC3** (ACC2 đã có sẵn):
+File `infrastructure/account3/parameters.json` **đã được điền sẵn** — chỉ cần MỞ RA kiểm tra, không cần sửa gì:
 
 ```json
 {
@@ -107,7 +107,7 @@ Mở file `infrastructure/account3/parameters.json`, điền `subscriptionId` ch
       "key": "ACC1",
       "name": "ACCOUNT_1",
       "label": "Frontend & Backend",
-      "subscriptionId": "PASTE_SUB_ACC1_TAI_DAY",
+      "subscriptionId": "bbad92f7-b7ef-4fa7-b3ef-61c200f5802e",
       "subscriptionName": ""
     },
     {
@@ -121,18 +121,20 @@ Mở file `infrastructure/account3/parameters.json`, điền `subscriptionId` ch
       "key": "ACC3",
       "name": "ACCOUNT_3",
       "label": "DevOps & Security",
-      "subscriptionId": "PASTE_SUB_ACC3_TAI_DAY",
+      "subscriptionId": "",
       "subscriptionName": ""
     }
   ]
 }
 ```
 
-> 💡 Account nào chưa có ID thì **để trống** — script bỏ qua account đó (báo cáo sẽ thiếu account đó nhưng không lỗi). ACC3 (DevOps & Security) thường **không có Azure subscription** — nếu đúng vậy, để trống và báo cáo sẽ chỉ gồm ACC1 + ACC2 (xem Bước 6).
+> 💡 **ACC1 + ACC2 đã có subscriptionId ✅. ACC3 để TRỐNG là đúng thiết kế** — DevOps & Security thường không có Azure subscription; script sẽ bỏ qua ACC3 và báo cáo gồm ACC1 + ACC2 (xem Bước 6). KHÔNG sửa gì trong file này.
 
 ---
 
 ## BƯỚC 2 — TẠO SERVICE CONNECTION LÊN AZURE DEVOPS · ~10 phút
+
+> 🔑 **Quan trọng — đăng nhập đủ account:** Script truy vấn subscription theo **login hiện tại**. ACC1 và ACC2 có thể nằm ở **2 tenant khác nhau** → phải `az login` bằng **từng tài khoản sở hữu** (ACC1 + ACC2) rồi `az account set` giữa các tenant. Nếu bỏ qua, script sẽ bỏ qua account không truy cập được.
 
 Trong PowerShell (đã đăng nhập Azure), chạy:
 
@@ -180,8 +182,10 @@ az login                                    # nếu chưa đăng nhập
 
 ## BƯỚC 4 — TẠO VÀ CHẠY PIPELINE BÁO CÁO · ~15 phút
 
+> 📌 **Nguồn repo:** Code đang nằm trên **GitHub** (`github.com/HTran2005/DU_AN_NHOM2`). Khi import pipeline, chọn nguồn **GitHub** (lần đầu sẽ được hỏi tạo GitHub service connection bằng GitHub PAT — chỉ cần quyền đọc repo). Nếu nhóm đã có sẵn repo trên **Azure Repos** thì chọn **Azure Repos Git**.
+
 1. **Pipelines → New Pipeline**
-2. Chọn **Azure Repos Git** → chọn repo **`DU_AN_NHOM2`**
+2. Chọn nguồn: **GitHub** (hoặc **Azure Repos Git** nếu repo đã push lên Azure Repos) → chọn repo **`DU_AN_NHOM2`**
 3. Chọn **Existing Azure Pipelines YAML file**
 4. Đường dẫn: **`infrastructure/account3/azure-pipelines-report.yml`** → **Continue → Run**
 5. Đợi build chạy xong (2–3 phút) → **trạng thái xanh ✓**

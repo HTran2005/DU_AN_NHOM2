@@ -120,10 +120,18 @@ else {
     Add-Check "Org/Project: $($cfg.organization) / $($cfg.project)" "OK"
     foreach ($acc in $cfg.accounts) {
       if ($acc.subscriptionId) {
-        Add-Check "$($acc.key) — $($acc.label)" "OK" "subscriptionId: $($acc.subscriptionId)"
+        # Kiểm tra QUYỀN TRUY CẬP THẬT bằng login hiện tại (không chỉ kiểm tra chuỗi ID)
+        $subCheck = az account show --subscription $acc.subscriptionId -o json 2>$null
+        if ($LASTEXITCODE -eq 0 -and $subCheck) {
+          $subName = ($subCheck | ConvertFrom-Json).name
+          Add-Check "$($acc.key) — $($acc.label)" "OK" "subscriptionId: $($acc.subscriptionId) ($subName) — login hiện tại truy cập được"
+        }
+        else {
+          Add-Check "$($acc.key) — $($acc.label)" "MISSING" "Login hiện tại KHÔNG truy cập được subscription này — chạy 'az login' bằng tài khoản sở hữu account"
+        }
       }
       else {
-        Add-Check "$($acc.key) — $($acc.label)" "MISSING" "Chưa có subscriptionId — hỏi thành viên sở hữu account"
+        Add-Check "$($acc.key) — $($acc.label)" "MISSING" "Chưa có subscriptionId — hỏi thành viên sở hữu account (ACC3 thường để trống do không có Azure subscription)"
       }
     }
   }
