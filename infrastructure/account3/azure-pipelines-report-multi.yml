@@ -1,0 +1,98 @@
+# ============================================================
+# Pipeline (DỰ PHÒNG): BÁO CÁO TỔNG HỢP TOÀN BỘ DỊCH VỤ
+#
+# Dùng khi các account nằm ở NHIỀU tenant Entra ID khác nhau
+# (không thể dùng 1 SPN dùng chung).
+#
+# Điều kiện:
+#   - Đã chạy create-service-connections.ps1 -Mode PerSubscription
+#     → tạo các connection: Azure-TripTo-ACC1..ACC3
+#   - parameters.json có đủ subscriptionId cho 3 account
+# ============================================================
+trigger: none
+pr: none
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  paramsFile: 'infrastructure/account3/parameters.json'
+
+jobs:
+  # ------------------------------------------------------------
+  # JOB 1: THU THẬP TÀI NGUYÊN — 1 matrix job cho mỗi account
+  # ------------------------------------------------------------
+  - job: Inventory
+    displayName: 'Thu thập tài nguyên theo account'
+    strategy:
+      matrix:
+        ACC1:
+          accountKey: ACC1
+          accountLabel: 'Frontend & Backend'
+          connection: 'Azure-TripTo-ACC1'
+        ACC2:
+          accountKey: ACC2
+          accountLabel: 'Database & Monitoring'
+          connection: 'Azure-TripTo-ACC2'
+        ACC3:
+          accountKey: ACC3
+          accountLabel: 'DevOps & Security'
+          connection: 'Azure-TripTo-ACC3'
+    steps:
+      - checkout: self
+
+      - task: AzureCLI@2
+        displayName: 'Thu thập tài nguyên $(accountKey) ($(accountLabel))'
+        inputs:
+          azureSubscription: $(connection)
+          scriptType: bash
+          scriptLocation: inlineScript
+          inlineScript: |
+            set -e
+            # Đọc subscriptionId tương ứng từ parameters.json
+            sub=$(jq -r --arg k "$(accountKey)" '.accounts[] | select(.key == $k) | .subscriptionId' "$(paramsFile)")
+            if [ -z "$sub" ]; then
+              echo "❌ Chưa có subscriptionId cho $(accountKey) trong parameters.json"
+              exit 1
+            fi
+            mkdir -p "$(Build.StagingDirectory)/inventory"
+            az resource list --subscription "$sub" --output json > "$(Build.StagingDirectory)/inventory/resources-$(accountKey).json"
+            az account show --subscription "$sub" --output json > "$(Build.StagingDirectory)/inventory/meta-$(accountKey).json"
+            echo "✅ $(accountKey): hoàn tất"
+
+      - task: PublishPipelineArtifact@1
+        displayName: 'Công bố inventory $(accountKey)'
+        inputs:
+          targetPath: '$(Build.StagingDirectory)/inventory'
+          artifact: 'inventory-$(accountKey)'
+          publishLocation: 'pipeline'
+
+  # ------------------------------------------------------------
+  # JOB 2: GỘP + SINH BÁO CÁO
+  # ------------------------------------------------------------
+  - job: Report
+    displayName: 'Sinh báo cáo tổng hợp'
+    dependsOn: Inventory
+    steps:
+      - checkout: self
+
+      - download: current
+        patterns: 'inventory-*'
+
+      - script: |
+          set -e
+          mkdir -p "$(Build.StagingDirectory)/inventory"
+          # Gộp các file resources/meta từ các artifact con về 1 thư mục
+          find "$(Pipeline.Workspace)" -name 'resources-*.json' -exec cp {} "$(Build.StagingDirectory)/inventory/" \;
+          find "$(Pipeline.Workspace)" -name 'meta-*.json' -exec cp {} "$(Build.StagingDirectory)/inventory/" \;
+          bash infrastructure/account3/generate-report.sh \
+            -i "$(Build.StagingDirectory)/inventory" \
+            -o "$(Build.StagingDirectory)/REPORT.md"
+        displayName: 'Gộp dữ liệu + sinh báo cáo'
+
+      - task: PublishPipelineArtifact@1
+        displayName: 'Công bố báo cáo (artifact)'
+        inputs:
+          targetPath: '$(Build.StagingDirectory)/REPORT.md'
+          artifact: 'BaoCaoToanBoDichVu'
+          publishLocation: 'pipeline'

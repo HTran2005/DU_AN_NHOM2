@@ -1,0 +1,29 @@
+{
+  "organization": "DuAnNhom2",
+  "project": "BAO_CAO",
+  "serviceConnectionName": "Azure-TripTo",
+  "servicePrincipalName": "sp-tripto-devops-report",
+  "accounts": [
+    {
+      "key": "ACC1",
+      "name": "ACCOUNT_1",
+      "label": "Frontend & Backend",
+      "subscriptionId": "bbad92f7-b7ef-4fa7-b3ef-61c200f5802e",
+      "subscriptionName": ""
+    },
+    {
+      "key": "ACC2",
+      "name": "ACCOUNT_2",
+      "label": "Database & Monitoring",
+      "subscriptionId": "42e7a0ff-6e78-4530-a021-bf133c012ba2",
+      "subscriptionName": ""
+    },
+    {
+      "key": "ACC3",
+      "name": "ACCOUNT_3",
+      "label": "DevOps & Security",
+      "subscriptionId": "",
+      "subscriptionName": ""
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+# ============================================================
+# Pipeline: BÁO CÁO TỔNG HỢP TOÀN BỘ DỊCH VỤ AZURE — TRIPTO
+#
+# Org     : DuAnNhom2
+# Project : BAO_CAO
+# Service : Azure-TripTo (Service Connection dùng chung - Mode Shared)
+#
+# Cách dùng:
+#   1. Chạy infrastructure/account3/create-service-connections.ps1 (Mode Shared)
+#   2. Pipelines → New Pipeline → Existing Azure Pipelines YAML file
+#      → chọn file này → Run
+#   3. Kết quả: artifact "BaoCaoToanBoDichVu/REPORT.md"
+#
+# Nếu các account nằm ở tenant khác nhau → dùng
+# azure-pipelines-report-multi.yml (Mode PerSubscription).
+# ============================================================
+trigger: none
+pr: none
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  org: 'DuAnNhom2'
+  project: 'BAO_CAO'
+  connectionName: 'Azure-TripTo'
+  paramsFile: 'infrastructure/account3/parameters.json'
+
+steps:
+  # ------------------------------------------------------------
+  # 1. THU THẬP TÀI NGUYÊN TỪ TẤT CẢ ACCOUNT
+  # ------------------------------------------------------------
+  - task: AzureCLI@2
+    displayName: 'Thu thập tài nguyên từ tất cả account'
+    inputs:
+      azureSubscription: $(connectionName)
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        set -e
+        mkdir -p "$(Build.StagingDirectory)/inventory"
+
+        # Đọc danh sách account có subscriptionId từ parameters.json
+        jq -r '.accounts[] | select(.subscriptionId != "") | [.key, .name, .label, .subscriptionId] | @tsv' "$(paramsFile)" > "$(Build.StagingDirectory)/accounts.tsv"
+
+        while IFS=$'\t' read -r key name label sub; do
+          echo "== $key ($label) - $sub"
+          az resource list --subscription "$sub" --output json > "$(Build.StagingDirectory)/inventory/resources-$key.json"
+          az account show --subscription "$sub" --output json > "$(Build.StagingDirectory)/inventory/meta-$key.json"
+          echo "   ✓ đã thu thập"
+        done < "$(Build.StagingDirectory)/accounts.tsv"
+
+        echo "✅ Hoàn tất thu thập tất cả account."
+
+  # ------------------------------------------------------------
+  # 2. SINH BÁO CÁO TỔNG HỢP
+  # ------------------------------------------------------------
+  - script: |
+      set -e
+      bash infrastructure/account3/generate-report.sh \
+        -i "$(Build.StagingDirectory)/inventory" \
+        -o "$(Build.StagingDirectory)/REPORT.md"
+    displayName: 'Sinh báo cáo tổng hợp (generate-report.sh)'
+
+  # ------------------------------------------------------------
+  # 3. CÔNG BỐ BÁO CÁO
+  # ------------------------------------------------------------
+  - task: PublishPipelineArtifact@1
+    displayName: 'Công bố báo cáo (artifact)'
+    inputs:
+      targetPath: '$(Build.StagingDirectory)/REPORT.md'
+      artifact: 'BaoCaoToanBoDichVu'
+      publishLocation: 'pipeline'
