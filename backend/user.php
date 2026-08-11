@@ -49,14 +49,8 @@ register_shutdown_function(function () {
 // HEADERS & CONFIG
 // =====================================================
 header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit();
-}
-// Import config
+// CORS do config.php xử lý (echo origin + Access-Control-Allow-Credentials: true)
+// để preflight OPTIONS của request credentials:'include' không bị chặn.
 require_once __DIR__ . '/config.php';
 // Redis client wrapper
 require_once __DIR__ . '/RedisClient.php';
@@ -1849,7 +1843,7 @@ function handleGetTours() {
         }
         
         $url_anh = $row['url_anh_chinh'];
-        if (!empty($url_anh) && strpos($url_anh, '/') !== 0) {
+        if (!empty($url_anh) && strpos($url_anh, '/') !== 0 && strpos($url_anh, 'http') === false) {
             $url_anh = '/img/' . $url_anh;
         }
         
@@ -2220,7 +2214,7 @@ function handleSearchTours() {
         }
         
         $url_anh = $row['url_anh_chinh'];
-        if (!empty($url_anh) && strpos($url_anh, '/') !== 0) {
+        if (!empty($url_anh) && strpos($url_anh, '/') !== 0 && strpos($url_anh, 'http') === false) {
             $url_anh = '/img/' . $url_anh;
         }
         
@@ -2420,8 +2414,8 @@ function handleFilterTours() {
         // Xử lý ảnh giống handleGetTours
         if (empty($url_anh)) {
             $url_anh = '/img/default.jpg';
-        } else if (strpos($url_anh, '/') !== 0) {
-            // Nếu không bắt đầu với '/', thêm '/img/' vào đầu
+        } else if (strpos($url_anh, '/') !== 0 && strpos($url_anh, 'http') === false) {
+            // Nếu không bắt đầu với '/' và không phải URL tuyệt đối, thêm '/img/' vào đầu
             $url_anh = '/img/' . $url_anh;
         }
         
@@ -4592,8 +4586,45 @@ function handleCreateBooking() {
             }
         }
         curl_close($signalRCh);
+
+        // ===== Azure Notification Hubs: gửi Browser Push Notification qua Web Push PWA =====
+        // (chỉ là nhánh bổ sung, không làm ảnh hưởng luồng booking - Service Bus / SignalR vẫn hoạt động)
+        $pushHubFunctionKey = getenv('FUNCTION_APP_KEY');
+        if (!empty($pushHubFunctionKey)) {
+            $pushPayload = [
+                'title' => 'TripTo',
+                'body' => 'Đặt tour thành công! Thông tin đặt tour của bạn đã được ghi nhận.',
+                'tag' => 'user:' . $id_nguoi_dung
+            ];
+
+            $pushHubUrl = 'https://tripto-function-gmcahcf6embwemaw.southeastasia-01.azurewebsites.net/api/SendNotificationHub';
+            $pushHubCh = curl_init($pushHubUrl);
+            curl_setopt_array($pushHubCh, [
+                CURLOPT_POST => true,
+                CURLOPT_POSTFIELDS => json_encode($pushPayload, JSON_UNESCAPED_UNICODE),
+                CURLOPT_HTTPHEADER => [
+                    'Content-Type: application/json',
+                    'x-functions-key: ' . $pushHubFunctionKey
+                ],
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_TIMEOUT => 3,
+                CURLOPT_CONNECTTIMEOUT => 2
+            ]);
+            $pushHubResponse = curl_exec($pushHubCh);
+            if ($pushHubResponse === false) {
+                error_log("SendNotificationHub error (booking_id={$booking_id}): " . curl_error($pushHubCh));
+            } else {
+                $pushHubHttpCode = curl_getinfo($pushHubCh, CURLINFO_HTTP_CODE);
+                if ($pushHubHttpCode >= 400) {
+                    error_log("SendNotificationHub HTTP error (booking_id={$booking_id}): HTTP {$pushHubHttpCode} - " . $pushHubResponse);
+                }
+            }
+            curl_close($pushHubCh);
+        } else {
+            error_log("SendNotificationHub skipped (booking_id={$booking_id}): FUNCTION_APP_KEY not set");
+        }
     } catch (Throwable $e) {
-        error_log("Service Bus / SignalR send error (booking_id={$booking_id}): " . $e->getMessage());
+        error_log("Service Bus / SignalR / Notification Hub send error (booking_id={$booking_id}): " . $e->getMessage());
     }
 
     exit;
