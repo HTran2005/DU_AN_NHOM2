@@ -6,6 +6,9 @@ const {
     createBrowserNotification
 } = require("@azure/notification-hubs");
 
+const INSTALLATION_ID_TAG_PATTERN =
+    /^\$InstallationId:([A-Za-z0-9_@\-.:#]{1,64})$/;
+
 const DEFAULT_ALLOWED_ORIGINS = [
     "https://tripto-gcbmg6gybegye7ex.southeastasia-01.azurewebsites.net",
     "https://tripto2-e3g2epfdaahzaqaa.southeastasia-01.azurewebsites.net",
@@ -95,17 +98,61 @@ app.http("SendNotificationHub", {
                 }
             });
 
-            const options = {};
+            const installationTagMatch =
+                typeof tag === "string"
+                    ? tag.match(INSTALLATION_ID_TAG_PATTERN)
+                    : null;
 
-            if (tag) {
-                options.tagExpression = tag;
-            }
+            let result;
 
-            const result =
-                await client.sendNotification(
+            if (installationTagMatch) {
+                const installationId =
+                    installationTagMatch[1];
+                const installation =
+                    await client.getInstallation(
+                        installationId
+                    );
+
+                if (
+                    !installation ||
+                    !installation.pushChannel
+                ) {
+                    return {
+                        status: 404,
+                        headers: corsHeaders || {},
+                        jsonBody: {
+                            success: false,
+                            message:
+                                "Installation not found or has no browser channel."
+                        }
+                    };
+                }
+
+                result = await client.sendNotification(
+                    notification,
+                    {
+                        deviceHandle: {
+                            endpoint:
+                                installation.pushChannel
+                                    .endpoint,
+                            auth: installation.pushChannel.auth,
+                            p256dh: installation.pushChannel
+                                .p256dh
+                        }
+                    }
+                );
+            } else {
+                const options = {};
+
+                if (tag) {
+                    options.tagExpression = tag;
+                }
+
+                result = await client.sendNotification(
                     notification,
                     options
                 );
+            }
 
             return {
                 status: 200,
