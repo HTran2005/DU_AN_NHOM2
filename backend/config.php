@@ -175,7 +175,10 @@ register_shutdown_function(function () {
     }
 
     $httpCode = http_response_code();
-    $success = ($httpCode >= 200 && $httpCode < 500);
+    // Request gặp exception (đăng nhập sai, lỗi nghiệp vụ...) phải được ghi là FAILED
+    // dù HTTP vẫn 200/400 (< 500), nếu không App Insights sẽ nhận Success=true sai.
+    $failed = !empty($GLOBALS['_monitor_request_failed']);
+    $success = !$failed && ($httpCode >= 200 && $httpCode < 500);
     monitorEndRequest($httpCode, $success);
 
     // Track PHP fatal errors
