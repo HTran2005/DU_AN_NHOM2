@@ -58,13 +58,17 @@ require_once __DIR__ . '/RedisClient.php';
 require_once __DIR__ . '/eventgrid/EventGridPublisher.php';
 
 /**
- * Helper publish sự kiện đăng nhập lên Event Grid.
+ * Helper publish sự kiện đăng nhập (LoginResult) lên Event Grid.
  * Luôn chạy trong try/catch để KHÔNG làm hỏng luồng đăng nhập khi Event Grid lỗi.
  * KHÔNG ghi password/token.
+ *
+ * Sự kiện chứa: status (Success|False), username, email, timestamp, message.
+ * Invocation Success của Function KHÔNG đồng nghĩa đăng nhập thành công;
+ * kết quả thật nằm ở trường status của sự kiện.
  */
-function publishLoginEvent($status, $email = '', $userId = null, $reason = null) {
+function publishLoginEvent($status, $email = '', $userId = null, $reason = null, $username = null, $message = null) {
     try {
-        EventGridPublisher::publishLoginEvent($status, $email, $userId, $reason);
+        EventGridPublisher::publishLoginEvent($status, $email, $userId, $reason, $username, $message);
     } catch (Throwable $e) {
         error_log('[EventGrid] publishLoginEvent error: ' . $e->getMessage());
     }
