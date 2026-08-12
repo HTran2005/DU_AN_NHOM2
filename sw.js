@@ -1,6 +1,24 @@
 const DEFAULT_TITLE = "TripTo";
 const DEFAULT_URL = "/frontend/user/TRANGCHU.html";
 
+async function notifyClientsOfPermissionIssue() {
+    try {
+        const clientsList = await self.clients.matchAll({
+            type: "window",
+            includeUncontrolled: true
+        });
+
+        const message = {
+            type: "TRIPTO_PUSH_PERMISSION_MISSING",
+            origin: self.location.origin
+        };
+
+        for (const client of clientsList) {
+            client.postMessage(message);
+        }
+    } catch (error) {}
+}
+
 self.addEventListener("push", function (event) {
     let payload = {};
 
@@ -46,6 +64,7 @@ self.addEventListener("push", function (event) {
                     "[sw] showNotification failed:",
                     error
                 );
+                notifyClientsOfPermissionIssue();
             })
     );
 });
