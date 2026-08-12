@@ -287,7 +287,12 @@
             console.warn(
                 "Notification permission is",
                 permission,
-                "- push notifications disabled."
+                "on origin",
+                window.location.origin,
+                "- push notifications disabled.",
+                permission === "denied"
+                    ? "Notification bị chặn. Xin quyền tự động không thể hiện lại; hãy mở biểu tượng chuông/cờ trên thanh địa chỉ -> Cho phép -> tải lại trang."
+                    : ""
             );
             return null;
         }
@@ -376,4 +381,26 @@
     window.urlBase64ToUint8Array = urlBase64ToUint8Array;
     window.getOrCreateInstallationId =
         getOrCreateInstallationId;
+
+    if (navigator.serviceWorker) {
+        navigator.serviceWorker.addEventListener(
+            "message",
+            function (event) {
+                const data = event.data;
+
+                if (
+                    data &&
+                    data.type ===
+                        "TRIPTO_PUSH_PERMISSION_MISSING"
+                ) {
+                    console.warn(
+                        "[TripTo Push] Service Worker khong the hien thi noti tren origin",
+                        data.origin ||
+                            window.location.origin,
+                        "vi Notification permission khong duoc cap. Vui long cho phep thong bao (icon chuong tren thanh dia chi) roi tai lai trang de dang ky lai."
+                    );
+                }
+            }
+        );
+    }
 })();
