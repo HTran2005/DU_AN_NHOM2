@@ -85,7 +85,8 @@ define(
         ?: ''
 );
 
-// Azure Event Grid - Topic đăng nhập (User.Login)
+// Azure Event Grid - Topic đăng nhập (LoginResult)
+// Sự kiện LoginResult: { status: Success|False, username, email, timestamp, message }
 // Endpoint ví dụ: https://tripto-login-topic.southeastasia-1.eventgrid.azure.net/api/events?api-version=2018-01-01
 // Key lấy từ Azure Portal (Event Grid Topic -> Access keys) hoặc az eventgrid topic key list
 define('EVENTGRID_LOGIN_TOPIC_ENDPOINT', getenv('EVENTGRID_LOGIN_TOPIC_ENDPOINT') ?: '');
