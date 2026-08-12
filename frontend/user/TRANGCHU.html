@@ -2889,7 +2889,7 @@
          */
         async function loadFeaturedTours() {
             try {
-                const response = await fetch('https://tripto-api-management.azure-api.net/tripto/user.php?endpoint=get_tours&limit=4&offset=0');
+                const response = await fetch('https://tripto-api-management.azure-api.net/tripto/backend/user.php?endpoint=get_tours&limit=4&offset=0');
                 const responseText = await response.text();
                 let result;
                 try {
