@@ -1342,7 +1342,7 @@
             isCombo = true;
             
             // Fetch combo data from API
-            fetch(`https://tripto-api-management.azure-api.net/tripto/user.php?endpoint=get_combo_detail&id=${comboId}`)
+            fetch(`https://tripto-api-management.azure-api.net/tripto/backend/user.php?endpoint=get_combo_detail&id=${comboId}`)
                 .then(response => {
                     console.log('📡 Combo API Response Status:', response.status);
                     return response.json();
@@ -1654,7 +1654,7 @@
             confirmBtn.textContent = '⏳ Đang xử lý...';
 
             // Send booking data to API
-            fetch('https://tripto-api-management.azure-api.net/tripto/user.php?endpoint=create_booking', {
+            fetch('https://tripto-api-management.azure-api.net/tripto/backend/user.php?endpoint=create_booking', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

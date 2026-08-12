@@ -26,7 +26,7 @@
         } else if (input && input.url) {
             url = input.url;
         }
-        if (url.indexOf('tripto-api-management.azure-api.net/tripto/user.php') !== -1) {
+        if (url.indexOf('tripto-api-management.azure-api.net/tripto/backend/user.php') !== -1) {
             if (!init.credentials) {
                 init.credentials = 'include';
             }
@@ -121,7 +121,7 @@ class TriptoAuth {
      */
     async login(email, password) {
         try {
-            const apiUrl = 'https://tripto-api-management.azure-api.net/tripto/user.php';
+            const apiUrl = 'https://tripto-api-management.azure-api.net/tripto/backend/user.php';
             const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {
@@ -198,7 +198,7 @@ class TriptoAuth {
             // Query backend for real online status
             (async () => {
                 try {
-                    const apiUrl = 'https://tripto-api-management.azure-api.net/tripto/user.php?endpoint=online&action=status&user_id=' + encodeURIComponent(user.id);
+                    const apiUrl = 'https://tripto-api-management.azure-api.net/tripto/backend/user.php?endpoint=online&action=status&user_id=' + encodeURIComponent(user.id);
                     const resp = await fetch(apiUrl, { credentials: 'include' });
                     const j = await resp.json();
                     const online = j && j.online;
@@ -462,7 +462,7 @@ class TriptoAuth {
     async sendHeartbeat() {
         if (!this.isLoggedIn()) return;
         try {
-            const apiUrl = 'https://tripto-api-management.azure-api.net/tripto/user.php?endpoint=online&action=heartbeat';
+            const apiUrl = 'https://tripto-api-management.azure-api.net/tripto/backend/user.php?endpoint=online&action=heartbeat';
             await fetch(apiUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

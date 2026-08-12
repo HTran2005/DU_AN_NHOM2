@@ -112,7 +112,7 @@ class MicrosoftAuth {
                 return;
             }
 
-            const apiUrl = 'https://tripto-api-management.azure-api.net/tripto/user.php?endpoint=auth&action=microsoft_login';
+            const apiUrl = 'https://tripto-api-management.azure-api.net/tripto/backend/user.php?endpoint=auth&action=microsoft_login';
             const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {
