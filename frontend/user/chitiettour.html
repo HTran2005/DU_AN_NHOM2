@@ -2761,6 +2761,11 @@
                 // Store tour data globally for booking button
                 currentTourData = tour;
 
+                // Update map to point to the actual tour location
+                if (typeof updateTourMapMarker === 'function') {
+                    updateTourMapMarker();
+                }
+
                 // Update page title
                 document.title = `Chi Tiết Tour - ${tour.ten} | Tripto`;
 
@@ -2945,6 +2950,11 @@
 
                 // Store combo data globally for booking button
                 currentTourData = combo;
+
+                // Update map to point to the actual combo location
+                if (typeof updateTourMapMarker === 'function') {
+                    updateTourMapMarker();
+                }
 
                 // Update notice section with combo info
                 const noticeContent = document.querySelector('.notice-container .notice-content');
@@ -3718,21 +3728,74 @@
         }
     </script>
     <script>
-        var map = new atlas.Map('tourMap', {
-            center: [107.1822, 20.9101],
-            zoom: 10,
-            view: 'Auto',
-            authOptions: {
-                authType: 'subscriptionKey',
-                subscriptionKey: window.MAPS_KEY
+        var tourMap = null;
+        var tourMapMarker = null;
+        var tourMapReady = false;
+        var tourMapPending = false;
+
+        function initTourMap() {
+            if (tourMap || typeof atlas === 'undefined' || !document.getElementById('tourMap')) return;
+            tourMap = new atlas.Map('tourMap', {
+                center: [105.85, 16.46],
+                zoom: 5,
+                view: 'Auto',
+                authOptions: {
+                    authType: 'subscriptionKey',
+                    subscriptionKey: window.MAPS_KEY
+                }
+            });
+            tourMap.events.add('ready', function () {
+                tourMapReady = true;
+                if (tourMapPending) {
+                    tourMapPending = false;
+                    updateTourMapMarker();
+                }
+            });
+        }
+
+        function updateTourMapMarker() {
+            if (!tourMap) return;
+            if (!tourMapReady) {
+                tourMapPending = true;
+                return;
             }
-        });
-        map.events.add('ready', function () {
-            map.markers.add(new atlas.HtmlMarker({
-                position: [107.1822, 20.9101],
-                text: 'Hạ Long'
-            }));
-        });
+            var tourData = (typeof currentTourData !== 'undefined' && currentTourData) ? currentTourData : null;
+            var placeName = (tourData && tourData.dia_diem_ten) ? tourData.dia_diem_ten : '';
+            if (!placeName) return;
+
+            var searchUrl = 'https://atlas.microsoft.com/search/address/json?api-version=1.0'
+                + '&subscription-key=' + encodeURIComponent(window.MAPS_KEY)
+                + '&query=' + encodeURIComponent(placeName + ', Việt Nam')
+                + '&countrySet=VN&limit=1';
+
+            fetch(searchUrl)
+                .then(function (res) { return res.json(); })
+                .then(function (data) {
+                    var result = data && data.results && data.results[0];
+                    if (!result) {
+                        console.warn('Không tìm thấy tọa độ cho:', placeName);
+                        return;
+                    }
+                    var lat = result.position.lat;
+                    var lon = result.position.lon;
+                    if (tourMapMarker) {
+                        tourMapMarker.setOptions({ position: [lon, lat], text: placeName });
+                    } else {
+                        tourMapMarker = new atlas.HtmlMarker({ position: [lon, lat], text: placeName });
+                        tourMap.markers.add(tourMapMarker);
+                    }
+                    tourMap.setCamera({ center: [lon, lat], zoom: 10 });
+                    var mapCaption = document.querySelector('.tour-location-map .map-caption');
+                    if (mapCaption) {
+                        mapCaption.textContent = 'Vị trí điểm tham quan chính: ' + placeName;
+                    }
+                })
+                .catch(function (err) {
+                    console.error('Lỗi geocode Azure Maps:', err);
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', initTourMap);
     </script>
     <script src="https://cdn.jsdelivr.net/npm/@microsoft/signalr@8.0.7/dist/browser/signalr.min.js"></script>
 <script src="../js/signalr.js"></script>

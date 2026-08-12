@@ -13,7 +13,7 @@ Thứ tự thao tác thực tế trên Portal Azure + Cloud Shell. Người th�
 5. Deploy code: **Deployment Center** bị bỏ (theo quyết định nhóm) → deploy thủ công bằng **zip qua Cloud Shell**.
 6. Cấu hình biến môi trường (env vars) cho app: cài DB config → đọc từ `config.php` phía backend.
 7. Kiểm tra: app chạy Online tại URL:
-   `https://tripto-gcbmg6gybegye7ex.southeastasia-01.azurewebsites.net`
+   `https://bao-cao-nhom2-web-cxenh6f9emhxdbgp.southeastasia-01.azurewebsites.net`
 
 **Ghi nhận:** F1 Free làm app **ngủ đông** khi không truy cập → request đầu có thể timeout; không bind được custom domain.
 
@@ -40,7 +40,7 @@ Thứ tự thao tác thực tế trên Portal Azure + Cloud Shell. Người th�
 3. **Create** → chờ profile Online.
 4. Thêm endpoint `tripto-origin`:
    - Type: **External endpoint**
-   - Target: `tripto-gcbmg6gybegye7ex.southeastasia-01.azurewebsites.net`
+   - Target: `bao-cao-nhom2-web-cxenh6f9emhxdbgp.southeastasia-01.azurewebsites.net`
    - Priority: **1**
 5. Thêm endpoint `tripto2`:
    - Type: **External endpoint**
@@ -171,7 +171,7 @@ Thứ tự thao tác thực tế trên Portal Azure + Cloud Shell. Người th�
     ```
 
 12. Kiểm chứng trên web thật:
-    - Fetch lại trang: `curl -s https://tripto-gcbmg6gybegye7ex.southeastasia-01.azurewebsites.net/frontend/user/chitiettour.html | grep -c atlas` → kết quả ≥ 1
+    - Fetch lại trang: `curl -s https://bao-cao-nhom2-web-cxenh6f9emhxdbgp.southeastasia-01.azurewebsites.net/frontend/user/chitiettour.html | grep -c atlas` → kết quả ≥ 1
     - Mở trang trên trình duyệt → phần "Mô tả tour" → khung **"Bản đồ điểm đến"** hiện bản đồ Azure Maps (góc dưới phải có chữ **Microsoft**, nút **Feedback**) ✅
     - Portal Azure Maps → `tripto-maps` → **Monitoring → Metrics** → metric **Usage** (Aggregation **Count**) → thấy số request tăng (vd **165 request**) → chứng minh web thật sự gọi Azure Maps ✅
 
@@ -219,11 +219,18 @@ Thứ tự thao tác thực tế trên Portal Azure + Cloud Shell. Người th�
 
 > **Bối cảnh:** chưa mua domain thật + App Service đang F1 (không bind custom domain được). Nên tạo **zone trắng** để chứng minh dịch vụ Azure DNS zones hoạt động. Để zone chạy thật cần: mua domain + trỏ NS + nâng tier B1+.
 
+### Vị trí zone hiện tại (tài khoản `hhd211105@gmail.com`)
+
+- **Subscription**: `42e7a0ff-6e78-4530-a021-bf133c012ba2` (Azure for Students)
+- **Resource group**: `DU_AN_NHOM2_RG`
+- **Nameserver**: `ns1-04.azure-dns.com`, `ns2-04.azure-dns.net`, `ns3-04.azure-dns.org`, `ns4-04.azure-dns.info`
+- **Record**: `www` CNAME → `bao-cao-nhom2-web-cxenh6f9emhxdbgp.southeastasia-01.azurewebsites.net`
+
 ### Các bước tạo zone
 
 1. **Mở trang tạo**: Portal → ô tìm kiếm → gõ **"DNS zones"** → chọn dịch vụ → bấm **+ Create**
 2. **Điền thông tin**:
-   - **Resource group**: `Frontend-Dung`
+   - **Resource group**: `DU_AN_NHOM2_RG`
    - **Name**: `tripto.vn` (tên miền dự kiến)
    - **Resource group location**: để mặc định (Azure DNS global)
 3. Bấm **Review + create** → **Create** → **Go to resource**
@@ -232,21 +239,21 @@ Thứ tự thao tác thực tế trên Portal Azure + Cloud Shell. Người th�
 ### Minh chứng cho giáo viên (3 bước — không cần mua domain)
 
 **Bước 1 — Lấy nameserver của zone:**
-- Portal → zone `tripto.vn` → nhìn record **NS** → copy 1 cái (vd `ns1-01.azure-dns.com`)
+- Portal → zone `tripto.vn` → nhìn record **NS** → copy 1 cái (vd `ns1-04.azure-dns.com`)
 
 **Bước 2 — Thêm 1 bản ghi vào zone:**
-- Trong zone → **+ Record set** → Name `www` → Type **CNAME** → Alias `tripto-gcbmg6gybegye7ex.southeastasia-01.azurewebsites.net` → **OK**
+- Trong zone → **+ Record set** → Name `www` → Type **CNAME** → Alias `bao-cao-nhom2-web-cxenh6f9emhxdbgp.southeastasia-01.azurewebsites.net` → **OK**
 
 > 📝 Lưu ý: bản ghi ban đầu từng tạo tên **`ww`** (nhập thiếu chữ `w`) → đã được **sửa lại đúng thành `www`** và xóa `ww` (query NS Azure xác nhận).
-> ✔ Có thêm lựa chọn CLI: `az network dns record-set cname set-record -g frontend-dung -z tripto.vn -n www --cname tripto-gcbmg6gybegye7ex.southeastasia-01.azurewebsites.net`
+> ✔ Có thêm lựa chọn CLI: `az network dns record-set cname set-record -g du_an_nhom2_rg -z tripto.vn -n www --cname bao-cao-nhom2-web-cxenh6f9emhxdbgp.southeastasia-01.azurewebsites.net -s 42e7a0ff-6e78-4530-a021-bf133c012ba2`
 
 **Bước 3 — Query trực tiếp nameserver (Cloud Shell hoặc máy):**
 ```
-nslookup -type=CNAME www.tripto.vn ns1-01.azure-dns.com
+nslookup -type=CNAME www.tripto.vn ns1-04.azure-dns.com
 ```
 Kết quả (bằng chứng hoạt động):
 ```
-www.tripto.vn  canonical name = tripto-gcbmg6gybegye7ex.southeastasia-01.azurewebsites.net
+www.tripto.vn  canonical name = bao-cao-nhom2-web-cxenh6f9emhxdbgp.southeastasia-01.azurewebsites.net
 ```
 - Máy chủ DNS Azure trả về đúng bản ghi = **zone đang hoạt động thật** ✅
 
@@ -263,6 +270,7 @@ www.tripto.vn  canonical name = tripto-gcbmg6gybegye7ex.southeastasia-01.azurewe
 
 - **Zone trắng vẫn chứng minh được hoạt động** bằng cách query nameserver (nslookup/dig) — không cần mua domain
 - Điều kiện để zone chạy thật (web mở bằng tên miền): mua domain + trỏ NS sang Azure DNS + nâng App Service lên B1+ để bind custom domain
+- **Đã tạo lại zone mới** trên tài khoản `hhd211105@gmail.com` (sub `42e7a0ff-6e78-4530-a021-bf133c012ba2`, RG `DU_AN_NHOM2_RG`, NS `ns1-04.azure-dns.com`). Khi đăng nhập **tài khoản cũ** còn chứa zone trắng `tripto.vn` cũ (NS `ns1-01.azure-dns.com`), nên **xóa cảnh để tránh trùng tên**: Portal → DNS zones → chọn `tripto.vn` → **Delete** (hoặc `az network dns zone delete -g <RG-cũ> -n tripto.vn`).
 
 ---
 
@@ -277,7 +285,7 @@ www.tripto.vn  canonical name = tripto-gcbmg6gybegye7ex.southeastasia-01.azurewe
 | Azure Maps | `tripto-maps` | ✅ Gen2, location `global`, **đã nhúng bản đồ vào web** (Usage 165 request) |
 | GitHub Actions | `main_tripto.yml` | ✅ Deploy `tripto` tự động khi push main |
 | GitHub Actions | `main_tripto2.yml` | ✅ (kết nối xong) Deploy `tripto2` tự động khi push main |
-| DNS zones | `tripto.vn` | ✅ Zone trắng tạo xong (NS/SOA tự sinh), minh chứng bằng nslookup |
+| DNS zones | `tripto.vn` | ✅ Zone public mới (sub `42e7a0ff…`, RG `DU_AN_NHOM2_RG`) — NS/SOA tự sinh, record `www` CNAME, minh chứng bằng nslookup |
 
 **Bị chặn:** Front Door, region Maps cụ thể. **DNS chạy thật:** cần mua domain + nâng B1+ (đề xuất bước tiếp theo).
 

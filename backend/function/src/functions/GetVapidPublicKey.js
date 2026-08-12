@@ -1,9 +1,9 @@
 const { app } = require("@azure/functions");
 
 const DEFAULT_ALLOWED_ORIGINS = [
-    "https://tripto-gcbmg6gybegye7ex.southeastasia-01.azurewebsites.net",
-    "https://tripto2-e3g2epfdaahzaqaa.southeastasia-01.azurewebsites.net",
-    "https://tripto-tm.trafficmanager.net",
+    "https://bao-cao-nhom2-web-cxenh6f9emhxdbgp.southeastasia-01.azurewebsites.net",
+    "https://bao-cao-nhom2-web2.azurewebsites.net",
+    "https://bao-cao-nhom2-tm.trafficmanager.net",
     "http://localhost:8080"
 ];
 
