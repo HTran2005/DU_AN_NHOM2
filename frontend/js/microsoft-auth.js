@@ -22,6 +22,7 @@ class MicrosoftAuth {
         this.msalInstance = null;
         this.msalLoaded = false;
         this.msalLoading = null;
+        this.loginInProgress = false;
     }
 
     /**
@@ -97,9 +98,14 @@ class MicrosoftAuth {
      * Đăng nhập bằng popup MSAL → gửi ID token cho backend
      */
     async login() {
+        if (this.loginInProgress) return;
+        this.loginInProgress = true;
         try {
             await this.loadMsal();
             const msalInstance = this.getInstance();
+            try {
+                await msalInstance.handleRedirectPromise();
+            } catch (e) { }
 
             const result = await msalInstance.loginPopup({
                 scopes: ['openid', 'profile', 'email'],
@@ -151,8 +157,19 @@ class MicrosoftAuth {
             if (error && (error.errorCode === 'user_cancelled' || error.errorCode === 'access_denied')) {
                 return;
             }
+            if (error && error.errorCode === 'interaction_in_progress') {
+                try {
+                    Object.keys(localStorage)
+                        .filter(k => k.toLowerCase().indexOf('msal') !== -1)
+                        .forEach(k => localStorage.removeItem(k));
+                } catch (e) { }
+                window.location.reload();
+                return;
+            }
             console.error('Microsoft login error:', error);
             alert('❌ Không thể đăng nhập bằng Microsoft: ' + (error && error.message ? error.message : 'Lỗi không xác định'));
+        } finally {
+            this.loginInProgress = false;
         }
     }
 
