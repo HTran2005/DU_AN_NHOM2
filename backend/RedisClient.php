@@ -209,6 +209,31 @@ class RedisClient {
             return $c->expire($key, (int)$ttl);
         });
     }
+
+    /**
+     * TTL key -> số giây còn lại (-1 nghĩa là vô hạn, -2 là key không tồn tại).
+     */
+    public function ttl($key) {
+        return $this->safeCall(function($c, $using) use ($key) {
+            if ($using === 'predis') {
+                return $c->ttl($key);
+            }
+            return $c->ttl($key);
+        });
+    }
+
+    /**
+     * KEYS pattern -> danh sách key khớp pattern. KHÔNG dùng pattern rộng như '*'
+     * trong production; chỉ dành cho trang test/kiểm tra.
+     */
+    public function keys($pattern) {
+        return $this->safeCall(function($c, $using) use ($pattern) {
+            if ($using === 'predis') {
+                return $c->keys($pattern);
+            }
+            return $c->keys($pattern);
+        });
+    }
 }
 
 // helper factory
