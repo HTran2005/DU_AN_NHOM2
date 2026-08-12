@@ -2303,12 +2303,25 @@
                         favoriteBtn.style.color = '#0057FF';
                         isFavoritedNow = true;
                         favoriteBtn.style.flex = '1';
+                        // Đồng bộ vào Azure Redis (Azure Function /api/favorites)
+                        const tourName = document.querySelector('.tour-title-detail')?.textContent?.trim() || '';
+                        const redisTourId = comboId || tourId;
+                        await fetch(`https://tripto-function-gmcahcf6embwemaw.southeastasia-01.azurewebsites.net/api/favorites?userId=${encodeURIComponent(userId)}`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ userId: String(userId), tourId: String(redisTourId), tourName: tourName })
+                        });
                         alert('✓ Đã thêm vào yêu thích');
                     } else if (result.success && !result.isFavorited) {
                         // Removed from favorites
                         favoriteBtn.textContent = '❤️ Thêm vào yêu thích';
                         favoriteBtn.style.color = '';
                         isFavoritedNow = false;
+                        // Xoá khỏi Azure Redis (Azure Function DELETE)
+                        const redisTourId = comboId || tourId;
+                        await fetch(`https://tripto-function-gmcahcf6embwemaw.southeastasia-01.azurewebsites.net/api/favorites?userId=${encodeURIComponent(userId)}&tourId=${encodeURIComponent(redisTourId)}`, {
+                            method: 'DELETE'
+                        });
                         alert('✓ Đã xóa khỏi yêu thích');
                     } else {
                         alert('❌ Lỗi: ' + result.message);

@@ -3250,12 +3250,37 @@
         }
 
         /**
+         * Đồng bộ yêu thích vào Azure Redis qua Azure Function
+         * /api/favorites (key: tripto:favorite:user:<userId>)
+         */
+        const AZURE_REDIS_FUNCTION = 'https://tripto-function-gmcahcf6embwemaw.southeastasia-01.azurewebsites.net/api/favorites';
+
+        async function syncFavoriteToAzureRedis(userId, tourId, tourName, removing) {
+            try {
+                if (removing) {
+                    await fetch(`${AZURE_REDIS_FUNCTION}?userId=${encodeURIComponent(userId)}&tourId=${encodeURIComponent(tourId)}`, { method: 'DELETE' });
+                } else {
+                    await fetch(`${AZURE_REDIS_FUNCTION}?userId=${encodeURIComponent(userId)}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ userId: String(userId), tourId: String(tourId), tourName: tourName || '' })
+                    });
+                }
+                console.log(removing ? '🗑 Azure Redis removed' : '❤️ Azure Redis saved');
+            } catch (error) {
+                console.error('Azure Redis sync error:', error);
+            }
+        }
+
+        /**
          * Handle heart icon click - toggle favorite for logged-in user
          */
         async function handleFavoriteClick(event) {
             try {
                 const button = event.target.closest('.tour-wishlist');
                 const tourId = button.getAttribute('data-tour-id');
+                const tourNameEl = button.closest('.tour-card')?.querySelector('.tour-title');
+                const tourName = tourNameEl ? tourNameEl.textContent.trim() : '';
                 
                 // Check if user is logged in
                 const isLoggedIn = sessionStorage.getItem('triptoLoggedIn') === 'true';
@@ -3290,6 +3315,7 @@
                     if (deleteResult.success) {
                         button.textContent = '♡';
                         button.style.color = '';
+                        syncFavoriteToAzureRedis(userId, tourId, tourName, true);
                         console.log('✓ Removed from favorites');
                     } else {
                         alert('Lỗi: ' + deleteResult.message);
@@ -3304,6 +3330,7 @@
                     if (addResult.success && addResult.isFavorited) {
                         button.textContent = '♥';
                         button.style.color = '#e74c3c';
+                        syncFavoriteToAzureRedis(userId, tourId, tourName, false);
                         console.log('✓ Added to favorites');
                     } else if (addResult.success) {
                         button.textContent = '♥';

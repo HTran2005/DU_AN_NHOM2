@@ -3138,6 +3138,15 @@ function favoriteDirtyKey($userId) {
     return favoriteCacheKey($userId) . ':dirty';
 }
 
+/**
+ * Key Hash companion chứa metadata của từng item yêu thích
+ * (userId, tourId, tourName, timestamp) — dữ liệu được Azure Function
+ * /api/favorites đọc và trả về cho trình duyệt.
+ */
+function favoriteMetaKey($userId) {
+    return favoriteCacheKey($userId) . ':meta';
+}
+
 function favoriteItemKey($type, $id) {
     return ($type === 'tour' ? 'tour' : 'combo') . ':' . intval($id);
 }
@@ -3212,6 +3221,8 @@ function setFavoriteCache($userId, array $tours, array $combos) {
         if ($r === null) $ok = false;
     }
     $rc->expire($key, getFavoriteTtl());
+    // Dựng lại metadata (tourName/timestamp) cho toàn bộ SET
+    favoriteRebuildMeta($userId, $tours, $combos);
     error_log('[Favorite] Redis WARM user=' . intval($userId) . ' members=' . (count($tours) + count($combos)) . ' ttl=' . getFavoriteTtl());
     return $ok;
 }
@@ -3276,6 +3287,69 @@ function favoriteIsMember($userId, $type, $id) {
 }
 
 /**
+ * Lấy tên tour/combo từ Database (dùng để lưu vào metadata Redis).
+ * Trả về '' nếu không tìm thấy.
+ */
+function favoriteLookupName($type, $id) {
+    global $conn;
+    $col  = ($type === 'tour') ? 'tour' : 'goi_combo';
+    $sql  = "SELECT ten FROM $col WHERE id = ? LIMIT 1";
+    $stmt = $conn->prepare($sql);
+    if (!$stmt) {
+        return '';
+    }
+    $stmt->bind_param('i', intval($id));
+    $stmt->execute();
+    $row = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+    return $row ? (string)$row['ten'] : '';
+}
+
+/**
+ * HSET metadata (userId/tourId/tourName/timestamp) vào hash :meta
+ * cho một item yêu thích. Refresh TTL của hash.
+ */
+function favoriteStoreMeta($userId, $type, $id) {
+    $rc = getRedisClientInstance();
+    if (!$rc->available()) {
+        return false;
+    }
+    $id       = intval($id);
+    $tourName = favoriteLookupName($type, $id);
+    $member   = favoriteItemKey($type, $id);
+    $value    = json_encode([
+        'userId'    => intval($userId),
+        'tourId'    => $member,
+        'tourName'  => $tourName,
+        'timestamp' => date('c')
+    ], JSON_UNESCAPED_UNICODE);
+    $rc->hset(favoriteMetaKey($userId), $member, $value);
+    $rc->expire(favoriteMetaKey($userId), getFavoriteTtl());
+    return true;
+}
+
+/**
+ * Xây dựng lại toàn bộ hash :meta từ danh sách tour/combo hiện có
+ * (dùng khi warm SET từ Database).
+ */
+function favoriteRebuildMeta($userId, array $tours, array $combos) {
+    $rc = getRedisClientInstance();
+    if (!$rc->available()) {
+        return false;
+    }
+    $metaKey = favoriteMetaKey($userId);
+    $rc->del($metaKey);
+    foreach (array_map('intval', $tours) as $t) {
+        favoriteStoreMeta($userId, 'tour', $t);
+    }
+    foreach (array_map('intval', $combos) as $c) {
+        favoriteStoreMeta($userId, 'combo', $c);
+    }
+    $rc->expire($metaKey, getFavoriteTtl());
+    return true;
+}
+
+/**
  * SADD: thêm item vào SET yêu thích + refresh TTL + đánh dấu dirty.
  * Trả về true/false.
  */
@@ -3297,6 +3371,8 @@ function favoriteAdd($userId, $type, $id) {
         return false;
     }
     $rc->expire($key, getFavoriteTtl());
+    // Lưu metadata (tourName/timestamp) vào hash :meta của cùng key
+    favoriteStoreMeta($userId, $type, $id);
     favoriteMarkDirty($userId);
     favoriteLog($userId, $member, 'ADD', 'SADD', 'SUCCESS');
     monitorTrackEvent('favorite_redis_add', [
@@ -3327,6 +3403,8 @@ function favoriteRemove($userId, $type, $id) {
         return false;
     }
     $rc->expire($key, getFavoriteTtl());
+    // Xoá metadata tương ứng trong hash :meta
+    $rc->hdel(favoriteMetaKey($userId), $member);
     favoriteMarkDirty($userId);
     favoriteLog($userId, $member, 'REMOVE', 'SREM', 'SUCCESS');
     monitorTrackEvent('favorite_redis_remove', [
@@ -3499,6 +3577,7 @@ function invalidateFavoriteCache($userId) {
     }
     $rc->del(favoriteCacheKey($userId));
     $rc->del(favoriteDirtyKey($userId));
+    $rc->del(favoriteMetaKey($userId));
     error_log('[Favorite] Redis INVALIDATE user=' . intval($userId));
     return true;
 }

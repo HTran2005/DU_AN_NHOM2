@@ -234,6 +234,62 @@ class RedisClient {
             return $c->keys($pattern);
         });
     }
+
+    // =============================================
+    // Redis HASH operations (dùng cho Favorite meta:
+    // lưu userId, tourId, tourName, timestamp)
+    // Mỗi function trả null khi Redis lỗi.
+    // =============================================
+
+    /**
+     * HSET key field value -> trả true/false.
+     */
+    public function hset($key, $field, $value) {
+        return $this->safeCall(function($c, $using) use ($key, $field, $value) {
+            if ($using === 'predis') {
+                return $c->hset($key, $field, $value) !== false;
+            }
+            return $c->hSet($key, $field, $value) !== false;
+        });
+    }
+
+    /**
+     * HDEL key field -> trả true nếu field bị xoá (hoặc false).
+     */
+    public function hdel($key, $field) {
+        return $this->safeCall(function($c, $using) use ($key, $field) {
+            if ($using === 'predis') {
+                return $c->hdel($key, [$field]) > 0;
+            }
+            return $c->hDel($key, $field) > 0;
+        });
+    }
+
+    /**
+     * HLEN key -> số field trong Hash (0 nếu rỗng).
+     */
+    public function hlen($key) {
+        return $this->safeCall(function($c, $using) use ($key) {
+            if ($using === 'predis') {
+                return (int)$c->hlen($key);
+            }
+            return (int)$c->hLen($key);
+        });
+    }
+
+    /**
+     * HGETALL key -> mảng field => value. Rỗng nếu Hash không tồn tại.
+     */
+    public function hgetall($key) {
+        return $this->safeCall(function($c, $using) use ($key) {
+            if ($using === 'predis') {
+                $result = $c->hgetall($key);
+                return is_array($result) ? $result : [];
+            }
+            $result = $c->hGetAll($key);
+            return is_array($result) ? $result : [];
+        });
+    }
 }
 
 // helper factory
