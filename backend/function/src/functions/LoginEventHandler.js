@@ -42,6 +42,14 @@ app.eventGrid('LoginEventHandler', {
             if (singleEvent.eventType === 'User.Login') {
                 const data = singleEvent.data || {};
 
+                // LUÔN trả 200 cho Event Grid -> "Invocation Success/0" không
+                // đồng nghĩa "Login thành công". Kết quả đăng nhập thực sự
+                // nằm ở dòng LOGIN RESULT bên dưới.
+                const loginSucceeded = data.status === 'Success';
+
+                context.log('============================================');
+                context.log('LOGIN RESULT =>', loginSucceeded ? 'SUCCESS' : 'FAILURE');
+                context.log('============================================');
                 context.log('[Login Event]');
                 context.log('Status:', data.status);
                 context.log('loginMethod:', data.loginMethod || 'username_or_email');

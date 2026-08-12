@@ -132,6 +132,83 @@ class RedisClient {
             return $c->mGet($keys);
         });
     }
+
+    // =============================================
+    // Redis SET operations (dùng cho Favorite/Wishlist)
+    // Mỗi function trả null khi Redis lỗi (caller tự fallback).
+    // =============================================
+
+    /**
+     * SADD key member -> trả số lượng member được thêm (0 nếu đã tồn tại).
+     */
+    public function sadd($key, $member) {
+        return $this->safeCall(function($c, $using) use ($key, $member) {
+            if ($using === 'predis') {
+                return (int)$c->sadd($key, [$member]);
+            }
+            return (int)$c->sAdd($key, $member);
+        });
+    }
+
+    /**
+     * SREM key member -> trả số lượng member bị xoá (0 nếu không tồn tại).
+     */
+    public function srem($key, $member) {
+        return $this->safeCall(function($c, $using) use ($key, $member) {
+            if ($using === 'predis') {
+                return (int)$c->srem($key, [$member]);
+            }
+            return (int)$c->sRem($key, $member);
+        });
+    }
+
+    /**
+     * SCARD key -> số lượng phần tử trong Set.
+     */
+    public function scard($key) {
+        return $this->safeCall(function($c, $using) use ($key) {
+            if ($using === 'predis') {
+                return (int)$c->scard($key);
+            }
+            return (int)$c->sCard($key);
+        });
+    }
+
+    /**
+     * SISMEMBER key member -> true/false.
+     */
+    public function sismember($key, $member) {
+        return $this->safeCall(function($c, $using) use ($key, $member) {
+            if ($using === 'predis') {
+                return $c->sismember($key, $member) ? true : false;
+            }
+            return $c->sIsMember($key, $member) ? true : false;
+        });
+    }
+
+    /**
+     * SMEMBERS key -> mảng member (rỗng nếu Set không có phần tử).
+     */
+    public function smembers($key) {
+        return $this->safeCall(function($c, $using) use ($key) {
+            if ($using === 'predis') {
+                return $c->smembers($key);
+            }
+            return $c->sMembers($key);
+        });
+    }
+
+    /**
+     * EXPIRE key seconds -> đặt lại TTL cho key.
+     */
+    public function expire($key, $ttl) {
+        return $this->safeCall(function($c, $using) use ($key, $ttl) {
+            if ($using === 'predis') {
+                return $c->expire($key, (int)$ttl);
+            }
+            return $c->expire($key, (int)$ttl);
+        });
+    }
 }
 
 // helper factory

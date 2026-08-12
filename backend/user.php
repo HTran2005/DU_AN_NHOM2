@@ -441,6 +441,9 @@ try {
         case 'remove_combo_favorite':
             handleRemoveComboFavorite();
             break;
+        case 'favorite_count':
+            handleFavoriteCount();
+            break;
         case 'get_favorite_groups':
             handleGetFavoriteGroups();
             break;
@@ -3093,87 +3096,413 @@ function handleGetFilterData() {
 // =====================================================
 
 // =====================================================
-// FAVORITE REDIS CACHE-ASIDE HELPERS
+// FAVORITE REDIS WRITE-BACK HELPERS
 // =====================================================
-// Database (yeu_thich) là SOURCE OF TRUTH.
-// Redis chỉ là CACHE theo Cache-Aside Pattern:
-//   READ : Redis GET -> HIT trả ngay / MISS -> Database -> Redis SETEX -> trả
-//   WRITE: Database INSERT/DELETE -> Redis DEL (invalidate)
-// Key   : tripto:favorite:user:{userId}  ->  JSON {"tours":[...],"combos":[...]}
-// TTL   : REDIS_FAVORITE_TTL (mặc định 600 giây)
+// Kiến trúc: Azure Cache for Redis là nơi xử lý TRƯỚC (write-back), Database
+// (yeu_thich) vẫn là SOURCE OF TRUTH lâu dài.
+//
+//   WRITE : SADD/SREM vào Redis SET -> đánh dấu dirty -> ĐỒNG BỘ LẠI Database
+//           theo chu kỳ REDIS_FAVORITE_FLUSH_SECONDS (batch sync, giảm số
+//           lần INSERT/DELETE Database khi người dùng bấm ❤️ liên tục).
+//   READ  : SISMEMBER/SCARD đọc từ Redis. Nếu SET chưa tồn tại -> warm từ
+//           Database (1 query) -> nạp vào Redis rồi trả.
+//   FALLBACK: Redis lỗi/không khả dụng -> thao tác trực tiếp xuống Database
+//           (hệ thống KHÔNG crash).
+//
+// Key chính: tripto:favorite:user:{userId}  ->  Redis SET
+//     member:  tour:{idTour}   /   combo:{idCombo}
+// Key dirty:  tripto:favorite:user:{userId}:dirty -> timestamp thay đổi chưa flush
+//
+// TTL: Redis có TTL (REDIS_FAVORITE_TTL, mặc định 600s) tránh dữ liệu tạm
+//      tồn tại vô thời hạn; mỗi lần ghi sẽ đặt lại TTL.
 
 function getFavoriteTtl() {
     $ttl = (int)getenv('REDIS_FAVORITE_TTL');
     return $ttl > 0 ? $ttl : 600;
 }
 
+function favoriteFlushSeconds() {
+    $s = (int)getenv('REDIS_FAVORITE_FLUSH_SECONDS');
+    return $s > 0 ? $s : 10;
+}
+
 function favoriteCacheKey($userId) {
     return 'tripto:favorite:user:' . intval($userId);
 }
 
+function favoriteDirtyKey($userId) {
+    return favoriteCacheKey($userId) . ':dirty';
+}
+
+function favoriteItemKey($type, $id) {
+    return ($type === 'tour' ? 'tour' : 'combo') . ':' . intval($id);
+}
+
 /**
- * Đọc danh sách yêu thích của user từ Redis.
- * Trả về ['tours'=>[], 'combos'=>[]] nếu CACHE HIT, hoặc null nếu MISS/lỗi.
+ * Parse member "tour:5" / "combo:7" -> ['type'=>..., 'id'=>int] hoặc null.
+ */
+function favoriteParseItem($member) {
+    if (preg_match('/^(tour|combo):(\d+)$/', trim($member), $m)) {
+        return ['type' => $m[1], 'id' => intval($m[2])];
+    }
+    return null;
+}
+
+/**
+ * Log chuẩn cho demo: KHÔNG log password/secret.
+ */
+function favoriteLog($userId, $itemKey, $action, $op, $result, $extra = []) {
+    $msg = '[Favorite] UserId: ' . intval($userId)
+        . ' | ProductId: ' . $itemKey
+        . ' | Action: ' . strtoupper($action)
+        . ' | Redis Key: ' . favoriteCacheKey($userId)
+        . ' | Redis Operation: ' . $op
+        . ' | Result: ' . $result;
+    if (!empty($extra)) {
+        $msg .= ' | ' . http_build_query($extra);
+    }
+    error_log($msg);
+}
+
+/**
+ * Đọc SET yêu thích của user từ Redis.
+ * Trả về ['tours'=>[], 'combos'=>[]] hoặc null nếu Redis lỗi.
  */
 function getFavoriteCache($userId) {
     $rc = getRedisClientInstance();
     if (!$rc->available()) {
         return null;
     }
-    $raw = $rc->get(favoriteCacheKey($userId));
-    if ($raw === null || $raw === false || $raw === '') {
+    $members = $rc->smembers(favoriteCacheKey($userId));
+    if ($members === null) {
         return null;
     }
-    $data = json_decode($raw, true);
-    if (!is_array($data)) {
-        return null;
+    $tours  = [];
+    $combos = [];
+    foreach ($members as $m) {
+        $p = favoriteParseItem($m);
+        if (!$p) continue;
+        if ($p['type'] === 'tour')  $tours[]  = $p['id'];
+        else                        $combos[] = $p['id'];
     }
-    return [
-        'tours'  => array_map('intval', is_array($data['tours'] ?? null)  ? $data['tours']  : []),
-        'combos' => array_map('intval', is_array($data['combos'] ?? null) ? $data['combos'] : []),
-    ];
+    return ['tours' => array_values(array_unique($tours)), 'combos' => array_values(array_unique($combos))];
 }
 
 /**
- * Ghi danh sách yêu thích vào Redis kèm TTL. Trả về true/false.
+ * Dựng lại SET yêu thích (DEL + SADD + EXPIRE) cho user. Trả về true/false.
  */
 function setFavoriteCache($userId, array $tours, array $combos) {
     $rc = getRedisClientInstance();
     if (!$rc->available()) {
         return false;
     }
-    $value = json_encode([
-        'tours'  => array_map('intval', $tours),
-        'combos' => array_map('intval', $combos),
-    ]);
-    $res = $rc->setex(favoriteCacheKey($userId), getFavoriteTtl(), $value);
-    if ($res === null) {
-        error_log('[Favorite] Redis SET failed user=' . intval($userId));
+    $key = favoriteCacheKey($userId);
+    $rc->del($key);
+    $ok = true;
+    foreach (array_map('intval', $tours) as $t) {
+        $r = $rc->sadd($key, 'tour:' . $t);
+        if ($r === null) $ok = false;
+    }
+    foreach (array_map('intval', $combos) as $c) {
+        $r = $rc->sadd($key, 'combo:' . $c);
+        if ($r === null) $ok = false;
+    }
+    $rc->expire($key, getFavoriteTtl());
+    error_log('[Favorite] Redis WARM user=' . intval($userId) . ' members=' . (count($tours) + count($combos)) . ' ttl=' . getFavoriteTtl());
+    return $ok;
+}
+
+/**
+ * Warm SET từ Database (1 query) nếu SET chưa tồn tại.
+ * Trả về ['tours'=>[], 'combos'=>[]] hoặc null nếu lỗi.
+ */
+function favoriteWarmFromDb($userId) {
+    global $conn;
+    $tours  = [];
+    $combos = [];
+    $sql = "SELECT id_tour, id_goi_combo FROM yeu_thich WHERE id_nguoi_dung = ?";
+    $stmt = $conn->prepare($sql);
+    if ($stmt) {
+        $stmt->bind_param('i', intval($userId));
+        $stmt->execute();
+        $result = $stmt->get_result();
+        while ($row = $result->fetch_assoc()) {
+            if (!empty($row['id_tour']))      $tours[]  = intval($row['id_tour']);
+            if (!empty($row['id_goi_combo'])) $combos[] = intval($row['id_goi_combo']);
+        }
+        $stmt->close();
+    }
+    setFavoriteCache($userId, $tours, $combos);
+    return ['tours' => $tours, 'combos' => $combos];
+}
+
+/**
+ * Đảm bảo SET tồn tại (warm từ DB nếu chưa có). Trả về dữ liệu hoặc null.
+ */
+function favoriteEnsureSet($userId) {
+    $rc = getRedisClientInstance();
+    if (!$rc->available()) {
+        return null;
+    }
+    $ex = $rc->exists(favoriteCacheKey($userId));
+    if ($ex === null) {
+        return null;
+    }
+    if (!$ex) {
+        return favoriteWarmFromDb($userId);
+    }
+    $data = getFavoriteCache($userId);
+    if ($data === null) {
+        return null;
+    }
+    return $data;
+}
+
+/**
+ * SISMEMBER: kiểm tra item có trong SET yêu thích không.
+ * Trả về true/false, hoặc null nếu Redis lỗi.
+ */
+function favoriteIsMember($userId, $type, $id) {
+    $data = favoriteEnsureSet($userId);
+    if ($data === null) {
+        return null;
+    }
+    $list = ($type === 'tour') ? $data['tours'] : $data['combos'];
+    return in_array(intval($id), $list, true);
+}
+
+/**
+ * SADD: thêm item vào SET yêu thích + refresh TTL + đánh dấu dirty.
+ * Trả về true/false.
+ */
+function favoriteAdd($userId, $type, $id) {
+    $rc = getRedisClientInstance();
+    if (!$rc->available()) {
         return false;
     }
-    error_log('[Favorite] Redis SET user=' . intval($userId) . ' ttl=' . getFavoriteTtl());
+    // BẮT BUỘC warm SET từ Database trước: nếu SET chưa tồn tại mà chỉ SADD
+    // 1 item, lần flush sau sẽ XOÁ hết các yêu thích cũ (toDel = DB - Set).
+    if (favoriteEnsureSet($userId) === null) {
+        return false;
+    }
+    $key    = favoriteCacheKey($userId);
+    $member = favoriteItemKey($type, $id);
+    $res = $rc->sadd($key, $member);
+    if ($res === null) {
+        favoriteLog($userId, $member, 'ADD', 'SADD', 'FAILED');
+        return false;
+    }
+    $rc->expire($key, getFavoriteTtl());
+    favoriteMarkDirty($userId);
+    favoriteLog($userId, $member, 'ADD', 'SADD', 'SUCCESS');
+    monitorTrackEvent('favorite_redis_add', [
+        'user_id' => intval($userId),
+        'item'    => $member,
+    ]);
     return true;
 }
 
 /**
- * Invalidate cache yêu thích của user sau khi Database thay đổi.
+ * SREM: xoá item khỏi SET yêu thích + refresh TTL + đánh dấu dirty.
+ * Trả về true/false.
+ */
+function favoriteRemove($userId, $type, $id) {
+    $rc = getRedisClientInstance();
+    if (!$rc->available()) {
+        return false;
+    }
+    // BẮT BUỘC warm SET từ Database trước (xem chú thích ở favoriteAdd).
+    if (favoriteEnsureSet($userId) === null) {
+        return false;
+    }
+    $key    = favoriteCacheKey($userId);
+    $member = favoriteItemKey($type, $id);
+    $res = $rc->srem($key, $member);
+    if ($res === null) {
+        favoriteLog($userId, $member, 'REMOVE', 'SREM', 'FAILED');
+        return false;
+    }
+    $rc->expire($key, getFavoriteTtl());
+    favoriteMarkDirty($userId);
+    favoriteLog($userId, $member, 'REMOVE', 'SREM', 'SUCCESS');
+    monitorTrackEvent('favorite_redis_remove', [
+        'user_id' => intval($userId),
+        'item'    => $member,
+    ]);
+    return true;
+}
+
+/**
+ * SCARD: số lượng yêu thích của user (đọc từ Redis, không query Database liên tục).
+ * Trả về int, hoặc null nếu Redis lỗi.
+ */
+function favoriteCount($userId) {
+    $data = favoriteEnsureSet($userId);
+    if ($data === null) {
+        return null;
+    }
+    return count($data['tours']) + count($data['combos']);
+}
+
+/**
+ * Đánh dấu có thay đổi chưa đồng bộ về Database (dirty flag).
+ */
+function favoriteMarkDirty($userId) {
+    $rc = getRedisClientInstance();
+    if (!$rc->available()) {
+        return false;
+    }
+    // Dirty flag sống cùng chu kỳ với SET (getFavoriteTtl) để không bị mất
+    // trước khi flush kịp chạy.
+    $rc->setex(favoriteDirtyKey($userId), getFavoriteTtl(), (string)time());
+    return true;
+}
+
+function favoriteClearDirty($userId) {
+    $rc = getRedisClientInstance();
+    if (!$rc->available()) {
+        return false;
+    }
+    $rc->del(favoriteDirtyKey($userId));
+    return true;
+}
+
+/**
+ * Write-back: đồng bộ SET Redis -> Database.
+ * Với mỗi item trong SET chưa có trong DB -> INSERT.
+ * Với row trong DB không còn trong SET -> DELETE.
+ * (SET Redis là trạng thái "hiện tại", DB được đưa về đúng trạng thái này.)
+ * Trả về ['added'=>int, 'removed'=>int] hoặc null nếu lỗi.
+ */
+function favoriteFlushToDb($userId) {
+    global $conn;
+    $rc = getRedisClientInstance();
+    if (!$rc->available()) {
+        return null;
+    }
+    // Nếu SET không còn tồn tại (hết TTL / chưa warm), KHÔNG reconcile:
+    // xoá dirty và bỏ qua để tránh xoá nhầm toàn bộ yêu thích trong DB.
+    $ex = $rc->exists(favoriteCacheKey($userId));
+    if ($ex === null || !$ex) {
+        favoriteClearDirty($userId);
+        return null;
+    }
+    $data = getFavoriteCache($userId);
+    if ($data === null) {
+        favoriteClearDirty($userId);
+        return null;
+    }
+    $tours  = $data['tours'];
+    $combos = $data['combos'];
+
+    $dbTours  = [];
+    $dbCombos = [];
+    $sql = "SELECT id_tour, id_goi_combo FROM yeu_thich WHERE id_nguoi_dung = ?";
+    $stmt = $conn->prepare($sql);
+    if ($stmt) {
+        $stmt->bind_param('i', intval($userId));
+        $stmt->execute();
+        $res = $stmt->get_result();
+        while ($row = $res->fetch_assoc()) {
+            if (!empty($row['id_tour']))      $dbTours[]  = intval($row['id_tour']);
+            if (!empty($row['id_goi_combo'])) $dbCombos[] = intval($row['id_goi_combo']);
+        }
+        $stmt->close();
+    }
+
+    $addTours   = array_diff($tours,  $dbTours);
+    $addCombos  = array_diff($combos, $dbCombos);
+    $delTours   = array_diff($dbTours, $tours);
+    $delCombos  = array_diff($dbCombos, $combos);
+
+    $added   = 0;
+    $removed = 0;
+
+    foreach ($addTours as $t) {
+        $ins = $conn->prepare("INSERT INTO yeu_thich (id_nguoi_dung, id_tour, ngay_them) VALUES (?, ?, CURRENT_TIMESTAMP)");
+        if ($ins) {
+            $ins->bind_param('ii', $userId, $t);
+            if ($ins->execute()) $added++;
+            $ins->close();
+        }
+    }
+    foreach ($addCombos as $c) {
+        $ins = $conn->prepare("INSERT INTO yeu_thich (id_nguoi_dung, id_goi_combo, ngay_them) VALUES (?, ?, CURRENT_TIMESTAMP)");
+        if ($ins) {
+            $ins->bind_param('ii', $userId, $c);
+            if ($ins->execute()) $added++;
+            $ins->close();
+        }
+    }
+
+    if (!empty($delTours) || !empty($delCombos)) {
+        $wheres  = [];
+        $params  = [intval($userId)];
+        $types   = 'i';
+        foreach ($delTours as $t)  { $wheres[] = 'id_tour = ?';      $params[] = $t; $types .= 'i'; }
+        foreach ($delCombos as $c) { $wheres[] = 'id_goi_combo = ?'; $params[] = $c; $types .= 'i'; }
+        $sql = "DELETE FROM yeu_thich WHERE id_nguoi_dung = ? AND (" . implode(' OR ', $wheres) . ")";
+        $stmt = $conn->prepare($sql);
+        if ($stmt) {
+            $stmt->bind_param($types, ...$params);
+            if ($stmt->execute()) {
+                $removed = $stmt->affected_rows;
+            }
+            $stmt->close();
+        }
+    }
+
+    favoriteClearDirty($userId);
+    error_log('[Favorite] DB SYNC user=' . intval($userId)
+        . ' added=' . $added . ' removed=' . $removed
+        . ' redis_total=' . (count($tours) + count($combos)));
+    monitorTrackEvent('favorite_db_sync', [
+        'user_id' => intval($userId),
+        'added'   => $added,
+        'removed' => $removed,
+        'total'   => count($tours) + count($combos),
+    ]);
+    return ['added' => $added, 'removed' => $removed];
+}
+
+/**
+ * Nếu có thay đổi chưa flush và đã quá chu kỳ -> đồng bộ về Database ngay.
+ * Được gọi ở đầu mỗi handler favorite để DB bắt kịp Redis trong tối đa
+ * REDIS_FAVORITE_FLUSH_SECONDS giây sau thao tác cuối.
+ */
+function favoriteMaybeFlush($userId) {
+    $rc = getRedisClientInstance();
+    if (!$rc->available()) {
+        return false;
+    }
+    $dirty = $rc->get(favoriteDirtyKey($userId));
+    if ($dirty === null || $dirty === false || $dirty === '') {
+        return false;
+    }
+    if ((time() - (int)$dirty) >= favoriteFlushSeconds()) {
+        return favoriteFlushToDb($userId) !== null;
+    }
+    return false;
+}
+
+/**
+ * Invalidate SET + dirty flag của user sau khi Database thay đổi (group ops...).
  */
 function invalidateFavoriteCache($userId) {
     $rc = getRedisClientInstance();
     if (!$rc->available()) {
         return false;
     }
-    $res = $rc->del(favoriteCacheKey($userId));
-    if ($res === null) {
-        error_log('[Favorite] Redis INVALIDATE failed user=' . intval($userId));
-        return false;
-    }
+    $rc->del(favoriteCacheKey($userId));
+    $rc->del(favoriteDirtyKey($userId));
     error_log('[Favorite] Redis INVALIDATE user=' . intval($userId));
     return true;
 }
 
 /**
- * Cache-aside check trạng thái yêu thích của 1 item (tour hoặc combo) cho 1 user.
+ * Check trạng thái yêu thích của 1 item bằng Redis SET (SISMEMBER).
+ * Cache MISS -> warm từ Database -> trả kết quả.
+ * Redis OFF  -> query Database trực tiếp (source of truth).
  * @param int $userId
  * @param int $itemId
  * @param string $type 'combo' | 'tour'
@@ -3184,46 +3513,46 @@ function checkFavoriteCached($userId, $itemId, $type = 'combo') {
     $itemId  = intval($itemId);
     $type    = ($type === 'tour') ? 'tour' : 'combo';
 
-    $cached = getFavoriteCache($userId);
-    if ($cached !== null) {
-        $list = ($type === 'combo') ? $cached['combos'] : $cached['tours'];
+    favoriteMaybeFlush($userId);
+
+    $rc = getRedisClientInstance();
+    if (!$rc->available()) {
+        global $conn;
+        $col  = ($type === 'tour') ? 'id_tour' : 'id_goi_combo';
+        $stmt = $conn->prepare("SELECT id FROM yeu_thich WHERE id_nguoi_dung = ? AND $col = ?");
+        $isFav = false;
+        if ($stmt) {
+            $stmt->bind_param('ii', $userId, $itemId);
+            $stmt->execute();
+            $isFav = $stmt->get_result()->num_rows > 0;
+            $stmt->close();
+        }
+        return ['isFavorite' => $isFav, 'cache' => 'OFF'];
+    }
+
+    $key = favoriteCacheKey($userId);
+    $ex  = $rc->exists($key);
+    if ($ex === null) {
+        return ['isFavorite' => false, 'cache' => 'OFF'];
+    }
+    if (!$ex) {
+        favoriteWarmFromDb($userId);
+        error_log('[Favorite] Redis MISS user=' . $userId . ' ' . $type . '=' . $itemId);
+        monitorTrackEvent('favorite_cache_miss', [
+            'user_id' => $userId,
+            'item_id' => $itemId,
+            'type'    => $type,
+        ]);
+    } else {
         error_log('[Favorite] Redis HIT user=' . $userId . ' ' . $type . '=' . $itemId);
         monitorTrackEvent('favorite_cache_hit', [
             'user_id' => $userId,
             'item_id' => $itemId,
             'type'    => $type,
         ]);
-        return ['isFavorite' => in_array($itemId, $list, true), 'cache' => 'HIT'];
     }
-
-    // CACHE MISS -> query Database (source of truth)
-    global $conn;
-    error_log('[Favorite] Redis MISS user=' . $userId . ' ' . $type . '=' . $itemId);
-    monitorTrackEvent('favorite_cache_miss', [
-        'user_id' => $userId,
-        'item_id' => $itemId,
-        'type'    => $type,
-    ]);
-
-    $tours  = [];
-    $combos = [];
-    $sql = "SELECT id_tour, id_goi_combo FROM yeu_thich WHERE id_nguoi_dung = ?";
-    $stmt = $conn->prepare($sql);
-    if ($stmt) {
-        $stmt->bind_param('i', $userId);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        while ($row = $result->fetch_assoc()) {
-            if (!empty($row['id_tour']))      $tours[]  = intval($row['id_tour']);
-            if (!empty($row['id_goi_combo'])) $combos[] = intval($row['id_goi_combo']);
-        }
-        $stmt->close();
-    }
-
-    setFavoriteCache($userId, $tours, $combos);
-
-    $list = ($type === 'combo') ? $combos : $tours;
-    return ['isFavorite' => in_array($itemId, $list, true), 'cache' => 'MISS'];
+    $isFav = $rc->sismember($key, favoriteItemKey($type, $itemId));
+    return ['isFavorite' => ($isFav === true), 'cache' => ($ex ? 'HIT' : 'MISS')];
 }
 
 /**
@@ -3269,7 +3598,57 @@ function handleToggleFavorite() {
         exit;
     }
 
-    // Toggle: nếu đang favorite -> DELETE, ngược lại -> INSERT. Sau đó invalidate cache.
+    // =====================================================
+    // REDIS-FIRST: xử lý toggle bằng Redis SET trước (write-back).
+    // Không query Database để kiểm tra trạng thái mỗi lần bấm.
+    // =====================================================
+    $rc = getRedisClientInstance();
+    if ($rc->available()) {
+        $type = $id_tour ? 'tour' : 'combo';
+        $itemId = $id_tour ? $id_tour : $id_goi_combo;
+
+        // Nếu có thay đổi cũ đã đủ chu kỳ -> flush về DB trước.
+        favoriteMaybeFlush($currentUserId);
+
+        $wasFavorite = favoriteIsMember($currentUserId, $type, $itemId);
+        if ($wasFavorite === null) {
+            // Redis lỗi khi đọc -> fallback xuống Database.
+            error_log('[Favorite] Redis SISMEMBER error, fallback DB user=' . $currentUserId);
+        } else {
+            $nowFavorite = false;
+            if ($wasFavorite) {
+                $opOk = favoriteRemove($currentUserId, $type, $itemId);   // SREM
+                $nowFavorite = false;
+            } else {
+                $opOk = favoriteAdd($currentUserId, $type, $itemId);      // SADD
+                $nowFavorite = true;
+            }
+
+            if ($opOk) {
+                echo json_encode([
+                    'success'        => true,
+                    'isFavorited'    => $nowFavorite,
+                    'isFavorite'     => $nowFavorite,
+                    'id'             => ($type === 'tour' ? 'T' : 'C') . $itemId,
+                    'cache'          => 'REDIS',
+                    'redis_available'=> true,
+                    'redis_operation'=> $nowFavorite ? 'SADD' : 'SREM',
+                    'pending_db_sync'=> true,
+                    'message'        => $nowFavorite
+                        ? 'Đã thêm vào yêu thích (lưu trong Redis)'
+                        : 'Đã xóa khỏi yêu thích (cập nhật Redis)'
+                ], JSON_UNESCAPED_UNICODE);
+                exit;
+            }
+            // SADD/SREM thất bại -> fallthrough xuống Database.
+            error_log('[Favorite] Redis write failed, fallback DB user=' . $currentUserId . ' ' . $type . '=' . $itemId);
+        }
+    }
+
+    // =====================================================
+    // FALLBACK (Redis không khả dụng / lỗi): ghi trực tiếp Database.
+    // Đảm bảo website KHÔNG crash khi Redis lỗi.
+    // =====================================================
     $wasFavorite = false;
     if ($id_tour) {
         $checkSql = "SELECT id FROM yeu_thich WHERE id_nguoi_dung = ? AND id_tour = ? AND id_goi_combo IS NULL";
@@ -3323,12 +3702,15 @@ function handleToggleFavorite() {
         exit;
     }
 
-    // BẮT BUỘC: sau khi Database thay đổi phải invalidate/update cache Redis.
+    // Sau khi Database thay đổi (fallback) -> invalidate cache Redis để đồng bộ.
     invalidateFavoriteCache($id_nguoi_dung);
+    favoriteLog($id_nguoi_dung, ($id_tour ? 'tour:' : 'combo:') . ($id_tour ?: $id_goi_combo),
+        $wasFavorite ? 'REMOVE' : 'ADD', 'DB', 'SUCCESS', ['cache' => 'FALLBACK_DB']);
 
     echo json_encode([
         'success' => true,
         'isFavorited' => !$wasFavorite,
+        'cache' => 'FALLBACK_DB',
         'message' => $wasFavorite ? 'Đã xóa khỏi yêu thích' : 'Đã thêm vào yêu thích'
     ], JSON_UNESCAPED_UNICODE);
     exit;
@@ -3338,11 +3720,25 @@ function handleToggleFavorite() {
 function handleCreateFavoriteWithGroup() {
     global $conn;
     
+    $currentUserId = getCurrentUserId();
+    if (!$currentUserId) {
+        favoriteRequireLogin('Vui lòng đăng nhập để thêm vào yêu thích');
+    }
+
     $data = json_decode(file_get_contents('php://input'), true);
     $id_tour = intval($data['id_tour'] ?? 0);
     $id_nguoi_dung = intval($data['id_nguoi_dung'] ?? 0);
     $id_nhom = intval($data['id_nhom'] ?? 0);
     
+    if ($id_nguoi_dung !== $currentUserId) {
+        http_response_code(401);
+        echo json_encode([
+            'success' => false,
+            'message' => 'Không có quyền thực hiện hành động này'
+        ], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
     if (!$id_tour || !$id_nguoi_dung || !$id_nhom) {
         echo json_encode([
             'success' => false,
@@ -3350,23 +3746,45 @@ function handleCreateFavoriteWithGroup() {
         ], JSON_UNESCAPED_UNICODE);
         exit;
     }
-    
-    $sql = "INSERT INTO yeu_thich (id_nguoi_dung, id_tour, id_nhom, ngay_them) 
-            VALUES (?, ?, ?, CURRENT_TIMESTAMP)";
-    $stmt = $conn->prepare($sql);
-    if (!$stmt) {
-        echo json_encode([
-            'success' => false,
-            'message' => 'Lỗi: ' . $conn->error
-        ], JSON_UNESCAPED_UNICODE);
-        exit;
+
+    // Flush các thay đổi yêu thích đang nằm trong Redis xuống DB trước,
+    // tránh tạo row trùng lặp và đảm bảo group được gán đúng.
+    favoriteMaybeFlush($id_nguoi_dung);
+
+    // Idempotent: nếu đã có row (user, tour) -> cập nhật id_nhom, ngược lại INSERT.
+    $findSql = "SELECT id FROM yeu_thich WHERE id_nguoi_dung = ? AND id_tour = ? AND id_goi_combo IS NULL";
+    $findStmt = $conn->prepare($findSql);
+    $findStmt->bind_param("ii", $id_nguoi_dung, $id_tour);
+    $findStmt->execute();
+    $existing = $findStmt->get_result()->fetch_assoc();
+    $findStmt->close();
+
+    $ok = false;
+    $favorite_id = 0;
+    if ($existing) {
+        $upd = $conn->prepare("UPDATE yeu_thich SET id_nhom = ? WHERE id = ?");
+        $upd->bind_param("ii", $id_nhom, intval($existing['id']));
+        $ok = $upd->execute();
+        $upd->close();
+        $favorite_id = intval($existing['id']);
+    } else {
+        $sql = "INSERT INTO yeu_thich (id_nguoi_dung, id_tour, id_nhom, ngay_them) 
+                VALUES (?, ?, ?, CURRENT_TIMESTAMP)";
+        $stmt = $conn->prepare($sql);
+        if (!$stmt) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Lỗi: ' . $conn->error
+            ], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+        $stmt->bind_param("iii", $id_nguoi_dung, $id_tour, $id_nhom);
+        $ok = $stmt->execute();
+        if ($ok) $favorite_id = $stmt->insert_id;
+        $stmt->close();
     }
     
-    $stmt->bind_param("iii", $id_nguoi_dung, $id_tour, $id_nhom);
-    
-    if ($stmt->execute()) {
-        $favorite_id = $stmt->insert_id;
-        $stmt->close();
+    if ($ok) {
         invalidateFavoriteCache($id_nguoi_dung);
         echo json_encode([
             'success' => true,
@@ -3385,12 +3803,26 @@ function handleCreateFavoriteWithGroup() {
 // Create combo favorite WITH group (for combos)
 function handleCreateComboFavoriteWithGroup() {
     global $conn;
-    
+
+    $currentUserId = getCurrentUserId();
+    if (!$currentUserId) {
+        favoriteRequireLogin('Vui lòng đăng nhập để thêm vào yêu thích');
+    }
+
     $data = json_decode(file_get_contents('php://input'), true);
     $id_goi_combo = intval($data['id_goi_combo'] ?? 0);
     $id_nguoi_dung = intval($data['id_nguoi_dung'] ?? 0);
     $id_nhom = intval($data['id_nhom'] ?? 0);
     
+    if ($id_nguoi_dung !== $currentUserId) {
+        http_response_code(401);
+        echo json_encode([
+            'success' => false,
+            'message' => 'Không có quyền thực hiện hành động này'
+        ], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
     if (!$id_goi_combo || !$id_nguoi_dung || !$id_nhom) {
         echo json_encode([
             'success' => false,
@@ -3398,23 +3830,42 @@ function handleCreateComboFavoriteWithGroup() {
         ], JSON_UNESCAPED_UNICODE);
         exit;
     }
-    
-    $sql = "INSERT INTO yeu_thich (id_nguoi_dung, id_goi_combo, id_nhom, ngay_them) 
-            VALUES (?, ?, ?, CURRENT_TIMESTAMP)";
-    $stmt = $conn->prepare($sql);
-    if (!$stmt) {
-        echo json_encode([
-            'success' => false,
-            'message' => 'Lỗi: ' . $conn->error
-        ], JSON_UNESCAPED_UNICODE);
-        exit;
+
+    favoriteMaybeFlush($id_nguoi_dung);
+
+    $findSql = "SELECT id FROM yeu_thich WHERE id_nguoi_dung = ? AND id_goi_combo = ?";
+    $findStmt = $conn->prepare($findSql);
+    $findStmt->bind_param("ii", $id_nguoi_dung, $id_goi_combo);
+    $findStmt->execute();
+    $existing = $findStmt->get_result()->fetch_assoc();
+    $findStmt->close();
+
+    $ok = false;
+    $favorite_id = 0;
+    if ($existing) {
+        $upd = $conn->prepare("UPDATE yeu_thich SET id_nhom = ? WHERE id = ?");
+        $upd->bind_param("ii", $id_nhom, intval($existing['id']));
+        $ok = $upd->execute();
+        $upd->close();
+        $favorite_id = intval($existing['id']);
+    } else {
+        $sql = "INSERT INTO yeu_thich (id_nguoi_dung, id_goi_combo, id_nhom, ngay_them) 
+                VALUES (?, ?, ?, CURRENT_TIMESTAMP)";
+        $stmt = $conn->prepare($sql);
+        if (!$stmt) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Lỗi: ' . $conn->error
+            ], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+        $stmt->bind_param("iii", $id_nguoi_dung, $id_goi_combo, $id_nhom);
+        $ok = $stmt->execute();
+        if ($ok) $favorite_id = $stmt->insert_id;
+        $stmt->close();
     }
     
-    $stmt->bind_param("iii", $id_nguoi_dung, $id_goi_combo, $id_nhom);
-    
-    if ($stmt->execute()) {
-        $favorite_id = $stmt->insert_id;
-        $stmt->close();
+    if ($ok) {
         invalidateFavoriteCache($id_nguoi_dung);
         echo json_encode([
             'success' => true,
@@ -3508,8 +3959,50 @@ function handleToggleComboFavorite() {
         ], JSON_UNESCAPED_UNICODE);
         exit;
     }
-    
-    // Check if favorite already exists
+
+    // =====================================================
+    // REDIS-FIRST: toggle bằng Redis SET (SADD/SREM), DB sync theo chu kỳ.
+    // =====================================================
+    $rc = getRedisClientInstance();
+    if ($rc->available()) {
+        favoriteMaybeFlush($currentUserId);
+
+        $wasFavorite = favoriteIsMember($currentUserId, 'combo', $id_goi_combo);
+        if ($wasFavorite === null) {
+            error_log('[Favorite] Redis SISMEMBER error, fallback DB user=' . $currentUserId);
+        } else {
+            $nowFavorite = false;
+            if ($wasFavorite) {
+                $opOk = favoriteRemove($currentUserId, 'combo', $id_goi_combo); // SREM
+                $nowFavorite = false;
+            } else {
+                $opOk = favoriteAdd($currentUserId, 'combo', $id_goi_combo);    // SADD
+                $nowFavorite = true;
+            }
+
+            if ($opOk) {
+                echo json_encode([
+                    'success'        => true,
+                    'isFavorited'    => $nowFavorite,
+                    'isFavorite'     => $nowFavorite,
+                    'id'             => 'C' . $id_goi_combo,
+                    'cache'          => 'REDIS',
+                    'redis_available'=> true,
+                    'redis_operation'=> $nowFavorite ? 'SADD' : 'SREM',
+                    'pending_db_sync'=> true,
+                    'message'        => $nowFavorite
+                        ? 'Đã thêm vào yêu thích (lưu trong Redis)'
+                        : 'Đã xóa khỏi yêu thích (cập nhật Redis)'
+                ], JSON_UNESCAPED_UNICODE);
+                exit;
+            }
+            error_log('[Favorite] Redis write failed, fallback DB user=' . $currentUserId . ' combo=' . $id_goi_combo);
+        }
+    }
+
+    // =====================================================
+    // FALLBACK: ghi trực tiếp Database khi Redis không khả dụng.
+    // =====================================================
     $checkSql = "SELECT id FROM yeu_thich 
                  WHERE id_nguoi_dung = ? AND id_goi_combo = ?";
     $checkStmt = $conn->prepare($checkSql);
@@ -3528,12 +4021,11 @@ function handleToggleComboFavorite() {
         
         if ($deleteStmt->execute()) {
             $deleteStmt->close();
-            // BẮT BUỘC: invalidate cache Redis sau khi Database thay đổi.
             invalidateFavoriteCache($id_nguoi_dung);
             echo json_encode([
                 'success' => true,
                 'isFavorited' => false,
-                'cache' => 'INVALIDATED',
+                'cache' => 'FALLBACK_DB',
                 'message' => 'Đã xóa khỏi yêu thích'
             ], JSON_UNESCAPED_UNICODE);
             exit;
@@ -3554,13 +4046,12 @@ function handleToggleComboFavorite() {
         if ($insertStmt->execute()) {
             $favorite_id = $insertStmt->insert_id;
             $insertStmt->close();
-            // BẮT BUỘC: invalidate cache Redis sau khi Database thay đổi.
             invalidateFavoriteCache($id_nguoi_dung);
             echo json_encode([
                 'success' => true,
                 'isFavorited' => true,
                 'id' => $favorite_id,
-                'cache' => 'INVALIDATED',
+                'cache' => 'FALLBACK_DB',
                 'message' => 'Đã thêm vào yêu thích'
             ], JSON_UNESCAPED_UNICODE);
             exit;
@@ -3649,8 +4140,31 @@ function handleRemoveComboFavorite() {
         ], JSON_UNESCAPED_UNICODE);
         exit;
     }
-    
-    // Delete from favorites (Database = source of truth)
+
+    // =====================================================
+    // REDIS-FIRST: SREM khỏi Redis, DB sync theo chu kỳ (write-back).
+    // =====================================================
+    $rc = getRedisClientInstance();
+    if ($rc->available()) {
+        favoriteMaybeFlush($currentUserId);
+        $opOk = favoriteRemove($currentUserId, 'combo', $id_goi_combo); // SREM
+        if ($opOk) {
+            echo json_encode([
+                'success'        => true,
+                'cache'          => 'REDIS',
+                'redis_available'=> true,
+                'redis_operation'=> 'SREM',
+                'pending_db_sync'=> true,
+                'message'        => 'Đã xóa khỏi yêu thích (cập nhật Redis)'
+            ], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+        error_log('[Favorite] Redis SREM failed, fallback DB user=' . $currentUserId . ' combo=' . $id_goi_combo);
+    }
+
+    // =====================================================
+    // FALLBACK: xoá trực tiếp Database (Database = source of truth)
+    // =====================================================
     $sql = "DELETE FROM yeu_thich WHERE id_nguoi_dung = ? AND id_goi_combo = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ii", $id_nguoi_dung, $id_goi_combo);
@@ -3661,7 +4175,7 @@ function handleRemoveComboFavorite() {
         invalidateFavoriteCache($id_nguoi_dung);
         echo json_encode([
             'success' => true,
-            'cache' => 'INVALIDATED'
+            'cache' => 'FALLBACK_DB'
         ], JSON_UNESCAPED_UNICODE);
     } else {
         http_response_code(400);
@@ -3670,6 +4184,58 @@ function handleRemoveComboFavorite() {
             'message' => 'Lỗi khi xoá yêu thích: ' . $conn->error
         ], JSON_UNESCAPED_UNICODE);
     }
+    exit;
+}
+
+// =====================================================
+// FAVORITE COUNT (SCARD) - demo: đọc số lượng từ Redis
+// =====================================================
+
+function handleFavoriteCount() {
+    global $conn;
+
+    $currentUserId = getCurrentUserId();
+    if (!$currentUserId) {
+        favoriteRequireLogin('Vui lòng đăng nhập để xem số lượng yêu thích');
+    }
+
+    $id_nguoi_dung = isset($_GET['id_nguoi_dung']) ? intval($_GET['id_nguoi_dung']) : 0;
+    if ($id_nguoi_dung > 0 && $id_nguoi_dung !== $currentUserId) {
+        http_response_code(401);
+        echo json_encode([
+            'success' => false,
+            'message' => 'Không có quyền thực hiện hành động này'
+        ], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    favoriteMaybeFlush($currentUserId);
+
+    // SCARD đọc từ Redis (không query Database liên tục).
+    $count = favoriteCount($currentUserId);
+    if ($count !== null) {
+        echo json_encode([
+            'success' => true,
+            'count' => $count,
+            'cache' => 'REDIS'
+        ], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    // FALLBACK: đếm trực tiếp trong Database.
+    $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM yeu_thich WHERE id_nguoi_dung = ?");
+    $total = 0;
+    if ($stmt) {
+        $stmt->bind_param("i", $currentUserId);
+        $stmt->execute();
+        $total = intval($stmt->get_result()->fetch_assoc()['total']);
+        $stmt->close();
+    }
+    echo json_encode([
+        'success' => true,
+        'count' => $total,
+        'cache' => 'DB'
+    ], JSON_UNESCAPED_UNICODE);
     exit;
 }
 
@@ -3836,8 +4402,114 @@ function handleGetUserFavorites() {
         ], JSON_UNESCAPED_UNICODE);
         exit;
     }
-    
-    // Get favorites with group filter if provided
+
+    $currentUserId = getCurrentUserId();
+    if ($currentUserId > 0 && $currentUserId === $id_nguoi_dung) {
+        // Đồng bộ Redis -> DB nếu đã đủ chu kỳ (write-back).
+        favoriteMaybeFlush($id_nguoi_dung);
+    }
+
+    // =====================================================
+    // REDIS-FIRST (không lọc theo nhóm): lấy danh sách id từ Redis,
+    // chỉ query Database để lấy chi tiết (tên, giá, ảnh) cho các id đó.
+    // =====================================================
+    if ($id_nhom <= 0) {
+        $rc = getRedisClientInstance();
+        if ($rc->available() && $currentUserId > 0 && $currentUserId === $id_nguoi_dung) {
+            $data = getFavoriteCache($id_nguoi_dung);
+            if ($data === null) {
+                $data = favoriteWarmFromDb($id_nguoi_dung);
+            }
+            $tours  = $data['tours'];
+            $combos = $data['combos'];
+
+            if (empty($tours) && empty($combos)) {
+                echo json_encode([
+                    'success' => true,
+                    'favorites' => [],
+                    'cache' => 'REDIS'
+                ], JSON_UNESCAPED_UNICODE);
+                exit;
+            }
+
+            $favorites = [];
+
+            if (!empty($tours)) {
+                $in    = implode(',', array_fill(0, count($tours), '?'));
+                $sql   = "SELECT y.id, y.id_tour, y.id_nhom, y.ngay_them,
+                                 t.id as tour_id, t.ten as tour_ten, t.gia, t.url_anh_chinh
+                          FROM yeu_thich y
+                          LEFT JOIN tour t ON y.id_tour = t.id
+                          WHERE y.id_nguoi_dung = ? AND y.id_tour IN ($in)";
+                $stmt  = $conn->prepare($sql);
+                if ($stmt) {
+                    $types  = str_repeat('i', count($tours) + 1);
+                    $params = array_merge([$id_nguoi_dung], $tours);
+                    $stmt->bind_param($types, ...$params);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    while ($row = $result->fetch_assoc()) {
+                        $favorites[] = [
+                            'id'       => intval($row['id']),
+                            'id_nhom'  => $row['id_nhom'] ? intval($row['id_nhom']) : null,
+                            'ngay_them'=> $row['ngay_them'],
+                            'type'     => 'tour',
+                            'id_tour'  => intval($row['id_tour']),
+                            'ten'      => $row['tour_ten'],
+                            'gia'      => floatval($row['gia']),
+                            'url_anh'  => $row['url_anh_chinh'],
+                        ];
+                    }
+                    $stmt->close();
+                }
+            }
+
+            if (!empty($combos)) {
+                $in    = implode(',', array_fill(0, count($combos), '?'));
+                $sql   = "SELECT y.id, y.id_goi_combo, y.id_nhom, y.ngay_them,
+                                 gc.id as combo_id, gc.ten as combo_ten, gc.gia_ban
+                          FROM yeu_thich y
+                          LEFT JOIN goi_combo gc ON y.id_goi_combo = gc.id
+                          WHERE y.id_nguoi_dung = ? AND y.id_goi_combo IN ($in)";
+                $stmt  = $conn->prepare($sql);
+                if ($stmt) {
+                    $types  = str_repeat('i', count($combos) + 1);
+                    $params = array_merge([$id_nguoi_dung], $combos);
+                    $stmt->bind_param($types, ...$params);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    while ($row = $result->fetch_assoc()) {
+                        $favorites[] = [
+                            'id'       => intval($row['id']),
+                            'id_nhom'  => $row['id_nhom'] ? intval($row['id_nhom']) : null,
+                            'ngay_them'=> $row['ngay_them'],
+                            'type'     => 'combo',
+                            'id_combo' => intval($row['combo_id']),
+                            'ten'      => $row['combo_ten'],
+                            'gia'      => floatval($row['gia_ban']),
+                            'url_anh'  => $row['url_anh'] ?? '',
+                        ];
+                    }
+                    $stmt->close();
+                }
+            }
+
+            usort($favorites, function ($a, $b) {
+                return strcmp($b['ngay_them'] ?? '', $a['ngay_them'] ?? '');
+            });
+
+            echo json_encode([
+                'success' => true,
+                'favorites' => $favorites,
+                'cache' => 'REDIS'
+            ], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+    }
+
+    // =====================================================
+    // DB PATH: lọc theo nhóm (id_nhom) hoặc Redis OFF.
+    // =====================================================
     $sql = "SELECT y.id, y.id_tour, y.id_goi_combo, y.id_nhom, y.ngay_them,
                    t.id as tour_id, t.ten as tour_ten, t.gia, t.url_anh_chinh,
                    gc.id as combo_id, gc.ten as combo_ten, gc.gia_ban
@@ -3892,21 +4564,28 @@ function handleGetUserFavorites() {
     
     echo json_encode([
         'success' => true,
-        'favorites' => $favorites
+        'favorites' => $favorites,
+        'cache' => 'DB'
     ], JSON_UNESCAPED_UNICODE);
     exit;
 }
 
 function handleAddToFavoriteGroup() {
     global $conn;
-    
+
+    // Backend xác định user từ SESSION (không tin userId từ client).
+    $currentUserId = getCurrentUserId();
+    if (!$currentUserId) {
+        favoriteRequireLogin('Vui lòng đăng nhập để quản lý nhóm yêu thích');
+    }
+
     $inputData = file_get_contents('php://input');
     $data = json_decode($inputData, true);
-    
-    $id_yeu_thich = isset($data['id_yeu_thich']) ? intval($data['id_yeu_thich']) : 0;
+
+    $id_yeu_thich_raw = isset($data['id_yeu_thich']) ? trim($data['id_yeu_thich']) : '';
     $id_nhom = isset($data['id_nhom']) ? intval($data['id_nhom']) : 0;
-    
-    if (!$id_yeu_thich || !$id_nhom) {
+
+    if ($id_yeu_thich_raw === '' || !$id_nhom) {
         http_response_code(400);
         echo json_encode([
             'success' => false,
@@ -3915,40 +4594,74 @@ function handleAddToFavoriteGroup() {
         exit;
     }
 
-    // Lấy id_nguoi_dung của favorite để invalidate cache Redis sau khi Database thay đổi.
-    $favUser = 0;
-    $uidStmt = $conn->prepare("SELECT id_nguoi_dung FROM yeu_thich WHERE id = ?");
-    if ($uidStmt) {
-        $uidStmt->bind_param("i", $id_yeu_thich);
-        $uidStmt->execute();
-        $uidRes = $uidStmt->get_result();
-        if ($uidRes && $uidRes->num_rows > 0) {
-            $favUser = intval($uidRes->fetch_assoc()['id_nguoi_dung']);
-        }
-        $uidStmt->close();
+    // Flush các thay đổi đang nằm trong Redis xuống DB trước để row tồn tại.
+    favoriteMaybeFlush($currentUserId);
+
+    // id_yeu_thich có thể là id row thật ("123") hoặc mã item ("T5" / "C7")
+    // do endpoint toggle_favorite/toggle_combo_favorite trả về khi item mới
+    // chỉ nằm trong Redis (chưa có row DB).
+    $type   = '';
+    $itemId = 0;
+    if (preg_match('/^([TC])(\d+)$/i', $id_yeu_thich_raw, $m)) {
+        $type   = strtoupper($m[1]);
+        $itemId = intval($m[2]);
     }
-    
+
     try {
+        $favoriteId = 0;
+        if ($itemId > 0) {
+            // Tìm row theo (user, item) - chỉ của chính user đang đăng nhập.
+            $col = ($type === 'T') ? 'id_tour' : 'id_goi_combo';
+            $stmt = $conn->prepare("SELECT id FROM yeu_thich WHERE id_nguoi_dung = ? AND $col = ?");
+            $stmt->bind_param("ii", $currentUserId, $itemId);
+            $stmt->execute();
+            $row = $stmt->get_result()->fetch_assoc();
+            $stmt->close();
+            if ($row) {
+                $favoriteId = intval($row['id']);
+            } else {
+                // Row chưa có -> INSERT kèm group (item này đang nằm trong Redis).
+                if ($type === 'T') {
+                    $stmt = $conn->prepare("INSERT INTO yeu_thich (id_nguoi_dung, id_tour, id_nhom, ngay_them) VALUES (?, ?, ?, CURRENT_TIMESTAMP)");
+                    $stmt->bind_param("iii", $currentUserId, $itemId, $id_nhom);
+                } else {
+                    $stmt = $conn->prepare("INSERT INTO yeu_thich (id_nguoi_dung, id_goi_combo, id_nhom, ngay_them) VALUES (?, ?, ?, CURRENT_TIMESTAMP)");
+                    $stmt->bind_param("iii", $currentUserId, $itemId, $id_nhom);
+                }
+                if (!$stmt->execute()) {
+                    throw new Exception("Execute failed: " . $stmt->error);
+                }
+                $favoriteId = $stmt->insert_id;
+                $stmt->close();
+            }
+        } else {
+            // Legacy: id_yeu_thich là id row thật - bắt buộc thuộc về user hiện tại.
+            $idLegacy = intval($id_yeu_thich_raw);
+            $stmt = $conn->prepare("SELECT id FROM yeu_thich WHERE id = ? AND id_nguoi_dung = ?");
+            $stmt->bind_param("ii", $idLegacy, $currentUserId);
+            $stmt->execute();
+            $row = $stmt->get_result()->fetch_assoc();
+            $stmt->close();
+            if (!$row) {
+                throw new Exception("Yêu thích không tồn tại hoặc không thuộc về bạn");
+            }
+            $favoriteId = intval($row['id']);
+        }
+
+        // Gán nhóm cho row.
         $sql = "UPDATE yeu_thich SET id_nhom = ? WHERE id = ?";
-        
         $stmt = $conn->prepare($sql);
-        
         if (!$stmt) {
             throw new Exception("Prepare failed: " . $conn->error);
         }
-        
-        $stmt->bind_param("ii", $id_nhom, $id_yeu_thich);
-        
+        $stmt->bind_param("ii", $id_nhom, $favoriteId);
         if (!$stmt->execute()) {
             throw new Exception("Execute failed: " . $stmt->error);
         }
-        
         $stmt->close();
 
         // BẮT BUỘC: invalidate cache Redis sau khi Database thay đổi.
-        if ($favUser > 0) {
-            invalidateFavoriteCache($favUser);
-        }
+        invalidateFavoriteCache($currentUserId);
         
         http_response_code(200);
         echo json_encode([
