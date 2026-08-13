@@ -18,6 +18,64 @@ const ALLOWED_ORIGINS = (
 
 const INSTALLATION_ID_PATTERN = /^[A-Za-z0-9\-_:]{1,64}$/;
 
+async function dedupeRegistrationsByEndpoint(
+    client,
+    endpoint,
+    preferredInstallationId,
+    context
+) {
+    if (!endpoint) return;
+
+    const matches = [];
+
+    try {
+        for await (const registration of client.listRegistrations({
+            top: 100
+        })) {
+            if (registration.endpoint === endpoint) {
+                matches.push(registration);
+            }
+        }
+    } catch (error) {
+        context.log(
+            "[RegisterNotification] Dedupe listing error: " +
+                error.message
+        );
+        return;
+    }
+
+    if (matches.length <= 1) return;
+
+    const keep =
+        matches.find(
+            (registration) =>
+                registration.registrationId ===
+                preferredInstallationId
+        ) || matches[0];
+
+    for (const registration of matches) {
+        if (registration === keep) continue;
+
+        try {
+            await client.deleteRegistration(
+                registration.registrationId
+            );
+            context.log(
+                "[RegisterNotification] Deleted duplicate registration " +
+                    registration.registrationId +
+                    " (same endpoint)"
+            );
+        } catch (error) {
+            context.log(
+                "[RegisterNotification] Dedupe delete error " +
+                    registration.registrationId +
+                    ": " +
+                    error.message
+            );
+        }
+    }
+}
+
 function getCorsHeaders(request) {
     const origin = request.headers.get("origin");
 
@@ -73,6 +131,46 @@ app.http("RegisterNotification", {
                 };
             }
 
+            const client = createNotificationHubClient();
+            if (!client) {
+                return {
+                    status: 500,
+                    headers: corsHeaders || {},
+                    jsonBody: {
+                        success: false,
+                        message:
+                            "Notification hub connection string is not configured."
+                    }
+                };
+            }
+
+            if (body.unregister === true) {
+                try {
+                    await client.deleteInstallation(installationId);
+                    context.log(
+                        "[RegisterNotification] Unregistered installation " +
+                            installationId
+                    );
+                } catch (error) {
+                    context.log(
+                        "[RegisterNotification] deleteInstallation " +
+                            installationId +
+                            ": " +
+                            error.message
+                    );
+                }
+
+                return {
+                    status: 200,
+                    headers: corsHeaders || {},
+                    jsonBody: {
+                        success: true,
+                        message: "Installation removed.",
+                        installationId: installationId
+                    }
+                };
+            }
+
             if (
                 typeof endpoint !== "string" ||
                 endpoint.trim() === "" ||
@@ -88,19 +186,6 @@ app.http("RegisterNotification", {
                         success: false,
                         message:
                             "endpoint, p256dh and auth must be non-empty strings."
-                    }
-                };
-            }
-
-            const client = createNotificationHubClient();
-            if (!client) {
-                return {
-                    status: 500,
-                    headers: corsHeaders || {},
-                    jsonBody: {
-                        success: false,
-                        message:
-                            "Notification hub connection string is not configured."
                     }
                 };
             }
@@ -123,6 +208,13 @@ app.http("RegisterNotification", {
 
             await client.createOrUpdateInstallation(
                 installation
+            );
+
+            await dedupeRegistrationsByEndpoint(
+                client,
+                endpoint,
+                installationId,
+                context
             );
 
             return {

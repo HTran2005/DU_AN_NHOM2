@@ -202,6 +202,56 @@
         }
     }
 
+    async function unregisterBrowserSubscription() {
+        const installationId = getOrCreateInstallationId();
+
+        try {
+            const response = await fetch(
+                FUNCTION_APP_URL + "/api/RegisterNotification",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    keepalive: true,
+                    body: JSON.stringify({
+                        installationId: installationId,
+                        unregister: true
+                    })
+                }
+            );
+
+            if (!response.ok) {
+                console.error(
+                    "UnregisterNotification request failed."
+                );
+                return null;
+            }
+
+            const data = await response.json();
+
+            if (!data || data.success !== true) {
+                console.error(
+                    "UnregisterNotification failed."
+                );
+                return null;
+            }
+
+            console.log(
+                "Browser push unregistered.",
+                installationId
+            );
+
+            return { success: true };
+        } catch (error) {
+            console.error(
+                "UnregisterNotification request error.",
+                error
+            );
+            return null;
+        }
+    }
+
     async function ensureFreshSubscription(
         registration,
         publicKey
@@ -381,12 +431,32 @@
     window.urlBase64ToUint8Array = urlBase64ToUint8Array;
     window.getOrCreateInstallationId =
         getOrCreateInstallationId;
+    window.unregisterBrowserSubscription =
+        unregisterBrowserSubscription;
+
+    window.addEventListener("userLogout", function () {
+        console.log(
+            "[TripTo Push] User logged out; unregistering push."
+        );
+        unregisterBrowserSubscription();
+    });
 
     if (navigator.serviceWorker) {
         navigator.serviceWorker.addEventListener(
             "message",
             function (event) {
                 const data = event.data;
+
+                if (
+                    data &&
+                    data.type ===
+                        "TRIPTO_PUSH_SUBSCRIPTION_CHANGED"
+                ) {
+                    console.log(
+                        "[TripTo Push] Service worker reported a subscription change; re-registering."
+                    );
+                    initPushNotifications();
+                }
 
                 if (
                     data &&

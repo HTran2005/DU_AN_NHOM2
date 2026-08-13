@@ -5,6 +5,7 @@ const inputSignalR = input.generic({
     name: 'connectionInfo',
     hubName: 'triptoHub',
     connectionStringSetting: 'AzureSignalRConnectionString',
+    userId: '{query.userId}',
 });
 
 const corsHeaders = {

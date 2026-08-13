@@ -17,10 +17,20 @@ app.http('sendNotification', {
 
         const data = await request.json();
 
-        context.extraOutputs.set(signalR, {
+        const signalRMessage = {
             target: 'newNotification',
             arguments: [data]
-        });
+        };
+
+        if (
+            data &&
+            typeof data.userId === 'string' &&
+            data.userId !== ''
+        ) {
+            signalRMessage.userId = data.userId;
+        }
+
+        context.extraOutputs.set(signalR, signalRMessage);
 
         return {
             status: 200,

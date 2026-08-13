@@ -71,7 +71,25 @@ self.addEventListener("push", function (event) {
 
 self.addEventListener("pushsubscriptionchange", function (event) {
     console.warn(
-        "[sw] Push subscription changed; re-subscription will happen on next page load."
+        "[sw] Push subscription changed; asking client pages to re-register."
+    );
+
+    event.waitUntil(
+        self.clients
+            .matchAll({
+                type: "window",
+                includeUncontrolled: true
+            })
+            .then(function (clientsList) {
+                const message = {
+                    type: "TRIPTO_PUSH_SUBSCRIPTION_CHANGED"
+                };
+
+                for (const client of clientsList) {
+                    client.postMessage(message);
+                }
+            })
+            .catch(function () {})
     );
 });
 

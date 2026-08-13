@@ -5379,6 +5379,7 @@ function handleCreateBooking() {
             'type' => 'booking_success',
             'title' => 'Đặt tour thành công!',
             'message' => 'Đặt tour ' . $so_dat_tour . ' thành công.',
+            'userId' => (string)$id_nguoi_dung,
             'bookingId' => $booking_id,
             'bookingCode' => $so_dat_tour,
             'tourName' => $tourName,

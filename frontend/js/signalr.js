@@ -199,12 +199,42 @@
     // =============================================
     async function connect() {
         try {
-            const connectionInfo = await fetch(
-                'https://tripto-function-gmcahcf6embwemaw.southeastasia-01.azurewebsites.net/api/negotiate',
-                {
-                    method: 'POST'
+            let negotiateUrl =
+                'https://tripto-function-gmcahcf6embwemaw.southeastasia-01.azurewebsites.net/api/negotiate';
+
+            let currentUserId = '';
+            try {
+                const currentUser =
+                    window.triptoAuth &&
+                    typeof window.triptoAuth.getUser === 'function'
+                        ? window.triptoAuth.getUser()
+                        : null;
+                if (
+                    currentUser &&
+                    currentUser.id !== undefined &&
+                    currentUser.id !== null
+                ) {
+                    currentUserId = String(currentUser.id);
                 }
-            );
+            } catch (e) {
+                currentUserId = '';
+            }
+
+            if (currentUserId !== '') {
+                negotiateUrl +=
+                    '?userId=' + encodeURIComponent(currentUserId);
+            } else {
+                const guestId =
+                    window.crypto &&
+                    typeof window.crypto.randomUUID === 'function'
+                        ? window.crypto.randomUUID()
+                        : 'guest-' + Date.now();
+                negotiateUrl += '?userId=' + encodeURIComponent(guestId);
+            }
+
+            const connectionInfo = await fetch(negotiateUrl, {
+                method: 'POST'
+            });
 
             if (!connectionInfo.ok) {
                 throw new Error('Không gọi được negotiate (HTTP ' + connectionInfo.status + ')');

@@ -141,6 +141,54 @@ app.http("SendNotificationHub", {
                         }
                     }
                 );
+            } else if (tag) {
+                const uniqueEndpoints = new Map();
+
+                for await (const registration of client.listRegistrationsByTag(
+                    tag,
+                    { top: 100 }
+                )) {
+                    if (!registration.endpoint) continue;
+
+                    if (!uniqueEndpoints.has(registration.endpoint)) {
+                        uniqueEndpoints.set(
+                            registration.endpoint,
+                            {
+                                endpoint: registration.endpoint,
+                                auth: registration.auth,
+                                p256dh: registration.p256dh
+                            }
+                        );
+                    }
+                }
+
+                if (uniqueEndpoints.size === 0) {
+                    return {
+                        status: 404,
+                        headers: corsHeaders || {},
+                        jsonBody: {
+                            success: false,
+                            message:
+                                "No registered browser found for tag."
+                        }
+                    };
+                }
+
+                let lastResult;
+                for (const channel of uniqueEndpoints.values()) {
+                    lastResult =
+                        await client.sendNotification(
+                            notification,
+                            {
+                                deviceHandle: {
+                                    endpoint: channel.endpoint,
+                                    auth: channel.auth,
+                                    p256dh: channel.p256dh
+                                }
+                            }
+                        );
+                }
+                result = lastResult;
             } else {
                 const options = {};
 
