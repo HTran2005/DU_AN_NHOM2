@@ -28,6 +28,14 @@ define('MS_CLIENT_ID', getenv('MS_CLIENT_ID') ?: '');
 define('MS_TENANT_ID', getenv('MS_TENANT_ID') ?: 'common');
 define('MS_AUTHORITY', getenv('MS_AUTHORITY') ?: ('https://login.microsoftonline.com/' . MS_TENANT_ID . '/v2.0'));
 
+// Azure OpenAI - Chatbot hỗ trợ (Tripto Assistant)
+// Endpoint: https://<resource>.openai.azure.com/ , Key & model name lấy từ Azure AI Foundry
+// Lưu trong Key Vault / biến môi trường App Service, KHÔNG hardcode. Nếu để trống,
+// chatbot tự động fallback sang câu trả lời mẫu để web không bao giờ bị lỗi.
+define('OPENAI_ENDPOINT', getenv('OPENAI_ENDPOINT') ?: '');
+define('OPENAI_API_KEY', getenv('OPENAI_API_KEY') ?: '');
+define('OPENAI_DEPLOYMENT', getenv('OPENAI_DEPLOYMENT') ?: 'gpt-4o-mini');
+
 // Error Reporting
 error_reporting(E_ALL);
 ini_set('display_errors', 0);        // Không hiển thị lỗi cho user

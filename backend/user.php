@@ -472,6 +472,9 @@ try {
         case 'init_favorite_tables':
             handleInitFavoriteTables();
             break;
+        case 'chatbot':
+            handleChatbot();
+            break;
         default:
             throw new Exception('Endpoint không hợp lệ: ' . htmlspecialchars($endpoint) . '. Vui lòng chỉ định endpoint hợp lệ.');
     }
@@ -6642,6 +6645,117 @@ function handleGetFilterDestinations() {
         ]);
         exit;
     }
+}
+
+// =====================================================
+// AI CHATBOT HANDLER
+// Endpoint: ?endpoint=chatbot (POST, body: {"message": "..."})
+// Trợ lý ảo Tripto dùng Azure OpenAI. Thiết kế FAIL-SAFE:
+//  - Nếu OPENAI_API_KEY/ENDPOINT chưa cấu hình -> trả lời bằng câu mẫu.
+//  - Nếu gọi Azure OpenAI lỗi hoặc quá 15 giây -> trả lời bằng câu mẫu.
+//  - Không bao giờ ném Exception ra ngoài -> web không bao giờ bị lỗi.
+//  - Key không bao giờ trả về cho frontend.
+// =====================================================
+function handleChatbot() {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        http_response_code(405);
+        echo json_encode(['success' => false, 'message' => 'Phương thức không được phép. Sử dụng POST.']);
+        exit;
+    }
+
+    $raw = file_get_contents('php://input');
+    $data = json_decode($raw, true);
+    $message = isset($data['message']) ? trim((string)$data['message']) : '';
+
+    if ($message === '') {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => 'Vui lòng nhập nội dung câu hỏi.']);
+        exit;
+    }
+    if (mb_strlen($message) > 2000) {
+        $message = mb_substr($message, 0, 2000);
+    }
+
+    // Hệ thống prompt: người trợ lý du lịch của Tripto
+    $systemPrompt = "Bạn là trợ lý ảo Tripto - chatbot hỗ trợ khách hàng của website đặt tour du lịch Tripto (Việt Nam). " .
+        "Bạn trả lời ngắn gọn, thân thiện bằng tiếng Việt về: đặt tour, đổi ngày tour, hủy tour, hoàn tiền, thanh toán, các điểm đến phổ biến. " .
+        "Nếu chưa biết câu trả lời chính xác, hãy hướng dẫn khách liên hệ hotline +84 (0) 1234 567 890 hoặc email support@tripto.vn. " .
+        "Tuyệt đối không bịa thông tin về giá cả, chính sách hoặc tour cụ thể.";
+
+    // Câu trả lời mẫu (fallback) - nội dung khớp với các lựa chọn nhanh trên trang hotro
+    $fallbackReplies = [
+        'đặt tour' => "Để đặt tour mới, bạn vào mục \"Chuyến du lịch\" trên trang chủ, chọn tour yêu thích rồi bấm \"Đặt ngay\". Bạn cần hỗ trợ thêm điểm đến nào không?",
+        'đổi ngày' => "Bạn muốn đổi ngày khởi hành. Vui lòng gọi hotline 0123 456 789 hoặc email support@tripto.vn kèm mã tour để đội ngũ hỗ trợ kiểm tra lịch trống và xác nhận đổi ngày cho bạn.",
+        'hoàn tiền' => "Để kiểm tra tình trạng hoàn tiền, bạn vào mục \"Tài khoản thanh toán\" hoặc liên hệ hotline 0123 456 789, cung cấp mã đơn hàng để chúng tôi tra cứu ngay.",
+        'hủy tour' => "Bạn muốn hủy tour. Chính sách hủy tùy thuộc tour và thời điểm hủy. Vui lòng gọi hotline 0123 456 789 hoặc email support@tripto.vn kèm mã tour để được hướng dẫn chi tiết.",
+    ];
+    $defaultFallback = "Cảm ơn bạn đã liên hệ Tripto! Để được hỗ trợ chính xác, bạn có thể gọi hotline 0123 456 789 hoặc gửi email support@tripto.vn. Chúng tôi sẽ phản hồi trong vòng 24 giờ.";
+
+    // Chọn câu mẫu phù hợp theo từ khóa
+    $fallbackReply = $defaultFallback;
+    $lowerMsg = mb_strtolower($message, 'UTF-8');
+    foreach ($fallbackReplies as $keyword => $reply) {
+        if (mb_strpos($lowerMsg, $keyword, 0, 'UTF-8') !== false) {
+            $fallbackReply = $reply;
+            break;
+        }
+    }
+
+    // Nếu chưa cấu hình OpenAI -> trả câu mẫu ngay (web không bao giờ lỗi)
+    if (empty(OPENAI_ENDPOINT) || empty(OPENAI_API_KEY)) {
+        echo json_encode(['success' => true, 'reply' => $fallbackReply, 'mode' => 'fallback']);
+        exit;
+    }
+
+    // Gọi Azure OpenAI (Chat Completions API)
+    $url = rtrim(OPENAI_ENDPOINT, '/') . '/openai/deployments/' . rawurlencode(OPENAI_DEPLOYMENT) . '/chat/completions?api-version=2024-06-01';
+
+    $payload = json_encode([
+        'messages' => [
+            ['role' => 'system', 'content' => $systemPrompt],
+            ['role' => 'user', 'content' => $message]
+        ],
+        'max_tokens' => 300,
+        'temperature' => 0.7
+    ]);
+
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => $payload,
+        CURLOPT_HTTPHEADER => [
+            'Content-Type: application/json',
+            'api-key: ' . OPENAI_API_KEY
+        ],
+        CURLOPT_TIMEOUT => 15,          // không để request treo lâu
+        CURLOPT_CONNECTTIMEOUT => 5,
+        CURLOPT_SSL_VERIFYPEER => true
+    ]);
+
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlErr = curl_error($ch);
+    curl_close($ch);
+
+    // Lỗi mạng hoặc HTTP lỗi -> fallback, KHÔNG báo lỗi cho người dùng
+    if ($response === false || $httpCode < 200 || $httpCode >= 300) {
+        error_log('[Chatbot] OpenAI error: http=' . $httpCode . ' curl=' . $curlErr);
+        echo json_encode(['success' => true, 'reply' => $fallbackReply, 'mode' => 'fallback']);
+        exit;
+    }
+
+    $result = json_decode($response, true);
+    $reply = isset($result['choices'][0]['message']['content'])
+        ? trim($result['choices'][0]['message']['content'])
+        : '';
+
+    if ($reply === '') {
+        $reply = $fallbackReply;
+    }
+
+    echo json_encode(['success' => true, 'reply' => $reply, 'mode' => 'ai']);
+    exit;
 }
 
 ?>

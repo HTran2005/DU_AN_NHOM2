@@ -507,43 +507,89 @@
             liveChatCloseBtn.addEventListener('click', closeLiveChat);
             liveChatOverlay.addEventListener('click', closeLiveChat);
 
+            var isSending = false;
+
+            // Trợ lý ảo: gọi backend user.php?endpoint=chatbot
+            // Fail-safe: nếu fetch lỗi/timeout => hiện câu trả lời mẫu, chat vẫn hoạt động
+            function askAssistant(message) {
+                if (isSending) { return; }
+                isSending = true;
+
+                var userMsg = document.createElement('div');
+                userMsg.className = 'user-message';
+                userMsg.textContent = message;
+                liveChatContent.appendChild(userMsg);
+                liveChatContent.scrollTop = liveChatContent.scrollHeight;
+
+                // Indicator "đang nhập..."
+                var typing = document.createElement('div');
+                typing.className = 'live-chat-intro';
+                typing.innerHTML = '<p>Trợ lý Tripto đang trả lời...</p>';
+                liveChatContent.appendChild(typing);
+                liveChatContent.scrollTop = liveChatContent.scrollHeight;
+
+                var timer = setTimeout(function() { finish(); }, 15000);
+
+                function finish() {
+                    clearTimeout(timer);
+                    if (typing.parentNode) { typing.parentNode.removeChild(typing); }
+                    isSending = false;
+                    liveChatInput.disabled = false;
+                    liveChatSendBtn.disabled = false;
+                    liveChatInput.focus();
+                }
+
+                function renderReply(text) {
+                    var reply = document.createElement('div');
+                    reply.className = 'live-chat-intro';
+                    var p = document.createElement('p');
+                    p.textContent = text;
+                    reply.appendChild(p);
+                    liveChatContent.appendChild(reply);
+                    liveChatContent.scrollTop = liveChatContent.scrollHeight;
+                }
+
+                var fallbackReply = 'Cảm ơn bạn đã liên hệ Tripto! Vui lòng gọi hotline 0123 456 789 hoặc gửi email support@tripto.vn, chúng tôi sẽ phản hồi sớm nhất có thể.';
+
+                liveChatInput.disabled = true;
+                liveChatSendBtn.disabled = true;
+
+                fetch('https://tripto-api-management.azure-api.net/tripto/backend/user.php?endpoint=chatbot', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ message: message })
+                })
+                .then(function(res) {
+                    if (!res.ok) { throw new Error('HTTP ' + res.status); }
+                    return res.json();
+                })
+                .then(function(data) {
+                    if (data && data.success && data.reply) {
+                        renderReply(data.reply);
+                    } else {
+                        renderReply(fallbackReply);
+                    }
+                    finish();
+                })
+                .catch(function() {
+                    renderReply(fallbackReply);
+                    finish();
+                });
+            }
+
             // Quick option buttons
             quickBtns.forEach(function(btn) {
                 btn.addEventListener('click', function() {
-                    var messageText = this.textContent;
-                    var userMsg = document.createElement('div');
-                    userMsg.className = 'user-message';
-                    userMsg.textContent = messageText;
-                    liveChatContent.appendChild(userMsg);
-                    liveChatContent.scrollTop = liveChatContent.scrollHeight;
-
-                    setTimeout(function() {
-                        var introDiv = document.createElement('div');
-                        introDiv.className = 'live-chat-intro';
-                        introDiv.innerHTML = '<p>Cảm ơn bạn đã liên hệ! Đội ngũ hỗ trợ sẽ phản hồi bạn trong vòng 24 giờ. Bạn có thể để lại số điện thoại để chúng tôi tiện liên hệ nhé!</p>';
-                        liveChatContent.appendChild(introDiv);
-                        liveChatContent.scrollTop = liveChatContent.scrollHeight;
-                    }, 1000);
+                    askAssistant(this.textContent);
                 });
             });
 
             function sendLiveMessage() {
                 var message = liveChatInput.value.trim();
                 if (message) {
-                    var userMsg = document.createElement('div');
-                    userMsg.className = 'user-message';
-                    userMsg.textContent = message;
-                    liveChatContent.appendChild(userMsg);
                     liveChatInput.value = '';
-                    liveChatContent.scrollTop = liveChatContent.scrollHeight;
-
-                    setTimeout(function() {
-                        var introDiv = document.createElement('div');
-                        introDiv.className = 'live-chat-intro';
-                        introDiv.innerHTML = '<p>Cảm ơn bạn đã nhắn tin! Chúng tôi sẽ phản hồi sớm nhất có thể.</p>';
-                        liveChatContent.appendChild(introDiv);
-                        liveChatContent.scrollTop = liveChatContent.scrollHeight;
-                    }, 1000);
+                    askAssistant(message);
                 }
             }
 
